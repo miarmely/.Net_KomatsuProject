@@ -8,7 +8,7 @@ using Microsoft.Extensions.Options;
 using Repositories.Contracts;
 using Services.Contracts;
 using System.Linq.Expressions;
-using System.Runtime.CompilerServices;
+
 
 namespace Services.Concretes
 {
@@ -18,15 +18,19 @@ namespace Services.Concretes
 
 		private readonly IMapper _mapper;
 
+		private readonly ILoggerService _loggerService;
+
 		private readonly UserSettingsConfig _userConfig;
 
 		public UserService(IRepositoryManager manager
 			, IOptions<UserSettingsConfig> userConfig
-			, IMapper mapper)
+			, IMapper mapper
+			, ILoggerService loggerService)
 		{
 			_manager = manager;
 			_userConfig = userConfig.Value;
 			_mapper = mapper;
+			_loggerService = loggerService;
 		}
 
 		public async Task<UserView> LoginAsync(UserView viewModel)
@@ -38,7 +42,7 @@ namespace Services.Concretes
 				.GetUserByTelNoAsync(viewModel.TelNo, false);
 			#endregion
 
-			#region when telNo not found
+			#region when telNo not found (throw)
 			_ = user ?? throw new ErrorWithCodeException(404,
 				"VE-T",
 				"Verification Error - Telephone",

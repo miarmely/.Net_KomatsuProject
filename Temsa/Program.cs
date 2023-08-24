@@ -1,14 +1,21 @@
+using NLog;
 using Temsa.Extensions;
+
+#region setup logger
+LogManager.Setup()
+	.LoadConfigurationFromFile();
+#endregion
 
 #region add extensions
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllersWithViews();
+builder.Services.AddAutoMapper(typeof(Program).Assembly);
 builder.Services.ConfigureRepositoryContext(builder.Configuration);
 builder.Services.ConfigureRepositoryManager();
 builder.Services.ConfigureServiceManager();
 builder.Services.ConfigureUserSettingsConfig(builder.Configuration);
-builder.Services.AddAutoMapper(typeof(Program).Assembly);
+builder.Services.ConfigureLoggerService();
 
 var app = builder.Build();
 
