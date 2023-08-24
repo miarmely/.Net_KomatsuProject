@@ -8,10 +8,8 @@ namespace Temsa.Utilities
 	{
         public MappingProfile()
         {
-            CreateMap<User, UserView>()
-                .ForMember(
-                    dst => dst.CompanyName,
-                    opt => opt.AllowNull());  // leave as null to CompanyName
-        }
-    }
+			CreateMap<User, UserView>();
+			CreateMap<UserView, User>();
+		}
+	}
 }

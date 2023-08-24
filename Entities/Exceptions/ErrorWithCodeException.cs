@@ -1,4 +1,5 @@
-﻿using System.Text.Json;
+﻿using Entities.ErrorModels;
+using System.Text.Json;
 
 
 namespace Entities.Exceptions
@@ -16,6 +17,11 @@ namespace Entities.Exceptions
 				ErrorDescription = errorDescription,
 				Message = message
 			}))
+		{ }
+
+		public ErrorWithCodeException(ErrorWithCode errorModel)
+			: base(JsonSerializer
+				  .Serialize(errorModel))
 		{ }
 	}
 }

@@ -11,6 +11,8 @@ builder.Services.ConfigureUserSettingsConfig(builder.Configuration);
 builder.Services.AddAutoMapper(typeof(Program).Assembly);
 
 var app = builder.Build();
+
+builder.Services.ConfigureExceptionHandler(app);
 #endregion
 
 #region set production or staging mode 

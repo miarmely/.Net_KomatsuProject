@@ -1,10 +1,14 @@
 ﻿using AutoMapper;
 using Entities.ConfigModels;
+using Entities.DataModels;
+using Entities.ErrorModels;
 using Entities.Exceptions;
 using Entities.ViewModels;
 using Microsoft.Extensions.Options;
 using Repositories.Contracts;
 using Services.Contracts;
+using System.Linq.Expressions;
+using System.Runtime.CompilerServices;
 
 namespace Services.Concretes
 {
@@ -27,23 +31,18 @@ namespace Services.Concretes
 
 		public async Task<UserView> LoginAsync(UserView viewModel)
 		{
-			#region format control
-			await FormatControlAsync(
-				telNo: viewModel.TelNo, 
-				password: viewModel.Password);
-			#endregion
+			await FormatControlAsync(viewModel);
 
-			#region get employee
+			#region get user by telNo
 			var user = await _manager.UserRepository
-				.GetEmployeeByTelNoAsync(viewModel.TelNo, false);
+				.GetUserByTelNoAsync(viewModel.TelNo, false);
 			#endregion
 
 			#region when telNo not found
-			if (user == null)
-				throw new ErrorWithCodeException(404, 
-					"VE-T",
-					"Verification Error - Telephone",
-					$"Telephone not found. -> telephone:{viewModel.TelNo}");
+			_ = user ?? throw new ErrorWithCodeException(404,
+				"VE-T",
+				"Verification Error - Telephone",
+				$"Telephone not found. -> telephone:{viewModel.TelNo}");
 			#endregion
 
 			#region when password is wrong
@@ -51,13 +50,71 @@ namespace Services.Concretes
 				throw new ErrorWithCodeException(404,
 					"VE-P",
 					"Verification Error - Password",
-					$"Password not found. -> email:{viewModel.Email} && password:{viewModel.Password}");
+					$"Password not found. -> telNo:{viewModel.TelNo} && password:{viewModel.Password}");
 			#endregion
 
+			#region convert user to userView
 			var userView = _mapper.Map<UserView>(user);
-			//userView.CompanyName = "x";
+
+			var company = await _manager.CompanyRepository
+				.GetCompanyByIdAsync(user.CompanyId, false);
+
+			userView.CompanyName = company.Name;
+			#endregion
 
 			return userView;
+		}
+
+		public async Task<UserView> RegisterAsync(UserView viewModel)
+		{
+			#region control format and conflict errors
+			await FormatControlAsync(viewModel);
+
+			await ConflictControlAsync(u =>
+				u.TelNo.Equals(viewModel.TelNo)
+				|| u.Email.Equals(viewModel.Email)
+				, viewModel);
+			#endregion
+
+			#region create company if not exists
+			var company = await _manager.CompanyRepository
+				.GetCompanyByNameAsync(viewModel.CompanyName, false);
+
+			#region when company name not found 
+			if (company == null)
+			{
+				company = new Company()
+				{
+					Name = viewModel.CompanyName
+				};
+
+				#region create company
+				_manager.CompanyRepository
+					.CreateCompany(company);
+
+				await _manager.SaveAsync();
+				#endregion
+			}
+			#endregion
+
+			#endregion
+
+			#region convert userView to user
+			var user = _mapper.Map<User>(viewModel);
+
+			user.CompanyId = company.Id;
+			#endregion
+
+			#region create user
+			_manager.UserRepository
+				.CreateUser(user);
+
+			await _manager.SaveAsync();
+
+			viewModel.Id = user.Id;
+			#endregion
+
+			return viewModel;
 		}
 
 		public async Task<bool> IsEmailSyntaxValidAsync(string email) =>
@@ -103,75 +160,136 @@ namespace Services.Concretes
 				return true;
 			});
 
-		private async Task FormatControlAsync(UserView viewModel)
+		public async Task FormatControlAsync(UserView viewModel)
 		{
-			var shortErrorCode = "FE-";
-			var longErrorCode = "Format Error - ";
+			var errorModel = new ErrorWithCode()
+			{
+				StatusCode = 400,
+				ErrorCode = "FE-",
+				ErrorDescription = "Formet Error - ",
+				Message = "Format Error - "
+			};
 
 			#region firstName control
 			if (viewModel.FirstName != null
-				&& viewModel.FirstName.Length != _userConfig.FirstNameMaxLength)
-			{
-				shortErrorCode = "F";
-				longErrorCode = "FirstName ";
-			}
+				&& viewModel.FirstName.Length > _userConfig.FirstNameMaxLength)
+				UpdateErrorCode(ref errorModel,
+					"F",
+					"FirstName ",
+					$"FirstName:{viewModel.FirstName} ");
 			#endregion
 
 			#region lastName control
 			if (viewModel.LastName != null
-				&& viewModel.LastName.Length != _userConfig.LastNameMaxLength)
-			{
-				shortErrorCode = "L";
-				longErrorCode = "LastName ";
-			}
+				&& viewModel.LastName.Length > _userConfig.LastNameMaxLength)
+				UpdateErrorCode(ref errorModel,
+					"L",
+					"LastName ",
+					$"LastName:{viewModel.LastName} ");
 			#endregion
 
 			#region companyName control
 			if (viewModel.CompanyName != null
-				&& viewModel.CompanyName.Length != _userConfig.CompanyNameMaxLength)
-			{
-				shortErrorCode = "C";
-				longErrorCode = "CompanyName ";
-			}
+				&& viewModel.CompanyName.Length > _userConfig.CompanyNameMaxLength)
+				UpdateErrorCode(ref errorModel,
+					"C",
+					"CompanyName ",
+					$"CompanyName:{viewModel.CompanyName} ");
 			#endregion
 
 			#region telNo control
 			if (viewModel.TelNo != null
 				&& !await IsTelNoSyntaxValidAsync(viewModel.TelNo))
-			{
-				shortErrorCode += "T";
-				longErrorCode += "Telephone ";
-			}
+				UpdateErrorCode(ref errorModel,
+					"T",
+					"TelNo ",
+					$"TelNo:{viewModel.TelNo} ");
 			#endregion
 
 			#region email control
 			if (viewModel.Email != null
 				&& !await IsEmailSyntaxValidAsync(viewModel.Email))
-			{
-				shortErrorCode += "E";
-				longErrorCode += "Email ";
-			}
+				UpdateErrorCode(ref errorModel,
+					"E",
+					"Email ",
+					$"Email:{viewModel.Email} ");
 			#endregion
 
 			#region password control
 			if (viewModel.Password != null
 				&& !await IsPasswordSyntaxValidAsync(viewModel.Password))
-			{
-				shortErrorCode += "P";
-				longErrorCode += "Password";
-			}
+				UpdateErrorCode(ref errorModel,
+					"P",
+					"Password ",
+					$"Password:{viewModel.Password} ");
 			#endregion
 
-			#region when format error occured
-			if (!shortErrorCode.Equals("FE-"))
+			#region throw format error
+			if (!errorModel.ErrorCode.Equals("FE-"))
 			{
-				longErrorCode = longErrorCode.TrimEnd();
+				// do trim to end
+				errorModel.ErrorDescription = errorModel.ErrorDescription.TrimEnd();
+				errorModel.Message = errorModel.Message.TrimEnd();
 
-				throw new ErrorWithCodeException(404, shortErrorCode, 
-					longErrorCode, longErrorCode);
+				throw new ErrorWithCodeException(errorModel);
 			}
-				
 			#endregion
+		}
+
+		private async Task ConflictControlAsync(
+			Expression<Func<User, bool>> forWhichKeys
+			, UserView viewModel)
+		{
+			#region get users
+			var users = await _manager.UserRepository
+				.GetUsersByConditionAsync(forWhichKeys, false);
+			#endregion
+
+			#region control conflict error
+			if (users.Count != 0)
+			{
+				var errorModel = new ErrorWithCode()
+				{
+					StatusCode = 409,
+					ErrorCode = "CE-",
+					ErrorDescription = "Conflict Error - ",
+					Message = "Conflict Error - "
+				};
+
+				#region when telNo already exists
+				if (users.Any(u => u.TelNo.Equals(viewModel.TelNo)))
+					UpdateErrorCode(ref errorModel,
+						"T",
+						"TelNo ",
+						$"TelNo:{viewModel.TelNo} ");
+				#endregion
+
+				#region when email already exists
+				if (users.Any(u => u.Email.Equals(viewModel.Email)))
+					UpdateErrorCode(ref errorModel,
+						"E",
+						"Email ",
+						$"Email:{viewModel.Email} ");
+				#endregion
+
+				#region do TrimEnd()
+				errorModel.ErrorDescription = errorModel.ErrorDescription.TrimEnd();
+				errorModel.Message = errorModel.Message.TrimEnd();
+				#endregion
+
+				throw new ErrorWithCodeException(errorModel);
+			}
+			#endregion
+		}
+
+		private void UpdateErrorCode(ref ErrorWithCode errorModel
+			, string newErrorCode
+			, string newErrorDescription
+			, string newMessage)
+		{
+			errorModel.ErrorCode += newErrorCode;
+			errorModel.ErrorDescription += newErrorDescription;
+			errorModel.Message += newMessage;
 		}
 	}
 }

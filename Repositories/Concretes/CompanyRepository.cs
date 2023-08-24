@@ -13,16 +13,16 @@ namespace Repositories.Concretes
         public void CreateCompany(Company company) =>
 			base.Create(company);
 
-		public async Task<List<Company>> GetAllCompanies(bool trackChanges) =>
+		public async Task<List<Company>> GetAllCompaniesAsync(bool trackChanges) =>
 			await base.FindAll(trackChanges)
 				.OrderBy(c => c.Id)
 				.ToListAsync();
 
-		public async Task<Company?> GetCompanyById(int id, bool trackChanges) =>
+		public async Task<Company?> GetCompanyByIdAsync(int id, bool trackChanges) =>
 			await base.FindWithCondition(c => c.Id == id, trackChanges)
 				.FirstOrDefaultAsync();
 
-		public async Task<Company?> GetCompanyByName(string name, bool trackChanges) =>
+		public async Task<Company?> GetCompanyByNameAsync(string name, bool trackChanges) =>
 			await base.FindWithCondition(c => c.Name.Equals(name), trackChanges)
 				.FirstOrDefaultAsync();
 

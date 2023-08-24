@@ -2,6 +2,8 @@
 {
 	public interface IRepositoryManager
 	{
-		public IUserRepository UserRepository { get; }
+		IUserRepository UserRepository { get; }
+		ICompanyRepository CompanyRepository { get; }
+		Task SaveAsync();
 	}
 }
