@@ -5,6 +5,10 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllersWithViews();
 builder.Services.ConfigureRepositoryContext(builder.Configuration);
+builder.Services.ConfigureRepositoryManager();
+builder.Services.ConfigureServiceManager();
+builder.Services.ConfigureUserSettingsConfig(builder.Configuration);
+builder.Services.AddAutoMapper(typeof(Program).Assembly);
 
 var app = builder.Build();
 #endregion

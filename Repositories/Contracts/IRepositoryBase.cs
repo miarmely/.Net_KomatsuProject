@@ -1,5 +1,4 @@
-﻿using Entities.DataModels;
-using System.Linq.Expressions;
+﻿using System.Linq.Expressions;
 
 namespace Repositories.Contracts
 {
@@ -7,7 +6,8 @@ namespace Repositories.Contracts
 	{
 		void Create(T entity);
 		IQueryable<T> FindAll(bool trackChanges);
-		IQueryable<T> FindWithCondition(Expression<Func<T, bool>> expression, bool trackChanges);
+		IQueryable<T> FindWithCondition(Expression<Func<T, bool>> expression
+			, bool trackChanges);
 		void Update(T entity);
 		void Delete(T entity);
 	}

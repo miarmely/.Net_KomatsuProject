@@ -26,12 +26,12 @@ namespace Repositories.Concretes
 				_context.Set<T>().Where(expression)
 				: _context.Set<T>().Where(expression).AsNoTracking();
 
-		public void Delete(T entity) =>
-			_context.Set<T>()
-				.Remove(entity);
-
 		public void Update(T entity) =>
 			_context.Set<T>()
 				.Update(entity);
+
+		public void Delete(T entity) =>
+			_context.Set<T>()
+				.Remove(entity);
 	}
 }
