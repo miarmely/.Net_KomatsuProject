@@ -14,7 +14,6 @@ builder.Services.AddAutoMapper(typeof(Program).Assembly);
 builder.Services.ConfigureRepositoryContext(builder.Configuration);
 builder.Services.ConfigureRepositoryManager();
 builder.Services.ConfigureServiceManager();
-builder.Services.ConfigureUserSettingsConfig(builder.Configuration);
 builder.Services.ConfigureLoggerService();
 
 var app = builder.Build();

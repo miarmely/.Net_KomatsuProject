@@ -41,7 +41,7 @@ namespace Repositories.Concretes
 					.OrderBy(orderBy)
 					.ToListAsync();
 
-		public async Task<User?> GetUserByIdAsync(int id, bool trackChanges) =>
+		public async Task<User?> GetUserByIdAsync(Guid id, bool trackChanges) =>
 			await base.FindWithCondition(u => u.Id == id, trackChanges)
 				.FirstOrDefaultAsync();
 

@@ -1,13 +1,11 @@
-﻿using Entities.ViewModels;
+﻿using Entities.DtoModels;
 
 namespace Services.Contracts
 {
 	public interface IUserService
 	{
-		Task<UserView> LoginAsync(UserView viewModel);
-		Task<UserView> RegisterAsync(UserView viewModel);
+		Task<UserDto> LoginAsync(UserDtoForLogin userDtoL);
+		Task<UserDto> RegisterAsync(UserDtoForRegister userDtoR);
 		Task<bool> IsEmailSyntaxValidAsync(string email);
-		Task<bool> IsTelNoSyntaxValidAsync(string telNo);
-		Task<bool> IsPasswordSyntaxValidAsync(string password);
 	}
 }

@@ -16,11 +16,6 @@ namespace Temsa.Extensions
 					options.UseSqlServer(configuration
 						.GetConnectionString("SqlServer")));
 
-		public static void ConfigureUserSettingsConfig(this IServiceCollection services
-			, IConfiguration configuration) =>
-				services.Configure<UserSettingsConfig>(configuration
-					.GetSection(nameof(UserSettingsConfig)));
-
 		public static void ConfigureRepositoryManager(this IServiceCollection services) =>
 			services.AddScoped<IRepositoryManager, RepositoryManager>();
 		

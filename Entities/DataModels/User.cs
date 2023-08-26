@@ -6,7 +6,7 @@ namespace Entities.DataModels
 	public class User
 	{
         [Key]
-        public int Id { get; set; }
+        public Guid Id { get; set; }
 
         [Column(TypeName = "varchar(50)")]
         public string FirstName { get; set; }

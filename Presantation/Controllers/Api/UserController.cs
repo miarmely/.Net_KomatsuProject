@@ -1,4 +1,4 @@
-﻿using Entities.ViewModels;
+﻿using Entities.DtoModels;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Services.Contracts;
@@ -16,20 +16,20 @@ namespace Presantation.Controllers.Api
 
 
 		[HttpPost("login")]
-		public async Task<IActionResult> LoginAsync(UserView viewModel)
+		public async Task<IActionResult> LoginAsync(UserDtoForLogin userDto)
 		{
 			var entity = await _manager.UserService
-				.LoginAsync(viewModel);
+				.LoginAsync(userDto);
 
 			return Ok(entity);
 		}
 
 
 		[HttpPost("register")]
-		public async Task<IActionResult> Register([FromBody] UserView viewModel)
+		public async Task<IActionResult> Register([FromBody] UserDtoForRegister userDto)
 		{
 			var entity = await _manager.UserService
-				.RegisterAsync(viewModel);
+				.RegisterAsync(userDto);
 
 			return StatusCode(StatusCodes.Status201Created, entity);
 		}

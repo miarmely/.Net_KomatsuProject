@@ -2,7 +2,7 @@
 
 namespace Entities.ErrorModels
 {
-	public class ErrorWithCode
+	public class ErrorDetails
 	{
         public int StatusCode { get; set; }
 		public string? ErrorCode { get; set; }

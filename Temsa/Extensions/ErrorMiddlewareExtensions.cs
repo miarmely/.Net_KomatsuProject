@@ -1,6 +1,5 @@
 ﻿using Entities.ErrorModels;
 using Microsoft.AspNetCore.Diagnostics;
-using Services.Concretes;
 using Services.Contracts;
 using System.Text.Json;
 
@@ -13,23 +12,21 @@ namespace Temsa.Extensions
 			app.UseExceptionHandler(configure =>
 				configure.Run(async context =>
 				{
-					#region set default response
-					context.Response.StatusCode = StatusCodes.Status500InternalServerError;
+					#region get context feature
+					var contextFeature = context.Features
+						.Get<IExceptionHandlerFeature>();
 					#endregion
 
 					#region when any error occured
-					var contextFeature = context.Features.Get<IExceptionHandlerFeature>();
-
 					if (contextFeature != null)
 					{
-						#region deserialize error model
-						var errorModel = JsonSerializer
-							.Deserialize<ErrorWithCode>(contextFeature.Error.Message);
+						#region set "response" as default
+						context.Response.StatusCode = StatusCodes.Status500InternalServerError;
 						#endregion
 
-						#region get logger service
-						var loggerService = context.RequestServices
-							.GetRequiredService<ILoggerService>();
+						#region deserialize error model
+						var errorModel = JsonSerializer
+							.Deserialize<ErrorDetails>(contextFeature.Error.Message);
 						#endregion
 
 						#region set response settings
@@ -37,14 +34,22 @@ namespace Temsa.Extensions
 						context.Response.StatusCode = errorModel.StatusCode;
 						#endregion
 
+						#region get logger service
+						var loggerService = context.RequestServices
+							.GetRequiredService<ILoggerService>();
+						#endregion
+
 						#region save log
+						var serializedErrorMsg= JsonSerializer
+							.Serialize(errorModel.Message);
+
 						// for expected errors
 						if (context.Response.StatusCode != 500)
-							loggerService.LogInfo(errorModel.Message);
+							loggerService.LogWarning(contextFeature.Error.Message);
 
 						// for unexpected errors
 						else
-							loggerService.LogError(errorModel.Message);
+							loggerService.LogError(contextFeature.Error.Message);
 						#endregion
 
 						await context.Response.WriteAsJsonAsync(errorModel);

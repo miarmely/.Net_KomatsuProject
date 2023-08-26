@@ -19,7 +19,7 @@ namespace Entities.Exceptions
 			}))
 		{ }
 
-		public ErrorWithCodeException(ErrorWithCode errorModel)
+		public ErrorWithCodeException(ErrorDetails errorModel)
 			: base(JsonSerializer
 				  .Serialize(errorModel))
 		{ }

@@ -1,15 +1,17 @@
 ﻿using AutoMapper;
 using Entities.DataModels;
-using Entities.ViewModels;
+using Entities.DtoModels;
+using Services.Contracts;
 
 namespace Temsa.Utilities
 {
 	public class MappingProfile : Profile
 	{
-        public MappingProfile()
-        {
-			CreateMap<User, UserView>();
-			CreateMap<UserView, User>();
+		public MappingProfile()
+		{
+			CreateMap<User, UserDto>();
+			CreateMap<UserDtoForRegister, User>();
+			
 		}
 	}
 }

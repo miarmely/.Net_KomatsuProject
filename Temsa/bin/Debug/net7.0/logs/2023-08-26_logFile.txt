@@ -1,1 +1,8 @@
 10:09:14.3857  INFO  Password not found. -> telNo:5528093408 && password:1234567
+10:41:46.7823  WARN  "Password not found. -\u003E telNo:5528093408 \u0026\u0026 password:1234567"
+10:43:14.9950  WARN  "Password not found. -\u003E telNo:5528093408 \u0026\u0026 password:1234567"
+10:51:14.9075  WARN  "Password not found. -\u003E telNo:5528093408 \u0026\u0026 password:1234567"
+10:53:03.5560  WARN  {"StatusCode":404,"ErrorCode":"VE-P","ErrorDescription":"Verification Error - Password","Message":"Password not found. -\u003E telNo:5528093408 \u0026\u0026 password:1234567"}
+18:58:24.6036  WARN  {"StatusCode":404,"ErrorCode":"VE-T","ErrorDescription":"Verification Error - Telephone","Message":"Telephone not found. -\u003E telephone:5528093409"}
+18:58:37.1180  WARN  {"StatusCode":404,"ErrorCode":"VE-T","ErrorDescription":"Verification Error - Telephone","Message":"Telephone not found. -\u003E telephone:5528093408"}
+18:58:55.2062  WARN  {"StatusCode":404,"ErrorCode":"VE-T","ErrorDescription":"Verification Error - Telephone","Message":"Telephone not found. -\u003E telephone:5528093407"}
