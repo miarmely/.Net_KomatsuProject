@@ -38,16 +38,13 @@ namespace Temsa.Extensions
 						#endregion
 
 						#region save log
-						var serializedErrorMessage= JsonSerializer.
-							Serialize(contextFeature.Error.Message);
-
 						// for expected errors
 						if (context.Response.StatusCode != 500)
-							loggerService.LogInfo(serializedErrorMessage);
+							loggerService.LogInfo(errorModel.Message);
 
 						// for unexpected errors
 						else
-							loggerService.LogError(serializedErrorMessage);
+							loggerService.LogError(errorModel.Message);
 						#endregion
 
 						await context.Response.WriteAsJsonAsync(errorModel);

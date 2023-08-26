@@ -18,19 +18,15 @@ namespace Services.Concretes
 
 		private readonly IMapper _mapper;
 
-		private readonly ILoggerService _loggerService;
-
 		private readonly UserSettingsConfig _userConfig;
 
 		public UserService(IRepositoryManager manager
 			, IOptions<UserSettingsConfig> userConfig
-			, IMapper mapper
-			, ILoggerService loggerService)
+			, IMapper mapper)
 		{
 			_manager = manager;
 			_userConfig = userConfig.Value;
 			_mapper = mapper;
-			_loggerService = loggerService;
 		}
 
 		public async Task<UserView> LoginAsync(UserView viewModel)
@@ -166,6 +162,7 @@ namespace Services.Concretes
 
 		public async Task FormatControlAsync(UserView viewModel)
 		{
+			#region set default error model
 			var errorModel = new ErrorWithCode()
 			{
 				StatusCode = 400,
@@ -173,6 +170,7 @@ namespace Services.Concretes
 				ErrorDescription = "Formet Error - ",
 				Message = "Format Error - "
 			};
+			#endregion
 
 			#region firstName control
 			if (viewModel.FirstName != null
