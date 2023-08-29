@@ -9,5 +9,6 @@
 		public string? TelNo { get; init; }
 		public string? Email { get; init; }
 		public string? Password { get; init; }
+		public List<string>? RoleNames { get; set; }  // can change
 	}
 }

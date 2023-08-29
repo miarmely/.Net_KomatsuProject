@@ -1,5 +1,4 @@
 ﻿using Entities.DataModels;
-using Entities.ErrorModels;
 using Entities.Exceptions;
 using Repositories.Contracts;
 using Services.Contracts;

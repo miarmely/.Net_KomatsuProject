@@ -16,6 +16,9 @@ builder.Services.ConfigureRepositoryManager();
 builder.Services.ConfigureServiceManager();
 builder.Services.ConfigureLoggerService();
 
+builder.Services.ConfigureIdentity();
+builder.Services.AddAuthentication();
+
 var app = builder.Build();
 
 builder.Services.ConfigureExceptionHandler(app);
@@ -30,7 +33,10 @@ if (!app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseRouting();
+
+app.UseAuthentication();
 app.UseAuthorization();
+
 app.MapControllerRoute(
 	name: "default",
 	pattern: "{controller=Home}/{action=Index}/{id?}");

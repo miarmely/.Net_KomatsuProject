@@ -1,10 +1,9 @@
 ﻿using AutoMapper;
-using Entities.ConfigModels;
 using Entities.DataModels;
 using Entities.DtoModels;
 using Entities.ErrorModels;
 using Entities.Exceptions;
-using Microsoft.Extensions.Options;
+using Entities.RelationModels;
 using Repositories.Contracts;
 using Services.Contracts;
 using System.Linq.Expressions;
@@ -19,7 +18,6 @@ namespace Services.Concretes
 		private readonly IMapper _mapper;
 
 		public UserService(IRepositoryManager manager
-			, IOptions<UserSettingsConfig> userConfig
 			, IMapper mapper)
 		{
 			_manager = manager;
@@ -51,6 +49,8 @@ namespace Services.Concretes
 			#region convert user to userDto
 			var userDto = _mapper.Map<UserDto>(user);
 
+			userDto.RoleNames = await GetRoleNamesOfUserAsync(user.Id);
+
 			#region add company name
 			var company = await _manager.CompanyRepository
 				.GetCompanyByIdAsync(user.CompanyId, false);
@@ -72,7 +72,7 @@ namespace Services.Concretes
 				, userDtoR);
 			#endregion
 
-			#region add companyId to user (autoMapper)
+			#region add companyId to user
 			var user = _mapper.Map<User>(userDtoR);
 
 			var company = await _manager.CompanyRepository
@@ -100,10 +100,27 @@ namespace Services.Concretes
 			await _manager.SaveAsync();
 			#endregion
 
-			#region convert user to userDto (autoMapper)
+			#region create userAndRole
+			// get role
+			var role = await _manager.RoleRepository
+				.GetRoleByNameAsync("User", false);
+
+			// create
+			_manager.UserAndRoleRepository
+				.CreateUserAndRole(new UserAndRole()
+				{
+					UserId = user.Id,
+					RoleId = role.Id
+				});
+
+			await _manager.SaveAsync();
+			#endregion
+
+			#region convert user to userDto
 			var userDto = _mapper.Map<UserDto>(user);
 
 			userDto.CompanyName = userDtoR.CompanyName;
+			userDto.RoleNames = new List<string>() { role.Name };
 			#endregion
 
 			return userDto;
@@ -114,7 +131,7 @@ namespace Services.Concretes
 			{
 				#region '@' control
 				var index = email.IndexOf('@');
-				
+
 				// when not contains '@'
 				if (index == -1)
 					return false;
@@ -185,6 +202,30 @@ namespace Services.Concretes
 			errorModel.ErrorCode += newErrorCode;
 			errorModel.ErrorDescription += newErrorDescription;
 			errorModel.Message += newMessage;
+		}
+
+		private async Task<List<string>> GetRoleNamesOfUserAsync(Guid userId)
+		{
+			#region get userAndRoles
+			var userAndRoles = await _manager.UserAndRoleRepository
+				.GetUserAndRolesByUserIdAsync(userId, false);
+			#endregion
+
+			#region add roleNames to list
+			var roleNames = new List<string>();
+			Role role;
+
+			foreach (var userAndRole in userAndRoles)
+			{
+				// get role	
+				role = await _manager.RoleRepository
+					.GetRoleByIdAsync(userAndRole.RoleId, false);
+			
+				roleNames.Add(role.Name);
+			}
+			#endregion
+
+			return roleNames;
 		}
 	}
 }
