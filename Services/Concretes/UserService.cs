@@ -34,16 +34,14 @@ namespace Services.Concretes
 			#region when telNo not found (throw)
 			_ = user ?? throw new ErrorWithCodeException(404,
 				"VE-T",
-				"Verification Error - Telephone",
-				$"Telephone not found. -> telephone:{UserDtoL.TelNo}");
+				"Verification Error - Telephone");
 			#endregion
 
 			#region when password is wrong (throw)
 			if (!user.Password.Equals(UserDtoL.Password))
 				throw new ErrorWithCodeException(404,
 					"VE-P",
-					"Verification Error - Password",
-					$"Password not found. -> telNo:{UserDtoL.TelNo} && password:{UserDtoL.Password}");
+					"Verification Error - Password");
 			#endregion
 
 			#region convert user to userDto
@@ -165,43 +163,32 @@ namespace Services.Concretes
 					StatusCode = 409,
 					ErrorCode = "CE-",
 					ErrorDescription = "Conflict Error - ",
-					Message = "Conflict Error - "
 				};
 
 				#region when telNo already exists
 				if (users.Any(u => u.TelNo.Equals(userDtoR.TelNo)))
-					UpdateErrorCode(ref errorModel,
-						"T",
-						"TelNo ",
-						$"TelNo:{userDtoR.TelNo} ");
+					UpdateErrorCode(ref errorModel, "T", "TelNo ");
 				#endregion
 
 				#region when email already exists
 				if (users.Any(u => u.Email.Equals(userDtoR.Email)))
-					UpdateErrorCode(ref errorModel,
-						"E",
-						"Email ",
-						$"Email:{userDtoR.Email} ");
+					UpdateErrorCode(ref errorModel, "E", "Email ");
 				#endregion
 
-				#region TrimEnd() to errorModel
+				#region throw exception
 				errorModel.ErrorDescription = errorModel.ErrorDescription.TrimEnd();
-				errorModel.Message = errorModel.Message.TrimEnd();
-				#endregion
-
 				throw new ErrorWithCodeException(errorModel);
+				#endregion
 			}
 			#endregion
 		}
 
 		private void UpdateErrorCode(ref ErrorDetails errorModel
 			, string newErrorCode
-			, string newErrorDescription
-			, string newMessage)
+			, string newErrorDescription)
 		{
 			errorModel.ErrorCode += newErrorCode;
 			errorModel.ErrorDescription += newErrorDescription;
-			errorModel.Message += newMessage;
 		}
 
 		private async Task<List<string>> GetRoleNamesOfUserAsync(Guid userId)

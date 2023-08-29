@@ -24,8 +24,6 @@ namespace Presantation.Controllers.Api
 			var entity = await _manager.UserService
 				.LoginAsync(userDto);
 
-
-
 			return Ok(entity);
 		}
 
@@ -39,7 +37,5 @@ namespace Presantation.Controllers.Api
 
 			return StatusCode(StatusCodes.Status201Created, entity);
 		}
-
-
 	}
 }

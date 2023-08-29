@@ -11,7 +11,7 @@ namespace Presantation.ActionFilters.Attributes
     public class ValidationUserFormatFilter : IAsyncActionFilter
     {
         private readonly UserSettingsConfig _userSettings;
-        private ErrorDetails _errorModel;
+        private readonly ErrorDetails _errorModel;
 
         public ValidationUserFormatFilter(IOptions<UserSettingsConfig> userSettings)
         {

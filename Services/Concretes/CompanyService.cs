@@ -24,8 +24,7 @@ namespace Services.Concretes
 			if (entity != null)
 				throw new ErrorWithCodeException(409, 
 					"CE-C",
-					"Conflict Error - CompanyName",
-					$"Conflict Error - CompanyName -> CompanyName : {entity.Name}");
+					"Conflict Error - CompanyName");
 			#endregion
 		}
 
@@ -40,8 +39,7 @@ namespace Services.Concretes
 			if (entity.Count == 0)
 				throw new ErrorWithCodeException(404,
 					"C-NF",
-					"Company - Not Found",
-					"Any Company Not Found.");
+					"Company - Not Found");
 			#endregion
 
 			return entity;
@@ -57,8 +55,7 @@ namespace Services.Concretes
 			#region when company not found
 			_ = entity ?? throw new ErrorWithCodeException(404,
 					"C-NF",
-					"Company - Not Found",
-					$"Company With Id:{id} Not Found.");
+					"Company - Not Found");
 			#endregion
 
 			return entity;
@@ -74,8 +71,7 @@ namespace Services.Concretes
 			#region when company not found
 			_ = entity ?? throw new ErrorWithCodeException(404,
 					"C-NF",
-					"Company - Not Found",
-					$"Company With Name:{name} Not Found.");
+					"Company - Not Found");
 			#endregion
 
 			return entity;

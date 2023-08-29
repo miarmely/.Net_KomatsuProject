@@ -407,3 +407,43 @@
 2023-08-29 11:08:11.9755 Info AppDomain Shutting down. LogFactory closing...
 2023-08-29 11:08:11.9864 Info LogFactory has been closed.
 >>>>>>> Stashed changes
+2023-08-29 12:33:56.4528 Info Registered target NLog.Targets.FileTarget(Name=logFile)
+2023-08-29 12:33:56.5761 Info NLog, Version=5.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c. File version: 5.2.3.1999. Product version: 5.2.3+a5ddef92a8afb22508450803e37c001f4a3ba52a. GlobalAssemblyCache: False
+2023-08-29 12:33:56.6431 Info Validating config: TargetNames=logFile, ConfigItems=12, FilePath=C:\Users\Mac\Desktop\SOFTWARE\1__Software_Languages\1__C#\2__API\1__Projects\Temsa\Temsa\bin\Debug\net7.0\NLog.config
+2023-08-29 12:33:56.6810 Info Configuration initialized.
+2023-08-29 13:40:55.5494 Info Registered target NLog.Targets.FileTarget(Name=logFile)
+2023-08-29 13:40:55.6496 Info NLog, Version=5.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c. File version: 5.2.3.1999. Product version: 5.2.3+a5ddef92a8afb22508450803e37c001f4a3ba52a. GlobalAssemblyCache: False
+2023-08-29 13:40:55.7398 Info Validating config: TargetNames=logFile, ConfigItems=12, FilePath=C:\Users\Mac\Desktop\SOFTWARE\1__Software_Languages\1__C#\2__API\1__Projects\Temsa\Temsa\bin\Debug\net7.0\NLog.config
+2023-08-29 13:40:55.7875 Info Configuration initialized.
+2023-08-29 13:43:30.0356 Info Registered target NLog.Targets.FileTarget(Name=logFile)
+2023-08-29 13:43:30.0959 Info NLog, Version=5.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c. File version: 5.2.3.1999. Product version: 5.2.3+a5ddef92a8afb22508450803e37c001f4a3ba52a. GlobalAssemblyCache: False
+2023-08-29 13:43:30.1625 Info Validating config: TargetNames=logFile, ConfigItems=12, FilePath=C:\Users\Mac\Desktop\SOFTWARE\1__Software_Languages\1__C#\2__API\1__Projects\Temsa\Temsa\bin\Debug\net7.0\NLog.config
+2023-08-29 13:43:30.2421 Info Configuration initialized.
+2023-08-29 13:57:30.4528 Info Registered target NLog.Targets.FileTarget(Name=logFile)
+2023-08-29 13:57:30.5064 Info NLog, Version=5.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c. File version: 5.2.3.1999. Product version: 5.2.3+a5ddef92a8afb22508450803e37c001f4a3ba52a. GlobalAssemblyCache: False
+2023-08-29 13:57:30.5664 Info Validating config: TargetNames=logFile, ConfigItems=12, FilePath=C:\Users\Mac\Desktop\SOFTWARE\1__Software_Languages\1__C#\2__API\1__Projects\Temsa\Temsa\bin\Debug\net7.0\NLog.config
+2023-08-29 13:57:30.6196 Info Configuration initialized.
+2023-08-29 13:59:34.9816 Info Registered target NLog.Targets.FileTarget(Name=logFile)
+2023-08-29 13:59:35.0432 Info NLog, Version=5.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c. File version: 5.2.3.1999. Product version: 5.2.3+a5ddef92a8afb22508450803e37c001f4a3ba52a. GlobalAssemblyCache: False
+2023-08-29 13:59:35.0939 Info Validating config: TargetNames=logFile, ConfigItems=12, FilePath=C:\Users\Mac\Desktop\SOFTWARE\1__Software_Languages\1__C#\2__API\1__Projects\Temsa\Temsa\bin\Debug\net7.0\NLog.config
+2023-08-29 13:59:35.1378 Info Configuration initialized.
+2023-08-29 14:12:39.2122 Info Registered target NLog.Targets.FileTarget(Name=logFile)
+2023-08-29 14:12:39.2296 Info NLog, Version=5.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c. File version: 5.2.3.1999. Product version: 5.2.3+a5ddef92a8afb22508450803e37c001f4a3ba52a. GlobalAssemblyCache: False
+2023-08-29 14:12:39.2500 Info Validating config: TargetNames=logFile, ConfigItems=12, FilePath=C:\Users\Mac\Desktop\SOFTWARE\1__Software_Languages\1__C#\2__API\1__Projects\Temsa\Temsa\bin\Debug\net7.0\NLog.config
+2023-08-29 14:12:39.2708 Info Configuration initialized.
+2023-08-29 14:12:40.8247 Info AppDomain Shutting down. LogFactory closing...
+2023-08-29 14:12:40.8362 Info LogFactory has been closed.
+2023-08-29 14:13:24.2002 Info Registered target NLog.Targets.FileTarget(Name=logFile)
+2023-08-29 14:13:24.2002 Info NLog, Version=5.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c. File version: 5.2.3.1999. Product version: 5.2.3+a5ddef92a8afb22508450803e37c001f4a3ba52a. GlobalAssemblyCache: False
+2023-08-29 14:13:24.2272 Info Validating config: TargetNames=logFile, ConfigItems=12, FilePath=C:\Users\Mac\Desktop\SOFTWARE\1__Software_Languages\1__C#\2__API\1__Projects\Temsa\Temsa\bin\Debug\net7.0\NLog.config
+2023-08-29 14:13:24.2450 Info Configuration initialized.
+2023-08-29 14:13:26.0668 Info AppDomain Shutting down. LogFactory closing...
+2023-08-29 14:13:26.0776 Info LogFactory has been closed.
+2023-08-29 14:14:47.0715 Info Registered target NLog.Targets.FileTarget(Name=logFile)
+2023-08-29 14:14:47.1270 Info NLog, Version=5.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c. File version: 5.2.3.1999. Product version: 5.2.3+a5ddef92a8afb22508450803e37c001f4a3ba52a. GlobalAssemblyCache: False
+2023-08-29 14:14:47.1778 Info Validating config: TargetNames=logFile, ConfigItems=12, FilePath=C:\Users\Mac\Desktop\SOFTWARE\1__Software_Languages\1__C#\2__API\1__Projects\Temsa\Temsa\bin\Debug\net7.0\NLog.config
+2023-08-29 14:14:47.2569 Info Configuration initialized.
+2023-08-29 14:22:14.2060 Info Registered target NLog.Targets.FileTarget(Name=logFile)
+2023-08-29 14:22:14.2723 Info NLog, Version=5.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c. File version: 5.2.3.1999. Product version: 5.2.3+a5ddef92a8afb22508450803e37c001f4a3ba52a. GlobalAssemblyCache: False
+2023-08-29 14:22:14.3278 Info Validating config: TargetNames=logFile, ConfigItems=12, FilePath=C:\Users\Mac\Desktop\SOFTWARE\1__Software_Languages\1__C#\2__API\1__Projects\Temsa\Temsa\bin\Debug\net7.0\NLog.config
+2023-08-29 14:22:14.3774 Info Configuration initialized.

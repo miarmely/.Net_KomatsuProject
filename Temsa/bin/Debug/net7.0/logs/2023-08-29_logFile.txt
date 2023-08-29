@@ -1,0 +1,21 @@
+13:43:37.8096  WARN  LogDetails { FilterMethod = , Controller = User, Action = Login, ErrorCode = VE-P, CreatedAt = 8/29/2023 10:43:37 AM }
+13:58:02.7624  WARN  LogDetails { FilterMethod = , Controller = User, Action = Login, ErrorCode = VE-P, CreatedAt = 8/29/2023 10:58:02 AM }
+13:59:50.8512  WARN  LogDetails { FilterMethod = , Controller = User, Action = Login, ErrorCode = FE-P, CreatedAt = 8/29/2023 10:59:50 AM }
+14:00:03.0527  WARN  LogDetails { FilterMethod = , Controller = User, Action = Login, ErrorCode = FE-TP, CreatedAt = 8/29/2023 11:00:03 AM }
+14:00:11.4356  WARN  LogDetails { FilterMethod = , Controller = User, Action = Login, ErrorCode = VE-T, CreatedAt = 8/29/2023 11:00:11 AM }
+14:00:19.3881  WARN  LogDetails { FilterMethod = , Controller = User, Action = Login, ErrorCode = VE-P, CreatedAt = 8/29/2023 11:00:19 AM }
+14:16:38.1312  WARN  LogDetails { FilterMethod = , Controller = User, Action = Login, ErrorCode = FE-TP, CreatedAt = 8/29/2023 11:16:38 AM }
+14:16:50.1740  WARN  LogDetails { FilterMethod = , Controller = User, Action = Login, ErrorCode = FE-TP, CreatedAt = 8/29/2023 11:16:50 AM }
+14:16:54.7439  WARN  LogDetails { FilterMethod = , Controller = User, Action = Login, ErrorCode = FE-T, CreatedAt = 8/29/2023 11:16:54 AM }
+14:17:01.6309  WARN  LogDetails { FilterMethod = , Controller = User, Action = Login, ErrorCode = FE-P, CreatedAt = 8/29/2023 11:17:01 AM }
+14:17:09.7887  WARN  LogDetails { FilterMethod = , Controller = User, Action = Login, ErrorCode = FE-T, CreatedAt = 8/29/2023 11:17:09 AM }
+14:17:16.0209  WARN  LogDetails { FilterMethod = , Controller = User, Action = Login, ErrorCode = VE-T, CreatedAt = 8/29/2023 11:17:16 AM }
+14:17:21.1166  WARN  LogDetails { FilterMethod = , Controller = User, Action = Login, ErrorCode = VE-P, CreatedAt = 8/29/2023 11:17:21 AM }
+14:17:28.2420  WARN  LogDetails { FilterMethod = , Controller = User, Action = Login, ErrorCode = VE-T, CreatedAt = 8/29/2023 11:17:28 AM }
+14:17:38.6293  WARN  LogDetails { FilterMethod = , Controller = User, Action = Register, ErrorCode = FE-CTEP, CreatedAt = 8/29/2023 11:17:38 AM }
+14:17:48.0086  WARN  LogDetails { FilterMethod = , Controller = User, Action = Register, ErrorCode = FE-FLCTEP, CreatedAt = 8/29/2023 11:17:47 AM }
+14:18:03.9586  WARN  LogDetails { FilterMethod = , Controller = User, Action = Register, ErrorCode = FE-FLCTP, CreatedAt = 8/29/2023 11:18:03 AM }
+14:18:10.5568  WARN  LogDetails { FilterMethod = , Controller = User, Action = Register, ErrorCode = FE-FLCTEP, CreatedAt = 8/29/2023 11:18:10 AM }
+14:18:20.7606  WARN  LogDetails { FilterMethod = , Controller = User, Action = Register, ErrorCode = FE-E, CreatedAt = 8/29/2023 11:18:20 AM }
+14:22:38.2917  WARN  LogDetails { Controller = User, Action = Login, ErrorCode = FE-T, CreatedAt = 8/29/2023 11:22:38 AM }
+14:22:40.2369  WARN  LogDetails { Controller = User, Action = Login, ErrorCode = FE-TP, CreatedAt = 8/29/2023 11:22:40 AM }

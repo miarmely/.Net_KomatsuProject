@@ -1,7 +1,8 @@
-﻿using Entities.ErrorModels;
+﻿using AutoMapper;
+using Entities.DtoModels;
+using Entities.ErrorModels;
 using Microsoft.AspNetCore.Diagnostics;
 using Services.Contracts;
-using System.Text.Json;
 
 namespace Temsa.Extensions
 {
@@ -20,13 +21,11 @@ namespace Temsa.Extensions
 					#region when any error occured
 					if (contextFeature != null)
 					{
-						#region set "response" as default
-						context.Response.StatusCode = StatusCodes.Status500InternalServerError;
-						#endregion
-
-						#region deserialize error model
-						var errorModel = JsonSerializer
-							.Deserialize<ErrorDetails>(contextFeature.Error.Message);
+						#region get error model from HttpContext
+						var errorModel = context.Request.HttpContext.Items
+							.Single(i => i.Key.Equals("errorDetails"))
+							.Value
+							as ErrorDetails;
 						#endregion
 
 						#region set response settings
@@ -40,19 +39,23 @@ namespace Temsa.Extensions
 						#endregion
 
 						#region save log
-						var serializedErrorMsg= JsonSerializer
-							.Serialize(errorModel.Message);
-
 						// for expected errors
 						if (context.Response.StatusCode != 500)
-							loggerService.LogWarning(contextFeature.Error.Message);
+							loggerService.LogWarning(errorModel.LogDetails.ToString());
 
 						// for unexpected errors
 						else
-							loggerService.LogError(contextFeature.Error.Message);
+							loggerService.LogError(errorModel.LogDetails.ToString());
 						#endregion
 
-						await context.Response.WriteAsJsonAsync(errorModel);
+						#region convert errorModel to errorDto
+						var mapper = context.RequestServices
+						.GetRequiredService<IMapper>();
+
+						var errorDto = mapper.Map<ErrorDto>(errorModel);
+						#endregion
+
+						await context.Response.WriteAsJsonAsync(errorDto);
 					}
 					#endregion
 				})

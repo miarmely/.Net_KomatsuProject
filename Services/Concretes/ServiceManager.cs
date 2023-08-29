@@ -15,11 +15,10 @@ namespace Services.Concretes
 		public ICompanyService CompanyService => _companyService.Value;
 		
 		public ServiceManager(IRepositoryManager manager
-			, IOptions<UserSettingsConfig> userSettings
 			, IMapper mapper)
         {
 			_userService = new Lazy<IUserService>(() => 
-				new UserService(manager, userSettings, mapper));
+				new UserService(manager, mapper));
 			_companyService = new Lazy<ICompanyService>(() => 
 				new CompanyService(manager));
         }

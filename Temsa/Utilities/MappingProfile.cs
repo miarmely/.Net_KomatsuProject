@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Entities.DataModels;
 using Entities.DtoModels;
+using Entities.ErrorModels;
 using Services.Contracts;
 
 namespace Temsa.Utilities
@@ -11,7 +12,7 @@ namespace Temsa.Utilities
 		{
 			CreateMap<User, UserDto>();
 			CreateMap<UserDtoForRegister, User>();
-			
+			CreateMap<ErrorDetails, ErrorDto>();
 		}
 	}
 }

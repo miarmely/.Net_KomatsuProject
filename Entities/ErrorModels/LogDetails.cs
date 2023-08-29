@@ -1,15 +1,13 @@
-﻿using System.Reflection.Metadata.Ecma335;
-using System.Security.Principal;
-
-namespace Entities.ErrorModels
+﻿namespace Entities.ErrorModels
 {
-	public class LogDetails
+	public record LogDetails
 	{
-        public string FilterMethod{ get; set; }
 		public string Controller { get; set; }
 		public string Action{ get; set; }
+		public string ErrorCode { get; set; }
+		public DateTime CreatedAt { get; }
 
-        public int MyProperty { get; set; }
-
+		public LogDetails() =>
+			CreatedAt = DateTime.UtcNow;
     }
 }

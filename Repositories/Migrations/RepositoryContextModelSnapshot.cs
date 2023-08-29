@@ -54,6 +54,23 @@ namespace Repositories.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Roles");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = (byte)1,
+                            Name = "User"
+                        },
+                        new
+                        {
+                            Id = (byte)2,
+                            Name = "Editor"
+                        },
+                        new
+                        {
+                            Id = (byte)3,
+                            Name = "Admin"
+                        });
                 });
 
             modelBuilder.Entity("Entities.DataModels.User", b =>
@@ -211,19 +228,19 @@ namespace Repositories.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "6d5d4834-b3d5-4eab-b1ae-41c8987a0246",
+                            Id = "7b25ea20-a21f-44f4-88c3-8f4dd8c5b743",
                             Name = "User",
                             NormalizedName = "USER"
                         },
                         new
                         {
-                            Id = "83c8d3f4-7e53-46f4-b7cc-7a6e9de9ad1b",
+                            Id = "9ad3df40-037f-4921-99c6-5d4bd012fb00",
                             Name = "Editor",
                             NormalizedName = "EDITOR"
                         },
                         new
                         {
-                            Id = "2b3486b0-0bd9-4187-8e5a-79b990043f2c",
+                            Id = "2424b374-04fc-4a06-8fcb-e76fb2d58440",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         });

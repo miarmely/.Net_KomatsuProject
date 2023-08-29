@@ -1,11 +1,8 @@
 ﻿using Entities.ConfigModels;
-<<<<<<< Updated upstream
-=======
 using Entities.DataModels;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc.Filters;
->>>>>>> Stashed changes
 using Microsoft.EntityFrameworkCore;
+using Presantation.ActionFilters.Attributes;
 using Repositories.Concretes;
 using Repositories.Contracts;
 using Repositories.EF;
@@ -30,13 +27,11 @@ namespace Temsa.Extensions
 
 		public static void ConfigureLoggerService(this IServiceCollection services) =>
 			services.AddSingleton<ILoggerService, LoggerService>();
-<<<<<<< Updated upstream
-=======
 
 		public static void ConfigureActionFilters(this IServiceCollection services)
 		{
 			services.AddSingleton<LogFilter>();
-			services.AddSingleton<ErrorFilter>();
+			services.AddScoped<ErrorFilter>();
 			services.AddScoped<ValidationUserFormatFilter>();
 		}
 
@@ -60,6 +55,5 @@ namespace Temsa.Extensions
 			.AddEntityFrameworkStores<RepositoryContext>()
 			.AddDefaultTokenProviders();
 		}
->>>>>>> Stashed changes
 	}
 }
