@@ -1,6 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace Entities.DtoModels
+﻿namespace Entities.DtoModels
 {
 	public record UserDtoForRegister
 	{

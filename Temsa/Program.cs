@@ -17,9 +17,8 @@ builder.Services.ConfigureServiceManager();
 builder.Services.ConfigureLoggerService();
 builder.Services.ConfigureActionFilters();
 builder.Services.ConfigureUserSettings(builder.Configuration);
-
 builder.Services.ConfigureIdentity();
-builder.Services.AddAuthentication();
+builder.Services.ConfigureJwt(builder.Configuration);
 
 var app = builder.Build();
 

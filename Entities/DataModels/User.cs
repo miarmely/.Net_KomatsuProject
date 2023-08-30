@@ -23,7 +23,7 @@ namespace Entities.DataModels
         [Column(TypeName = "varchar(50)")]
         public string Email { get; set; }
         
-        [Column(TypeName = "varchar(20)")]
+        [Column(TypeName = "char(32)")]  // standart MD5 encryption length is 32.
         public string Password { get; set; }
     }
 }

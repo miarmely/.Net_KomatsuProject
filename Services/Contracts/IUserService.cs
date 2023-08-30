@@ -6,6 +6,5 @@ namespace Services.Contracts
 	{
 		Task<UserDto> LoginAsync(UserDtoForLogin userDtoL);
 		Task<UserDto> RegisterAsync(UserDtoForRegister userDtoR);
-		Task<bool> IsEmailSyntaxValidAsync(string email);
 	}
 }

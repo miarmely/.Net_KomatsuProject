@@ -96,7 +96,7 @@ namespace Repositories.Migrations
 
                     b.Property<string>("Password")
                         .IsRequired()
-                        .HasColumnType("varchar(20)");
+                        .HasColumnType("char(32)");
 
                     b.Property<string>("TelNo")
                         .IsRequired()
@@ -228,19 +228,19 @@ namespace Repositories.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "7b25ea20-a21f-44f4-88c3-8f4dd8c5b743",
+                            Id = "0f1cdfd5-8d60-4b43-b972-cd110fcc85cc",
                             Name = "User",
                             NormalizedName = "USER"
                         },
                         new
                         {
-                            Id = "9ad3df40-037f-4921-99c6-5d4bd012fb00",
+                            Id = "7345f05e-40ba-41cd-9046-7d10fc0a41c5",
                             Name = "Editor",
                             NormalizedName = "EDITOR"
                         },
                         new
                         {
-                            Id = "2424b374-04fc-4a06-8fcb-e76fb2d58440",
+                            Id = "7991f6fc-5fae-4522-acfc-b5fb23e22008",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         });

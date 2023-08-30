@@ -1,13 +1,16 @@
 ﻿using Entities.ConfigModels;
 using Entities.DataModels;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using Presantation.ActionFilters.Attributes;
 using Repositories.Concretes;
 using Repositories.Contracts;
 using Repositories.EF;
 using Services.Concretes;
 using Services.Contracts;
+using System.Text;
 
 namespace Temsa.Extensions
 {
@@ -54,6 +57,34 @@ namespace Temsa.Extensions
 			})
 			.AddEntityFrameworkStores<RepositoryContext>()
 			.AddDefaultTokenProviders();
+		}
+
+		public static void ConfigureJwt(this IServiceCollection services, IConfiguration configuration)
+		{
+			var section = configuration.GetSection("JwtSettings");
+
+			services.AddAuthentication(opt =>
+			{
+				opt.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+				opt.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+			})
+			.AddJwtBearer(opt =>
+			{
+				#region set issuerSigningKey
+				var issuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8
+					.GetBytes(section["SecretKey"]));
+				#endregion
+
+				opt.TokenValidationParameters = new TokenValidationParameters
+				{
+					ValidIssuer = section["ValidIssuer"],
+					ValidateIssuer = true,
+					ValidAudience = section["ValidAudience"],
+					ValidateAudience = true,
+					IssuerSigningKey = issuerSigningKey,
+					ValidateIssuerSigningKey = true,
+				};
+			});
 		}
 	}
 }

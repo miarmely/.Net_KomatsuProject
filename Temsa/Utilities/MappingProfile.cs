@@ -2,7 +2,6 @@
 using Entities.DataModels;
 using Entities.DtoModels;
 using Entities.ErrorModels;
-using Services.Contracts;
 
 namespace Temsa.Utilities
 {

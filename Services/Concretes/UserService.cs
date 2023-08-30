@@ -5,16 +5,18 @@ using Entities.ErrorModels;
 using Entities.Exceptions;
 using Entities.RelationModels;
 using Repositories.Contracts;
+using Repositories.Migrations;
 using Services.Contracts;
+using System.Collections.ObjectModel;
 using System.Linq.Expressions;
-
+using System.Security.Cryptography;
+using System.Text;
 
 namespace Services.Concretes
 {
 	public class UserService : IUserService
 	{
 		private readonly IRepositoryManager _manager;
-
 		private readonly IMapper _mapper;
 
 		public UserService(IRepositoryManager manager
@@ -38,7 +40,9 @@ namespace Services.Concretes
 			#endregion
 
 			#region when password is wrong (throw)
-			if (!user.Password.Equals(UserDtoL.Password))
+			var hashedPassword = await ComputeMd5Async(UserDtoL.Password);
+
+			if (!user.Password.Equals(hashedPassword))
 				throw new ErrorWithCodeException(404,
 					"VE-P",
 					"Verification Error - Password");
@@ -47,15 +51,11 @@ namespace Services.Concretes
 			#region convert user to userDto
 			var userDto = _mapper.Map<UserDto>(user);
 
-			userDto.RoleNames = await GetRoleNamesOfUserAsync(user.Id);
-
-			#region add company name
 			var company = await _manager.CompanyRepository
 				.GetCompanyByIdAsync(user.CompanyId, false);
 
 			userDto.CompanyName = company.Name;
-			#endregion
-
+			userDto.RoleNames = await GetRoleNamesOfUserAsync(user.Id);
 			#endregion
 
 			return userDto;
@@ -70,16 +70,17 @@ namespace Services.Concretes
 				, userDtoR);
 			#endregion
 
-			#region add companyId to user
-			var user = _mapper.Map<User>(userDtoR);
-
+			#region get company
 			var company = await _manager.CompanyRepository
 				.GetCompanyByNameAsync(userDtoR.CompanyName, false);
 
 			#region create company if not exists on database
 			if (company == null)
 			{
-				company = new Company() { Name = userDtoR.CompanyName };
+				company = new Company()
+				{
+					Name = userDtoR.CompanyName
+				};
 
 				_manager.CompanyRepository
 					.CreateCompany(company);
@@ -88,7 +89,13 @@ namespace Services.Concretes
 			}
 			#endregion
 
+			#endregion
+
+			#region convert userDtoR to user
+			var user = _mapper.Map<User>(userDtoR);
+
 			user.CompanyId = company.Id;
+			user.Password = await ComputeMd5Async(user.Password);
 			#endregion
 
 			#region create user
@@ -99,7 +106,6 @@ namespace Services.Concretes
 			#endregion
 
 			#region create userAndRole
-			// get role
 			var role = await _manager.RoleRepository
 				.GetRoleByNameAsync("User", false);
 
@@ -118,33 +124,11 @@ namespace Services.Concretes
 			var userDto = _mapper.Map<UserDto>(user);
 
 			userDto.CompanyName = userDtoR.CompanyName;
-			userDto.RoleNames = new List<string>() { role.Name };
+			userDto.RoleNames = new Collection<string> { role.Name };
 			#endregion
 
 			return userDto;
 		}
-
-		public async Task<bool> IsEmailSyntaxValidAsync(string email) =>
-			await Task.Run(() =>
-			{
-				#region '@' control
-				var index = email.IndexOf('@');
-
-				// when not contains '@'
-				if (index == -1)
-					return false;
-				#endregion
-
-				#region '.' control
-				var emailExtension = email.Substring(index + 1);  // ex: gmail.com
-
-				// when not contains '.'
-				if (!emailExtension.Contains('.'))
-					return false;
-				#endregion
-
-				return true;
-			});
 
 		private async Task ConflictControlAsync(
 			Expression<Func<User, bool>> forWhichKeys
@@ -207,115 +191,30 @@ namespace Services.Concretes
 				// get role	
 				role = await _manager.RoleRepository
 					.GetRoleByIdAsync(userAndRole.RoleId, false);
-			
+
 				roleNames.Add(role.Name);
 			}
 			#endregion
 
 			return roleNames;
 		}
+
+		private async Task<string> ComputeMd5Async(string input) =>
+			await Task.Run(() =>
+			{
+				using (var md5 = MD5.Create())
+				{
+					// hash to input
+					var hash = md5.ComputeHash(Encoding.UTF8
+								.GetBytes(input));
+
+					// convert byte[] to string
+					var hashedInput = BitConverter
+						.ToString(hash)
+						.Replace("-", "");
+
+					return hashedInput;
+				}
+			});
 	}
 }
-
-
-//public async Task FormatControlAsync(UserDtoForLogin viewModel)
-//{
-//	#region set default error model
-//	var errorModel = new ErrorDetails()
-//	{
-//		StatusCode = 400,
-//		ErrorCode = "FE-",
-//		ErrorDescription = "Formet Error - ",
-//		Message = "Format Error - "
-//	};
-//	#endregion
-
-//	#region firstName control
-//	if (viewModel.FirstName != null
-//		&& viewModel.FirstName.Length > _userConfig.FirstNameMaxLength)
-//		UpdateErrorCode(ref errorModel,
-//			"F",
-//			"FirstName ",
-//			$"FirstName:{viewModel.FirstName} ");
-//	#endregion
-
-//	#region lastName control
-//	if (viewModel.LastName != null
-//		&& viewModel.LastName.Length > _userConfig.LastNameMaxLength)
-//		UpdateErrorCode(ref errorModel,
-//			"L",
-//			"LastName ",
-//			$"LastName:{viewModel.LastName} ");
-//	#endregion
-
-//	#region companyName control
-//	if (viewModel.CompanyName != null
-//		&& viewModel.CompanyName.Length > _userConfig.CompanyNameMaxLength)
-//		UpdateErrorCode(ref errorModel,
-//			"C",
-//			"CompanyName ",
-//			$"CompanyName:{viewModel.CompanyName} ");
-//	#endregion
-
-//	#region telNo control
-//	if (viewModel.TelNo != null
-//		&& !await IsTelNoSyntaxValidAsync(viewModel.TelNo))
-//		UpdateErrorCode(ref errorModel,
-//			"T",
-//			"TelNo ",
-//			$"TelNo:{viewModel.TelNo} ");
-//	#endregion
-
-//	#region email control
-//	if (viewModel.Email != null
-//		&& !await IsEmailSyntaxValidAsync(viewModel.Email))
-//		UpdateErrorCode(ref errorModel,
-//			"E",
-//			"Email ",
-//			$"Email:{viewModel.Email} ");
-//	#endregion
-
-//	#region password control
-//	if (viewModel.Password != null
-//		&& !await IsPasswordSyntaxValidAsync(viewModel.Password))
-//		UpdateErrorCode(ref errorModel,
-//			"P",
-//			"Password ",
-//			$"Password:{viewModel.Password} ");
-//	#endregion
-
-//	#region throw format error
-//	if (!errorModel.ErrorCode.Equals("FE-"))
-//	{
-//		// do trim to end
-//		errorModel.ErrorDescription = errorModel.ErrorDescription.TrimEnd();
-//		errorModel.Message = errorModel.Message.TrimEnd();
-
-//		throw new ErrorWithCodeException(errorModel);
-//	}
-//	#endregion
-//}
-
-
-//public async Task<bool> IsTelNoSyntaxValidAsync(string telNo) =>
-//			await Task.Run(() =>
-//			{
-//				#region length control
-//				if (telNo.Length != _userConfig.TelNoLength)
-//					return false;
-//				#endregion
-
-//				return true;
-//			});
-
-//public async Task<bool> IsPasswordSyntaxValidAsync(string password) =>
-//	await Task.Run(() =>
-//	{
-//		#region length control
-//		if (password.Length < _userConfig.PasswordMinLength  // min len
-//			|| password.Length > _userConfig.PasswordMaxLength) // max len
-//			return false;
-//		#endregion
-
-//		return true;
-//	});

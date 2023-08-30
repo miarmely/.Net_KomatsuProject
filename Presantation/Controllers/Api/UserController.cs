@@ -1,4 +1,5 @@
 ﻿using Entities.DtoModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Presantation.ActionFilters;
@@ -19,6 +20,7 @@ namespace Presantation.Controllers.Api
 
 		[HttpPost("login")]
 		[ValidationUserFormat]
+		//[Authorize]
 		public async Task<IActionResult> LoginAsync(UserDtoForLogin userDto)
 		{
 			var entity = await _manager.UserService
