@@ -20,24 +20,27 @@ namespace Presantation.Controllers.Api
 
 		[HttpPost("login")]
 		[ValidationUserFormat]
-		//[Authorize]
 		public async Task<IActionResult> LoginAsync(UserDtoForLogin userDto)
 		{
-			var entity = await _manager.UserService
+			var token = await _manager.UserService
 				.LoginAsync(userDto);
 
-			return Ok(entity);
+			return Ok(new
+			{
+				token
+			});
 		}
 
 
 		[HttpPost("register")]
 		[ValidationUserFormat]
-		public async Task<IActionResult> Register([FromBody] UserDtoForRegister userDto)
+		[Authorize(Roles = "Admin")]
+		public async Task<IActionResult> RegisterAsync([FromBody] UserDtoForRegister userDto)
 		{
-			var entity = await _manager.UserService
+			await _manager.UserService
 				.RegisterAsync(userDto);
 
-			return StatusCode(StatusCodes.Status201Created, entity);
+			return StatusCode(StatusCodes.Status201Created);
 		}
 	}
 }

@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Presantation;
 using Presantation.ActionFilters.Attributes;
 using Repositories.Concretes;
 using Repositories.Contracts;
@@ -38,11 +39,16 @@ namespace Temsa.Extensions
 			services.AddScoped<ValidationUserFormatFilter>();
 		}
 
-		public static void ConfigureUserSettings(this IServiceCollection services
-			, IConfiguration configuration) =>
-				services.Configure<UserSettingsConfig>(configuration
-					.GetSection(nameof(UserSettingsConfig)));
+		public static void ConfigureConfigModels(this IServiceCollection services
+			, IConfiguration configuration)
+		{
+			services.Configure<UserSettingsConfig>(configuration
+				.GetSection(nameof(UserSettingsConfig)));
 
+			services.Configure<JwtSettingsConfig>(configuration
+				.GetSection(nameof(JwtSettingsConfig)));
+		}
+				
 		public static void ConfigureIdentity(this IServiceCollection services)
 		{
 			services.AddIdentity<UserWithIdentity, IdentityRole>(setup =>
@@ -61,7 +67,7 @@ namespace Temsa.Extensions
 
 		public static void ConfigureJwt(this IServiceCollection services, IConfiguration configuration)
 		{
-			var section = configuration.GetSection("JwtSettings");
+			var section = configuration.GetSection("JwtSettingsConfig");
 
 			services.AddAuthentication(opt =>
 			{
@@ -83,8 +89,13 @@ namespace Temsa.Extensions
 					ValidateAudience = true,
 					IssuerSigningKey = issuerSigningKey,
 					ValidateIssuerSigningKey = true,
+					ValidateLifetime = true
 				};
 			});
 		}
+
+		public static void ConfigureAddControllersWithView(this IServiceCollection service)
+			=> service.AddControllersWithViews()
+				.AddApplicationPart(typeof(AssemblyReference).Assembly);
 	}
 }

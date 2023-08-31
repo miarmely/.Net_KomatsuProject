@@ -9,14 +9,14 @@ LogManager.Setup()
 #region add extensions
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddControllersWithViews();
+builder.Services.ConfigureAddControllersWithView();
 builder.Services.AddAutoMapper(typeof(Program).Assembly);
 builder.Services.ConfigureRepositoryContext(builder.Configuration);
 builder.Services.ConfigureRepositoryManager();
 builder.Services.ConfigureServiceManager();
 builder.Services.ConfigureLoggerService();
 builder.Services.ConfigureActionFilters();
-builder.Services.ConfigureUserSettings(builder.Configuration);
+builder.Services.ConfigureConfigModels(builder.Configuration);
 builder.Services.ConfigureIdentity();
 builder.Services.ConfigureJwt(builder.Configuration);
 
@@ -34,10 +34,8 @@ if (!app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseRouting();
-
 app.UseAuthentication();
 app.UseAuthorization();
-
 app.MapControllerRoute(
 	name: "default",
 	pattern: "{controller=Home}/{action=Index}/{id?}");

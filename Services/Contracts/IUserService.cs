@@ -4,7 +4,7 @@ namespace Services.Contracts
 {
 	public interface IUserService
 	{
-		Task<UserDto> LoginAsync(UserDtoForLogin userDtoL);
-		Task<UserDto> RegisterAsync(UserDtoForRegister userDtoR);
+		Task<string> LoginAsync(UserDtoForLogin userDtoL);
+		Task RegisterAsync(UserDtoForRegister userDtoR);
 	}
 }
