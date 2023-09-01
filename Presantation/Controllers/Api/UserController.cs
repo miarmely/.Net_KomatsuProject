@@ -1,5 +1,4 @@
 ﻿using Entities.DtoModels;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Presantation.ActionFilters;
@@ -34,7 +33,6 @@ namespace Presantation.Controllers.Api
 
 		[HttpPost("register")]
 		[ValidationUserFormat]
-		[Authorize(Roles = "Admin")]
 		public async Task<IActionResult> RegisterAsync([FromBody] UserDtoForRegister userDto)
 		{
 			await _manager.UserService

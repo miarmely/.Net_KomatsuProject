@@ -15,11 +15,6 @@ namespace Repositories.Concretes
 		public void CreateUserAndRole(UserAndRole userAndRole) =>
 			base.Create(userAndRole);
 
-		public async Task<UserAndRole?> GetUserAndRolesByIdAsync(int id, bool trackChanges)
-			=> await base
-				.FindWithCondition(ur => ur.Id == id, trackChanges)
-				.FirstOrDefaultAsync();
-
 		public async Task<List<UserAndRole>> GetUserAndRolesByUserIdAsync(Guid? id, bool trackChanges)
 			=> await base
 				.FindWithCondition(ur => ur.UserId.Equals(id), false)

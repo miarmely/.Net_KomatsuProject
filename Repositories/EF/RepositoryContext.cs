@@ -1,13 +1,11 @@
 ﻿using Entities.DataModels;
 using Entities.RelationModels;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using Repositories.EF.Configs;
 using System.Reflection;
 
 namespace Repositories.EF
 {
-	public class RepositoryContext : IdentityDbContext<UserWithIdentity>
+	public class RepositoryContext : DbContext
 	{
         private DbSet<User> Users { get; set; }
         private DbSet<Company> Companies { get; set; }
@@ -19,10 +17,7 @@ namespace Repositories.EF
 
 		protected override void OnModelCreating(ModelBuilder modelBuilder)
 		{
-			// to create all identity tables.
-			base.OnModelCreating(modelBuilder);
-			
-			// apply all configuration
+			// apply all configuration models
 			modelBuilder.ApplyConfigurationsFromAssembly(Assembly
 				.GetExecutingAssembly());
 		}

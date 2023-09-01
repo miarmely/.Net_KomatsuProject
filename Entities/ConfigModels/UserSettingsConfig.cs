@@ -8,8 +8,9 @@
 		public TelNoProp TelNo { get; init; }
 		public EmailProp Email { get; init; }
 		public PasswordProp Password { get; init; }
+        public string DefaultRole { get; init; }
 
-		public record FirstNameProp
+        public record FirstNameProp
 		{
             public int MaxLength { get; init; }
         }

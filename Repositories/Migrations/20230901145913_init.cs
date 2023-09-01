@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Repositories.Migrations
 {
     /// <inheritdoc />
-    public partial class Init : Migration
+    public partial class init : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -49,7 +49,7 @@ namespace Repositories.Migrations
                     CompanyId = table.Column<short>(type: "smallint", nullable: false),
                     TelNo = table.Column<string>(type: "char(10)", nullable: false),
                     Email = table.Column<string>(type: "varchar(50)", nullable: false),
-                    Password = table.Column<string>(type: "varchar(20)", nullable: false)
+                    Password = table.Column<string>(type: "char(24)", nullable: false)
                 },
                 constraints: table =>
                 {

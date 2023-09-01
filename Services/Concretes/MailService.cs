@@ -1,4 +1,5 @@
 ﻿using Entities.ConfigModels;
+using Entities.ConfigModels.Contracts;
 using Entities.DtoModels;
 using Entities.Exceptions;
 using MailKit.Net.Smtp;
@@ -11,18 +12,18 @@ namespace Services.Concretes
 {
 	public class MailService : IMailService
 	{
-		private readonly MailSettingsConfig _mailSettings;
+		private readonly IConfigManager _config;
 
-		public MailService(IOptions<MailSettingsConfig> mailSettings) =>
-			_mailSettings = mailSettings.Value;
+		public MailService(IConfigManager config) =>
+			_config = config;
 
 		public async Task SendMailAsync(MailDto mailDto)
 		{
 			var mimeMessage = new MimeMessage();
 
 			#region set "from" and "sender"
-			var displayName = mailDto.DisplayName ?? _mailSettings.DisplayName;
-			var from = mailDto.From ?? _mailSettings.From;
+			var displayName = mailDto.DisplayName ?? _config.MailSettings.DisplayName;
+			var from = mailDto.From ?? _config.MailSettings.From;
 
 			mimeMessage.From.Add(new MailboxAddress(displayName, from));
 			mimeMessage.Sender = new MailboxAddress(displayName, from);
@@ -50,21 +51,21 @@ namespace Services.Concretes
 				using (var smtpClient = new SmtpClient())
 				{
 					#region set socket option
-					var socketOption = _mailSettings.UseSSL ?
+					var socketOption = _config.MailSettings.UseSSL ?
 						SecureSocketOptions.SslOnConnect  // active SSL
 						: SecureSocketOptions.StartTls;  // active TLS
 					#endregion
 
 					#region connect to smtp
 					await smtpClient.ConnectAsync(
-						host: _mailSettings.Host,
-						port: _mailSettings.Port,
+						host: _config.MailSettings.Host,
+						port: _config.MailSettings.Port,
 						options: socketOption);
 					#endregion
 
 					#region set authentication
-					await smtpClient.AuthenticateAsync(_mailSettings.Username,
-						_mailSettings.Password);
+					await smtpClient.AuthenticateAsync(_config.MailSettings.Username,
+						_config.MailSettings.Password);
 					#endregion
 
 					#region send mail

@@ -12,8 +12,8 @@ using Repositories.EF;
 namespace Repositories.Migrations
 {
     [DbContext(typeof(RepositoryContext))]
-    [Migration("20230828122835_Init")]
-    partial class Init
+    [Migration("20230901145913_init")]
+    partial class init
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -99,7 +99,7 @@ namespace Repositories.Migrations
 
                     b.Property<string>("Password")
                         .IsRequired()
-                        .HasColumnType("varchar(20)");
+                        .HasColumnType("char(24)");
 
                     b.Property<string>("TelNo")
                         .IsRequired()

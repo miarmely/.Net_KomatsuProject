@@ -1,4 +1,5 @@
 ﻿using Entities.ConfigModels;
+using Entities.ConfigModels.Contracts;
 using Entities.DataModels;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
@@ -23,11 +24,12 @@ namespace Temsa.Extensions
 					options.UseSqlServer(configuration
 						.GetConnectionString("SqlServer")));
 
-		public static void ConfigureRepositoryManager(this IServiceCollection services) =>
+		public static void ConfigureAllManagers(this IServiceCollection services)
+		{
 			services.AddScoped<IRepositoryManager, RepositoryManager>();
-		
-		public static void ConfigureServiceManager(this IServiceCollection services) =>
 			services.AddScoped<IServiceManager, ServiceManager>();
+			services.AddScoped<IConfigManager, ConfigManager>();
+		}
 
 		public static void ConfigureLoggerService(this IServiceCollection services) =>
 			services.AddSingleton<ILoggerService, LoggerService>();
@@ -52,22 +54,6 @@ namespace Temsa.Extensions
 				.GetSection(nameof(MailSettingsConfig)));
 		}
 				
-		public static void ConfigureIdentity(this IServiceCollection services)
-		{
-			services.AddIdentity<UserWithIdentity, IdentityRole>(setup =>
-			{
-				setup.Password.RequireDigit = true;
-				setup.Password.RequiredLength = 6;
-				setup.Password.RequireNonAlphanumeric = false;
-				setup.Password.RequireUppercase = false;
-				setup.Password.RequireLowercase = false;
-
-				setup.User.RequireUniqueEmail = true;
-			})
-			.AddEntityFrameworkStores<RepositoryContext>()
-			.AddDefaultTokenProviders();
-		}
-
 		public static void ConfigureJwt(this IServiceCollection services, IConfiguration configuration)
 		{
 			var section = configuration.GetSection("JwtSettingsConfig");

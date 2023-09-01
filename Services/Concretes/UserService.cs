@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Entities.ConfigModels;
+using Entities.ConfigModels.Contracts;
 using Entities.DataModels;
 using Entities.DtoModels;
 using Entities.ErrorModels;
@@ -22,18 +23,18 @@ namespace Services.Concretes
 	{
 		private readonly IRepositoryManager _repository;
 		private readonly IServiceManager _service;
+		private readonly IConfigManager _config;
 		private readonly IMapper _mapper;
-		private readonly JwtSettingsConfig _jwtSettings;
 
 		public UserService(IRepositoryManager repository,
 			IServiceManager service,
-			IMapper mapper,
-			IOptions<JwtSettingsConfig> jwtSettings)
+			IConfigManager config,
+			IMapper mapper)
 		{
 			_repository = repository;
 			_service = service;
+			_config = config;
 			_mapper = mapper;
-			_jwtSettings = jwtSettings.Value;
 		}
 		
 		public async Task<string> LoginAsync(UserDtoForLogin UserDtoL)
@@ -58,15 +59,15 @@ namespace Services.Concretes
 					"Verification Error - Password");
 			#endregion
 
-			return await CreateTokenForUserAsync(user.Id);
+			return await GenerateTokenForUserAsync(user.Id);
 		}
 
 		public async Task RegisterAsync(UserDtoForRegister userDtoR)
 		{
 			#region control conflict errors
 			await ConflictControlAsync(u =>
-				u.TelNo.Equals(userDtoR.TelNo)
-				|| u.Email.Equals(userDtoR.Email)
+				u.TelNo.Equals(userDtoR.TelNo)  // telNo
+				|| u.Email.Equals(userDtoR.Email)  // email
 				, userDtoR);
 			#endregion
 
@@ -107,29 +108,19 @@ namespace Services.Concretes
 
 			#region create userAndRole
 			var role = await _repository.RoleRepository
-				.GetRoleByNameAsync("User", false);
+				.GetRoleByNameAsync(_config.UserSettings.DefaultRole, false);
 
-			// create
+			// create,
+			var entity = new UserAndRole()
+			{
+				UserId = user.Id,
+				RoleId = role.Id
+			};
+
 			_repository.UserAndRoleRepository
-				.CreateUserAndRole(new UserAndRole()
-				{
-					UserId = user.Id,
-					RoleId = role.Id
-				});
+				.CreateUserAndRole(entity);
 
 			await _repository.SaveAsync();
-			#endregion
-
-			#region send mail
-			await _service.MailService
-				.SendMailAsync(new MailDto
-				{
-					Subject = "Başarılı Kayıt",
-					Body = $"Sayın {userDtoR.FirstName} {userDtoR.LastName}," +
-					$"<br> Temsa mobil uygulamasına kayıt talebiniz başarıyla sonuçlanmıştır." +
-					$"<br><br> Lütfen bu mesaja geri dönüş yapmayınız.",
-					To = new Collection<string> { user.Email }
-				});
 			#endregion
 		}
 
@@ -217,12 +208,12 @@ namespace Services.Concretes
 				}
 			});
 
-		private async Task<string> CreateTokenForUserAsync(Guid userId)
+		private async Task<string> GenerateTokenForUserAsync(Guid userId)
 		{
 			#region set claims
 			var claims = new Collection<Claim>
 			{
-				new Claim(ClaimTypes.Name, userId.ToString())  // add userId
+				new Claim(ClaimTypes.NameIdentifier, userId.ToString())  // add userId
 			};
 			var roleNames = await GetRoleNamesOfUserAsync(userId);
 
@@ -233,7 +224,7 @@ namespace Services.Concretes
 
 			#region set signingCredentials
 			var encodedKey = Encoding.UTF8
-					.GetBytes(_jwtSettings.SecretKey);
+					.GetBytes(_config.JwtSettings.SecretKey);
 
 			var signingCredentials = new SigningCredentials(
 				new SymmetricSecurityKey(encodedKey),
@@ -242,10 +233,10 @@ namespace Services.Concretes
 
 			#region set token
 			var token = new JwtSecurityToken(
-				issuer: _jwtSettings.ValidIssuer,
-				audience: _jwtSettings.ValidAudience,
+				issuer: _config.JwtSettings.ValidIssuer,
+				audience: _config.JwtSettings.ValidAudience,
 				claims: claims,
-				expires: DateTime.Now.AddMinutes(_jwtSettings.Expires),
+				expires: DateTime.Now.AddMinutes(_config.JwtSettings.Expires),
 				signingCredentials: signingCredentials);
 			#endregion
 

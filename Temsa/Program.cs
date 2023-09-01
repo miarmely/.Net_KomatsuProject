@@ -12,12 +12,10 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.ConfigureAddControllersWithView();
 builder.Services.AddAutoMapper(typeof(Program).Assembly);
 builder.Services.ConfigureRepositoryContext(builder.Configuration);
-builder.Services.ConfigureRepositoryManager();
-builder.Services.ConfigureServiceManager();
+builder.Services.ConfigureAllManagers();
 builder.Services.ConfigureLoggerService();
 builder.Services.ConfigureActionFilters();
 builder.Services.ConfigureConfigModels(builder.Configuration);
-builder.Services.ConfigureIdentity();
 builder.Services.ConfigureJwt(builder.Configuration);
 
 var app = builder.Build();

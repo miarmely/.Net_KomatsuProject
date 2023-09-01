@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Entities.ConfigModels;
+using Entities.ConfigModels.Contracts;
 using Microsoft.Extensions.Options;
 using Repositories.Contracts;
 using Services.Contracts;
@@ -16,17 +17,16 @@ namespace Services.Concretes
 		public ICompanyService CompanyService => _companyService.Value;
 		public IMailService MailService => _mailService.Value;
 		
-		public ServiceManager(IRepositoryManager manager
-			, IMapper mapper
-			, IOptions<JwtSettingsConfig> jwtSettings
-			, IOptions<MailSettingsConfig> mailSettings)
+		public ServiceManager(IRepositoryManager repository,
+			IConfigManager config,
+			IMapper mapper)
         {
 			_userService = new Lazy<IUserService>(() => 
-				new UserService(manager, this, mapper, jwtSettings));
+				new UserService(repository, this, config, mapper));
 			_companyService = new Lazy<ICompanyService>(() => 
-				new CompanyService(manager));
+				new CompanyService(repository));
 			_mailService = new Lazy<IMailService>(() =>
-				new MailService(mailSettings));
+				new MailService(config));
         }
 	}
 }
