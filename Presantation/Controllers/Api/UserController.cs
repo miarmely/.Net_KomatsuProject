@@ -27,7 +27,7 @@ namespace Presantation.Controllers.Api
 
 			return Ok(new
 			{
-				token
+				Token = token
 			});
 		}
 

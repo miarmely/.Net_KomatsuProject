@@ -47,6 +47,9 @@ namespace Temsa.Extensions
 
 			services.Configure<JwtSettingsConfig>(configuration
 				.GetSection(nameof(JwtSettingsConfig)));
+
+			services.Configure<MailSettingsConfig>(configuration
+				.GetSection(nameof(MailSettingsConfig)));
 		}
 				
 		public static void ConfigureIdentity(this IServiceCollection services)

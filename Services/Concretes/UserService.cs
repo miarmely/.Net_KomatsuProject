@@ -20,23 +20,26 @@ namespace Services.Concretes
 {
 	public class UserService : IUserService
 	{
-		private readonly IRepositoryManager _manager;
+		private readonly IRepositoryManager _repository;
+		private readonly IServiceManager _service;
 		private readonly IMapper _mapper;
 		private readonly JwtSettingsConfig _jwtSettings;
 
-		public UserService(IRepositoryManager manager
-			, IMapper mapper
-			, IOptions<JwtSettingsConfig> jwtSettings)
+		public UserService(IRepositoryManager repository,
+			IServiceManager service,
+			IMapper mapper,
+			IOptions<JwtSettingsConfig> jwtSettings)
 		{
-			_manager = manager;
+			_repository = repository;
+			_service = service;
 			_mapper = mapper;
 			_jwtSettings = jwtSettings.Value;
 		}
-
+		
 		public async Task<string> LoginAsync(UserDtoForLogin UserDtoL)
 		{
 			#region get user by telNo
-			var user = await _manager.UserRepository
+			var user = await _repository.UserRepository
 				.GetUserByTelNoAsync(UserDtoL.TelNo, false);
 			#endregion
 
@@ -68,7 +71,7 @@ namespace Services.Concretes
 			#endregion
 
 			#region get company
-			var company = await _manager.CompanyRepository
+			var company = await _repository.CompanyRepository
 				.GetCompanyByNameAsync(userDtoR.CompanyName, false);
 
 			#region create company if not exists on database
@@ -79,10 +82,10 @@ namespace Services.Concretes
 					Name = userDtoR.CompanyName
 				};
 
-				_manager.CompanyRepository
+				_repository.CompanyRepository
 					.CreateCompany(company);
 
-				await _manager.SaveAsync();
+				await _repository.SaveAsync();
 			}
 			#endregion
 
@@ -96,25 +99,37 @@ namespace Services.Concretes
 			#endregion
 
 			#region create user
-			_manager.UserRepository
+			_repository.UserRepository
 				.CreateUser(user);
 
-			await _manager.SaveAsync();
+			await _repository.SaveAsync();
 			#endregion
 
 			#region create userAndRole
-			var role = await _manager.RoleRepository
-				.GetRoleByNameAsync("Admin", false);
+			var role = await _repository.RoleRepository
+				.GetRoleByNameAsync("User", false);
 
 			// create
-			_manager.UserAndRoleRepository
+			_repository.UserAndRoleRepository
 				.CreateUserAndRole(new UserAndRole()
 				{
 					UserId = user.Id,
 					RoleId = role.Id
 				});
 
-			await _manager.SaveAsync();
+			await _repository.SaveAsync();
+			#endregion
+
+			#region send mail
+			await _service.MailService
+				.SendMailAsync(new MailDto
+				{
+					Subject = "Başarılı Kayıt",
+					Body = $"Sayın {userDtoR.FirstName} {userDtoR.LastName}," +
+					$"<br> Temsa mobil uygulamasına kayıt talebiniz başarıyla sonuçlanmıştır." +
+					$"<br><br> Lütfen bu mesaja geri dönüş yapmayınız.",
+					To = new Collection<string> { user.Email }
+				});
 			#endregion
 		}
 
@@ -123,7 +138,7 @@ namespace Services.Concretes
 			UserDtoForRegister userDtoR)
 		{
 			#region get users
-			var users = await _manager.UserRepository
+			var users = await _repository.UserRepository
 				.GetUsersByConditionAsync(forWhichKeys, false);
 			#endregion
 
@@ -166,7 +181,7 @@ namespace Services.Concretes
 		private async Task<ICollection<string>> GetRoleNamesOfUserAsync(Guid userId)
 		{
 			#region get userAndRoles
-			var userAndRoles = await _manager.UserAndRoleRepository
+			var userAndRoles = await _repository.UserAndRoleRepository
 				.GetUserAndRolesByUserIdAsync(userId, false);
 			#endregion
 
@@ -176,7 +191,7 @@ namespace Services.Concretes
 
 			foreach (var userAndRole in userAndRoles)
 			{
-				role = await _manager.RoleRepository
+				role = await _repository.RoleRepository
 					.GetRoleByIdAsync(userAndRole.RoleId, false);
 
 				roleNames.Add(role.Name);
@@ -191,16 +206,14 @@ namespace Services.Concretes
 			{
 				using (var md5 = MD5.Create())
 				{
-					// hash to input
-					var hash = md5.ComputeHash(Encoding.UTF8
-								.GetBytes(input));
+					#region hash to input
+					var hashAsByte = md5.ComputeHash(Encoding.UTF8
+						.GetBytes(input));
 
-					// convert byte[] to string
-					var hashedInput = BitConverter
-						.ToString(hash)
-						.Replace("-", "");
+					var hashAsString = Convert.ToBase64String(hashAsByte);
+					#endregion 
 
-					return hashedInput;
+					return hashAsString;
 				}
 			});
 

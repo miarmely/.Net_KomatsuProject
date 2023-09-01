@@ -1,0 +1,89 @@
+﻿using Entities.ConfigModels;
+using Entities.DtoModels;
+using Entities.Exceptions;
+using MailKit.Net.Smtp;
+using MailKit.Security;
+using Microsoft.Extensions.Options;
+using MimeKit;
+using Services.Contracts;
+
+namespace Services.Concretes
+{
+	public class MailService : IMailService
+	{
+		private readonly MailSettingsConfig _mailSettings;
+
+		public MailService(IOptions<MailSettingsConfig> mailSettings) =>
+			_mailSettings = mailSettings.Value;
+
+		public async Task SendMailAsync(MailDto mailDto)
+		{
+			var mimeMessage = new MimeMessage();
+
+			#region set "from" and "sender"
+			var displayName = mailDto.DisplayName ?? _mailSettings.DisplayName;
+			var from = mailDto.From ?? _mailSettings.From;
+
+			mimeMessage.From.Add(new MailboxAddress(displayName, from));
+			mimeMessage.Sender = new MailboxAddress(displayName, from);
+			#endregion
+
+			#region set "to"
+			foreach (var to in mailDto.To)
+				mimeMessage.To.Add(MailboxAddress
+					.Parse(to));
+			#endregion
+
+			#region set "subject" and "body"
+			// set subject
+			mimeMessage.Subject = mailDto.Subject;
+
+			// set "body"
+			var bodyBuilder = new BodyBuilder();
+			bodyBuilder.HtmlBody = mailDto.Body;
+			mimeMessage.Body = bodyBuilder.ToMessageBody();
+			#endregion
+
+			#region send mail
+			try
+			{
+				using (var smtpClient = new SmtpClient())
+				{
+					#region set socket option
+					var socketOption = _mailSettings.UseSSL ?
+						SecureSocketOptions.SslOnConnect  // active SSL
+						: SecureSocketOptions.StartTls;  // active TLS
+					#endregion
+
+					#region connect to smtp
+					await smtpClient.ConnectAsync(
+						host: _mailSettings.Host,
+						port: _mailSettings.Port,
+						options: socketOption);
+					#endregion
+
+					#region set authentication
+					await smtpClient.AuthenticateAsync(_mailSettings.Username,
+						_mailSettings.Password);
+					#endregion
+
+					#region send mail
+					await smtpClient.SendAsync(mimeMessage);
+					await smtpClient.DisconnectAsync(true);
+					#endregion
+				}
+			}
+			catch (Exception ex)
+			{
+				#region for unexpected error
+				throw new ErrorWithCodeException(
+					statusCode: 500,
+					errorCode: "EE",
+					errorDescription: $"Email Error -> {ex.Message}"
+				);
+				#endregion
+			}
+			#endregion
+		}
+	}
+}
