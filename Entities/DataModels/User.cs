@@ -23,7 +23,14 @@ namespace Entities.DataModels
         [Column(TypeName = "varchar(50)")]
         public string Email { get; set; }
         
-        [Column(TypeName = "char(24)")]  // standart ToBase64String length is 24.
+        [Column(TypeName = "char(24)")]  // Convert.ToBase64String() length for text is 24.
         public string Password { get; set; }
-    }
+
+        public bool IsDeleted { get; set; }
+
+        #region navigation properties
+        [ForeignKey("CompanyId")]
+		public Company? Company { get; set; }
+		#endregion
+	}
 }

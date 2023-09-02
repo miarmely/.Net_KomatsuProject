@@ -17,4 +17,9 @@
     <ProjectReference Include="..\Repositories\Repositories.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Images\MainCategory\" />
+    <Folder Include="Images\Machine\" />
+  </ItemGroup>
+
 </Project>
