@@ -10,7 +10,12 @@ namespace Repositories.Concretes
         public RoleRepository(RepositoryContext context) : base(context)
         {}
 
-	 	public async Task<Role> GetRoleByIdAsync(int id, bool trackChanges) =>
+		public async Task<List<Role>> GetAllRolesAsync(bool trackChanges = false) =>
+			await base
+				.FindAll(trackChanges)
+				.ToListAsync();
+	
+		public async Task<Role> GetRoleByIdAsync(int id, bool trackChanges) =>
 			await base
 				.FindWithCondition(r => r.Id == id, trackChanges)
 				.SingleAsync();

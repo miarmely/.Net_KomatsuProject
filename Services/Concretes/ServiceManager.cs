@@ -22,7 +22,7 @@ namespace Services.Concretes
 			IMapper mapper)
         {
 			_userService = new Lazy<IUserService>(() => 
-				new UserService(repository, this, config, mapper));
+				new UserService(repository, config, mapper));
 			_companyService = new Lazy<ICompanyService>(() => 
 				new CompanyService(repository));
 			_mailService = new Lazy<IMailService>(() =>

@@ -7,29 +7,24 @@ namespace Repositories.Concretes
 {
 	public class CompanyRepository : RepositoryBase<Company>, ICompanyRepository
 	{
-        public CompanyRepository(RepositoryContext context) : base(context)
-        {}
+		public CompanyRepository(RepositoryContext context) : base(context)
+		{ }
 
-        public void CreateCompany(Company company) =>
-			base.Create(company);
-
-		public async Task<List<Company>> GetAllCompaniesAsync(bool trackChanges) =>
-			await base.FindAll(trackChanges)
-				.OrderBy(c => c.Id)
+		public async Task<List<Company>> GetAllCompaniesAsync(
+			bool trackChanges = false) =>
+			await base
+				.FindAll(trackChanges)
+				.OrderBy(c => c.Name)
 				.ToListAsync();
 
-		public async Task<Company?> GetCompanyByIdAsync(int id, bool trackChanges) =>
+		public async Task<Company?> GetCompanyByIdAsync(int id,
+			bool trackChanges = false) =>
 			await base.FindWithCondition(c => c.Id == id, trackChanges)
 				.FirstOrDefaultAsync();
 
-		public async Task<Company?> GetCompanyByNameAsync(string name, bool trackChanges) =>
+		public async Task<Company?> GetCompanyByNameAsync(string name,
+			bool trackChanges = false) =>
 			await base.FindWithCondition(c => c.Name.Equals(name), trackChanges)
 				.FirstOrDefaultAsync();
-
-		public void UpdateCompany(Company company) =>
-			base.Update(company);
-
-		public void DeleteCompany(Company company) =>
-			base.Delete(company);
 	}
 }

@@ -1,11 +1,10 @@
-﻿using Entities.RelationModels;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
+﻿using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Entities.DataModels
 {
-	public class Machine
+    public class Machine
 	{
 		[Key]
 		public Guid Id { get; set; }
@@ -15,7 +14,7 @@ namespace Entities.DataModels
 		public int BrandId { get; set; }
 
 		[Column(TypeName = "tinyint")]
-		public int MainAndSubCategoryId { get; set; }
+		public int CategoryId { get; set; }
 
 		[Column(TypeName = "varchar(50)")]
 		public string Model { get; set; }
@@ -42,8 +41,8 @@ namespace Entities.DataModels
 		[ForeignKey("BrandId")]
 		public Brand? Brand { get; set; }
 
-		[ForeignKey("MainAndSubCategoryId")]
-		public MainAndSubCategory? MainAndSubCategory { get; set; }
+		[ForeignKey("CategoryId")]
+		public Category? Category { get; set; }
 		#endregion
 	}
 }

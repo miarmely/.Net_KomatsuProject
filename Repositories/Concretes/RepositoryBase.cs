@@ -33,5 +33,17 @@ namespace Repositories.Concretes
 		public void Delete(T entity) =>
 			_context.Set<T>()
 				.Remove(entity);
+
+		public async Task<List<T>> ControlOrderByAsync<TResult>(
+			IQueryable<T> entity,
+			Expression<Func<T, TResult>> orderBy,
+			bool asAscending) =>
+				asAscending ?
+					await entity   // ascending
+						.OrderBy(orderBy)
+						.ToListAsync()
+					: await entity   // descending
+						.OrderByDescending(orderBy)
+						.ToListAsync();
 	}
 }

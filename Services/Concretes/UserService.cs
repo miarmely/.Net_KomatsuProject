@@ -22,21 +22,18 @@ namespace Services.Concretes
 	public class UserService : IUserService
 	{
 		private readonly IRepositoryManager _repository;
-		private readonly IServiceManager _service;
 		private readonly IConfigManager _config;
 		private readonly IMapper _mapper;
 
 		public UserService(IRepositoryManager repository,
-			IServiceManager service,
 			IConfigManager config,
 			IMapper mapper)
 		{
 			_repository = repository;
-			_service = service;
 			_config = config;
 			_mapper = mapper;
 		}
-		
+
 		public async Task<string> LoginAsync(UserDtoForLogin UserDtoL)
 		{
 			#region get user by telNo
@@ -101,7 +98,7 @@ namespace Services.Concretes
 
 			#region create user
 			_repository.UserRepository
-				.CreateUser(user);
+				.Create(user);
 
 			await _repository.SaveAsync();
 			#endregion
@@ -118,7 +115,7 @@ namespace Services.Concretes
 			};
 
 			_repository.UserAndRoleRepository
-				.CreateUserAndRole(entity);
+				.Create(entity);
 
 			await _repository.SaveAsync();
 			#endregion
@@ -130,7 +127,7 @@ namespace Services.Concretes
 		{
 			#region get users
 			var users = await _repository.UserRepository
-				.GetUsersByConditionAsync(forWhichKeys, false);
+				.GetUsersByConditionAsync(forWhichKeys);
 			#endregion
 
 			#region control conflict error
@@ -202,7 +199,7 @@ namespace Services.Concretes
 						.GetBytes(input));
 
 					var hashAsString = Convert.ToBase64String(hashAsByte);
-					#endregion 
+					#endregion
 
 					return hashAsString;
 				}

@@ -10,53 +10,62 @@ namespace Repositories.Concretes
 	{
 		public UserRepository(RepositoryContext context) : base(context)
 		{ }
-
-		public void CreateUser(User user) =>
-			base.Create(user);
-
-		public async Task<List<User>> GetAllUsersAsync(bool trackChanges) =>
-			await base.FindAll(trackChanges)
-				.OrderBy(u => u.Id)
-				.ToListAsync();
-
-		public async Task<List<User>> GetAllUsersByOrderByAsync<T>(
-			Expression<Func<User, T>> orderBy
-			, bool trackChanges) =>
-				await base.FindAll(trackChanges)
-					.OrderBy(orderBy)
-					.ToListAsync();
-
-		public async Task<List<User>> GetUsersByConditionAsync(
-			Expression<Func<User, bool>> expression
-			, bool trackChanges) =>
-				await base.FindWithCondition(expression, trackChanges)
-					.OrderBy(u => u.Id)
-					.ToListAsync();
-
-		public async Task<List<User>> GetUsersByConditionByOrderByAsync<T>(
-			Expression<Func<User, bool>> condition
-			, Expression<Func<User, T>> orderBy
-			, bool trackChanges) =>
-				await base.FindWithCondition(condition, trackChanges)
-					.OrderBy(orderBy)
-					.ToListAsync();
-
-		public async Task<User?> GetUserByIdAsync(Guid id, bool trackChanges) =>
-			await base.FindWithCondition(u => u.Id == id, trackChanges)
-				.FirstOrDefaultAsync();
-
-		public async Task<User?> GetUserByTelNoAsync(string telNo, bool trackChanges) =>
-			await base.FindWithCondition(u => u.TelNo.Equals(telNo), trackChanges)
-				.FirstOrDefaultAsync();
-
-		public async Task<User?> GetUserByEmailAsync(string email, bool trackChanges) =>
-			await base.FindWithCondition(u => u.Email.Equals(email), trackChanges)
-				.FirstOrDefaultAsync();
 		
-		public void UpdateUser(User user) =>
-			base.Update(user);
+		public async Task<User?> GetUserByIdAsync(Guid id,
+			bool trackChanges = false) =>
+				await base
+					.FindWithCondition(u => u.Id == id, trackChanges)
+					.FirstOrDefaultAsync();
 
-		public void DeleteUser(User user) =>
-			base.Delete(user);
+		public async Task<User?> GetUserByTelNoAsync(string telNo,
+			bool trackChanges = false) =>
+			await base
+				.FindWithCondition(u => u.TelNo.Equals(telNo), trackChanges)
+				.FirstOrDefaultAsync();
+
+		public async Task<User?> GetUserByEmailAsync(string email,
+			bool trackChanges = false) =>
+			await base
+				.FindWithCondition(u => u.Email.Equals(email), trackChanges)
+				.FirstOrDefaultAsync();
+
+		#region GetAllUsersAsync
+		public async Task<List<User>> GetAllUsersAsync(bool trackChanges = false) =>
+			await base
+				.FindAll(trackChanges)
+				.ToListAsync();
+		/*
+		 * with orderBy
+		 */
+		public async Task<List<User>> GetAllUsersAsync<T>(
+			Expression<Func<User, T>> orderBy,
+			bool asAscending = true,
+			bool trackChanges = false) =>
+				await base.ControlOrderByAsync(
+					base.FindAll(trackChanges),
+					orderBy,
+					asAscending);
+		#endregion
+
+		#region GetUsersByConditionAsync
+		public async Task<List<User>> GetUsersByConditionAsync(
+			Expression<Func<User, bool>> condition, 
+			bool trackChanges = false) =>
+			await base
+				.FindWithCondition(condition, trackChanges)
+				.ToListAsync();
+		/*
+		 * with orderBy
+		 */
+		public async Task<List<User>> GetUsersByConditionAsync<T>(
+			Expression<Func<User, bool>> condition,
+			Expression<Func<User, T>> orderBy,
+			bool asAscending = true,
+			bool trackChanges = false) =>
+				await ControlOrderByAsync(
+					base.FindWithCondition(condition, trackChanges),
+					orderBy,
+					asAscending);
+		#endregion
 	}
 }

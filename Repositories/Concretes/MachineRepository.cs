@@ -11,15 +11,31 @@ namespace Repositories.Concretes
 		public MachineRepository(RepositoryContext context) : base(context)
 		{ }
 
-		public void CreateMachine(Machine machine) =>
-			base.Create(machine);
+		public async Task<Machine?> GetMachineByMachineIdAsync(Guid machineId, bool trackChanges) =>
+			await base
+				.FindWithCondition(m => m.Id.Equals(machineId), trackChanges)
+				.SingleOrDefaultAsync();
 
-		public async Task<List<Machine>> GetAllMachinesAsync(bool trackChanges) =>
+		#region GetAllMachinesAsync
+		public async Task<List<Machine>> GetAllMachinesAsync(bool trackChanges = false) =>
 			await base
 				.FindAll(trackChanges)
-				.OrderBy(m => m.Id)
 				.ToListAsync();
+		/*
+		 * with orderBy
+		 */
+		public async Task<List<Machine>> GetAllMachinesAsync<TResult>(
+			Expression<Func<Machine, TResult>> orderBy,
+			bool asAscending = true,
+			bool trackChanges = false) =>
+				await base
+					.ControlOrderByAsync(
+						base.FindAll(trackChanges),
+						orderBy,
+						asAscending);
+		#endregion
 
+		#region GetMachinesByConditionAsync
 		public async Task<List<Machine>> GetMachinesByConditionAsync(
 			Expression<Func<Machine, bool>> expression,
 			bool trackChanges) =>
@@ -27,16 +43,19 @@ namespace Repositories.Concretes
 					.FindWithCondition(expression, trackChanges)
 					.OrderBy(m => m.Id)
 					.ToListAsync();
-
-		public async Task<Machine?> GetMachineByMachineIdAsync(Guid machineId, bool trackChanges) =>
-			await base
-				.FindWithCondition(m => m.Id.Equals(machineId), trackChanges)
-				.SingleOrDefaultAsync();
-
-		public void UpdateMachine(Machine machine) =>
-			base.Update(machine);
-
-		public void RemoveMachine(Machine machine) =>
-			base.Delete(machine);
+		/*
+		 * with orderBy
+		 */
+		public async Task<List<Machine>> GetMachinesByConditionAsync<TResult>(
+			Expression<Func<Machine, bool>> condition,
+			Expression<Func<Machine, TResult>> orderBy,
+			bool asAscending = true,
+			bool trackChanges = false) =>
+				await base
+					.ControlOrderByAsync(
+						base.FindWithCondition(condition, trackChanges),
+						orderBy,
+						asAscending);
+		#endregion
 	}
 }

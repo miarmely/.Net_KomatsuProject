@@ -1,19 +1,17 @@
 ﻿using Entities.DataModels;
 using System.Linq.Expressions;
+using System.Runtime.InteropServices;
 
 namespace Repositories.Contracts
 {
 	public interface IUserRepository : IRepositoryBase<User>
 	{
-		void CreateUser(User user);
-		Task<List<User>> GetAllUsersAsync(bool trackChanges);
-		Task<List<User>> GetAllUsersByOrderByAsync<T>(Expression<Func<User, T>> orderBy, bool trackChanges);
-		Task<List<User>> GetUsersByConditionAsync(Expression<Func<User, bool>> expression, bool trackChanges);
-		Task<List<User>> GetUsersByConditionByOrderByAsync<T>(Expression<Func<User, bool>> condition, Expression<Func<User, T>> orderBy, bool trackChanges);
-		Task<User?> GetUserByIdAsync(Guid id, bool trackChanges);
-		Task<User?> GetUserByTelNoAsync(string telNo, bool trackChanges);
-		Task<User?> GetUserByEmailAsync(string email, bool trackChanges);
-		void UpdateUser(User user);
-		void DeleteUser(User user);
+		Task<User?> GetUserByIdAsync(Guid id, bool trackChanges = false);
+		Task<User?> GetUserByTelNoAsync(string telNo, bool trackChanges = false);
+		Task<User?> GetUserByEmailAsync(string email, bool trackChanges = false);
+		Task<List<User>> GetAllUsersAsync(bool trackChanges = false);
+		Task<List<User>> GetAllUsersAsync<T>(Expression<Func<User, T>> orderBy, bool asAscending = true, bool trackChanges = false);
+		Task<List<User>> GetUsersByConditionAsync(Expression<Func<User, bool>> condition, bool trackChanges = false);
+		Task<List<User>> GetUsersByConditionAsync<T>(Expression<Func<User, bool>> condition, Expression<Func<User, T>> orderBy, bool asAscending = true, bool trackChanges = false);		
 	}
 }
