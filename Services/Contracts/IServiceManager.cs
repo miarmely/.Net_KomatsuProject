@@ -5,5 +5,6 @@
 		IUserService UserService { get; }
 		ICompanyService CompanyService { get; }
 		IMailService MailService { get; }
+		IMachineService MachineService { get;  }
 	}
 }
