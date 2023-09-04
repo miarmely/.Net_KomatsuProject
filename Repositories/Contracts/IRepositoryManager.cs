@@ -8,7 +8,6 @@
 		IRoleRepository RoleRepository { get; }
 		IMachineRepository MachineRepository { get; }
 		IMainCategoryRepository MainCategoryRepository { get; }
-		ICategoryRepository CategoryRepository { get; }
 		IBrandRepository BrandRepository { get; }
 		Task SaveAsync();
 	}

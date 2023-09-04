@@ -1,8 +1,6 @@
 ﻿using Entities.ConfigModels;
 using Entities.ConfigModels.Contracts;
-using Entities.DataModels;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Presantation;
@@ -36,7 +34,6 @@ namespace Temsa.Extensions
 
 		public static void ConfigureActionFilters(this IServiceCollection services)
 		{
-			services.AddSingleton<LogFilter>();
 			services.AddScoped<ErrorFilter>();
 			services.AddScoped<ValidationUserFormatFilter>();
 		}
@@ -52,6 +49,9 @@ namespace Temsa.Extensions
 
 			services.Configure<MailSettingsConfig>(configuration
 				.GetSection(nameof(MailSettingsConfig)));
+
+			services.Configure<FileServiceSettingsConfig>(configuration
+				.GetSection(nameof(FileServiceSettingsConfig)));
 		}
 				
 		public static void ConfigureJwt(this IServiceCollection services, IConfiguration configuration)

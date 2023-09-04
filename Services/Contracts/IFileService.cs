@@ -2,5 +2,6 @@
 {
 	public interface IFileService
 	{
+		Task<byte[]> ConvertFileToByte(string filePath);
 	}
 }

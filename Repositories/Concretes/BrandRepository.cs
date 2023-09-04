@@ -10,18 +10,18 @@ namespace Repositories.Concretes
 		public BrandRepository(RepositoryContext context) : base(context)
 		{}
 
-		public async Task<List<Brand>> GetAllBrandsAsync(bool trackChanges) =>
+		public async Task<List<Brand>> GetAllBrandsAsync(bool trackChanges = false) =>
 			 await base
 				.FindAll(trackChanges)
 				.OrderBy(b => b.Name)
 				.ToListAsync();
 
-		public async Task<Brand?> GetBrandByIdAsync(int id, bool trackChanges) =>
+		public async Task<Brand?> GetBrandByIdAsync(int id, bool trackChanges = false) =>
 			await base
 				.FindWithCondition(b => b.Id == id, trackChanges)
 				.SingleOrDefaultAsync();
 
-		public async Task<Brand?> GetBrandByNameAsync(string name, bool trackChanges) =>
+		public async Task<Brand?> GetBrandByNameAsync(string name, bool trackChanges = false) =>
 			await base
 				.FindWithCondition(b => b.Name.Equals(name), trackChanges)
 				.SingleOrDefaultAsync();

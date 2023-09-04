@@ -41,7 +41,6 @@ namespace Repositories.Concretes
 			bool trackChanges) =>
 				await base
 					.FindWithCondition(expression, trackChanges)
-					.OrderBy(m => m.Id)
 					.ToListAsync();
 		/*
 		 * with orderBy

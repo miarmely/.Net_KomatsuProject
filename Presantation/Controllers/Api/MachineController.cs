@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using Entities.DtoModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Services.Contracts;
 
@@ -14,12 +15,23 @@ namespace Presantation.Controllers.Api
 		public MachineController(IServiceManager services) =>
 			_services = services;
 
-		[HttpGet("mainCategory")]
-		public async Task<IActionResult> GetMainCategoriesAsync()
+		[HttpPost("display")]
+		public async Task<IActionResult> GetMachinesByConditionAsync(
+			[FromBody] MachineDtoForSearch machineDtoS)
 		{
+			var entity = await _services.MachineService
+				.GetMachinesByConditionAsync(machineDtoS);
 			
-				
+			return Ok(entity);
 		}
-		
+
+
+		[HttpPost("create")]
+		public async Task<IActionResult> CreateMachineAsync(
+			[FromBody] MachineDto machineDto)
+		{
+
+		}
+
 	}
 }

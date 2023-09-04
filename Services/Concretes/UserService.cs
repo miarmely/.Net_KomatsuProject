@@ -81,7 +81,7 @@ namespace Services.Concretes
 				};
 
 				_repository.CompanyRepository
-					.CreateCompany(company);
+					.Create(company);
 
 				await _repository.SaveAsync();
 			}

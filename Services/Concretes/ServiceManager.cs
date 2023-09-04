@@ -7,21 +7,21 @@ namespace Services.Concretes
 {
     public class ServiceManager : IServiceManager
     {
-		#region fields
+	
 		private readonly Lazy<IUserService> _userService;
 		private readonly Lazy<ICompanyService> _companyService;
 		private readonly Lazy<IMailService> _mailService;
 		private readonly Lazy<IMachineService> _machineService;
-		#endregion
-
-		#region properties
+		private readonly Lazy<IFileService> _fileService;
+		private readonly Lazy<IDtoConverterService> _dtoConverterService;
+		
 		public IUserService UserService => _userService.Value;
 		public ICompanyService CompanyService => _companyService.Value;
 		public IMailService MailService => _mailService.Value;
 		public IMachineService MachineService => _machineService.Value;
-		#endregion
+		public IFileService FileService => _fileService.Value;
+		public IDtoConverterService DtoConverterServcice => _dtoConverterService.Value;
 
-		#region functions
 		public ServiceManager(IRepositoryManager repository,
 			IConfigManager config,
 			IMapper mapper)
@@ -33,8 +33,11 @@ namespace Services.Concretes
 			_mailService = new Lazy<IMailService>(() =>
 				new MailService(config));
 			_machineService = new Lazy<IMachineService>(() => 
-				new MachineService(repository));
+				new MachineService(repository, DtoConverterServcice));
+			_fileService = new Lazy<IFileService>(() => 
+				new FileService(config));
+			_dtoConverterService = new Lazy<IDtoConverterService>(() =>
+				new DtoConverterService(repository));
         }
-		#endregion
 	}
 }

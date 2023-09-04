@@ -9,27 +9,31 @@ namespace Entities.DataModels
 		[Key]
 		public Guid Id { get; set; }
 
-		[ForeignKey("BrandId")]
 		[Column(TypeName = "smallint")]
 		public int BrandId { get; set; }
 
 		[Column(TypeName = "tinyint")]
-		public int CategoryId { get; set; }
+		public int MainCategoryId { get; set; }
+
+		[Column(TypeName = "varchar(50)")]
+		public string SubCategoryName { get; set; }
 
 		[Column(TypeName = "varchar(50)")]
 		public string Model { get; set; }
 
-		[Column(TypeName = "varchar(60)")]
+        public bool IsSecondHand { get; set; }
+
+        [Column(TypeName = "varchar(60)")]
 		public string ImagePath { get; set; }
 
 		[Column(TypeName = "smallint")]
 		public int Stock { get; set; }
 
 		[Column(TypeName = "smallint")]
-		public int Hired { get; set; }
+		public int Rented { get; set; }
 
 		[Column(TypeName = "smallint")]
-		public int Saled { get; set; }
+		public int Sold { get; set; }
 
 		[Column(TypeName = "smallint")]
 		public int Year { get; set; }
@@ -41,8 +45,8 @@ namespace Entities.DataModels
 		[ForeignKey("BrandId")]
 		public Brand? Brand { get; set; }
 
-		[ForeignKey("CategoryId")]
-		public Category? Category { get; set; }
+		[ForeignKey("MainCategoryId")]
+		public MainCategory MainCategory { get; set; }
 		#endregion
 	}
 }
