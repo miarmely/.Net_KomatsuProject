@@ -24,7 +24,8 @@ namespace Repositories.Concretes
 
 		public async Task<Company?> GetCompanyByNameAsync(string name,
 			bool trackChanges = false) =>
-			await base.FindWithCondition(c => c.Name.Equals(name), trackChanges)
+			await base
+				.FindWithCondition(c => c.Name.Equals(name), trackChanges)
 				.FirstOrDefaultAsync();
 	}
 }

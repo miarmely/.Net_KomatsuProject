@@ -16,14 +16,16 @@ namespace Repositories.Concretes
 				.OrderBy(b => b.Name)
 				.ToListAsync();
 
-		public async Task<Brand?> GetBrandByIdAsync(int id, bool trackChanges = false) =>
+		public async Task<Brand?> GetBrandByIdAsync(int id, 
+			bool trackChanges = false) =>
 			await base
 				.FindWithCondition(b => b.Id == id, trackChanges)
 				.SingleOrDefaultAsync();
 
-		public async Task<Brand?> GetBrandByNameAsync(string name, bool trackChanges = false) =>
+		public async Task<Brand?> GetBrandByNameAsync(string name, 
+			bool trackChanges = false) =>
 			await base
 				.FindWithCondition(b => b.Name.Equals(name), trackChanges)
-				.SingleOrDefaultAsync();
+				.FirstOrDefaultAsync();
 	}
 }

@@ -1,7 +1,12 @@
-﻿using Entities.DtoModels;
+﻿using AutoMapper;
+using Entities.DtoModels;
 using Entities.Exceptions;
+using Microsoft.EntityFrameworkCore.Diagnostics;
+using Microsoft.EntityFrameworkCore.Query.Internal;
 using Repositories.Contracts;
 using Services.Contracts;
+using System.Net;
+using System.Text;
 
 namespace Services.Concretes
 {
@@ -9,18 +14,38 @@ namespace Services.Concretes
 	{
 		private readonly IRepositoryManager _repository;
 		private readonly IDtoConverterService _dtoConverterService;
+		private readonly IMapper _mapper;
 
-		public MachineService(IRepositoryManager repository, IDtoConverterService dtoConverterService)
+		public MachineService(IRepositoryManager repository,
+			IDtoConverterService dtoConverterService,
+			IMapper mapper)
 		{
 			_repository = repository;
 			_dtoConverterService = dtoConverterService;
+			_mapper = mapper;
 		}
 
-		public async Task CreateMachineAsync(MachineDto machineDto)
+		public async Task CreateMachineAsync(MachineDtoForCreate machineDtoC)
 		{
-			
+			#region convert machineDtoC to machineDto
+			var machineDto = _mapper.Map<MachineDto>(machineDtoC);
+
+			await ControlConflictErrorAsync(machineDto);
+
+			machineDto.RegistrationDate = DateTime.UtcNow;
+			#endregion
+
+			#region convert machineDto to machine
+			var machine = await _dtoConverterService
+				.MachineDtoToMachineAsync(machineDto);
+			#endregion
+
+			#region create machine
 			_repository.MachineRepository
-				.Create();
+				.Create(machine);
+
+			await _repository.SaveAsync();
+			#endregion
 		}
 
 		public async Task<List<MachineDto>> GetMachinesByConditionAsync(
@@ -44,37 +69,38 @@ namespace Services.Concretes
 			var machines = await _repository.MachineRepository
 				.GetMachinesByConditionAsync(m =>
 				#region brand
-					brand == null ?
+					(brand == null ?
 						true
-						: m.BrandId == brand.Id
+						: m.BrandId == brand.Id)
 				#endregion
 				#region mainCategory
-					&& mainCategory == null ?
+					&& (mainCategory == null ?
 						true
-						: m.MainCategoryId == mainCategory.Id
+						: m.MainCategoryId == mainCategory.Id)
 				#endregion
 				#region SubCategoryName
-					&& machineDtoS.SubCategoryName == null ?
+					&& (machineDtoS.SubCategoryName == null ?
 						true
-						: m.SubCategoryName.Equals(machineDtoS.SubCategoryName)
+						: m.SubCategoryName.Equals(machineDtoS.SubCategoryName))
 				#endregion
 				#region Model
-					&& machineDtoS.Model == null ?
+					&& (machineDtoS.Model == null ?
 						true
-						: m.Model.Equals(machineDtoS.Model)
+						: m.Model.Equals(machineDtoS.Model))
 				#endregion
 				#region IsSecondHand
-					&& machineDtoS.IsSecondHand == null ?
+					&& (machineDtoS.IsSecondHand == null ?
 						true
-						: m.IsSecondHand == machineDtoS.IsSecondHand
+						: m.IsSecondHand == machineDtoS.IsSecondHand)
 				#endregion
 				#region SoldOrRentedStatus
-					&& machineDtoS.SoldOrRentedStatus == null ?
+					&& (machineDtoS.SoldOrRentedStatus == null ?
 						true
 						: (machineDtoS.SoldOrRentedStatus.Equals("sold") ?
 							m.Sold > 0  // "sold" column > 0
-							: m.Rented > 0));  // "rented" column > 0
+							: m.Rented > 0)));  // "rented" column > 0
 			#endregion
+
 			#endregion
 
 			#region when any machine not found (throw)
@@ -88,5 +114,22 @@ namespace Services.Concretes
 				.MachineToMachineDtoAsync(machines);
 		}
 
+
+		private async Task ControlConflictErrorAsync(MachineDto machineDto)
+		{
+			#region get entity that have same subCategory and Model
+			var entity = await _repository.MachineRepository
+				.GetMachinesByConditionAsync(m => 
+					m.SubCategoryName.Equals(machineDto.SubCategoryName)
+					&& m.Model.Equals(machineDto.Model));
+			#endregion
+
+			#region throw error
+			if (entity.Count != 0)
+				throw new ErrorWithCodeException(409,
+					"CE-M",
+					"Conflict Error - Model");
+			#endregion
+		}
 	}
 }

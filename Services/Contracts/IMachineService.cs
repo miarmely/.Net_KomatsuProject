@@ -7,6 +7,6 @@ namespace Services.Contracts
 	public interface IMachineService
 	{
 		Task<List<MachineDto>> GetMachinesByConditionAsync(MachineDtoForSearch machineDtoS);
-		Task CreateMachineAsync(MachineDto machineDto);
+		Task CreateMachineAsync(MachineDtoForCreate machineDtoC);
 	}
 }

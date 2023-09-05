@@ -3,8 +3,6 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.5.33516.290
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Temsa", "Temsa\Temsa.csproj", "{149A811D-29AF-483A-879A-C91CFDF9C4BB}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Repositories", "Repositories\Repositories.csproj", "{A2F6F234-FF53-4736-B771-4BF61D5B5530}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Entities", "Entities\Entities.csproj", "{170D063A-D24A-4BCF-B8C1-1A45E68C2E32}"
@@ -13,16 +11,16 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Presantation", "Presantatio
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Services", "Services\Services.csproj", "{2A9B8839-91EE-4289-8DA5-EE1E813B6826}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Temsa_API", "Temsa_API\Temsa_API.csproj", "{AA7E53F4-6432-4605-A609-BAE52634CEC9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Temsa_Web", "Temsa_Web\Temsa_Web.csproj", "{2BE30F66-8314-4A1D-BA34-20B306D4F43E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{149A811D-29AF-483A-879A-C91CFDF9C4BB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{149A811D-29AF-483A-879A-C91CFDF9C4BB}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{149A811D-29AF-483A-879A-C91CFDF9C4BB}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{149A811D-29AF-483A-879A-C91CFDF9C4BB}.Release|Any CPU.Build.0 = Release|Any CPU
 		{A2F6F234-FF53-4736-B771-4BF61D5B5530}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{A2F6F234-FF53-4736-B771-4BF61D5B5530}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A2F6F234-FF53-4736-B771-4BF61D5B5530}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -39,6 +37,14 @@ Global
 		{2A9B8839-91EE-4289-8DA5-EE1E813B6826}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2A9B8839-91EE-4289-8DA5-EE1E813B6826}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2A9B8839-91EE-4289-8DA5-EE1E813B6826}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AA7E53F4-6432-4605-A609-BAE52634CEC9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AA7E53F4-6432-4605-A609-BAE52634CEC9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AA7E53F4-6432-4605-A609-BAE52634CEC9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AA7E53F4-6432-4605-A609-BAE52634CEC9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2BE30F66-8314-4A1D-BA34-20B306D4F43E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2BE30F66-8314-4A1D-BA34-20B306D4F43E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2BE30F66-8314-4A1D-BA34-20B306D4F43E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2BE30F66-8314-4A1D-BA34-20B306D4F43E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

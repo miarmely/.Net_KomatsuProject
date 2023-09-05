@@ -1,0 +1,4 @@
+14:24:46.3399  WARN  LogDetails { Controller = Machine, Action = CreateMachine, ErrorCode = CE-M, CreatedAt = 9/5/2023 11:24:46 AM }
+14:24:55.9479  WARN  LogDetails { Controller = Machine, Action = CreateMachine, ErrorCode = CE-M, CreatedAt = 9/5/2023 11:24:55 AM }
+14:25:23.6993  WARN  LogDetails { Controller = User, Action = Login, ErrorCode = FE-T, CreatedAt = 9/5/2023 11:25:23 AM }
+14:26:08.3010  WARN  LogDetails { Controller = User, Action = Register, ErrorCode = FE-T, CreatedAt = 9/5/2023 11:26:08 AM }

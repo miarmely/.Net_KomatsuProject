@@ -1,5 +1,6 @@
 using NLog;
-using Temsa.Extensions;
+using System.Reflection;
+using Temsa_Web.Extensions;
 
 #region setup logger
 LogManager.Setup()
@@ -10,17 +11,10 @@ LogManager.Setup()
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.ConfigureAddControllersWithView();
-builder.Services.AddAutoMapper(typeof(Program).Assembly);
-builder.Services.ConfigureRepositoryContext(builder.Configuration);
-builder.Services.ConfigureAllManagers();
+builder.Services.AddAutoMapper(Assembly.GetExecutingAssembly());
 builder.Services.ConfigureLoggerService();
-builder.Services.ConfigureActionFilters();
-builder.Services.ConfigureConfigModels(builder.Configuration);
-builder.Services.ConfigureJwt(builder.Configuration);
 
 var app = builder.Build();
-
-builder.Services.ConfigureExceptionHandler(app);
 #endregion
 
 #region set production or staging mode 

@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "gyy7+dbue5ntNx9aVUFaNAswtfMa1MYuPZRm6NGtWpeD03W8+sXFpZHHQ8DKc5FWbJynAdnBmGJBNE8AobSUmw==",
+  "dgSpecHash": "6Xzo8n25GzAjP64wXtNjSU3XryYS0PDZAwUfOt4f2zNbE/NVE//AZh2ual+sZPx3Ljs/CfoD8TG5YxHNMmLMqA==",
   "success": true,
-  "projectFilePath": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\Temsa\\Temsa\\Temsa.csproj",
+  "projectFilePath": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\Temsa\\Temsa\\Temsa_Web2.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\Mac\\.nuget\\packages\\automapper\\12.0.1\\automapper.12.0.1.nupkg.sha512",
     "C:\\Users\\Mac\\.nuget\\packages\\automapper.extensions.microsoft.dependencyinjection\\12.0.1\\automapper.extensions.microsoft.dependencyinjection.12.0.1.nupkg.sha512",

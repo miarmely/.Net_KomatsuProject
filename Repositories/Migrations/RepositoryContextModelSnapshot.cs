@@ -65,14 +65,14 @@ namespace Repositories.Migrations
                     b.Property<short>("BrandId")
                         .HasColumnType("smallint");
 
-                    b.Property<short>("Hired")
-                        .HasColumnType("smallint");
-
                     b.Property<string>("ImagePath")
                         .IsRequired()
                         .HasColumnType("varchar(60)");
 
                     b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsSecondHand")
                         .HasColumnType("bit");
 
                     b.Property<byte>("MainCategoryId")
@@ -85,7 +85,10 @@ namespace Repositories.Migrations
                     b.Property<DateTime>("RegistrationDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<short>("Saled")
+                    b.Property<short>("Rented")
+                        .HasColumnType("smallint");
+
+                    b.Property<short>("Sold")
                         .HasColumnType("smallint");
 
                     b.Property<short>("Stock")
@@ -94,9 +97,6 @@ namespace Repositories.Migrations
                     b.Property<string>("SubCategoryName")
                         .IsRequired()
                         .HasColumnType("varchar(50)");
-
-                    b.Property<bool>("UsageStatus")
-                        .HasColumnType("bit");
 
                     b.Property<short>("Year")
                         .HasColumnType("smallint");

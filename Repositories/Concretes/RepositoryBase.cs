@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using Repositories.Contracts;
 using Repositories.EF;
 using System.Linq.Expressions;
@@ -21,7 +22,8 @@ namespace Repositories.Concretes
 				_context.Set<T>()
 				: _context.Set<T>().AsNoTracking();
 
-		public IQueryable<T> FindWithCondition(Expression<Func<T, bool>> expression, bool trackChanges) =>
+		public IQueryable<T> FindWithCondition(Expression<Func<T, bool>> expression,
+			bool trackChanges) =>
 			trackChanges ?
 				_context.Set<T>().Where(expression)
 				: _context.Set<T>().Where(expression).AsNoTracking();

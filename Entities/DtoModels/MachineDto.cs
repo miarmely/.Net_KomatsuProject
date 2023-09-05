@@ -12,6 +12,6 @@
 		public int? Rented { get; init; }
 		public int? Sold { get; init; }
 		public int? Year { get; init; }
-		public DateTime? RegistrationDate { get; init; }
+		public DateTime? RegistrationDate { get; set; }
 	}
 }

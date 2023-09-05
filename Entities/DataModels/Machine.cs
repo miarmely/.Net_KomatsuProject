@@ -43,7 +43,7 @@ namespace Entities.DataModels
 
 		#region navigation properties
 		[ForeignKey("BrandId")]
-		public Brand? Brand { get; set; }
+		public Brand Brand { get; set; }
 
 		[ForeignKey("MainCategoryId")]
 		public MainCategory MainCategory { get; set; }
