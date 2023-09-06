@@ -1,0 +1,3 @@
+﻿<Project>
+  <Import Project="..\build\Temsa_API_.props" />
+</Project>
