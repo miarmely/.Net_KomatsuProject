@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using System.IdentityModel.Tokens.Jwt;
 
 namespace Temsa_Web.Areas.Admin.Controllers
 {
@@ -7,6 +9,8 @@ namespace Temsa_Web.Areas.Admin.Controllers
 	{
 		public IActionResult Index()
 		{
+		
+			
 			return View();
 		}
 	}

@@ -220,11 +220,11 @@ namespace Services.Concretes
 			#endregion
 
 			#region set signingCredentials
-			var encodedKey = Encoding.UTF8
+			var secretKeyInBytes = Encoding.UTF8
 					.GetBytes(_config.JwtSettings.SecretKey);
 
 			var signingCredentials = new SigningCredentials(
-				new SymmetricSecurityKey(encodedKey),
+				new SymmetricSecurityKey(secretKeyInBytes),
 				SecurityAlgorithms.HmacSha256);
 			#endregion
 

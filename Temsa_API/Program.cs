@@ -18,6 +18,7 @@ builder.Services.ConfigureLoggerService();
 builder.Services.ConfigureActionFilters();
 builder.Services.ConfigureConfigModels(builder.Configuration);
 builder.Services.ConfigureJwt(builder.Configuration);
+builder.Services.ConfigureCORS();
 
 var app = builder.Build();
 
@@ -42,6 +43,7 @@ app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
+app.UseCors("Temsa_Web");
 #endregion
 
 app.Run();

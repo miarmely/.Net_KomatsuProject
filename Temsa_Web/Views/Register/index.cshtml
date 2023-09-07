@@ -5,21 +5,34 @@
 <div class="reg-w3">
 	<div class="w3layouts-main">
 		<h2>ŞİMDİ KAYIT OL</h2>
-		<form action="#" method="post">
-			<input type="text" class="ggg" placeholder="AD" required>
-			<input type="text" class="ggg" placeholder="SOYAD" required>
-			<input type="text" class="ggg" placeholder="ŞİRKET ADI" required>
-			<input type="text" class="ggg" placeholder="TELEFON (xxx) xxx xx xx" required>
-			<input type="email" class="ggg" placeholder="E-MAIL" required>
-			<input type="password" class="ggg" placeholder="ŞİFRE" required>
-			<input type="password" class="ggg" placeholder="ŞİFREYİ ONAYLA" required>
-			
-			<h4 style="margin-top:15px"><input type="checkbox" />Şifreleri göster</h4>
-			<h4><input type="checkbox" />Hizmet şartları ve gizlilik politikasını kabul ediyorum.</h4>
+		<form>
+			<!-- inputs -->
+			<input id="inpt_firstName" type="text" class="ggg" placeholder="AD" required>
+			<input id="inpt_lastName" type="text" class="ggg" placeholder="SOYAD" required>
+			<input id="inpt_companyName" type="text" class="ggg" placeholder="ŞİRKET ADI" required>
+			<input id="inpt_telNo" type="text" class="ggg" placeholder="TELEFON (xxx) xxx xx xx" required>
+			<input id="inpt_email" type="email" class="ggg" placeholder="E-MAIL" required>
+			<input id="inpt_password" type="password" class="ggg" placeholder="ŞİFRE" required>
+			<input id="inpt_confirmPassword" type="password" class="ggg" placeholder="ŞİFREYİ ONAYLA" required>
+			<!-- /inputs -->
 
+			<!-- checkbox -->
+			<h4 style="margin-top:15px">
+				<input id="box_showPasswords" type="checkbox" />
+				Şifreleri göster
+			</h4>
+			<h4>
+				<input id="box_privacyPolicy" type="checkbox" />
+				Hizmet şartları ve gizlilik politikasını kabul ediyorum.
+			</h4>
+			<!-- /checkbox -->
+
+			<!-- register button -->
 			<div class="clearfix"></div>
-			<input type="submit" value="KAYDOL" >
+			<p id="p_resultLabel" style="color:rgb(255, 75, 75); margin-top:30px; margin-bottom: 30px;"></p>
+			<input id="btn_register" type="submit" value="KAYDOL" >
+			<!-- /register button -->
 		</form>
-		<p>Zaten kayıtlı mısın?.<a href="login.html">Giriş sayfası</a></p>
+		<p>Zaten kayıtlı mısın?<a href="login.html">Giriş sayfası</a></p>
 	</div>
 </div>

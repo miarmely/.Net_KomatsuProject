@@ -56,7 +56,7 @@ namespace Temsa.Extensions
 				
 		public static void ConfigureJwt(this IServiceCollection services, IConfiguration configuration)
 		{
-			var section = configuration.GetSection("JwtSettingsConfig");
+			var section = configuration.GetSection(nameof(JwtSettingsConfig));
 
 			services.AddAuthentication(opt =>
 			{
@@ -86,5 +86,19 @@ namespace Temsa.Extensions
 		public static void ConfigureAddControllers(this IServiceCollection service)
 			=> service.AddControllers()
 				.AddApplicationPart(typeof(AssemblyReference).Assembly);
+
+		public static void ConfigureCORS(this IServiceCollection services) =>
+			services.AddCors(setup =>
+			{
+				#region for Temsa_Web projects
+				setup.AddPolicy("Temsa_Web", configure => 
+					configure
+						.WithOrigins("https://localhost:7091", 
+							"https://localhost:7136",
+							"http://127.0.0.1:5500")
+						.AllowAnyHeader()
+						.AllowAnyMethod());
+				#endregion
+			});
 	}
 }

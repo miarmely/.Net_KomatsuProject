@@ -38,7 +38,7 @@ namespace Presantation.Controllers
             await _manager.UserService
                 .RegisterAsync(userDto);
 
-            return StatusCode(StatusCodes.Status201Created);
+            return StatusCode(StatusCodes.Status201Created, new {});
         }
     }
 }

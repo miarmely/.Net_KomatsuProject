@@ -1,6 +1,6 @@
 {
   "Version": 1,
-  "Hash": "95dXQob5efdBe8wOlYEQG9YDRJ+YTs/RYehLj/G9nI4=",
+  "Hash": "HU+4LFpXXZ1OSP7C/0pfP9jtrT2CAoNa5N35flwcOYU=",
   "Source": "Temsa_Web",
   "BasePath": "_content/Temsa_Web",
   "Mode": "Default",
@@ -1054,6 +1054,23 @@
       "OriginalItemSpec": "wwwroot\\js\\raphael-min.js"
     },
     {
+      "Identity": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\Temsa\\Temsa_Web\\wwwroot\\js\\register.js",
+      "SourceId": "Temsa_Web",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\Temsa\\Temsa_Web\\wwwroot\\",
+      "BasePath": "_content/Temsa_Web",
+      "RelativePath": "js/register.js",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\js\\register.js"
+    },
+    {
       "Identity": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\Temsa\\Temsa_Web\\wwwroot\\js\\script.js",
       "SourceId": "Temsa_Web",
       "SourceType": "Discovered",
@@ -1086,6 +1103,23 @@
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "wwwroot\\js\\scripts.js"
+    },
+    {
+      "Identity": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\Temsa\\Temsa_Web\\wwwroot\\js\\tools.js",
+      "SourceId": "Temsa_Web",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\Temsa\\Temsa_Web\\wwwroot\\",
+      "BasePath": "_content/Temsa_Web",
+      "RelativePath": "js/tools.js",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\js\\tools.js"
     },
     {
       "Identity": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\Temsa\\Temsa_Web\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap.css",

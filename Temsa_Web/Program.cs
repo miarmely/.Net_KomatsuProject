@@ -13,6 +13,8 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.ConfigureAddControllersWithView();
 builder.Services.AddAutoMapper(Assembly.GetExecutingAssembly());
 builder.Services.ConfigureLoggerService();
+builder.Services.ConfigureConfigModels();
+builder.Services.ConfigureJwt(builder.Configuration);
 
 var app = builder.Build();
 #endregion

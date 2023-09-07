@@ -124,7 +124,7 @@ namespace Presantation.ActionFilters.Attributes
             {
                 #region control '@'
                 var atIndex = email.IndexOf('@');
-                if (atIndex == email.Length - 1 // when '@' in first index.
+                if (atIndex == email.Length - 1 // when '@' in last index.
                     || atIndex == -1)  // when '@' not found
                     return false;
                 #endregion
@@ -158,7 +158,7 @@ namespace Presantation.ActionFilters.Attributes
                 var dotIndex = emailExtension.IndexOf('.');
 
                 if (dotIndex == -1  // when '.' not found
-                    || dotIndex == atIndex + 1  // when no char between '@' and '.'
+                    || dotIndex == 0  // when no char between '@' and '.'
                     || dotIndex == emailExtension.Length - 1)  // when '.' last Index
                     return false;
                 #endregion
@@ -172,7 +172,7 @@ namespace Presantation.ActionFilters.Attributes
 
             if (!isEmailValid)
                 UpdateErrorModel("E", "Email ");
-        }
+		}
 
         private async Task ControlPassword(string? password) =>
             await Task.Run(() =>
