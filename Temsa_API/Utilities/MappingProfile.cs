@@ -1,8 +1,6 @@
 ﻿using AutoMapper;
 using Entities.DataModels;
 using Entities.DtoModels;
-using Entities.DtoModels.Machine;
-using Entities.DtoModels.User;
 using Entities.ErrorModels;
 
 namespace Temsa.Utilities

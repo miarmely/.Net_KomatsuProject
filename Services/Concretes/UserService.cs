@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using Entities.ConfigModels.Contracts;
 using Entities.DataModels;
-using Entities.DtoModels.User;
+using Entities.DtoModels;
 using Entities.ErrorModels;
 using Entities.Exceptions;
 using Entities.RelationModels;

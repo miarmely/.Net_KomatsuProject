@@ -1,7 +1,9 @@
 ﻿using Entities.DataModels;
+using Entities.QueryModels;
 using Microsoft.EntityFrameworkCore;
 using Repositories.Contracts;
 using Repositories.EF;
+using Repositories.Utilies;
 using System.Linq.Expressions;
 
 namespace Repositories.Concretes
@@ -10,7 +12,7 @@ namespace Repositories.Concretes
 	{
 		public UserRepository(RepositoryContext context) : base(context)
 		{ }
-		
+
 		public async Task<User?> GetUserByIdAsync(Guid id,
 			bool trackChanges = false) =>
 				await base
@@ -30,10 +32,14 @@ namespace Repositories.Concretes
 				.FirstOrDefaultAsync();
 
 		#region GetAllUsersAsync
-		public async Task<List<User>> GetAllUsersAsync(bool trackChanges = false) =>
-			await base
-				.FindAll(trackChanges)
-				.ToListAsync();
+		public async Task<List<User>> GetAllUsersAsync(
+			PagingParameters pagingParameters,
+			bool trackChanges = false) =>
+				await PagingList<User>
+					.ToPagingList(
+						base.FindAll(trackChanges),
+						pagingParameters.PageNumber,
+						pagingParameters.PageSize);
 		/*
 		 * with orderBy
 		 */
@@ -49,7 +55,7 @@ namespace Repositories.Concretes
 
 		#region GetUsersByConditionAsync
 		public async Task<List<User>> GetUsersByConditionAsync(
-			Expression<Func<User, bool>> condition, 
+			Expression<Func<User, bool>> condition,
 			bool trackChanges = false) =>
 			await base
 				.FindWithCondition(condition, trackChanges)

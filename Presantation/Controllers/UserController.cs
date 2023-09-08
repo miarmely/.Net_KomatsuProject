@@ -1,4 +1,5 @@
-﻿using Entities.DtoModels.User;
+﻿using Entities.DtoModels;
+using Entities.QueryModels;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Presantation.ActionFilters;
@@ -37,7 +38,7 @@ namespace Presantation.Controllers
             [FromBody] UserDtoForRegisterWithoutRole userDto)
         {
             await _services.UserService
-                .RegisterAsync(userDto, "User");
+                .RegisterAsync(userDto, "User");  // set user role as user
 
             return StatusCode(StatusCodes.Status201Created, new {});
         }
@@ -53,5 +54,13 @@ namespace Presantation.Controllers
 
 			return StatusCode(StatusCodes.Status201Created, new { });
 		}
+
+
+        [HttpGet("display")]
+        public async Task<IActionResult> DisplayUserWithPagingAsync(
+            [FromQuery] PagingParameters pagingParameters)
+        {
+            return Ok();
+        }
 	}
 }

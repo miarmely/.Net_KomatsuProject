@@ -1,4 +1,5 @@
 ﻿using Entities.DataModels;
+using Entities.QueryModels;
 using System.Linq.Expressions;
 using System.Runtime.InteropServices;
 
@@ -9,7 +10,7 @@ namespace Repositories.Contracts
 		Task<User?> GetUserByIdAsync(Guid id, bool trackChanges = false);
 		Task<User?> GetUserByTelNoAsync(string telNo, bool trackChanges = false);
 		Task<User?> GetUserByEmailAsync(string email, bool trackChanges = false);
-		Task<List<User>> GetAllUsersAsync(bool trackChanges = false);
+		Task<List<User>> GetAllUsersAsync(PagingParameters pagingParameters, bool trackChanges = false);
 		Task<List<User>> GetAllUsersAsync<T>(Expression<Func<User, T>> orderBy, bool asAscending = true, bool trackChanges = false);
 		Task<List<User>> GetUsersByConditionAsync(Expression<Func<User, bool>> condition, bool trackChanges = false);
 		Task<List<User>> GetUsersByConditionAsync<T>(Expression<Func<User, bool>> condition, Expression<Func<User, T>> orderBy, bool asAscending = true, bool trackChanges = false);		

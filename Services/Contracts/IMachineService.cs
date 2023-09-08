@@ -1,5 +1,5 @@
 ﻿using Entities.DataModels;
-using Entities.DtoModels.Machine;
+using Entities.DtoModels;
 using System.Linq.Expressions;
 
 namespace Services.Contracts

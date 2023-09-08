@@ -1,4 +1,4 @@
-﻿using Entities.DtoModels.Machine;
+﻿using Entities.DtoModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Presantation.ActionFilters;

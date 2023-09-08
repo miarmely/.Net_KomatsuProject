@@ -1,5 +1,5 @@
 ﻿using Entities.DataModels;
-using Entities.DtoModels.Machine;
+using Entities.DtoModels;
 using Repositories.Contracts;
 using Services.Contracts;
 

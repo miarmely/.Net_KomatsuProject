@@ -1,4 +1,4 @@
-﻿namespace Entities.DtoModels.Machine
+﻿namespace Entities.DtoModels
 {
     public record MachineDtoForSearch
     {

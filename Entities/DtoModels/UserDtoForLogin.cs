@@ -1,4 +1,4 @@
-﻿namespace Entities.DtoModels.User
+﻿namespace Entities.DtoModels
 {
     public record UserDtoForLogin
     {

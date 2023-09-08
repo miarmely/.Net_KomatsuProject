@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using Entities.DtoModels.Machine;
+using Entities.DtoModels;
 using Entities.Exceptions;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Repositories.Contracts;

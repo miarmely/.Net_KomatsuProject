@@ -1,4 +1,4 @@
-﻿using Entities.DtoModels.User;
+﻿using Entities.DtoModels;
 
 namespace Services.Contracts
 {

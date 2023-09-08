@@ -1,6 +1,6 @@
-﻿namespace Entities.DtoModels.Machine
+﻿namespace Entities.DtoModels
 {
-    public class MachineDtoForCreate
+    public record MachineDto
     {
         public string? BrandName { get; init; }
         public string? MainCategoryName { get; init; }
@@ -12,5 +12,6 @@
         public int? Rented { get; init; }
         public int? Sold { get; init; }
         public int? Year { get; init; }
+        public DateTime? RegistrationDate { get; set; }
     }
 }
