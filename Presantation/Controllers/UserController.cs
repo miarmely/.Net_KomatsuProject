@@ -1,4 +1,4 @@
-﻿using Entities.DtoModels;
+﻿using Entities.DtoModels.User;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Presantation.ActionFilters;
@@ -11,17 +11,17 @@ namespace Presantation.Controllers
     [ModifyError]
     public class UserController : ControllerBase
     {
-        private readonly IServiceManager _manager;
+        private readonly IServiceManager _services;
 
-        public UserController(IServiceManager manager) =>
-            _manager = manager;
+        public UserController(IServiceManager services) =>
+			_services = services;
 
 
         [HttpPost("login")]
         [ValidationUserFormat]
         public async Task<IActionResult> LoginAsync(UserDtoForLogin userDto)
         {
-            var token = await _manager.UserService
+            var token = await _services.UserService
                 .LoginAsync(userDto);
 
             return Ok(new
@@ -31,14 +31,27 @@ namespace Presantation.Controllers
         }
 
 
-        [HttpPost("register")]
+        [HttpPost("registerForMobile")]
         [ValidationUserFormat]
-        public async Task<IActionResult> RegisterAsync([FromBody] UserDtoForRegister userDto)
+        public async Task<IActionResult> RegisterForMobileAsync(
+            [FromBody] UserDtoForRegisterWithoutRole userDto)
         {
-            await _manager.UserService
-                .RegisterAsync(userDto);
+            await _services.UserService
+                .RegisterAsync(userDto, "User");
 
             return StatusCode(StatusCodes.Status201Created, new {});
         }
-    }
+
+
+		[HttpPost("registerForWeb")]
+		[ValidationUserFormat]
+		public async Task<IActionResult> RegisterForWebAsync(
+            [FromBody] UserDtoForRegisterWithRole userDto)
+		{
+			await _services.UserService
+				.RegisterAsync(userDto, userDto.RoleName);
+
+			return StatusCode(StatusCodes.Status201Created, new { });
+		}
+	}
 }

@@ -8,5 +8,6 @@
 		IMachineService MachineService { get; }
 		IFileService FileService { get; }
 		IDtoConverterService DtoConverterServcice { get; }
+		IDataConverterService DataConverterService { get; }
 	}
 }

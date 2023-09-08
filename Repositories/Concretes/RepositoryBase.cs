@@ -9,6 +9,7 @@ namespace Repositories.Concretes
 	public class RepositoryBase<T> : IRepositoryBase<T> where T : class
 	{
 		private readonly RepositoryContext _context;
+		public int Count => _context.Set<T>().Count();
 
 		public RepositoryBase(RepositoryContext context) =>
 			_context = context;

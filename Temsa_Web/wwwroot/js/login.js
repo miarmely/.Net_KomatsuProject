@@ -30,23 +30,9 @@ $(function () {
                 // save token to localStorage
                 let token = response["token"];
                 localStorage.setItem("token", token);
-                alert(2);
-                
-                //#region open homepage for admin (ajax)
-                $.ajax({
-                    method: "POST",
-                    url: "admin/home",
-                    data: JSON.stringify(token),
-                    contentType: "application/json",
-                    dataType: "json",
-                    success: (response) => {
-                        alert("Succesfull");
-                    },
-                    error: () => {
-                        alert("Error");
-                    }
-                });
-                //#endregion
+
+                // open homepage
+                window.location = "Home";
             },
             error: (response) => {
                 writeErrorMessage(response.responseText, "#p_resultLabel");

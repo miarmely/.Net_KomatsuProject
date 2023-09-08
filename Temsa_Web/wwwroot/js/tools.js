@@ -1,103 +1,109 @@
-﻿export function convertErrorCodeToErrorMessage(errorCode) {
+﻿export function convertErrorCodeToErrorMessage(errorCode)
+{
     switch (errorCode) {
         //#region format error codes
         // with one code
-        case "FE-F": return "Ad geçerli değil";
-        case "FE-L": return "Soyad geçerli değil";
-        case "FE-C": return "Şirket adı geçerli değil";
-        case "FE-T": return "Telefon numarası geçerli değil";
-        case "FE-E": return "Email geçerli değil";
-        case "FE-P": return "Şifre geçerli değil";
+        case "FE-F": return "ad geçerli değil";
+        case "FE-L": return "soyad geçerli değil";
+        case "FE-C": return "şirket adı geçerli değil";
+        case "FE-T": return "telefon numarası geçerli değil";
+        case "FE-E": return "email geçerli değil";
+        case "FE-P": return "şifre geçerli değil";
 
         // with two code
-        case "FE-FL": return "Ad ve Soyad geçerli değil";
-        case "FE-FC": return "Ad ve Şirket Adı geçerli değil";
-        case "FE-FT": return "Ad ve Telefon Numarası geçerli değil";
-        case "FE-FE": return "Ad ve Email geçerli değil";
-        case "FE-FP": return "Ad ve Şifre geçerli değil";
-        case "FE-LC": return "Soyad ve Şirket Adı geçerli değil";
-        case "FE-LT": return "Soyad ve Telefon geçerli değil";
-        case "FE-LE": return "Soyad ve Email geçerli değil";
-        case "FE-LP": return "Soyad ve Şifre geçerli değil";
-        case "FE-CT": return "Şirket Adı ve Telefon geçerli değil";
-        case "FE-CE": return "Şirket Adı ve Email geçerli değil";
-        case "FE-CP": return "Şirket Adı ve Şifre geçerli değil";
-        case "FE-TE": return "Telefon Numarası ve Email geçerli değil";
-        case "FE-TP": return "Telefon Numarası ve Şifre geçerli değil";
-        case "FE-EP": return "Email ve Şifre geçerli değil";
+        case "FE-FL": return "ad ve soyad geçerli değil";
+        case "FE-FC": return "ad ve şirket adı geçerli değil";
+        case "FE-FT": return "ad ve telefon numarası geçerli değil";
+        case "FE-FE": return "ad ve email geçerli değil";
+        case "FE-FP": return "ad ve şifre geçerli değil";
+        case "FE-LC": return "soyad ve şirket adı geçerli değil";
+        case "FE-LT": return "soyad ve telefon geçerli değil";
+        case "FE-LE": return "soyad ve email geçerli değil";
+        case "FE-LP": return "soyad ve şifre geçerli değil";
+        case "FE-CT": return "şirket adı ve telefon geçerli değil";
+        case "FE-CE": return "şirket adı ve email geçerli değil";
+        case "FE-CP": return "şirket adı ve şifre geçerli değil";
+        case "FE-TE": return "telefon numarası ve email geçerli değil";
+        case "FE-TP": return "telefon numarası ve şifre geçerli değil";
+        case "FE-EP": return "email ve şifre geçerli değil";
 
         // with three code
-        case "FE-FLC": return "Ad, Soyad ve Şirket Adı geçerli değil";
-        case "FE-FLT": return "Ad, Soyad ve Telefon Numarası geçerli değil";
-        case "FE-FLE": return "Ad, Soyad ve Email geçerli değil";
-        case "FE-FLP": return "Ad, Soyad ve Şifre geçerli değil";
-        case "FE-FCT": return "Ad, Şirket Adı ve Telefon Numarası geçerli değil";
-        case "FE-FCE": return "Ad, Şirket Adı ve Email geçerli değil";
-        case "FE-FCP": return "Ad, Şirket Adı ve Şifre geçerli değil";
-        case "FE-FTE": return "Ad, Telefon Numarası ve Email geçerli değil";
-        case "FE-FTP": return "Ad, Telefon Numarası ve Şifre geçerli değil";
-        case "FE-FEP": return "Ad, Email ve Şifre geçerli değil";
-        case "FE-LCT": return "Soyad, Şirket Adı ve Telefon Numarası geçerli değil";
-        case "FE-LCE": return "Soyad, Şirket Adı ve Email geçerli değil";
-        case "FE-LCP": return "Soyad, Şirket Adı ve Şifre geçerli değil";
-        case "FE-LTE": return "Soyad, Telefon Numarası ve Email geçerli değil";
-        case "FE-LTP": return "Soyad, Telefon Numarası ve Şifre geçerli değil";
-        case "FE-LEP": return "Soyad, Email ve Şifre geçerli değil";
-        case "FE-CTE": return "Şirket Adı, Telefon Numarası ve Email geçerli değil";
-        case "FE-CTP": return "Şirket Adı, Telefon Numarası ve Şifre geçerli değil";
-        case "FE-CEP": return "Şirket Adı, Email ve Şifre geçerli değil";
-        case "FE-TEP": return "Telefon Numarası, Email ve Şifre geçerli değil";
+        case "FE-FLC": return "ad, soyad ve şirket adı geçerli değil";
+        case "FE-FLT": return "ad, soyad ve telefon numarası geçerli değil";
+        case "FE-FLE": return "ad, soyad ve email geçerli değil";
+        case "FE-FLP": return "ad, soyad ve şifre geçerli değil";
+        case "FE-FCT": return "ad, şirket adı ve telefon numarası geçerli değil";
+        case "FE-FCE": return "ad, şirket adı ve email geçerli değil";
+        case "FE-FCP": return "ad, şirket adı ve şifre geçerli değil";
+        case "FE-FTE": return "ad, telefon numarası ve email geçerli değil";
+        case "FE-FTP": return "ad, telefon numarası ve şifre geçerli değil";
+        case "FE-FEP": return "ad, email ve şifre geçerli değil";
+        case "FE-LCT": return "soyad, şirket adı ve telefon numarası geçerli değil";
+        case "FE-LCE": return "soyad, şirket adı ve email geçerli değil";
+        case "FE-LCP": return "soyad, şirket adı ve şifre geçerli değil";
+        case "FE-LTE": return "soyad, telefon numarası ve email geçerli değil";
+        case "FE-LTP": return "soyad, telefon numarası ve şifre geçerli değil";
+        case "FE-LEP": return "soyad, email ve şifre geçerli değil";
+        case "FE-CTE": return "şirket adı, telefon numarası ve email geçerli değil";
+        case "FE-CTP": return "şirket adı, telefon numarası ve şifre geçerli değil";
+        case "FE-CEP": return "şirket adı, email ve şifre geçerli değil";
+        case "FE-TEP": return "telefon numarası, email ve şifre geçerli değil";
 
         // with four code
-        case "FE-FLCT": return "Ad, Soyad, Şirket Adı ve Telefon Numarası geçerli değil";
-        case "FE-FLCE": return "Ad, Soyad, Şirket Adı ve Email geçerli değil";
-        case "FE-FLCP": return "Ad, Soyad, Şirket Adı ve Şifre geçerli değil";
-        case "FE-FLTE": return "Ad, Soyad, Telefon Numarası ve Email geçerli değil";
-        case "FE-FLTP": return "Ad, Soyad, Telefon Numarası ve Şifre geçerli değil";
-        case "FE-FLEP": return "Ad, Soyad, Email ve Şifre geçerli değil";
-        case "FE-FCTE": return "Ad, Şirket Adı, Telefon Numarası ve Email geçerli değil";
-        case "FE-FCTP": return "Ad, Şirket Adı, Telefon Numarası ve Şifre geçerli değil";
-        case "FE-FCEP": return "Ad, Şirket Adı, Email ve Şifre geçerli değil";
-        case "FE-FTEP": return "Ad, Telefon Numarası, Email ve Şifre geçerli değil";
-        case "FE-LCTE": return "Soyad, Şirket Adı, Telefon Numarası ve Email geçerli değil";
-        case "FE-LCTP": return "Soyad, Şirket Adı, Telefon Numarası ve Şifre geçerli değil";
-        case "FE-LCEP": return "Soyad, Şirket Adı, Email ve Şifre geçerli değil";
-        case "FE-LTEP": return "Soyad, Telefon Numarası, Email ve Şifre geçerli değil";
-        case "FE-CTEP": return "Şirket Adı, Telefon Numarası, Email ve Şifre geçerli değil";
+        case "FE-FLCT": return "ad, soyad, şirket adı ve telefon numarası geçerli değil";
+        case "FE-FLCE": return "ad, soyad, şirket adı ve email geçerli değil";
+        case "FE-FLCP": return "ad, soyad, şirket adı ve şifre geçerli değil";
+        case "FE-FLTE": return "ad, soyad, telefon numarası ve email geçerli değil";
+        case "FE-FLTP": return "ad, soyad, telefon numarası ve şifre geçerli değil";
+        case "FE-FLEP": return "ad, soyad, email ve şifre geçerli değil";
+        case "FE-FCTE": return "ad, şirket adı, telefon numarası ve email geçerli değil";
+        case "FE-FCTP": return "ad, şirket adı, telefon numarası ve şifre geçerli değil";
+        case "FE-FCEP": return "ad, şirket adı, email ve şifre geçerli değil";
+        case "FE-FTEP": return "ad, telefon numarası, email ve şifre geçerli değil";
+        case "FE-LCTE": return "soyad, şirket adı, telefon numarası ve email geçerli değil";
+        case "FE-LCTP": return "soyad, şirket adı, telefon numarası ve şifre geçerli değil";
+        case "FE-LCEP": return "soyad, şirket adı, email ve şifre geçerli değil";
+        case "FE-LTEP": return "soyad, telefon numarası, email ve şifre geçerli değil";
+        case "FE-CTEP": return "şirket adı, telefon numarası, email ve şifre geçerli değil";
 
         // with five code
-        case "FE-FLCTE": return "Ad, Soyad, Şirket Adı, Telefon Numarası ve Email geçerli değil";
-        case "FE-FLCTP": return "Ad, Soyad, Şirket Adı, Telefon Numarası ve Şifre geçerli değil";
-        case "FE-FLCEP": return "Ad, Soyad, Şirket Adı, Email ve Şifre geçerli değil";
-        case "FE-FLTEP": return "Ad, Soyad, Telefon Numarası, Email ve Şifre geçerli değil";
-        case "FE-FCTEP": return "Ad, Şirket Adı, Telefon Numarası, Email ve Şifre geçerli değil";
-        case "FE-LCTEP": return "Soyad, Şirket Adı, Telefon Numarası, Email ve Şifre geçerli değil";
+        case "FE-FLCTE": return "ad, soyad, şirket adı, telefon numarası ve email geçerli değil";
+        case "FE-FLCTP": return "ad, soyad, şirket adı, telefon numarası ve şifre geçerli değil";
+        case "FE-FLCEP": return "ad, soyad, şirket adı, email ve şifre geçerli değil";
+        case "FE-FLTEP": return "ad, soyad, telefon numarası, email ve şifre geçerli değil";
+        case "FE-FCTEP": return "ad, şirket adı, telefon numarası, email ve şifre geçerli değil";
+        case "FE-LCTEP": return "soyad, şirket adı, telefon numarası, email ve şifre geçerli değil";
 
         // with six code
-        case "FE-FLCTEP": return "Ad, Soyad, Şirket Adı, Telefon Numarası, Email ve Şifre geçerli değil";
+        case "FE-FLCTEP": return "ad, soyad, şirket adı, telefon numarası, email ve şifre geçerli değil";
         //#endregion
 
         //#region verification error codes
-        case "VE-T": return "Telefon numarası Yanlış";
-        case "VE-P": return "Şifre yanlış";
+        case "VE-T": return "telefon numarası Yanlış";
+        case "VE-P": return "şifre yanlış";
         //#endregion
 
         //#region conflict error codes
-        case "CE-T": return "Girilen Telefon Numarası daha önceden kullanılmış";
-        case "CE-E": return "Girilen Email daha önceden kullanılmış";
-        case "CE-TE": return "Girilen Telefon Numarası ve Email daha önceden kullanılmış";
+        case "CE-T": return "girilen telefon numarası daha önceden kullanılmış";
+        case "CE-E": return "girilen email daha önceden kullanılmış";
+        case "CE-TE": return "girilen telefon numarası ve email daha önceden kullanılmış";
         //#endregion
     };
 }
 
-export function writeErrorMessage(responseText, resultLabelId) {
+export function writeErrorMessage(responseText, resultLabelId)
+{
     var errorMsg = JSON.parse(responseText);
     var convertedErrorMsg = convertErrorCodeToErrorMessage(errorMsg["errorCode"]);
     updateResultLabel(convertedErrorMsg, "rgb(255, 75, 75)", resultLabelId);
 }
 
-export function updateResultLabel(message, color, resultLabelId) {
+export function updateResultLabel(message, color, resultLabelId)
+{
+    //#region reset resultLabel
     let resultLabel = $(resultLabelId);
+    resultLabel.empty();
+    //#endregion
 
     //#region change color
     resultLabel.attr("style",
@@ -106,8 +112,6 @@ export function updateResultLabel(message, color, resultLabelId) {
         margin-bottom: 30px;`);
     //#endregion
 
-    //#region update
-    resultLabel.empty();  // reset
-    resultLabel.text(message);  // add
-    //#endregion
+    // update
+    resultLabel.text(message);
 }

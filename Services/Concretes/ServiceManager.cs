@@ -14,6 +14,7 @@ namespace Services.Concretes
 		private readonly Lazy<IMachineService> _machineService;
 		private readonly Lazy<IFileService> _fileService;
 		private readonly Lazy<IDtoConverterService> _dtoConverterService;
+		private readonly Lazy<IDataConverterService> _dataConverterService;
 		
 		public IUserService UserService => _userService.Value;
 		public ICompanyService CompanyService => _companyService.Value;
@@ -21,23 +22,27 @@ namespace Services.Concretes
 		public IMachineService MachineService => _machineService.Value;
 		public IFileService FileService => _fileService.Value;
 		public IDtoConverterService DtoConverterServcice => _dtoConverterService.Value;
+		public IDataConverterService DataConverterService => _dataConverterService.Value;
 
 		public ServiceManager(IRepositoryManager repository,
 			IConfigManager config,
 			IMapper mapper)
         {
 			_userService = new Lazy<IUserService>(() => 
-				new UserService(repository, config, mapper));
+				new UserService(repository, config, mapper, DataConverterService));
 			_companyService = new Lazy<ICompanyService>(() => 
 				new CompanyService(repository));
 			_mailService = new Lazy<IMailService>(() =>
 				new MailService(config));
 			_machineService = new Lazy<IMachineService>(() => 
-				new MachineService(repository, DtoConverterServcice, mapper));
+				new MachineService(repository, DtoConverterServcice, 
+					DataConverterService, mapper));
 			_fileService = new Lazy<IFileService>(() => 
 				new FileService(config));
 			_dtoConverterService = new Lazy<IDtoConverterService>(() =>
 				new DtoConverterService(repository));
+			_dataConverterService = new Lazy<IDataConverterService>(() =>
+				new DataConverterService(repository));
         }
 	}
 }

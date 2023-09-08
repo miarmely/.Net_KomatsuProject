@@ -1,12 +1,10 @@
 ﻿using AutoMapper;
-using Entities.ConfigModels;
 using Entities.ConfigModels.Contracts;
 using Entities.DataModels;
-using Entities.DtoModels;
+using Entities.DtoModels.User;
 using Entities.ErrorModels;
 using Entities.Exceptions;
 using Entities.RelationModels;
-using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Repositories.Contracts;
 using Services.Contracts;
@@ -19,19 +17,22 @@ using System.Text;
 
 namespace Services.Concretes
 {
-	public class UserService : IUserService
+    public class UserService : IUserService
 	{
 		private readonly IRepositoryManager _repository;
 		private readonly IConfigManager _config;
 		private readonly IMapper _mapper;
+		private readonly IDataConverterService _dataConverterService;
 
 		public UserService(IRepositoryManager repository,
 			IConfigManager config,
-			IMapper mapper)
+			IMapper mapper,
+			IDataConverterService dataConverterService)
 		{
 			_repository = repository;
 			_config = config;
 			_mapper = mapper;
+			_dataConverterService = dataConverterService;
 		}
 
 		public async Task<string> LoginAsync(UserDtoForLogin UserDtoL)
@@ -59,7 +60,8 @@ namespace Services.Concretes
 			return await GenerateTokenForUserAsync(user.Id);
 		}
 
-		public async Task RegisterAsync(UserDtoForRegister userDtoR)
+		public async Task RegisterAsync(UserDtoForRegisterWithoutRole userDtoR, 
+			string roleName)
 		{
 			#region control conflict errors
 			await ConflictControlAsync(u =>
@@ -105,7 +107,7 @@ namespace Services.Concretes
 
 			#region create userAndRole
 			var role = await _repository.RoleRepository
-				.GetRoleByNameAsync(_config.UserSettings.DefaultRole, false);
+				.GetRoleByNameAsync(roleName, false);
 
 			// create,
 			var entity = new UserAndRole()
@@ -123,7 +125,7 @@ namespace Services.Concretes
 
 		private async Task ConflictControlAsync(
 			Expression<Func<User, bool>> forWhichKeys,
-			UserDtoForRegister userDtoR)
+			UserDtoForRegisterWithoutRole userDtoR)
 		{
 			#region get users
 			var users = await _repository.UserRepository

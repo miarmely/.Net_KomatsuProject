@@ -1,28 +1,28 @@
 ﻿using AutoMapper;
-using Entities.DtoModels;
+using Entities.DtoModels.Machine;
 using Entities.Exceptions;
 using Microsoft.EntityFrameworkCore.Diagnostics;
-using Microsoft.EntityFrameworkCore.Query.Internal;
 using Repositories.Contracts;
 using Services.Contracts;
-using System.Net;
-using System.Text;
 
 namespace Services.Concretes
 {
-	public class MachineService : IMachineService
+    public class MachineService : IMachineService
 	{
 		private readonly IRepositoryManager _repository;
 		private readonly IDtoConverterService _dtoConverterService;
+		private readonly IDataConverterService _dataConverterService;
 		private readonly IMapper _mapper;
 
 		public MachineService(IRepositoryManager repository,
 			IDtoConverterService dtoConverterService,
+			IDataConverterService dataConverterService,
 			IMapper mapper)
 		{
 			_repository = repository;
 			_dtoConverterService = dtoConverterService;
 			_mapper = mapper;
+			_dataConverterService = dataConverterService;
 		}
 
 		public async Task CreateMachineAsync(MachineDtoForCreate machineDtoC)
@@ -36,7 +36,7 @@ namespace Services.Concretes
 			#endregion
 
 			#region convert machineDto to machine
-			var machine = await _dtoConverterService
+			var machine = await _dataConverterService
 				.MachineDtoToMachineAsync(machineDto);
 			#endregion
 

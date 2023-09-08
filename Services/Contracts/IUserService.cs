@@ -1,10 +1,10 @@
-﻿using Entities.DtoModels;
+﻿using Entities.DtoModels.User;
 
 namespace Services.Contracts
 {
-	public interface IUserService
+    public interface IUserService
 	{
 		Task<string> LoginAsync(UserDtoForLogin userDtoL);
-		Task RegisterAsync(UserDtoForRegister userDtoR);
+		Task RegisterAsync(UserDtoForRegisterWithoutRole userDtoR, string roleName);
 	}
 }

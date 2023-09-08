@@ -18,14 +18,10 @@
 		<!-- font-awesome icons -->
 		<link rel="stylesheet" href="~/css/font.css" type="text/css"/>
 		<link href="~/css/font-awesome.css" rel="stylesheet"> 
-		<link rel="stylesheet" href="~/css/morris.css" type="text/css"/>
-		<!-- calendar -->
-		<link rel="stylesheet" href="~/css/monthly.css">
-		<!-- //calendar -->
 		<!-- //font-awesome icons -->
 		<script src="~/js/jquery2.0.3.min.js"></script>
-		<script src="~/js/raphael-min.js"></script> 
-		<script src="~/js/morris.js"></script>
+		<script type="module" src="~/js/createUser.js"></script>
+		<script type="module" src="~/js/tools.js"></script>
 	</head>
 	<body>
 		<section id="container">
@@ -85,10 +81,10 @@
 									<span>Kullanıcılar</span>
 								</a>
 								<ul class="sub">
-									<li><a href="#">Yeni Oluştur</a></li>
-									<li><a href="#">Kayıtlı Olanları Görüntüle</a></li>
-									<li><a href="#">Bilgileri Güncelle</a></li>
-									<li><a href="#">Sil</a></li>
+									<li><a href="/user/create">Yeni Oluştur</a></li>
+									<li><a href="/user/display">Kayıtlı Olanları Görüntüle</a></li>
+									<li><a href="/user/update">Bilgileri Güncelle</a></li>
+									<li><a href="/user/delete">Sil</a></li>
 								</ul>
 							</li>
 							<li class="sub-menu">
@@ -135,9 +131,19 @@
 			<!--sidebar end-->
 
 			<!--main content start-->
-			<div>
-				@RenderBody();
-			</div>
+			<section id="main-content">
+				<section class="wrapper">
+					@RenderBody();
+				</section>
+
+				<!-- footer -->
+				<div class="footer">
+					<div class="wthree-copyright">
+						<p>© 2017 Visitors. All rights reserved | Design by <a href="http://w3layouts.com">W3layouts</a></p>
+					</div>
+				</div>
+				<!-- / footer -->
+			</section>
 			<!--main content end-->
 		</section>
 
