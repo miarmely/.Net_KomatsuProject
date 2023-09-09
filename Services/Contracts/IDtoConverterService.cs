@@ -7,6 +7,6 @@ namespace Services.Contracts
 	{
 		Task<List<MachineDto>> MachineToMachineDtoAsync(List<Machine> machines);
 		Task<MachineDto> MachineToMachineDtoAsync(Machine machines);
-
+		Task<ICollection<UserDto>> UserToUserDtoAsync(List<User> users);
 	}
 }

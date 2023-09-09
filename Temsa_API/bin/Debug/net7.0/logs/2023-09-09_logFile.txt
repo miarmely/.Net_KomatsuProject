@@ -10,3 +10,6 @@
 11:51:58.5397  WARN  LogDetails { Controller = User, Action = Register, ErrorCode = FE-T, CreatedAt = 9/9/2023 8:51:58 AM }
 11:53:51.2601  WARN  LogDetails { Controller = User, Action = Register, ErrorCode = CE-TE, CreatedAt = 9/9/2023 8:53:51 AM }
 11:56:29.4980  WARN  LogDetails { Controller = User, Action = CreateUser, ErrorCode = CE-TE, CreatedAt = 9/9/2023 8:56:29 AM }
+16:33:17.2784  WARN  LogDetails { Controller = User, Action = GetAllUsersWithPaging, ErrorCode = NF-U, CreatedAt = 9/9/2023 1:33:17 PM }
+16:35:31.8292  WARN  LogDetails { Controller = User, Action = Register, ErrorCode = FE-TE, CreatedAt = 9/9/2023 1:35:31 PM }
+16:39:20.6931  WARN  LogDetails { Controller = User, Action = Register, ErrorCode = CE-T, CreatedAt = 9/9/2023 1:39:20 PM }

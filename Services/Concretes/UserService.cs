@@ -4,7 +4,9 @@ using Entities.DataModels;
 using Entities.DtoModels;
 using Entities.ErrorModels;
 using Entities.Exceptions;
+using Entities.QueryModels;
 using Entities.RelationModels;
+using Microsoft.AspNetCore.Http;
 using Microsoft.IdentityModel.Tokens;
 using Repositories.Contracts;
 using Services.Contracts;
@@ -14,6 +16,7 @@ using System.Linq.Expressions;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
+using System.Text.Json;
 
 namespace Services.Concretes
 {
@@ -22,17 +25,17 @@ namespace Services.Concretes
 		private readonly IRepositoryManager _manager;
 		private readonly IConfigManager _config;
 		private readonly IMapper _mapper;
-		private readonly IDataConverterService _dataConverterService;
+		private readonly IDtoConverterService _dtoConverterService;
 
 		public UserService(IRepositoryManager manager,
 			IConfigManager config,
 			IMapper mapper,
-			IDataConverterService dataConverterService)
+			IDtoConverterService dtoConverterService)
 		{
 			_manager = manager;
 			_config = config;
 			_mapper = mapper;
-			_dataConverterService = dataConverterService;
+			_dtoConverterService = dtoConverterService;
 		}
 
 		public async Task<string> LoginAsync(UserDtoForLogin UserDtoL)
@@ -145,6 +148,42 @@ namespace Services.Concretes
 			await _manager.SaveAsync();
 			#endregion
 		}
+		
+		public async Task<ICollection<UserDto>> GetAllUsersWithPagingAsync(
+			PagingParameters pagingParameters, HttpResponse response)
+		{
+			#region when user not found (throw)
+			var users = await _manager.UserRepository
+				.GetAllUsersAsync(pagingParameters);
+
+			if (users.Count == 0)
+				throw new ErrorWithCodeException(404, "NF-U", "Not Found - User");
+			#endregion
+
+			#region convert user to userDto
+			var userDtos = await _dtoConverterService
+				.UserToUserDtoAsync(users);
+			#endregion
+
+			#region add pagination details to headers
+			var metaData = new
+			{
+				users.TotalPage,
+				users.TotalCount,
+				users.CurrentPage,
+				users.PageSize,
+				users.HasPrevious,
+				users.HasNext
+			};
+
+			response.Headers.Add("User-Pagination", JsonSerializer.Serialize(metaData));
+			#endregion
+
+			return userDtos;
+		}
+
+
+		#region private
 
 		private async Task ConflictControlAsync(
 			Expression<Func<User, bool>> condition,
@@ -291,5 +330,7 @@ namespace Services.Concretes
 
 			return company;
 		}
+
+		#endregion
 	}
 }

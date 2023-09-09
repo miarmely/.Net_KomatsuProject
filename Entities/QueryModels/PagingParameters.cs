@@ -2,10 +2,12 @@
 {
 	public class PagingParameters
 	{
+		public int PageNumber { get; set; } = 1;
+
+		#region pageSize
 		private const int MaxPageSize = 50;
 
 		private int _pageSize = 10;
-		public int PageNumber { get; set; } = 1;
 		public int PageSize
 		{
 			get
@@ -15,8 +17,11 @@
 			set
 			{
 				// control maxPageSize
-				_pageSize = (value > 50) ? MaxPageSize : value;
+				_pageSize = value > 50 ?
+					MaxPageSize
+					: value;
 			}
 		}
+		#endregion
 	}
 }

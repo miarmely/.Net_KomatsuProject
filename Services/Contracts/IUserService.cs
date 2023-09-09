@@ -1,4 +1,6 @@
 ﻿using Entities.DtoModels;
+using Entities.QueryModels;
+using Microsoft.AspNetCore.Http;
 
 namespace Services.Contracts
 {
@@ -7,5 +9,7 @@ namespace Services.Contracts
 		Task<string> LoginAsync(UserDtoForLogin userDtoL);
 		Task RegisterAsync(UserDtoForRegister userDtoR);
 		Task CreateUserAsync(UserDtoForCreate userDtoC);
+		Task<ICollection<UserDto>> GetAllUsersWithPagingAsync(
+			PagingParameters pagingParameters, HttpResponse response);
 	}
 }

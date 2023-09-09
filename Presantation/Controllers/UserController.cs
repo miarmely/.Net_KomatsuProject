@@ -40,7 +40,7 @@ namespace Presantation.Controllers
             await _manager.UserService
                 .RegisterAsync(userDtoR);
 
-            return StatusCode(StatusCodes.Status201Created, new {});
+            return StatusCode(StatusCodes.Status201Created);
         }
 
 
@@ -52,15 +52,18 @@ namespace Presantation.Controllers
             await _manager.UserService
                 .CreateUserAsync(userDtoC);
 
-			return StatusCode(StatusCodes.Status201Created, new { });
+			return StatusCode(StatusCodes.Status201Created);
 		}
 
 
         [HttpGet("display")]
-        public async Task<IActionResult> DisplayUserWithPagingAsync(
+        public async Task<IActionResult> GetAllUsersWithPagingAsync(
             [FromQuery] PagingParameters pagingParameters)
         {
-            return Ok();
+            var entity = await _manager.UserService
+                .GetAllUsersWithPagingAsync(pagingParameters, Response);
+
+            return Ok(entity);
         }
 	}
 }

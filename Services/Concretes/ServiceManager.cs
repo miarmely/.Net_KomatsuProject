@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Entities.ConfigModels.Contracts;
+using Microsoft.AspNetCore.Http;
 using Repositories.Contracts;
 using Services.Contracts;
 
@@ -29,7 +30,7 @@ namespace Services.Concretes
 			IMapper mapper)
         {
 			_userService = new Lazy<IUserService>(() => 
-				new UserService(repository, config, mapper, DataConverterService));
+				new UserService(repository, config, mapper, DtoConverterServcice));
 			_companyService = new Lazy<ICompanyService>(() => 
 				new CompanyService(repository));
 			_mailService = new Lazy<IMailService>(() =>

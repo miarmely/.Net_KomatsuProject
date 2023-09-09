@@ -9,15 +9,15 @@ namespace Repositories.Utilies
 		public int CurrentPage { get; private set; }
 		public int PageSize { get; private set; }
 		public bool HasPrevious => CurrentPage > 1;
-		public bool HasNext => CurrentPage < 50;
+		public bool HasNext => CurrentPage < TotalPage;
 
 		public PagingList(List<T> entity, int totalCount, int pageNumber, int pageSize)
 		{
 			#region initialize properties
-			TotalPage = (int)Math.Ceiling(TotalCount / (double)PageSize);
 			TotalCount = totalCount;
 			CurrentPage = pageNumber;
 			PageSize = pageSize;
+			TotalPage = (int)Math.Ceiling(totalCount / (double)pageSize);
 			#endregion
 
 			// add source to list
