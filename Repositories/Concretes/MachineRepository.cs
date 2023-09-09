@@ -1,7 +1,9 @@
 ﻿using Entities.DataModels;
+using Entities.QueryModels;
 using Microsoft.EntityFrameworkCore;
 using Repositories.Contracts;
 using Repositories.EF;
+using Repositories.Utilies;
 using System.Linq.Expressions;
 
 namespace Repositories.Concretes
@@ -17,25 +19,38 @@ namespace Repositories.Concretes
 				.SingleOrDefaultAsync();
 
 		#region GetAllMachinesAsync
-		public async Task<List<Machine>> GetAllMachinesAsync(bool trackChanges = false) =>
-			await base
-				.FindAll(trackChanges)
-				.ToListAsync();
+		/*
+		 * default
+		 */
+		public async Task<PagingList<Machine>> GetAllMachinesAsync(
+			PagingParameters pagingParameters,
+			bool trackChanges = false) =>
+				await PagingList<Machine>
+					.ToPagingListAsync(
+						base.FindAll(trackChanges),
+						pagingParameters.PageNumber,
+						pagingParameters.PageSize);
 		/*
 		 * with orderBy
 		 */
-		public async Task<List<Machine>> GetAllMachinesAsync<TResult>(
+		public async Task<PagingList<Machine>> GetAllMachinesAsync<TResult>(
+			PagingParameters pagingParameters,
 			Expression<Func<Machine, TResult>> orderBy,
 			bool asAscending = true,
 			bool trackChanges = false) =>
-				await base
-					.ControlOrderByAsync(
-						base.FindAll(trackChanges),
-						orderBy,
-						asAscending);
+				await PagingList<Machine>
+					.ToPagingListAsync(
+						asAscending ?
+							base.FindAll(trackChanges).OrderBy(orderBy)
+							: base.FindAll(trackChanges).OrderByDescending(orderBy),
+						pagingParameters.PageNumber,
+						pagingParameters.PageSize);
 		#endregion
 
 		#region GetMachinesByConditionAsync
+		/*
+		 * default
+		 */
 		public async Task<List<Machine>> GetMachinesByConditionAsync(
 			Expression<Func<Machine, bool>> expression,
 			bool trackChanges) =>
@@ -50,11 +65,15 @@ namespace Repositories.Concretes
 			Expression<Func<Machine, TResult>> orderBy,
 			bool asAscending = true,
 			bool trackChanges = false) =>
-				await base
-					.ControlOrderByAsync(
-						base.FindWithCondition(condition, trackChanges),
-						orderBy,
-						asAscending);
+				asAscending ?
+					await base
+						.FindWithCondition(condition, trackChanges)
+						.OrderBy(orderBy)
+						.ToListAsync()
+					: await base
+						.FindWithCondition(condition, trackChanges)
+						.OrderByDescending(orderBy)
+						.ToListAsync();
 		#endregion
 	}
 }

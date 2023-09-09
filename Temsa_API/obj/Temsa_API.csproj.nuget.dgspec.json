@@ -40,9 +40,9 @@
         "net7.0": {
           "targetAlias": "net7.0",
           "dependencies": {
-            "Microsoft.AspNetCore.Identity.EntityFrameworkCore": {
+            "Microsoft.Extensions.Options": {
               "target": "Package",
-              "version": "[7.0.10, )"
+              "version": "[7.0.1, )"
             }
           },
           "imports": [

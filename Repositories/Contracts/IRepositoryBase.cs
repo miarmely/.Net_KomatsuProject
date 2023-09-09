@@ -11,6 +11,5 @@ namespace Repositories.Contracts
 			, bool trackChanges);
 		void Update(T entity);
 		void Delete(T entity);
-		Task<List<T>> ControlOrderByAsync<TResult>(IQueryable<T> entity, Expression<Func<T, TResult>> orderBy, bool asAscending);
 	}
 }

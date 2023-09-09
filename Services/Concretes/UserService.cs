@@ -19,17 +19,17 @@ namespace Services.Concretes
 {
     public class UserService : IUserService
 	{
-		private readonly IRepositoryManager _repository;
+		private readonly IRepositoryManager _manager;
 		private readonly IConfigManager _config;
 		private readonly IMapper _mapper;
 		private readonly IDataConverterService _dataConverterService;
 
-		public UserService(IRepositoryManager repository,
+		public UserService(IRepositoryManager manager,
 			IConfigManager config,
 			IMapper mapper,
 			IDataConverterService dataConverterService)
 		{
-			_repository = repository;
+			_manager = manager;
 			_config = config;
 			_mapper = mapper;
 			_dataConverterService = dataConverterService;
@@ -38,7 +38,7 @@ namespace Services.Concretes
 		public async Task<string> LoginAsync(UserDtoForLogin UserDtoL)
 		{
 			#region get user by telNo
-			var user = await _repository.UserRepository
+			var user = await _manager.UserRepository
 				.GetUserByTelNoAsync(UserDtoL.TelNo, false);
 			#endregion
 
@@ -60,54 +60,36 @@ namespace Services.Concretes
 			return await GenerateTokenForUserAsync(user.Id);
 		}
 
-		public async Task RegisterAsync(UserDtoForRegisterWithoutRole userDtoR, 
-			string roleName)
+		public async Task RegisterAsync(UserDtoForRegister userDtoR)
 		{
 			#region control conflict errors
+			var userDto = _mapper.Map<UserDto>(userDtoR);
+
 			await ConflictControlAsync(u =>
-				u.TelNo.Equals(userDtoR.TelNo)  // telNo
-				|| u.Email.Equals(userDtoR.Email)  // email
-				, userDtoR);
-			#endregion
-
-			#region get company
-			var company = await _repository.CompanyRepository
-				.GetCompanyByNameAsync(userDtoR.CompanyName, false);
-
-			#region create company if not exists on database
-			if (company == null)
-			{
-				company = new Company()
-				{
-					Name = userDtoR.CompanyName
-				};
-
-				_repository.CompanyRepository
-					.Create(company);
-
-				await _repository.SaveAsync();
-			}
-			#endregion
-
+				u.TelNo.Equals(userDto.TelNo)  // telNo
+				|| u.Email.Equals(userDto.Email)  // email
+				, userDto);
 			#endregion
 
 			#region convert userDtoR to user
+			var company = await GetCompanyAndCreateIfNotExistsAsync(userDtoR.CompanyName);
+			
 			var user = _mapper.Map<User>(userDtoR);
-
 			user.CompanyId = company.Id;
-			user.Password = await ComputeMd5Async(user.Password);
+			user.Password = await ComputeMd5Async(userDtoR.Password);
 			#endregion
 
 			#region create user
-			_repository.UserRepository
+			_manager.UserRepository
 				.Create(user);
 
-			await _repository.SaveAsync();
+			await _manager.SaveAsync();
 			#endregion
 
 			#region create userAndRole
-			var role = await _repository.RoleRepository
-				.GetRoleByNameAsync(roleName, false);
+			// get "User" role
+			var role = await _manager.RoleRepository
+				.GetRoleByNameAsync("User", false);
 
 			// create,
 			var entity = new UserAndRole()
@@ -116,20 +98,61 @@ namespace Services.Concretes
 				RoleId = role.Id
 			};
 
-			_repository.UserAndRoleRepository
+			_manager.UserAndRoleRepository
 				.Create(entity);
 
-			await _repository.SaveAsync();
+			await _manager.SaveAsync();
+			#endregion
+		}
+
+		public async Task CreateUserAsync(UserDtoForCreate userDtoC)
+		{
+			#region control conflict error
+			var userDto = _mapper.Map<UserDto>(userDtoC);
+
+			await ConflictControlAsync(u =>
+				u.Email.Equals(userDto.Email)
+				|| u.TelNo.Equals(userDto.TelNo)
+				, userDto);
+			#endregion
+
+			#region convert userDtoC to user
+			var company = await GetCompanyAndCreateIfNotExistsAsync(userDtoC.CompanyName);
+		
+			var user = _mapper.Map<User>(userDtoC);
+			user.CompanyId = company.Id;
+			user.Password = await ComputeMd5Async(userDtoC.Password);
+			#endregion
+
+			#region create user
+			_manager.UserRepository
+				.Create(user);
+
+			await _manager.SaveAsync();
+			#endregion
+
+			#region create userAndRole
+			var role = await _manager.RoleRepository
+				.GetRoleByNameAsync(userDtoC.RoleName, false);
+
+			_manager.UserAndRoleRepository
+				.Create(new UserAndRole
+				{
+					UserId = user.Id,
+					RoleId = role.Id
+				});
+
+			await _manager.SaveAsync();
 			#endregion
 		}
 
 		private async Task ConflictControlAsync(
-			Expression<Func<User, bool>> forWhichKeys,
-			UserDtoForRegisterWithoutRole userDtoR)
+			Expression<Func<User, bool>> condition,
+			UserDto userDto)
 		{
 			#region get users
-			var users = await _repository.UserRepository
-				.GetUsersByConditionAsync(forWhichKeys);
+			var users = await _manager.UserRepository
+				.GetUsersByConditionAsync(condition);
 			#endregion
 
 			#region control conflict error
@@ -142,18 +165,19 @@ namespace Services.Concretes
 					ErrorDescription = "Conflict Error - ",
 				};
 
-				#region when telNo already exists
-				if (users.Any(u => u.TelNo.Equals(userDtoR.TelNo)))
+				#region control telNo
+				if (users.Any(u => u.TelNo.Equals(userDto.TelNo)))
 					UpdateErrorCode(ref errorModel, "T", "TelNo ");
 				#endregion
 
-				#region when email already exists
-				if (users.Any(u => u.Email.Equals(userDtoR.Email)))
+				#region control email
+				if (users.Any(u => u.Email.Equals(userDto.Email)))
 					UpdateErrorCode(ref errorModel, "E", "Email ");
 				#endregion
 
 				#region throw exception
 				errorModel.ErrorDescription = errorModel.ErrorDescription.TrimEnd();
+
 				throw new ErrorWithCodeException(errorModel);
 				#endregion
 			}
@@ -171,7 +195,7 @@ namespace Services.Concretes
 		private async Task<ICollection<string>> GetRoleNamesOfUserAsync(Guid userId)
 		{
 			#region get userAndRoles
-			var userAndRoles = await _repository.UserAndRoleRepository
+			var userAndRoles = await _manager.UserAndRoleRepository
 				.GetUserAndRolesByUserIdAsync(userId, false);
 			#endregion
 
@@ -181,7 +205,7 @@ namespace Services.Concretes
 
 			foreach (var userAndRole in userAndRoles)
 			{
-				role = await _repository.RoleRepository
+				role = await _manager.RoleRepository
 					.GetRoleByIdAsync(userAndRole.RoleId, false);
 
 				roleNames.Add(role.Name);
@@ -241,6 +265,31 @@ namespace Services.Concretes
 
 			return new JwtSecurityTokenHandler()
 				.WriteToken(token);
+		}
+
+		private async Task<Company> GetCompanyAndCreateIfNotExistsAsync(string companyName)
+		{
+			#region get company
+			var company = await _manager.CompanyRepository
+				.GetCompanyByNameAsync(companyName, false);
+			#endregion
+
+			#region create company if not exists on database
+			if (company == null)
+			{
+				company = new Company()
+				{
+					Name = companyName
+				};
+
+				_manager.CompanyRepository
+					.Create(company);
+
+				await _manager.SaveAsync();
+			}
+			#endregion
+
+			return company;
 		}
 	}
 }

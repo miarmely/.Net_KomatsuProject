@@ -1,0 +1,12 @@
+11:43:27.2661  WARN  LogDetails { Controller = User, Action = Login, ErrorCode = FE-T, CreatedAt = 9/9/2023 8:43:27 AM }
+11:44:34.3955  WARN  LogDetails { Controller = User, Action = Login, ErrorCode = FE-P, CreatedAt = 9/9/2023 8:44:34 AM }
+11:44:39.8809  WARN  LogDetails { Controller = User, Action = Login, ErrorCode = FE-P, CreatedAt = 9/9/2023 8:44:39 AM }
+11:44:48.2787  WARN  LogDetails { Controller = User, Action = Login, ErrorCode = VE-P, CreatedAt = 9/9/2023 8:44:48 AM }
+11:44:53.3935  WARN  LogDetails { Controller = User, Action = Login, ErrorCode = VE-P, CreatedAt = 9/9/2023 8:44:53 AM }
+11:49:52.8966  WARN  LogDetails { Controller = User, Action = Login, ErrorCode = FE-P, CreatedAt = 9/9/2023 8:49:52 AM }
+11:49:55.2890  WARN  LogDetails { Controller = User, Action = Login, ErrorCode = FE-P, CreatedAt = 9/9/2023 8:49:55 AM }
+11:50:00.1814  WARN  LogDetails { Controller = User, Action = Register, ErrorCode = CE-T, CreatedAt = 9/9/2023 8:50:00 AM }
+11:51:53.3593  WARN  LogDetails { Controller = User, Action = Register, ErrorCode = CE-T, CreatedAt = 9/9/2023 8:51:53 AM }
+11:51:58.5397  WARN  LogDetails { Controller = User, Action = Register, ErrorCode = FE-T, CreatedAt = 9/9/2023 8:51:58 AM }
+11:53:51.2601  WARN  LogDetails { Controller = User, Action = Register, ErrorCode = CE-TE, CreatedAt = 9/9/2023 8:53:51 AM }
+11:56:29.4980  WARN  LogDetails { Controller = User, Action = CreateUser, ErrorCode = CE-TE, CreatedAt = 9/9/2023 8:56:29 AM }

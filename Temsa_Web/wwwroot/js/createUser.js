@@ -18,7 +18,7 @@ $(function () {
 
         $.ajax({
             method: "POST",
-            url: "https://localhost:7091/api/services/user/registerForWeb",
+            url: "https://localhost:7091/api/services/user/create",
             data: JSON.stringify(data),
             contentType: "application/json",
             success: () => {

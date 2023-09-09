@@ -2,7 +2,7 @@
 
 namespace Repositories.Utilies
 {
-	public class PagingList<T> : List<T>
+	public class PagingList<T> : List<T> where T : class
 	{
 		public int TotalPage { get; private set; }
 		public int TotalCount { get; private set; }
@@ -24,7 +24,7 @@ namespace Repositories.Utilies
 			base.AddRange(entity);
 		}
 
-		public static async Task<PagingList<T>> ToPagingList(IQueryable<T> source, int pageNumber, int pageSize)
+		public static async Task<PagingList<T>> ToPagingListAsync(IQueryable<T> source, int pageNumber, int pageSize)
 		{
 			#region get data for pageNumber
 			var entity = await source

@@ -5,6 +5,7 @@ namespace Services.Contracts
     public interface IUserService
 	{
 		Task<string> LoginAsync(UserDtoForLogin userDtoL);
-		Task RegisterAsync(UserDtoForRegisterWithoutRole userDtoR, string roleName);
+		Task RegisterAsync(UserDtoForRegister userDtoR);
+		Task CreateUserAsync(UserDtoForCreate userDtoC);
 	}
 }

@@ -12,17 +12,17 @@ namespace Presantation.Controllers
     [ModifyError]
     public class UserController : ControllerBase
     {
-        private readonly IServiceManager _services;
+        private readonly IServiceManager _manager;
 
         public UserController(IServiceManager services) =>
-			_services = services;
+			_manager = services;
 
 
         [HttpPost("login")]
         [ValidationUserFormat]
         public async Task<IActionResult> LoginAsync(UserDtoForLogin userDto)
         {
-            var token = await _services.UserService
+            var token = await _manager.UserService
                 .LoginAsync(userDto);
 
             return Ok(new
@@ -32,25 +32,25 @@ namespace Presantation.Controllers
         }
 
 
-        [HttpPost("registerForMobile")]
+        [HttpPost("register")]
         [ValidationUserFormat]
-        public async Task<IActionResult> RegisterForMobileAsync(
-            [FromBody] UserDtoForRegisterWithoutRole userDto)
+        public async Task<IActionResult> RegisterAsync(
+            [FromBody] UserDtoForRegister userDtoR)
         {
-            await _services.UserService
-                .RegisterAsync(userDto, "User");  // set user role as user
+            await _manager.UserService
+                .RegisterAsync(userDtoR);
 
             return StatusCode(StatusCodes.Status201Created, new {});
         }
 
 
-		[HttpPost("registerForWeb")]
+		[HttpPost("create")]
 		[ValidationUserFormat]
-		public async Task<IActionResult> RegisterForWebAsync(
-            [FromBody] UserDtoForRegisterWithRole userDto)
+		public async Task<IActionResult> CreateUserAsync(
+            [FromBody] UserDtoForCreate userDtoC)
 		{
-			await _services.UserService
-				.RegisterAsync(userDto, userDto.RoleName);
+            await _manager.UserService
+                .CreateUserAsync(userDtoC);
 
 			return StatusCode(StatusCodes.Status201Created, new { });
 		}

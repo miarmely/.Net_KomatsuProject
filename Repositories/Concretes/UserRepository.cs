@@ -13,44 +13,52 @@ namespace Repositories.Concretes
 		public UserRepository(RepositoryContext context) : base(context)
 		{ }
 
-		public async Task<User?> GetUserByIdAsync(Guid id,
+		public async Task<User?> GetUserByIdAsync(
+			Guid id,
 			bool trackChanges = false) =>
 				await base
 					.FindWithCondition(u => u.Id == id, trackChanges)
 					.FirstOrDefaultAsync();
 
-		public async Task<User?> GetUserByTelNoAsync(string telNo,
+		public async Task<User?> GetUserByTelNoAsync(
+			string telNo,
 			bool trackChanges = false) =>
 			await base
 				.FindWithCondition(u => u.TelNo.Equals(telNo), trackChanges)
 				.FirstOrDefaultAsync();
 
-		public async Task<User?> GetUserByEmailAsync(string email,
+		public async Task<User?> GetUserByEmailAsync(
+			string email,
 			bool trackChanges = false) =>
 			await base
 				.FindWithCondition(u => u.Email.Equals(email), trackChanges)
 				.FirstOrDefaultAsync();
 
 		#region GetAllUsersAsync
-		public async Task<List<User>> GetAllUsersAsync(
+		public async Task<PagingList<User>> GetAllUsersAsync(
 			PagingParameters pagingParameters,
 			bool trackChanges = false) =>
 				await PagingList<User>
-					.ToPagingList(
+					.ToPagingListAsync(
 						base.FindAll(trackChanges),
 						pagingParameters.PageNumber,
 						pagingParameters.PageSize);
 		/*
 		 * with orderBy
 		 */
-		public async Task<List<User>> GetAllUsersAsync<T>(
+		public async Task<PagingList<User>> GetAllUsersAsync<T>(
+			PagingParameters pagingParameters,
 			Expression<Func<User, T>> orderBy,
 			bool asAscending = true,
 			bool trackChanges = false) =>
-				await base.ControlOrderByAsync(
-					base.FindAll(trackChanges),
-					orderBy,
-					asAscending);
+				await PagingList<User>
+					.ToPagingListAsync(
+						asAscending ?
+							base.FindAll(trackChanges).OrderBy(orderBy)
+							: base.FindAll(trackChanges).OrderByDescending(orderBy),
+						pagingParameters.PageNumber,
+						pagingParameters.PageSize);
+		
 		#endregion
 
 		#region GetUsersByConditionAsync
@@ -68,10 +76,15 @@ namespace Repositories.Concretes
 			Expression<Func<User, T>> orderBy,
 			bool asAscending = true,
 			bool trackChanges = false) =>
-				await ControlOrderByAsync(
-					base.FindWithCondition(condition, trackChanges),
-					orderBy,
-					asAscending);
+				asAscending ?
+					await base
+						.FindWithCondition(condition, trackChanges)
+						.OrderBy(orderBy)
+						.ToListAsync()
+					: await base
+						.FindWithCondition(condition, trackChanges)
+						.OrderByDescending(orderBy)
+						.ToListAsync();
 		#endregion
 	}
 }

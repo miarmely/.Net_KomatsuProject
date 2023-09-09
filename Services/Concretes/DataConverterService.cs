@@ -1,6 +1,5 @@
 ﻿using Entities.DataModels;
 using Entities.DtoModels;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Repositories.Contracts;
 using Services.Contracts;
 

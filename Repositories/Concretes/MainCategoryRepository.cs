@@ -12,13 +12,15 @@ namespace Repositories.Concretes
         public MainCategoryRepository(RepositoryContext context) : base(context)
         {}
 
-		public async Task<MainCategory?> GetMainCategoryByIdAsync(int id, 
+		public async Task<MainCategory?> GetMainCategoryByIdAsync(
+			int id, 
 			bool trackChanges)
 			=> await base
 				.FindWithCondition(m => m.Id == id, trackChanges)
 				.SingleOrDefaultAsync();
 
-		public async Task<MainCategory?> GetMainCategoryByNameAsync(string name, 
+		public async Task<MainCategory?> GetMainCategoryByNameAsync(
+			string name, 
 			bool trackChanges)
 			=> await base
 				.FindWithCondition(m => m.Name.Equals(name), trackChanges)
@@ -33,14 +35,18 @@ namespace Repositories.Concretes
 		 * with orderBy
 		 */
 		public async Task<List<MainCategory>> GetAllMainCategoriesAsync<TResult>(
-			Expression<Func<MainCategory, TResult>> orderBy, 
-			bool asAscending = true, 
+			Expression<Func<MainCategory, TResult>> orderBy,
+			bool asAscending = true,
 			bool trackChanges = false) =>
-			await base
-				.ControlOrderByAsync(
-					base.FindAll(trackChanges),
-					orderBy,
-					asAscending);
+				asAscending ?
+					await base
+						.FindAll(trackChanges)
+						.OrderBy(orderBy)
+						.ToListAsync()
+					: await base
+						.FindAll(trackChanges)
+						.OrderByDescending(orderBy)
+						.ToListAsync();
 		#endregion
 	}
 }
