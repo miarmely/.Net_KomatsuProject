@@ -60,7 +60,7 @@ namespace Services.Concretes
 					"Verification Error - Password");
 			#endregion
 
-			return await GenerateTokenForUserAsync(user.Id);
+			return await GenerateTokenForUserAsync(user);
 		}
 
 		public async Task RegisterAsync(UserDtoForRegister userDtoR)
@@ -75,11 +75,14 @@ namespace Services.Concretes
 			#endregion
 
 			#region convert userDtoR to user
-			var company = await GetCompanyAndCreateIfNotExistsAsync(userDtoR.CompanyName);
+			var company = await 
+				GetCompanyAndCreateIfNotExistsAsync(userDtoR.CompanyName);
 			
+			// convert
 			var user = _mapper.Map<User>(userDtoR);
 			user.CompanyId = company.Id;
 			user.Password = await ComputeMd5Async(userDtoR.Password);
+			user.CreatedAt = DateTime.UtcNow;
 			#endregion
 
 			#region create user
@@ -125,6 +128,7 @@ namespace Services.Concretes
 			var user = _mapper.Map<User>(userDtoC);
 			user.CompanyId = company.Id;
 			user.Password = await ComputeMd5Async(userDtoC.Password);
+			user.CreatedAt = DateTime.UtcNow;
 			#endregion
 
 			#region create user
@@ -270,18 +274,23 @@ namespace Services.Concretes
 				}
 			});
 
-		private async Task<string> GenerateTokenForUserAsync(Guid userId)
+		private async Task<string> GenerateTokenForUserAsync(User user)
 		{
 			#region set claims
 			var claims = new Collection<Claim>
 			{
-				new Claim(ClaimTypes.NameIdentifier, userId.ToString())  // add userId
+				new Claim("Id", user.Id.ToString()),
+				new Claim("firstName", user.FirstName),
+				new Claim("LastName", user.LastName)
 			};
-			var roleNames = await GetRoleNamesOfUserAsync(userId);
 
-			// add roles
+			#region add roles
+			var roleNames = await GetRoleNamesOfUserAsync(user.Id);
+
 			foreach (var roleName in roleNames)
-				claims.Add(new Claim(ClaimTypes.Role, roleName));
+				claims.Add(new Claim("Role", roleName));
+			#endregion
+
 			#endregion
 
 			#region set signingCredentials

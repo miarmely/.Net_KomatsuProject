@@ -28,6 +28,8 @@ namespace Entities.DataModels
 
         public bool IsDeleted { get; set; }
 
+        public DateTime CreatedAt { get; set; }
+
         #region navigation properties
         [ForeignKey("CompanyId")]
 		public Company? Company { get; set; }

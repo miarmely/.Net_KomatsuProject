@@ -13,3 +13,4 @@
 16:33:17.2784  WARN  LogDetails { Controller = User, Action = GetAllUsersWithPaging, ErrorCode = NF-U, CreatedAt = 9/9/2023 1:33:17 PM }
 16:35:31.8292  WARN  LogDetails { Controller = User, Action = Register, ErrorCode = FE-TE, CreatedAt = 9/9/2023 1:35:31 PM }
 16:39:20.6931  WARN  LogDetails { Controller = User, Action = Register, ErrorCode = CE-T, CreatedAt = 9/9/2023 1:39:20 PM }
+17:41:44.7271  WARN  LogDetails { Controller = User, Action = Login, ErrorCode = VE-P, CreatedAt = 9/9/2023 2:41:44 PM }

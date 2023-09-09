@@ -192,6 +192,9 @@ namespace Repositories.Migrations
                     b.Property<short>("CompanyId")
                         .HasColumnType("smallint");
 
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("Email")
                         .IsRequired()
                         .HasColumnType("varchar(50)");

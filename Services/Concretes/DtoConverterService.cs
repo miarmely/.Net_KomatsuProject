@@ -115,8 +115,8 @@ namespace Services.Concretes
 						CompanyName = company.Name,
 						TelNo = user.TelNo,
 						Email = user.Email,
-						Password = user.Password,
-						RoleNames = roleNames
+						RoleNames = roleNames,
+						CreatedAt = user.CreatedAt
 					});
 				}
 				#endregion
