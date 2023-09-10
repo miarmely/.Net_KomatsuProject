@@ -1,30 +1,28 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Entities.QueryModels;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Temsa_Web.Controllers
 {
-	[Route("user")]
 	public class UserController : Controller
 	{
-		[Route("create")]
-		public IActionResult CreateUser()
+		public IActionResult Create()
 		{
 			return View("Create");
 		}
 
-		[Route("display")]
-		public IActionResult DisplayUser()
+		public IActionResult Display([FromQuery] PagingParameters pagingParameters)
 		{
-			return View("Display");
+			return View("Display", pagingParameters);
 		}
 
-		[Route("update")]
-		public IActionResult UpdateUser()
+		[Route("display/update")]
+		public IActionResult Update()
 		{
 			return View("Update");
 		}
 
-		[Route("delete")]
-		public IActionResult DeleteUser()
+		[Route("display/delete")]
+		public IActionResult Delete()
 		{
 			return View("Delete");
 		}

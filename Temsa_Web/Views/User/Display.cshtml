@@ -1,1 +1,110 @@
-﻿<h1>Display</h1>
+﻿@model PagingParameters;
+
+
+<div class="table-agile-info">
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            Kayıtlı Kullanılar
+        </div>
+
+        @*menubar*@
+        <div class="row w3-res-tb">
+            <div class="col-sm-5 m-b-xs">
+            <select class="input-sm form-control w-sm inline v-middle">
+                <option value="0">Seçilenleri Sil</option>
+                <option value="1">...</option>
+            </select>
+            <button class="btn btn-sm btn-default">Uygula</button>                
+            </div>
+            <div class="col-sm-4">
+            </div>
+            <div class="col-sm-3">
+            <div class="input-group">
+                <input type="text" class="input-sm form-control" placeholder="Search">
+                <span class="input-group-btn">
+                <button class="btn btn-sm btn-default" type="button">Ara</button>
+                </span>
+            </div>
+            </div>
+        </div>
+        @*/menubar*@
+
+        @*/data*@
+        <div class="table-responsive">
+            <table class="table table-striped b-t b-light">
+            <thead>
+                <tr>
+                    <th style="width:20px;">
+                        <label class="i-checks m-b-none">
+                        <input type="checkbox"><i></i>
+                        </label>
+                    </th>
+                    <th>Ad</th>
+                    <th>Soyad</th>
+                    <th>Şirket Adı</th>
+                    <th>Telefon Numarası</th>
+                    <th>Email</th>
+                    <th>Roller</th>
+                    <th>Kayıt Tarihi</th>
+                    <th>İşlemler</th>
+                    <th style="width:30px;"></th>
+                </tr>
+            </thead>
+            <tbody>
+            </tbody>
+            </table>
+        </div>
+        @*/data*@
+
+        @*/navigation*@
+        <footer class="panel-footer">
+            <div class="row">
+            <div class="col-sm-5 text-left">
+                <small class="text-muted inline m-t-sm m-b-s"><b>20</b> kullanıcı görüntüleniyor</small>
+            </div>
+            <div class="col-sm-7 text-right text-center-xs">                
+                <ul class="pagination pagination-sm m-t-none m-b-none">
+                <li><a href=""><i class="fa fa-chevron-left"></i></a></li>
+                <li value=""><a href="?pageNumber=1">1</a></li>
+                <li><a href="?pageNumber=2">2</a></li>
+                <li><a href="?pageNumber=3">3</a></li>
+                <li><a href="?pageNumber=4">4</a></li>
+                <li><a href=""><i class="fa fa-chevron-right"></i></a></li>
+                </ul>
+            </div>
+            </div>
+        </footer>
+        @*/navigation*@
+    </div>
+</div>
+
+<script>
+     $(function(){
+         FillTable();
+
+         function FillTable(){
+             alert("@Model.PageNumber");
+
+             $.ajax({
+                 method: "GET",
+                 url: "https://localhost:7091/api/services/user/display",
+                 data : JSON.stringify("@Model"),
+                 contentType: "application/json",
+                 dataType: "json",
+
+                 success: (response) =>{
+                     alert("success");
+                     updateResultLabel();
+                 },
+
+                 error: (response) => {
+                     alert(response.responseText);
+                     //writeErrorMessage(response.reponseText, )
+                 }
+             });
+         }
+
+    })
+
+
+</script>
