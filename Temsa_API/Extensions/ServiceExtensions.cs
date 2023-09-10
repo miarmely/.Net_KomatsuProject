@@ -97,7 +97,8 @@ namespace Temsa.Extensions
 							"https://localhost:7136",
 							"http://127.0.0.1:5500")
 						.AllowAnyHeader()
-						.AllowAnyMethod());
+						.AllowAnyMethod()
+						.WithExposedHeaders("User-Pagination"));
 				#endregion
 			});
 	}

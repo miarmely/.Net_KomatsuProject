@@ -6,16 +6,22 @@ namespace Repositories.Utilies
 	{
 		public int TotalPage { get; private set; }
 		public int TotalCount { get; private set; }
-		public int CurrentPage { get; private set; }
+        public int CurrentPageNo { get; private set; }
 		public int PageSize { get; private set; }
-		public bool HasPrevious => CurrentPage > 1;
-		public bool HasNext => CurrentPage < TotalPage;
+        public bool HasPrevious => CurrentPageNo > 1;
+		public bool HasNext => CurrentPageNo < TotalPage;
 
-		public PagingList(List<T> entity, int totalCount, int pageNumber, int pageSize)
+		#region LastPageCount
+        public int LastPageCount => TotalCount % PageSize == 0 ? 
+			PageSize  // when lastPage full
+			: TotalCount % PageSize;  // when lastPage not full
+        #endregion
+
+        public PagingList(List<T> entity, int totalCount, int pageNumber, int pageSize)
 		{
 			#region initialize properties
 			TotalCount = totalCount;
-			CurrentPage = pageNumber;
+			CurrentPageNo = pageNumber;
 			PageSize = pageSize;
 			TotalPage = (int)Math.Ceiling(totalCount / (double)pageSize);
 			#endregion

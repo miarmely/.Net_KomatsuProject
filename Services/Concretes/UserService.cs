@@ -174,7 +174,8 @@ namespace Services.Concretes
 			{
 				users.TotalPage,
 				users.TotalCount,
-				users.CurrentPage,
+                users.LastPageCount,
+                users.CurrentPageNo,
 				users.PageSize,
 				users.HasPrevious,
 				users.HasNext

@@ -1,11 +1,10 @@
-﻿@model PagingParameters;
-
-
-<div class="table-agile-info">
+﻿<div class="table-agile-info">
     <div class="panel panel-default">
+        @*title*@
         <div class="panel-heading">
-            Kayıtlı Kullanılar
+            Kayıtlı Kullanıcılar
         </div>
+        @*/title*@
 
         @*menubar*@
         <div class="row w3-res-tb">
@@ -31,27 +30,27 @@
 
         @*/data*@
         <div class="table-responsive">
-            <table class="table table-striped b-t b-light">
-            <thead>
-                <tr>
-                    <th style="width:20px;">
-                        <label class="i-checks m-b-none">
-                        <input type="checkbox"><i></i>
-                        </label>
-                    </th>
-                    <th>Ad</th>
-                    <th>Soyad</th>
-                    <th>Şirket Adı</th>
-                    <th>Telefon Numarası</th>
-                    <th>Email</th>
-                    <th>Roller</th>
-                    <th>Kayıt Tarihi</th>
-                    <th>İşlemler</th>
-                    <th style="width:30px;"></th>
-                </tr>
-            </thead>
-            <tbody>
-            </tbody>
+            <table id="tbl_user" class="table table-striped b-t b-light">
+                <thead>
+                    <tr>
+                        <th style="width:20px;">
+                            <label class="i-checks m-b-none">
+                            <input type="checkbox"><i></i>
+                            </label>
+                        </th>
+                        <th>Ad</th>
+                        <th>Soyad</th>
+                        <th>Şirket Adı</th>
+                        <th>Telefon Numarası</th>
+                        <th>Email</th>
+                        <th>Roller</th>
+                        <th>Kayıt Tarihi</th>
+                        <th>İşlemler</th>
+                        <th style="width:30px;"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                </tbody>
             </table>
         </div>
         @*/data*@
@@ -60,51 +59,20 @@
         <footer class="panel-footer">
             <div class="row">
             <div class="col-sm-5 text-left">
-                <small class="text-muted inline m-t-sm m-b-s"><b>20</b> kullanıcı görüntüleniyor</small>
+                <small id="lbl_displayingQuantity" class="text-muted inline m-t-sm m-b-s"><b>0</b> kullanıcı görüntüleniyor</small>
             </div>
-            <div class="col-sm-7 text-right text-center-xs">                
-                <ul class="pagination pagination-sm m-t-none m-b-none">
-                <li><a href=""><i class="fa fa-chevron-left"></i></a></li>
-                <li value=""><a href="?pageNumber=1">1</a></li>
-                <li><a href="?pageNumber=2">2</a></li>
-                <li><a href="?pageNumber=3">3</a></li>
-                <li><a href="?pageNumber=4">4</a></li>
-                <li><a href=""><i class="fa fa-chevron-right"></i></a></li>
-                </ul>
-            </div>
+                <div class="col-sm-7 text-right text-center-xs">                
+                    <ul id="ul_pagination" class="pagination pagination-sm m-t-none m-b-none">
+                        <li>
+                            <a id="a_paginationBack" href="#" hidden>
+                                <i class="fa fa-chevron-left"></i>
+                            </a>
+                        </li>
+                        <li><a id="a_pagination1" href="#">1</a></li>
+                    </ul>
+                </div>
             </div>
         </footer>
         @*/navigation*@
     </div>
 </div>
-
-<script>
-     $(function(){
-         FillTable();
-
-         function FillTable(){
-             alert("@Model.PageNumber");
-
-             $.ajax({
-                 method: "GET",
-                 url: "https://localhost:7091/api/services/user/display",
-                 data : JSON.stringify("@Model"),
-                 contentType: "application/json",
-                 dataType: "json",
-
-                 success: (response) =>{
-                     alert("success");
-                     updateResultLabel();
-                 },
-
-                 error: (response) => {
-                     alert(response.responseText);
-                     //writeErrorMessage(response.reponseText, )
-                 }
-             });
-         }
-
-    })
-
-
-</script>

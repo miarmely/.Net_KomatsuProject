@@ -115,3 +115,38 @@ export function updateResultLabel(message, color, resultLabelId)
     // update
     resultLabel.text(message);
 }
+
+export function getDateTimeAsModified(dateTime) {
+    //#region set year, hours and minutes
+    let date = new Date(dateTime);
+
+    let year = date.getFullYear();
+    let hours = date.getHours() + 3;
+    let minutes = date.getMinutes();
+    //#endregion
+
+    //#region set day
+    let day = date.getDate();
+
+    // add '0' to head
+    let dayInString = day < 10 ?
+        `0${day}`  // add 0
+        : day.toString(); // don't add
+    //#endregion
+
+    //#region set month
+    let month = date.getMonth() + 1;
+
+    // add '0' to head
+    let monthInString = month < 10 ?
+        `0${month}`  // add 0
+        : month.toString();  // don't add
+    //#endregion
+
+    return `${dayInString}.${monthInString}.${year} - ${hours}:${minutes}`;
+}
+
+export function getHeaderInJson(headerName) {
+    return JSON.parse(
+        localStorage.getItem(headerName));
+}

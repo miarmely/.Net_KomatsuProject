@@ -10,21 +10,19 @@ namespace Temsa_Web.Controllers
 			return View("Create");
 		}
 
-		public IActionResult Display([FromQuery] PagingParameters pagingParameters)
+		public IActionResult Display()
 		{
-			return View("Display", pagingParameters);
+			return View("Display");
 		}
 
-		[Route("display/update")]
 		public IActionResult Update()
 		{
 			return View("Update");
 		}
 
-		[Route("display/delete")]
 		public IActionResult Delete()
 		{
 			return View("Delete");
 		}
-	}
+    }
 }
