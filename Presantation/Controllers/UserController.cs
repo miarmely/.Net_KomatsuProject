@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Presantation.ActionFilters;
 using Services.Contracts;
 
+
 namespace Presantation.Controllers
 {
     [ApiController]
@@ -64,6 +65,18 @@ namespace Presantation.Controllers
                 .GetAllUsersWithPagingAsync(pagingParameters, Response);
 
             return Ok(entity);
+        }
+
+
+        [HttpPut("update/{email}")]
+        public async Task<IActionResult> GetUpdateUserAsync(
+            [FromRoute(Name = "email")] string email,
+            [FromBody] UserDtoForUpdate userDtoU)
+        {
+            await _manager.UserService
+                .UpdateUserAsync(email, userDtoU);
+
+            return NoContent();
         }
 	}
 }

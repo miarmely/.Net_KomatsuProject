@@ -36,14 +36,9 @@ $(function () {
             FillTable(userPagination.CurrentPageNo + 1);
         //#endregion
     });
+    //#endregion events
 
-    $("#a_row1").click(() => {
-        alert(2)
-        
-    });
-    //#endregion
-
-    //#region other functions
+    //#region functions
     function FillTable(pageNumber) {
         //#region reset table if not empty
         let tableBody = $("#tbl_user tbody")
@@ -106,9 +101,9 @@ $(function () {
 						    <td id="td_roleNames">${user.roleNames.toString()}</td>
 						    <td id="td_createdAt">${getDateTimeAsModified(user.createdAt)}</td>
 						    <td>
-							    <a href="#" onclick="updateRow(${no});" class="active" ui-toggle-class="">
-								    <i class="fa fa-check text-info"> Güncelle</i>
-							    </a>
+							    <button onclick="updateTableRow(${no});" class="active" ui-toggle-class="">
+								    <i class="fa fa-pencil text-info"> Güncelle</i>
+							    </button>
 						    </td>
 					    </tr>`
                     );

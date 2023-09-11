@@ -21,326 +21,401 @@ using System.Text.Json;
 namespace Services.Concretes
 {
     public class UserService : IUserService
-	{
-		private readonly IRepositoryManager _manager;
-		private readonly IConfigManager _config;
-		private readonly IMapper _mapper;
-		private readonly IDtoConverterService _dtoConverterService;
+    {
+        private readonly IRepositoryManager _manager;
+        private readonly IConfigManager _config;
+        private readonly IMapper _mapper;
+        private readonly IDtoConverterService _dtoConverterService;
 
-		public UserService(IRepositoryManager manager,
-			IConfigManager config,
-			IMapper mapper,
-			IDtoConverterService dtoConverterService)
-		{
-			_manager = manager;
-			_config = config;
-			_mapper = mapper;
-			_dtoConverterService = dtoConverterService;
-		}
+        public UserService(IRepositoryManager manager,
+            IConfigManager config,
+            IMapper mapper,
+            IDtoConverterService dtoConverterService)
+        {
+            _manager = manager;
+            _config = config;
+            _mapper = mapper;
+            _dtoConverterService = dtoConverterService;
+        }
 
-		public async Task<string> LoginAsync(UserDtoForLogin UserDtoL)
-		{
-			#region get user by telNo
-			var user = await _manager.UserRepository
-				.GetUserByTelNoAsync(UserDtoL.TelNo, false);
-			#endregion
+        public async Task<string> LoginAsync(UserDtoForLogin UserDtoL)
+        {
+            #region get user by telNo
+            var user = await _manager.UserRepository
+                .GetUserByTelNoAsync(UserDtoL.TelNo, false);
+            #endregion
 
-			#region when telNo not found (throw)
-			_ = user ?? throw new ErrorWithCodeException(404,
-				"VE-T",
-				"Verification Error - Telephone");
-			#endregion
+            #region when telNo not found (throw)
+            _ = user ?? throw new ErrorWithCodeException(404,
+                "VE-T",
+                "Verification Error - Telephone");
+            #endregion
 
-			#region when password is wrong (throw)
-			var hashedPassword = await ComputeMd5Async(UserDtoL.Password);
+            #region when password is wrong (throw)
+            var hashedPassword = await ComputeMd5Async(UserDtoL.Password);
 
-			if (!user.Password.Equals(hashedPassword))
-				throw new ErrorWithCodeException(404,
-					"VE-P",
-					"Verification Error - Password");
-			#endregion
+            if (!user.Password.Equals(hashedPassword))
+                throw new ErrorWithCodeException(404,
+                    "VE-P",
+                    "Verification Error - Password");
+            #endregion
 
-			return await GenerateTokenForUserAsync(user);
-		}
+            return await GenerateTokenForUserAsync(user);
+        }
 
-		public async Task RegisterAsync(UserDtoForRegister userDtoR)
-		{
-			#region control conflict errors
-			var userDto = _mapper.Map<UserDto>(userDtoR);
+        public async Task RegisterAsync(UserDtoForRegister userDtoR)
+        {
+            #region control conflict errors
+            var userDto = _mapper.Map<UserDto>(userDtoR);
 
-			await ConflictControlAsync(u =>
-				u.TelNo.Equals(userDto.TelNo)  // telNo
-				|| u.Email.Equals(userDto.Email)  // email
-				, userDto);
-			#endregion
+            await ConflictControlAsync(u =>
+                u.TelNo.Equals(userDto.TelNo)  // telNo
+                || u.Email.Equals(userDto.Email)  // email
+                , userDto);
+            #endregion
 
-			#region convert userDtoR to user
-			var company = await 
-				GetCompanyAndCreateIfNotExistsAsync(userDtoR.CompanyName);
-			
-			// convert
-			var user = _mapper.Map<User>(userDtoR);
-			user.CompanyId = company.Id;
-			user.Password = await ComputeMd5Async(userDtoR.Password);
-			user.CreatedAt = DateTime.UtcNow;
-			#endregion
+            #region convert userDtoR to user
+            var company = await
+                GetCompanyAndCreateIfNotExistsAsync(userDtoR.CompanyName);
 
-			#region create user
-			_manager.UserRepository
-				.Create(user);
+            // convert
+            var user = _mapper.Map<User>(userDtoR);
+            user.CompanyId = company.Id;
+            user.Password = await ComputeMd5Async(userDtoR.Password);
+            user.CreatedAt = DateTime.UtcNow;
+            #endregion
 
-			await _manager.SaveAsync();
-			#endregion
+            #region create user
+            _manager.UserRepository
+                .Create(user);
 
-			#region create userAndRole
-			// get "User" role
-			var role = await _manager.RoleRepository
-				.GetRoleByNameAsync("User", false);
+            await _manager.SaveAsync();
+            #endregion
 
-			// create,
-			var entity = new UserAndRole()
-			{
-				UserId = user.Id,
-				RoleId = role.Id
-			};
+            #region create userAndRole
+            // get "User" role
+            var role = await _manager.RoleRepository
+                .GetRoleByNameAsync("User", false);
 
-			_manager.UserAndRoleRepository
-				.Create(entity);
+            // create,
+            var entity = new UserAndRole()
+            {
+                UserId = user.Id,
+                RoleId = role.Id
+            };
 
-			await _manager.SaveAsync();
-			#endregion
-		}
+            _manager.UserAndRoleRepository
+                .Create(entity);
 
-		public async Task CreateUserAsync(UserDtoForCreate userDtoC)
-		{
-			#region control conflict error
-			var userDto = _mapper.Map<UserDto>(userDtoC);
+            await _manager.SaveAsync();
+            #endregion
+        }
 
-			await ConflictControlAsync(u =>
-				u.Email.Equals(userDto.Email)
-				|| u.TelNo.Equals(userDto.TelNo)
-				, userDto);
-			#endregion
+        public async Task CreateUserAsync(UserDtoForCreate userDtoC)
+        {
+            #region control conflict error
+            var userDto = _mapper.Map<UserDto>(userDtoC);
 
-			#region convert userDtoC to user
-			var company = await GetCompanyAndCreateIfNotExistsAsync(userDtoC.CompanyName);
-		
-			var user = _mapper.Map<User>(userDtoC);
-			user.CompanyId = company.Id;
-			user.Password = await ComputeMd5Async(userDtoC.Password);
-			user.CreatedAt = DateTime.UtcNow;
-			#endregion
+            await ConflictControlAsync(u =>
+                u.Email.Equals(userDto.Email)
+                || u.TelNo.Equals(userDto.TelNo)
+                , userDto);
+            #endregion
 
-			#region create user
-			_manager.UserRepository
-				.Create(user);
+            #region convert userDtoC to user
+            var company = await GetCompanyAndCreateIfNotExistsAsync(userDtoC.CompanyName);
 
-			await _manager.SaveAsync();
-			#endregion
+            var user = _mapper.Map<User>(userDtoC);
+            user.CompanyId = company.Id;
+            user.Password = await ComputeMd5Async(userDtoC.Password);
+            user.CreatedAt = DateTime.UtcNow;
+            #endregion
 
-			#region create userAndRole
-			var role = await _manager.RoleRepository
-				.GetRoleByNameAsync(userDtoC.RoleName, false);
+            #region create user
+            _manager.UserRepository
+                .Create(user);
 
-			_manager.UserAndRoleRepository
-				.Create(new UserAndRole
-				{
-					UserId = user.Id,
-					RoleId = role.Id
-				});
+            await _manager.SaveAsync();
+            #endregion
 
-			await _manager.SaveAsync();
-			#endregion
-		}
-		
-		public async Task<ICollection<UserDto>> GetAllUsersWithPagingAsync(
-			PagingParameters pagingParameters, HttpResponse response)
-		{
-			#region when user not found (throw)
-			var users = await _manager.UserRepository
-				.GetAllUsersAsync(pagingParameters);
+            #region create userAndRole
+            var role = await _manager.RoleRepository
+                .GetRoleByNameAsync(userDtoC.RoleName, false);
 
-			if (users.Count == 0)
-				throw new ErrorWithCodeException(404, "NF-U", "Not Found - User");
-			#endregion
+            _manager.UserAndRoleRepository
+                .Create(new UserAndRole
+                {
+                    UserId = user.Id,
+                    RoleId = role.Id
+                });
 
-			#region convert user to userDto
-			var userDtos = await _dtoConverterService
-				.UserToUserDtoAsync(users);
-			#endregion
+            await _manager.SaveAsync();
+            #endregion
+        }
 
-			#region add pagination details to headers
-			var metaData = new
-			{
-				users.TotalPage,
-				users.TotalCount,
+        public async Task<ICollection<UserDto>> GetAllUsersWithPagingAsync(
+            PagingParameters pagingParameters, HttpResponse response)
+        {
+            #region when user not found (throw)
+            var users = await _manager.UserRepository
+                .GetAllUsersAsync(pagingParameters);
+
+            if (users.Count == 0)
+                throw new ErrorWithCodeException(404, "NF-U", "Not Found - User");
+            #endregion
+
+            #region convert user to userDto
+            var userDtos = await _dtoConverterService
+                .UserToUserDtoAsync(users);
+            #endregion
+
+            #region add pagination details to headers
+            var metaData = new
+            {
+                users.TotalPage,
+                users.TotalCount,
                 users.LastPageCount,
                 users.CurrentPageNo,
-				users.PageSize,
-				users.HasPrevious,
-				users.HasNext
-			};
+                users.PageSize,
+                users.HasPrevious,
+                users.HasNext
+            };
 
-			response.Headers.Add("User-Pagination", JsonSerializer.Serialize(metaData));
-			#endregion
+            response.Headers.Add("User-Pagination", JsonSerializer.Serialize(metaData));
+            #endregion
 
-			return userDtos;
-		}
+            return userDtos;
+        }
 
+        public async Task UpdateUserAsync(string email, UserDtoForUpdate userDtoU)
+        {
+            #region when user not found (throw)
+            var user = await _manager.UserRepository
+                .GetUserByEmailAsync(email);
 
-		#region private
+            if (user == null)
+                throw new ErrorWithCodeException(404,
+                    "VE-E",
+                    "Verification Error - Email");
+            #endregion
 
-		private async Task ConflictControlAsync(
-			Expression<Func<User, bool>> condition,
-			UserDto userDto)
-		{
-			#region get users
-			var users = await _manager.UserRepository
-				.GetUsersByConditionAsync(condition);
-			#endregion
+            #region update user
+            var company = await GetCompanyAndCreateIfNotExistsAsync(userDtoU.CompanyName);
 
-			#region control conflict error
-			if (users.Count != 0)
-			{
-				var errorModel = new ErrorDetails()
-				{
-					StatusCode = 409,
-					ErrorCode = "CE-",
-					ErrorDescription = "Conflict Error - ",
-				};
+            user.FirstName = userDtoU.FirstName;
+            user.LastName = userDtoU.LastName;
+            user.TelNo = userDtoU.TelNo;
+            user.CompanyId = company.Id;
+            user.Email = userDtoU.Email;
 
-				#region control telNo
-				if (users.Any(u => u.TelNo.Equals(userDto.TelNo)))
-					UpdateErrorCode(ref errorModel, "T", "TelNo ");
-				#endregion
+            _manager.UserRepository.Update(user);
+            #endregion
 
-				#region control email
-				if (users.Any(u => u.Email.Equals(userDto.Email)))
-					UpdateErrorCode(ref errorModel, "E", "Email ");
-				#endregion
+            #region delete userAndRole that not exists userDto
+            var userAndRoles = await _manager.UserAndRoleRepository
+                .GetUserAndRolesByUserIdAsync(user.Id);
 
-				#region throw exception
-				errorModel.ErrorDescription = errorModel.ErrorDescription.TrimEnd();
+            #region delete UserAndRole 
+            var roleNamesInDatabase = new Collection<string>();
 
-				throw new ErrorWithCodeException(errorModel);
-				#endregion
-			}
-			#endregion
-		}
+            foreach (var userAndRole in userAndRoles)
+            {
+                #region get role
+                var role = await _manager.RoleRepository
+                    .GetRoleByIdAsync(userAndRole.RoleId);
 
-		private void UpdateErrorCode(ref ErrorDetails errorModel
-			, string newErrorCode
-			, string newErrorDescription)
-		{
-			errorModel.ErrorCode += newErrorCode;
-			errorModel.ErrorDescription += newErrorDescription;
-		}
+                roleNamesInDatabase.Add(role.Name);
+                #endregion
 
-		private async Task<ICollection<string>> GetRoleNamesOfUserAsync(Guid userId)
-		{
-			#region get userAndRoles
-			var userAndRoles = await _manager.UserAndRoleRepository
-				.GetUserAndRolesByUserIdAsync(userId, false);
-			#endregion
+                #region when exists database but not exists current data
+                if (!userDtoU.RoleNames.Contains(role.Name))
+                    _manager.UserAndRoleRepository
+                        .Delete(userAndRole);
+                #endregion
+            }
+            #endregion
 
-			#region add roleNames to collection
-			var roleNames = new Collection<string>();
-			Role role;
+            #endregion
 
-			foreach (var userAndRole in userAndRoles)
-			{
-				role = await _manager.RoleRepository
-					.GetRoleByIdAsync(userAndRole.RoleId, false);
+            #region create userAndRole that not exists database
+            foreach (var roleNameInDto in userDtoU.RoleNames)
+            {
+                // when not exists database but exists userDto
+                if (!roleNamesInDatabase.Contains(roleNameInDto))
+                {
+                    #region get role
+                    var role = await _manager.RoleRepository
+                        .GetRoleByNameAsync(roleNameInDto);
+                    #endregion
 
-				roleNames.Add(role.Name);
-			}
-			#endregion
+                    #region create userAndRole
+                    _manager.UserAndRoleRepository
+                        .Create(new UserAndRole
+                        {
+                            UserId = user.Id,
+                            RoleId = role.Id
+                        });
+                    #endregion
+                }
+            }
 
-			return roleNames;
-		}
+            await _manager.SaveAsync();
+            #endregion
+        }
+        
+        #region private
 
-		private async Task<string> ComputeMd5Async(string input) =>
-			await Task.Run(() =>
-			{
-				using (var md5 = MD5.Create())
-				{
-					#region hash to input
-					var hashAsByte = md5.ComputeHash(Encoding.UTF8
-						.GetBytes(input));
+        private async Task ConflictControlAsync(
+            Expression<Func<User, bool>> condition,
+            UserDto userDto)
+        {
+            #region get users
+            var users = await _manager.UserRepository
+                .GetUsersByConditionAsync(condition);
+            #endregion
 
-					var hashAsString = Convert.ToBase64String(hashAsByte);
-					#endregion
+            #region control conflict error
+            if (users.Count != 0)
+            {
+                var errorModel = new ErrorDetails()
+                {
+                    StatusCode = 409,
+                    ErrorCode = "CE-",
+                    ErrorDescription = "Conflict Error - ",
+                };
 
-					return hashAsString;
-				}
-			});
+                #region control telNo
+                if (users.Any(u => u.TelNo.Equals(userDto.TelNo)))
+                    UpdateErrorCode(ref errorModel, "T", "TelNo ");
+                #endregion
 
-		private async Task<string> GenerateTokenForUserAsync(User user)
-		{
-			#region set claims
-			var claims = new Collection<Claim>
-			{
-				new Claim("Id", user.Id.ToString()),
-				new Claim("firstName", user.FirstName),
-				new Claim("LastName", user.LastName)
-			};
+                #region control email
+                if (users.Any(u => u.Email.Equals(userDto.Email)))
+                    UpdateErrorCode(ref errorModel, "E", "Email ");
+                #endregion
 
-			#region add roles
-			var roleNames = await GetRoleNamesOfUserAsync(user.Id);
+                #region throw exception
+                errorModel.ErrorDescription = errorModel.ErrorDescription.TrimEnd();
 
-			foreach (var roleName in roleNames)
-				claims.Add(new Claim("Role", roleName));
-			#endregion
+                throw new ErrorWithCodeException(errorModel);
+                #endregion
+            }
+            #endregion
+        }
 
-			#endregion
+        private void UpdateErrorCode(ref ErrorDetails errorModel
+            , string newErrorCode
+            , string newErrorDescription)
+        {
+            errorModel.ErrorCode += newErrorCode;
+            errorModel.ErrorDescription += newErrorDescription;
+        }
 
-			#region set signingCredentials
-			var secretKeyInBytes = Encoding.UTF8
-					.GetBytes(_config.JwtSettings.SecretKey);
+        private async Task<ICollection<string>> GetRoleNamesOfUserAsync(Guid userId)
+        {
+            #region get userAndRoles
+            var userAndRoles = await _manager.UserAndRoleRepository
+                .GetUserAndRolesByUserIdAsync(userId, false);
+            #endregion
 
-			var signingCredentials = new SigningCredentials(
-				new SymmetricSecurityKey(secretKeyInBytes),
-				SecurityAlgorithms.HmacSha256);
-			#endregion
+            #region add roleNames to collection
+            var roleNames = new Collection<string>();
+            Role role;
 
-			#region set token
-			var token = new JwtSecurityToken(
-				issuer: _config.JwtSettings.ValidIssuer,
-				audience: _config.JwtSettings.ValidAudience,
-				claims: claims,
-				expires: DateTime.Now.AddMinutes(_config.JwtSettings.Expires),
-				signingCredentials: signingCredentials);
-			#endregion
+            foreach (var userAndRole in userAndRoles)
+            {
+                role = await _manager.RoleRepository
+                    .GetRoleByIdAsync(userAndRole.RoleId, false);
 
-			return new JwtSecurityTokenHandler()
-				.WriteToken(token);
-		}
+                roleNames.Add(role.Name);
+            }
+            #endregion
 
-		private async Task<Company> GetCompanyAndCreateIfNotExistsAsync(string companyName)
-		{
-			#region get company
-			var company = await _manager.CompanyRepository
-				.GetCompanyByNameAsync(companyName, false);
-			#endregion
+            return roleNames;
+        }
 
-			#region create company if not exists on database
-			if (company == null)
-			{
-				company = new Company()
-				{
-					Name = companyName
-				};
+        private async Task<string> ComputeMd5Async(string input) =>
+            await Task.Run(() =>
+            {
+                using (var md5 = MD5.Create())
+                {
+                    #region hash to input
+                    var hashAsByte = md5.ComputeHash(Encoding.UTF8
+                        .GetBytes(input));
 
-				_manager.CompanyRepository
-					.Create(company);
+                    var hashAsString = Convert.ToBase64String(hashAsByte);
+                    #endregion
 
-				await _manager.SaveAsync();
-			}
-			#endregion
+                    return hashAsString;
+                }
+            });
 
-			return company;
-		}
+        private async Task<string> GenerateTokenForUserAsync(User user)
+        {
+            #region set claims
+            var claims = new Collection<Claim>
+            {
+                new Claim("Id", user.Id.ToString()),
+                new Claim("firstName", user.FirstName),
+                new Claim("LastName", user.LastName)
+            };
 
-		#endregion
-	}
+            #region add roles
+            var roleNames = await GetRoleNamesOfUserAsync(user.Id);
+
+            foreach (var roleName in roleNames)
+                claims.Add(new Claim("Role", roleName));
+            #endregion
+
+            #endregion
+
+            #region set signingCredentials
+            var secretKeyInBytes = Encoding.UTF8
+                    .GetBytes(_config.JwtSettings.SecretKey);
+
+            var signingCredentials = new SigningCredentials(
+                new SymmetricSecurityKey(secretKeyInBytes),
+                SecurityAlgorithms.HmacSha256);
+            #endregion
+
+            #region set token
+            var token = new JwtSecurityToken(
+                issuer: _config.JwtSettings.ValidIssuer,
+                audience: _config.JwtSettings.ValidAudience,
+                claims: claims,
+                expires: DateTime.Now.AddMinutes(_config.JwtSettings.Expires),
+                signingCredentials: signingCredentials);
+            #endregion
+
+            return new JwtSecurityTokenHandler()
+                .WriteToken(token);
+        }
+
+        private async Task<Company> GetCompanyAndCreateIfNotExistsAsync(string companyName)
+        {
+            #region get company
+            var company = await _manager.CompanyRepository
+                .GetCompanyByNameAsync(companyName, false);
+            #endregion
+
+            #region create company if not exists on database
+            if (company == null)
+            {
+                company = new Company()
+                {
+                    Name = companyName
+                };
+
+                _manager.CompanyRepository
+                    .Create(company);
+
+                await _manager.SaveAsync();
+            }
+            #endregion
+
+            return company;
+        }
+
+        #endregion
+    }
 }

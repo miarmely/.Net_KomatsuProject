@@ -11,5 +11,6 @@ namespace Services.Contracts
 		Task CreateUserAsync(UserDtoForCreate userDtoC);
 		Task<ICollection<UserDto>> GetAllUsersWithPagingAsync(
 			PagingParameters pagingParameters, HttpResponse response);
-	}
+		Task UpdateUserAsync(string email, UserDtoForUpdate userDtoU);
+    }
 }

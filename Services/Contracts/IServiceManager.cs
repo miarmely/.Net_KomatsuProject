@@ -9,5 +9,6 @@
 		IFileService FileService { get; }
 		IDtoConverterService DtoConverterServcice { get; }
 		IDataConverterService DataConverterService { get; }
+		IRoleService RoleService { get; }
 	}
 }
