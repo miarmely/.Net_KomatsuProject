@@ -36,6 +36,11 @@ $(function () {
             FillTable(userPagination.CurrentPageNo + 1);
         //#endregion
     });
+
+    $("#a_row1").click(() => {
+        alert(2)
+        
+    });
     //#endregion
 
     //#region other functions
@@ -83,28 +88,32 @@ $(function () {
                 //#endregion
 
                 //#region add users to table
+                let no = 1;
+
                 response.forEach(user => {
                     tableBody.append(
-                        `<tr>
+                        `<tr id="tr_row${no}">
                             <td>
                                 <label class="i-checks m-b-none">
                                     <input type="checkbox"><i></i>
                                 </label>
                             </td>
-						    <td>${user.firstName}</td>
-						    <td>${user.lastName}</td>
-						    <td>${user.companyName}</td>
-						    <td>${user.telNo}</td>
-						    <td>${user.email}</td>
-						    <td>${user.roleNames.toString()}</td>
-						    <td>${getDateTimeAsModified(user.createdAt)}</td>
+						    <td id="td_firstName">${user.firstName}</td>
+						    <td id="td_lastName">${user.lastName}</td>
+						    <td id="td_companyName">${user.companyName}</td>
+						    <td id="td_telNo">${user.telNo}</td>
+						    <td id="td_email">${user.email}</td>
+						    <td id="td_roleNames">${user.roleNames.toString()}</td>
+						    <td id="td_createdAt">${getDateTimeAsModified(user.createdAt)}</td>
 						    <td>
-							    <a href="#" class="active" ui-toggle-class="">
+							    <a href="#" onclick="updateRow(${no});" class="active" ui-toggle-class="">
 								    <i class="fa fa-check text-info"> Güncelle</i>
 							    </a>
 						    </td>
 					    </tr>`
                     );
+
+                    no += 1
                 });
                 //#endregion
 
@@ -140,36 +149,36 @@ $(function () {
     }
 
     function AddPaginationButtons() {
-    //#region set buttonQauntity for pagination
-    let userPagination = getHeaderInJson("User-Pagination");
+        //#region set buttonQauntity for pagination
+        let userPagination = getHeaderInJson("User-Pagination");
 
-    let buttonQuantity =
-        userPagination.TotalPage < paginationButtonQuantity ?
-            userPagination.TotalPage
-            : paginationButtonQuantity
-    //#endregion
+        let buttonQuantity =
+            userPagination.TotalPage < paginationButtonQuantity ?
+                userPagination.TotalPage
+                : paginationButtonQuantity
+        //#endregion
 
-    //#region add pagination buttons to table
-    let paginationList = $("#ul_pagination");
+        //#region add pagination buttons to table
+        let paginationList = $("#ul_pagination");
 
-    for (let no = 2; no <= buttonQuantity; no += 1)
-        paginationList.append(
-            `<li>
+        for (let no = 2; no <= buttonQuantity; no += 1)
+            paginationList.append(
+                `<li>
                     <a id="a_pagination${no}" href="#"> 
                         ${no}
                     </a>
                 </li> `);
-    //#endregion
+        //#endregion
 
-    //#region add paginationNext button
-    if (buttonQuantity > 1)
-        paginationList.append(
-            `<li>
+        //#region add paginationNext button
+        if (buttonQuantity > 1)
+            paginationList.append(
+                `<li>
                 <a id="a_paginationNext" href="#">
                     <i class="fa fa-chevron-right"></i>
                 </a>
             </li>`);
-    //#endregion
+        //#endregion
     }
     //#endregion
 });

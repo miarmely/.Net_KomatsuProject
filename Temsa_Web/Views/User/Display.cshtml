@@ -76,3 +76,24 @@
         @*/navigation*@
     </div>
 </div>
+
+<script>
+    function updateRow(no){
+        let selectedRow = $(`#tr_row${no}`);
+
+        let datasOfSelectedRow = {
+            firstName : selectedRow.children("#td_firstName"),
+            lastName : selectedRow.children("#td_lastName"),
+            companyName : selectedRow.children("#td_companyName"),
+            telNo : selectedRow.children("#td_telNo"),
+            email : selectedRow.children("#td_email"),
+            roleNames : selectedRow.children("#td_roleNames")
+        }
+
+        let firstName = datasOfSelectedRow.firstName.text()
+        datasOfSelectedRow.firstName.empty();
+        datasOfSelectedRow.firstName.append(`
+            <input type="text" placeholder="${firstName}">
+        `);
+    }
+</script>
