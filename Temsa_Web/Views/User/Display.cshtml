@@ -59,7 +59,7 @@
         <footer class="panel-footer">
             <div class="row">
             <div class="col-sm-5 text-left">
-                <small id="lbl_displayingQuantity" class="text-muted inline m-t-sm m-b-s"><b>0</b> kullanıcı görüntüleniyor</small>
+                <small id="lbl_entityQuantity" class="text-muted inline m-t-sm m-b-s"><b>0</b> kullanıcı görüntüleniyor</small>
             </div>
                 <div class="col-sm-7 text-right text-center-xs">                
                     <ul id="ul_pagination" class="pagination pagination-sm m-t-none m-b-none">
@@ -78,6 +78,12 @@
 </div>
 
 <script>
+    const pageSize = 10;
+    const tableBody = $("#tbl_user tbody");
+    const nameOfPaginationHeader = "User-Pagination";
+    const lbl_entityQuantity = $("#lbl_entityQuantity");
+    const ul_pagination = $("#ul_pagination");
+
     function updateTableRow(no){
         //#region set columns
         let row = $(`#tr_row${no}`);
@@ -223,5 +229,34 @@
         td_roleNames.empty();
         td_roleNames.append(roleName);
         //#endregion
+    }
+
+    function AddEntitiesToTable(response) {
+        let no = 1;
+
+        response.forEach(user => {
+            tableBody.append(
+                `<tr id="tr_row${no}">
+                    <td>
+                        <label class="i-checks m-b-none">
+                            <input type="checkbox"><i></i>
+                        </label>
+                    </td>
+					<td id="td_firstName">${user.firstName}</td>
+					<td id="td_lastName">${user.lastName}</td>
+					<td id="td_companyName">${user.companyName}</td>
+					<td id="td_telNo">${user.telNo}</td>
+					<td id="td_email">${user.email}</td>
+					<td id="td_roleNames">${user.roleNames.toString()}</td>
+					<td id="td_createdAt">${getDateTimeAsModified(user.createdAt)}</td>
+					<td>
+						<button onclick="updateTableRow(${no});" class="active" ui-toggle-class="">
+							<i class="fa fa-pencil text-info"> Güncelle</i>
+						</button>
+					</td>
+				</tr>`
+            );
+            no += 1;
+        });
     }
 </script>
