@@ -1,41 +1,47 @@
 ﻿$(function () {
+    //#region variables
     const pageNumber = 1;
-    const paginationButtonQuantity = 5;
+    const paginationButtonQuantity = window.paginationButtonQuantity;
+    const pageSize = window.pageSize;
+    const tableBody = window.tableBody;
+    const nameOfPaginationHeader = window.nameOfPaginationHeader;
+    const lbl_entityQuantity = window.lbl_entityQuantity;
+    const ul_pagination = window.ul_pagination;
+    //#endregion
     
-    FillTable(pageNumber);
+    fillTable(pageNumber);
     let paginationData = localStorage.getItem(nameOfPaginationHeader);
 
     AddPaginationButtons();
 
-    
     //#region events
     $("#a_paginationBack").click(() => {
         //#region open previous page if previous page exists
         if (paginationData.HasPrevious)
-            FillTable(paginationData.CurrentPageNo - 1);
+            fillTable(paginationData.CurrentPageNo - 1);
         //#endregion
     });
 
-    $("#a_pagination1").click(() => FillTable(1));
+    $("#a_pagination1").click(() => fillTable(1));
 
-    $("#a_pagination2").click(() => FillTable(2));
+    $("#a_pagination2").click(() => fillTable(2));
 
-    $("#a_pagination3").click(() => FillTable(3));
+    $("#a_pagination3").click(() => fillTable(3));
 
-    $("#a_pagination4").click(() => FillTable(4));
+    $("#a_pagination4").click(() => fillTable(4));
 
-    $("#a_pagination5").click(() => FillTable(5));
+    $("#a_pagination5").click(() => fillTable(5));
 
     $("#a_paginationNext").click(() => {
         //#region open next page if next page exists
         if (paginationData.HasNext)
-            FillTable(paginationData.CurrentPageNo + 1);
+            fillTable(paginationData.CurrentPageNo + 1);
         //#endregion
     });
     //#endregion events
 
     //#region functions
-    function FillTable(pageNumber) {
+    function fillTable(pageNumber) {
         //#region reset table if not empty
         if (tableBody.children("tr").length != 0)
             tableBody.empty();
@@ -76,30 +82,7 @@
                 //#endregion
 
                 AddEntitiesToTable(response);                
-
-                //#region hide/show pagination back and next buttons
-                if (paginationData.TotalPage > 1) {
-                    //#region hide/show paginationBack button
-                    // hide
-                    if (paginationData.CurrentPageNo == 1)
-                        $("#a_paginationBack").attr("hidden", "");
-
-                    // show
-                    else
-                        $("#a_paginationBack").removeAttr("hidden");
-                    //#endregion
-
-                    //#region hide/show paginationNext button
-                    // hide
-                    if (paginationData.CurrentPageNo == paginationData.TotalPage)
-                        $("#a_paginationNext").attr("hidden", "");
-
-                    // show
-                    else
-                        $("#a_paginationNext").removeAttr("hidden");
-                    //#endregion
-                }
-                //#endregion
+                HideOrShowPaginationBackAndNextButtons();
             },
             error: (response) => {
                 alert(response.responseText);
@@ -119,7 +102,7 @@
         for (let no = 2; no <= buttonQuantity; no += 1)
             ul_pagination.append(
                 `<li>
-                    <a id="a_pagination${no}" href="#"> 
+                    <a id="a_pagination${no}" onclick="fillTable(${no})" href="#"> 
                         ${no}
                     </a>
                 </li> `);
@@ -134,6 +117,30 @@
                 </a>
             </li>`);
         //#endregion
+    }
+
+    function HideOrShowPaginationBackAndNextButtons() {
+        if (paginationData.TotalPage > 1) {
+            //#region for paginationBack button
+            // hide
+            if (paginationData.CurrentPageNo == 1)
+                $("#a_paginationBack").attr("hidden", "");
+
+            // show
+            else
+                $("#a_paginationBack").removeAttr("hidden");
+            //#endregion
+
+            //#region for paginationNext button
+            // hide
+            if (paginationData.CurrentPageNo == paginationData.TotalPage)
+                $("#a_paginationNext").attr("hidden", "");
+
+            // show
+            else
+                $("#a_paginationNext").removeAttr("hidden");
+            //#endregion
+        }
     }
     //#endregion
 });

@@ -69,6 +69,7 @@ namespace Presantation.Controllers
 
 
         [HttpPut("update/{email}")]
+        [ValidationUserFormat]
         public async Task<IActionResult> GetUpdateUserAsync(
             [FromRoute(Name = "email")] string email,
             [FromBody] UserDtoForUpdate userDtoU)

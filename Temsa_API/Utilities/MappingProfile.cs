@@ -10,12 +10,18 @@ namespace Temsa.Utilities
 		public MappingProfile()
 		{
 			CreateMap<User, UserDto>();
-			CreateMap<UserDtoForRegister, User>();
-			CreateMap<UserDtoForCreate, User>();
 			CreateMap<UserDtoForCreate, UserDto>();
 			CreateMap<UserDtoForRegister, UserDto>();
-			CreateMap<ErrorDetails, ErrorDto>();
-			CreateMap<MachineDtoForCreate, MachineDto>();
-		}
+
+            CreateMap<UserDtoForRegister, User>();
+            CreateMap<UserDtoForCreate, User>();
+
+            CreateMap<UserDtoForRegister, UserDtoForConflictControl>();
+            CreateMap<UserDtoForCreate, UserDtoForConflictControl>();
+            CreateMap<UserDtoForUpdate, UserDtoForConflictControl>();
+
+            CreateMap<ErrorDetails, ErrorDto>();
+            CreateMap<MachineDtoForCreate, MachineDto>();
+        }
 	}
 }

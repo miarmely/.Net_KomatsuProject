@@ -58,9 +58,9 @@
         @*/navigation*@
         <footer class="panel-footer">
             <div class="row">
-            <div class="col-sm-5 text-left">
-                <small id="lbl_entityQuantity" class="text-muted inline m-t-sm m-b-s"><b>0</b> kullanıcı görüntüleniyor</small>
-            </div>
+                <div class="col-sm-5 text-left">
+                    <small id="lbl_entityQuantity" class="text-muted inline m-t-sm m-b-s"><b>0</b> kullanıcı görüntüleniyor</small>
+                </div>
                 <div class="col-sm-7 text-right text-center-xs">                
                     <ul id="ul_pagination" class="pagination pagination-sm m-t-none m-b-none">
                         <li>
@@ -77,186 +77,272 @@
     </div>
 </div>
 
+<script type="module" src="~/js/userDisplay.js"></script>
+
 <script>
-    const pageSize = 10;
-    const tableBody = $("#tbl_user tbody");
-    const nameOfPaginationHeader = "User-Pagination";
-    const lbl_entityQuantity = $("#lbl_entityQuantity");
-    const ul_pagination = $("#ul_pagination");
+    function Click_SaveButton(no) {
+		//#region set variables
+		let oldColumnValues = JSON.parse(
+			sessionStorage.getItem(`tr_row${no}`)
+		);
+		let data = {
+			"firstName": $(`#tr_row${no} #inpt_firstName`).val().trim() 
+				== oldColumnValues["firstName"] ?
+					null 
+					: $(`#tr_row${no} #inpt_firstName`).val().trim(),
 
-    function updateTableRow(no){
-        //#region set columns
-        let row = $(`#tr_row${no}`);
-        let columns = {
-            "firstName" : row.children("#td_firstName"),
-            "lastName" : row.children("#td_lastName"),
-            "companyName" : row.children("#td_companyName"),
-            "telNo" : row.children("#td_telNo"),
-            "email" : row.children("#td_email"),
-        }
-        //#endregion
+			"lastName": $(`#tr_row${no} #inpt_lastName`).val().trim() 
+				== oldColumnValues["lastName"] ?
+					null 
+					: $(`#tr_row${no} #inpt_lastName`).val().trim(),
 
-        //#region add <input> to columns
-        for(let columnName in columns){
-            let column = columns[columnName];
-            let columnText = column.text();
-            
-            //#region add <input> to column
-            column.empty()
-            column.append(
-                `<input id="inpt_${columnName}" required>`
-            )
-            //#endregion add input to column
+			"companyName": $(`#tr_row${no} #inpt_companyName`).val().trim() 
+				== oldColumnValues["companyName"] ?
+					null 
+					: $(`#tr_row${no} #inpt_companyName`).val().trim(),
 
-            //#region add place holder to column
-            column
-                .children(`#inpt_${columnName}`)
-                .val(columnText);
-            //#endregion
-        }
-        //#endregion
-        
-        //#region add <select> to roleName column
-        // get roleName on column
-        let td_roleNames = row.children("#td_roleNames");
-        let roleNameOnColumn = td_roleNames.text();
-        
-        // add <select>
-        td_roleNames.empty();
-        td_roleNames.append(`<select> </select>`);
-        
-        $.ajax({
-            method: "GET",
-            url: "https://localhost:7091/api/services/role/display",
-            dataType: "json",
-            success: (response) => {
-                //#region add <option> to <select>
-                let slct_roleNames = td_roleNames.children("select");
+			"telNo": $(`#tr_row${no} #inpt_telNo`).val().trim() 
+				== oldColumnValues["telNo"] ?
+					null 
+					: $(`#tr_row${no} #inpt_telNo`).val().trim(),
 
-                // add options
-                response.forEach(roleName => {
-                    slct_roleNames.append(
-                        `<option>${roleName}</option>`
-                    );
-                });
+			"email": $(`#tr_row${no} #inpt_email`).val().trim() 
+				== oldColumnValues["email"] ?
+					null 
+					: $(`#tr_row${no} #inpt_email`).val().trim(),
 
-                // set default roleName
-                slct_roleNames.val(roleNameOnColumn);
-                //#endregion
-            },
-            error: (response) => {
-                alert(response.responseText)
-            }
-        });
-       //#endregion
+			"roleNames": $(`#tr_row${no} option:selected`).val().trim()
+				== oldColumnValues["roleName"] ?
+					null
+					: [ $(`#tr_row${no} option:selected`).val().trim() ]
+		};
+		let columnsWithInput = {
+			"firstName": $(`#tr_row${no} #td_firstName`),
+			"lastName": $(`#tr_row${no} #td_lastName`),
+			"companyName": $(`#tr_row${no} #td_companyName`),
+			"telNo": $(`#tr_row${no} #td_telNo`),
+			"email": $(`#tr_row${no} #td_email`)
+		}
+		let emailInStorage = oldColumnValues["email"];
+		//#endregion
 
-        //#region add "save" and "cancel" buttons
-        let td_processes =  row.children("td:last-child");
-        
-        td_processes.empty(); // remove 'update' button
-        td_processes.append(
-            `<button onclick="paginationSaveButton(${no})"" class="active" ui-toggle-class="">
-                <i class="fa fa-check text-success"> Kaydet</i>
-            <br>
-            <button onclick="paginationCancelButton(${no})" class="active" ui-toggle-class="">
-                <i class="fa fa-times text-danger"> Vazgeç</i>`
-        );
-       //#endregion
-    }
+		//#region when any <input> is blank (error)
+		for(var columnName in columnsWithInput)
+			if(columnsWithInput[columnName]
+				.children(`#inpt_${columnName}`)
+				.val()
+				.trim() == "")
+			{
+				alert("You Can Leave Blank Any Column");
+				return;
+			}
+		//#endregion
+		
+		$.ajax({
+			method: "PUT",
+			url: `https://localhost:7091/api/services/user/update/${emailInStorage}`,
+			data: JSON.stringify(data),
+			contentType: "application/json",
+			dataType: "json",
+			success: () => {
+				//#region convert all <input> to text
+				for (var columnName in columnsWithInput) {
+					// remove <input>
+					let column = columnsWithInput[columnName];
+					column.empty();
 
-    function paginationSaveButton(no) {
-        //#region set data
-        let data = {
-            firstName: $(`#tr_row${no} #inpt_firstName`).val().trim(),
-            lastName: $(`#tr_row${no} #inpt_lastName`).val().trim(),
-            companyName: $(`#tr_row${no} #inpt_companyName`).val().trim(),
-            telNo: $(`#tr_row${no} #inpt_telNo`).val().trim(),
-            email: $(`#tr_row${no} #inpt_email`).val().trim(),
-            roleNames: [
-                $(`#tr_row${no} option:selected`).val().trim()
-            ]
-        };
-        //#endregion
+					// add <input> value as text
+					column.append(
+						data[columnName] ?? oldColumnValues[columnName]
+					);
+				}
+				//#endregion
 
-        $.ajax({
-            method : "PUT",
-            url: `https://localhost:7091/api/services/user/update/${data.email}`,
-            data: JSON.stringify(data),
-            contentType: "application/json",
-            dataType: "json",
-            success: () => {
-                // convert all <input> to text
-                paginationCancelButton(no);
-            },
-            error: (response) => {
-                alert(response.responsetext);
-            }
-        });
-    }
+				//#region convert <select> to text
+				// remove <select>
+				let td_roleNames = $(`#tr_row${no} #td_roleNames`);
+				td_roleNames.empty();
 
-    function paginationCancelButton(no) {
-        //#region set columns
-        let row = $(`#tr_row${no}`);
-        let columns = {
-            "firstName" : row.children("#td_firstName"),
-            "lastName" : row.children("#td_lastName"),
-            "companyName" : row.children("#td_companyName"),
-            "telNo" : row.children("#td_telNo"),
-            "email" : row.children("#td_email"),
-        }
-        //#endregion
-        
-        //#region convert all <input> to text
-        for(var columnName in columns){
-            //#region get <input> value of column
-            let column = columns[columnName];
-            let inputValue = column
-                .children(`#inpt_${columnName}`)
-                .val();
-            //#endregion
-            
-            //#region remove <input> and add text
-            column.empty();
-            column.append(inputValue);
-            //#endregion
-        }
-        //#endregion    
+				// add <select> text
+				td_roleNames.append(
+					data["roleNames"] ?? oldColumnValues["roleNames"]
+				);
+				//#endregion
 
-        //#region remove <select> and add text
-        let roleName = $(`#tr_row${no} option:selected`);
-        let td_roleNames = $(`#tr_row${no} #td_roleNames`);
+				//#region add "update" button
+				// remove "save" and "cancel" buttons
+				let td_processes = $(`#tr_row${no} #td_processes`);
+				td_processes.empty();
 
-        td_roleNames.empty();
-        td_roleNames.append(roleName);
-        //#endregion
-    }
+				// add
+				td_processes.append(
+					`<button onclick="window.Click_UpdateButton(${no})" class="active" ui-toggle-class="">
+						<i class="fa fa-pencil text-info"> 
+							Güncelle
+						</i>
+					</button>`
+				);
+				//#endregion
 
-    function AddEntitiesToTable(response) {
-        let no = 1;
+				// hide error row
+				$(`#tr_error${no}`).attr("hidden", "");
+			},
+			error: (response) => {
+				//#region write error
+				// show resultLabel
+				var resultLabelId = $(`#tr_error${no} td`);
+				$(resultLabelId).removeAttr("hidden");
 
-        response.forEach(user => {
-            tableBody.append(
-                `<tr id="tr_row${no}">
-                    <td>
-                        <label class="i-checks m-b-none">
-                            <input type="checkbox"><i></i>
-                        </label>
-                    </td>
-					<td id="td_firstName">${user.firstName}</td>
-					<td id="td_lastName">${user.lastName}</td>
-					<td id="td_companyName">${user.companyName}</td>
-					<td id="td_telNo">${user.telNo}</td>
-					<td id="td_email">${user.email}</td>
-					<td id="td_roleNames">${user.roleNames.toString()}</td>
-					<td id="td_createdAt">${getDateTimeAsModified(user.createdAt)}</td>
-					<td>
-						<button onclick="updateTableRow(${no});" class="active" ui-toggle-class="">
-							<i class="fa fa-pencil text-info"> Güncelle</i>
-						</button>
-					</td>
-				</tr>`
-            );
-            no += 1;
-        });
-    }
+				// write error
+				var errorMessage = window.getErrorMessage(response.responseText);
+				window.updateResultLabel(errorMessage, "red", resultLabelId);
+				//#endregion
+			}
+		});
+	}
+
+	function Click_CancelButton(no) {
+		//#region set variables
+		let row = $(`#tr_row${no}`);
+		let columnValuesInStorage = JSON.parse(
+			sessionStorage.getItem(`tr_row${no}`)
+		);
+		let columnsWithInput = {
+			"firstName": row.children("#td_firstName"),
+			"lastName": row.children("#td_lastName"),
+			"companyName": row.children("#td_companyName"),
+			"telNo": row.children("#td_telNo"),
+			"email": row.children("#td_email")
+		};
+		//#endregion
+
+		//#region convert all <input> to text
+		for (var columnName in columnsWithInput) {
+			// remove <input>
+			let column = columnsWithInput[columnName];
+			column.empty();
+
+			// add previous value as text
+			column.append(
+				columnValuesInStorage[columnName]
+			);
+		}
+		//#endregion
+
+		//#region convert <select> to text
+		// remove <select> of role
+		let td_roleNames = $(`#tr_row${no} #td_roleNames`);
+		td_roleNames.empty();
+
+		// add previous role as text
+		td_roleNames.append(
+			columnValuesInStorage["roleNames"]
+		);
+		//#endregion
+
+		//#region add "update" button
+		// remove "save" and "cancel" buttons
+		let td_processes = $(`#tr_row${no} #td_processes`);
+		td_processes.empty();
+
+		// add
+		td_processes.append(
+			`<button onclick="window.Click_UpdateButton(${no});" class="active" ui-toggle-class="">
+				<i class="fa fa-pencil text-info"> 
+					Güncelle
+				</i>
+			</button>`
+		);
+		//#endregion
+	}
+
+	function Click_UpdateButton(no) {
+		//#region set variables
+		let row = $(`#tr_row${no}`);
+		let columnsForAddInput = {
+			"firstName": row.children("#td_firstName"),
+			"lastName": row.children("#td_lastName"),
+			"companyName": row.children("#td_companyName"),
+			"telNo": row.children("#td_telNo"),
+			"email": row.children("#td_email")
+		}
+		let columnValues = {
+			"firstName": columnsForAddInput.firstName.text(),
+			"lastName": columnsForAddInput.lastName.text(),
+			"companyName": columnsForAddInput.companyName.text(),
+			"telNo": columnsForAddInput.telNo.text(),
+			"email": columnsForAddInput.email.text(),
+		}
+		//#endregion
+
+		//#region add <input> to columns (dynamic)
+		for (let columnName in columnsForAddInput) {
+			// add <input> to column
+			let column = columnsForAddInput[columnName];
+			column.empty()
+			column.append(`<input id="inpt_${columnName}">`)
+
+			// add placeholder to column
+			column
+				.children(`#inpt_${columnName}`)
+				.val(columnValues[columnName]);
+		}
+		//#endregion
+
+		//#region add <select> to roleName column
+		// get roleName on column
+		let td_roleNames = row.children("#td_roleNames");
+		let roleNameOnColumn = td_roleNames.text();
+
+		// add <select>
+		td_roleNames.empty();
+		td_roleNames.append(`<select> </select>`);
+		
+		$.ajax({
+			method: "GET",
+			url: "https://localhost:7091/api/services/role/display",
+			dataType: "json",
+			success: (response) => {
+				//#region add <option> to <select>
+				let slct_roleNames = td_roleNames.children("select");
+
+				// add options
+				response.forEach(roleName => {
+					slct_roleNames.append(
+						`<option>${roleName}</option>`
+					);
+				});
+
+				// add value on select
+				slct_roleNames.val(roleNameOnColumn);
+				//#endregion
+			},
+			error: (response) => {
+				alert(response.responseText)
+			}
+		});
+		//#endregion
+		
+		//#region add "save" and "cancel" buttons
+		// remove 'update' button
+		let td_processes = row.children("#td_processes");
+		td_processes.empty(); 
+
+		// add
+		td_processes.append(
+			`<button onclick="window.Click_SaveButton(${no})"" class="active" ui-toggle-class="">
+				<i class="fa fa-check text-success"> Kaydet</i>
+			<button onclick="window.Click_CancelButton(${no})" class="active" ui-toggle-class="">
+				<i class="fa fa-times text-danger"> Vazgeç</i>`
+		);
+		//#endregion
+
+		//#region save column values to sessionStorage
+		columnValues["roleNames"] = roleNameOnColumn;
+		sessionStorage.setItem(
+			`tr_row${no}`,
+			JSON.stringify(columnValues)
+		);
+		//#endregion
+	}
 </script>

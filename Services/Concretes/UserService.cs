@@ -66,12 +66,12 @@ namespace Services.Concretes
         public async Task RegisterAsync(UserDtoForRegister userDtoR)
         {
             #region control conflict errors
-            var userDto = _mapper.Map<UserDto>(userDtoR);
+            var userDtoC = _mapper.Map<UserDtoForConflictControl>(userDtoR);
 
             await ConflictControlAsync(u =>
-                u.TelNo.Equals(userDto.TelNo)  // telNo
-                || u.Email.Equals(userDto.Email)  // email
-                , userDto);
+                u.TelNo.Equals(userDtoC.TelNo)  // telNo
+                || u.Email.Equals(userDtoC.Email)  // email
+                , userDtoC);
             #endregion
 
             #region convert userDtoR to user
@@ -114,12 +114,12 @@ namespace Services.Concretes
         public async Task CreateUserAsync(UserDtoForCreate userDtoC)
         {
             #region control conflict error
-            var userDto = _mapper.Map<UserDto>(userDtoC);
+            var userDtoConf = _mapper.Map<UserDtoForConflictControl>(userDtoC);
 
             await ConflictControlAsync(u =>
-                u.Email.Equals(userDto.Email)
-                || u.TelNo.Equals(userDto.TelNo)
-                , userDto);
+                u.Email.Equals(userDtoConf.Email)
+                || u.TelNo.Equals(userDtoConf.TelNo)
+                , userDtoConf);
             #endregion
 
             #region convert userDtoC to user
@@ -189,6 +189,16 @@ namespace Services.Concretes
 
         public async Task UpdateUserAsync(string email, UserDtoForUpdate userDtoU)
         {
+            #region control conflict error
+            var userDtoC = _mapper.Map<UserDtoForConflictControl>(userDtoU);
+
+            // if values null, then they didn't change.
+            await ConflictControlAsync(u =>
+                u.TelNo == null ? true : u.TelNo == userDtoU.TelNo
+                || u.Email == null ? true : u.Email == userDtoU.Email,
+                userDtoC);
+            #endregion
+
             #region when user not found (throw)
             var user = await _manager.UserRepository
                 .GetUserByEmailAsync(email);
@@ -199,75 +209,84 @@ namespace Services.Concretes
                     "Verification Error - Email");
             #endregion
 
-            #region update user
-            var company = await GetCompanyAndCreateIfNotExistsAsync(userDtoU.CompanyName);
+            #region get company
+            var company = userDtoU.CompanyName == null ?
+                null  // if company name not updated
+                : await GetCompanyAndCreateIfNotExistsAsync(userDtoU.CompanyName);
+            #endregion
 
-            user.FirstName = userDtoU.FirstName;
-            user.LastName = userDtoU.LastName;
-            user.TelNo = userDtoU.TelNo;
-            user.CompanyId = company.Id;
-            user.Email = userDtoU.Email;
+            #region update user
+            user.FirstName = userDtoU.FirstName ?? user.FirstName;
+            user.LastName = userDtoU.LastName ?? user.LastName;
+            user.TelNo = userDtoU.TelNo ?? user.TelNo;
+            user.CompanyId = company == null ? user.CompanyId : company.Id;
+            user.Email = userDtoU.Email ?? user.Email;
 
             _manager.UserRepository.Update(user);
             #endregion
 
-            #region delete userAndRole that not exists userDto
-            var userAndRoles = await _manager.UserAndRoleRepository
-                .GetUserAndRolesByUserIdAsync(user.Id);
-
-            #region delete UserAndRole 
-            var roleNamesInDatabase = new Collection<string>();
-
-            foreach (var userAndRole in userAndRoles)
+            #region create&delete userAndRole
+            if (userDtoU.RoleNames != null)
             {
-                #region get role
-                var role = await _manager.RoleRepository
-                    .GetRoleByIdAsync(userAndRole.RoleId);
+                #region delete userAndRole that not exists userDto
+                var userAndRoles = await _manager.UserAndRoleRepository
+                    .GetUserAndRolesByUserIdAsync(user.Id);
 
-                roleNamesInDatabase.Add(role.Name);
-                #endregion
+                #region delete UserAndRole 
+                var roleNamesInDatabase = new Collection<string>();
 
-                #region when exists database but not exists current data
-                if (!userDtoU.RoleNames.Contains(role.Name))
-                    _manager.UserAndRoleRepository
-                        .Delete(userAndRole);
-                #endregion
-            }
-            #endregion
-
-            #endregion
-
-            #region create userAndRole that not exists database
-            foreach (var roleNameInDto in userDtoU.RoleNames)
-            {
-                // when not exists database but exists userDto
-                if (!roleNamesInDatabase.Contains(roleNameInDto))
+                foreach (var userAndRole in userAndRoles)
                 {
                     #region get role
                     var role = await _manager.RoleRepository
-                        .GetRoleByNameAsync(roleNameInDto);
+                        .GetRoleByIdAsync(userAndRole.RoleId);
+
+                    roleNamesInDatabase.Add(role.Name);
                     #endregion
 
-                    #region create userAndRole
-                    _manager.UserAndRoleRepository
-                        .Create(new UserAndRole
-                        {
-                            UserId = user.Id,
-                            RoleId = role.Id
-                        });
+                    #region when exists database but not exists current data
+                    if (!userDtoU.RoleNames.Contains(role.Name))
+                        _manager.UserAndRoleRepository
+                            .Delete(userAndRole);
                     #endregion
                 }
+                #endregion
+
+                #endregion
+
+                #region create userAndRole that not exists database
+                foreach (var roleNameInDto in userDtoU.RoleNames)
+                {
+                    // when not exists database but exists userDto
+                    if (!roleNamesInDatabase.Contains(roleNameInDto))
+                    {
+                        #region get role
+                        var role = await _manager.RoleRepository
+                            .GetRoleByNameAsync(roleNameInDto);
+                        #endregion
+
+                        #region create userAndRole
+                        _manager.UserAndRoleRepository
+                            .Create(new UserAndRole
+                            {
+                                UserId = user.Id,
+                                RoleId = role.Id
+                            });
+                        #endregion
+                    }
+                }
+                #endregion
             }
 
             await _manager.SaveAsync();
             #endregion
         }
-        
+
         #region private
 
         private async Task ConflictControlAsync(
             Expression<Func<User, bool>> condition,
-            UserDto userDto)
+            UserDtoForConflictControl userDtoC)
         {
             #region get users
             var users = await _manager.UserRepository
@@ -285,12 +304,12 @@ namespace Services.Concretes
                 };
 
                 #region control telNo
-                if (users.Any(u => u.TelNo.Equals(userDto.TelNo)))
+                if (users.Any(u => u.TelNo.Equals(userDtoC.TelNo)))
                     UpdateErrorCode(ref errorModel, "T", "TelNo ");
                 #endregion
 
                 #region control email
-                if (users.Any(u => u.Email.Equals(userDto.Email)))
+                if (users.Any(u => u.Email.Equals(userDtoC.Email)))
                     UpdateErrorCode(ref errorModel, "E", "Email ");
                 #endregion
 

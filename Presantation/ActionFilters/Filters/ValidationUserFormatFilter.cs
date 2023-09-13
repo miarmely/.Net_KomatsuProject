@@ -51,9 +51,14 @@ namespace Presantation.ActionFilters.Attributes
             #region control format of dtoModel properties
             foreach (var property in properties)
             {
+                #region don't check value if is null.
                 value = property.GetValue(dtoModel);
 
-                // control formats
+                if (value == null)
+                    continue;
+                #endregion
+
+                #region control formats
                 switch (property.Name)
                 {
                     case "FirstName":
@@ -75,6 +80,7 @@ namespace Presantation.ActionFilters.Attributes
                         await ControlPassword(value as string);
                         break;
                 };
+                #endregion
             }
             #endregion
 
