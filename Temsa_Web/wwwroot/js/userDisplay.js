@@ -177,7 +177,7 @@
                     <td hidden></td>
                 </tr>
                 <tr id="tr_error${no}">
-                    <td colspan="10" style="text-align:center" hidden>
+                    <td colspan="10" hidden>
                     </td>
                 </tr>`
             );

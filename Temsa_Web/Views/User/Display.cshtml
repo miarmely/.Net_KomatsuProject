@@ -112,7 +112,7 @@
 					: $(`#tr_row${no} #inpt_email`).val().trim(),
 
 			"roleNames": $(`#tr_row${no} option:selected`).val().trim()
-				== oldColumnValues["roleName"] ?
+				== oldColumnValues["roleNames"] ?
 					null
 					: [ $(`#tr_row${no} option:selected`).val().trim() ]
 		};
@@ -129,15 +129,39 @@
 		//#region when any <input> is blank (error)
 		for(var columnName in columnsWithInput)
 			if(columnsWithInput[columnName]
-				.children(`#inpt_${columnName}`)
+				.children(`#inpt_${columnName}`)  // get <input>
 				.val()
 				.trim() == "")
 			{
-				alert("You Can Leave Blank Any Column");
+				window.updateResultLabel(
+					"lütfen boş bıraktığınız yerleri doldurunuz.", 
+					"red", 
+					`#tr_error${no} td`)
 				return;
 			}
 		//#endregion
 		
+		//#region when any column not changed
+		// count null column quantity
+		let nullColumnQuantity = 0;
+		for(var columnName in data){
+			if(data[columnName] != null)
+				break;
+
+			nullColumnQuantity+=1;
+		}
+		
+		// write errorMessage
+		let dataLength = Object.keys(data).length;
+		if(nullColumnQuantity == dataLength){
+			window.updateResultLabel(
+				"herhangi Bir Değişiklik Yapılmadı", 
+				"red", 
+				`#tr_error${no} td`)
+			return;
+		}
+		//#endregion
+
 		$.ajax({
 			method: "PUT",
 			url: `https://localhost:7091/api/services/user/update/${emailInStorage}`,
@@ -188,15 +212,9 @@
 				$(`#tr_error${no}`).attr("hidden", "");
 			},
 			error: (response) => {
-				//#region write error
-				// show resultLabel
-				var resultLabelId = $(`#tr_error${no} td`);
-				$(resultLabelId).removeAttr("hidden");
-
-				// write error
-				var errorMessage = window.getErrorMessage(response.responseText);
-				window.updateResultLabel(errorMessage, "red", resultLabelId);
-				//#endregion
+				window.writeErrorMessage(
+					response.responseText, 
+					`#tr_error${no} td`);
 			}
 		});
 	}
@@ -245,6 +263,9 @@
 		let td_processes = $(`#tr_row${no} #td_processes`);
 		td_processes.empty();
 
+		// hide error message label
+		$(`#tr_error${no} td`).attr("hidden", "")
+
 		// add
 		td_processes.append(
 			`<button onclick="window.Click_UpdateButton(${no});" class="active" ui-toggle-class="">
@@ -280,7 +301,7 @@
 			// add <input> to column
 			let column = columnsForAddInput[columnName];
 			column.empty()
-			column.append(`<input id="inpt_${columnName}">`)
+			column.append(`<input id="inpt_${columnName}">`);
 
 			// add placeholder to column
 			column

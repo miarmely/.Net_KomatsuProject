@@ -30,3 +30,12 @@
 18:19:14.5477  WARN  LogDetails { Controller = User, Action = GetUpdateUser, ErrorCode = FE-TE, CreatedAt = 9/13/2023 3:19:14 PM }
 18:19:17.3423  WARN  LogDetails { Controller = User, Action = GetUpdateUser, ErrorCode = FE-E, CreatedAt = 9/13/2023 3:19:17 PM }
 18:19:23.3160  WARN  LogDetails { Controller = User, Action = GetUpdateUser, ErrorCode = CE-E, CreatedAt = 9/13/2023 3:19:23 PM }
+18:23:23.6673  WARN  LogDetails { Controller = User, Action = GetUpdateUser, ErrorCode = FE-T, CreatedAt = 9/13/2023 3:23:23 PM }
+18:34:37.7332  WARN  LogDetails { Controller = User, Action = GetUpdateUser, ErrorCode = FE-T, CreatedAt = 9/13/2023 3:34:37 PM }
+18:35:08.8849  WARN  LogDetails { Controller = User, Action = GetUpdateUser, ErrorCode = FE-T, CreatedAt = 9/13/2023 3:35:08 PM }
+18:35:14.8278  WARN  LogDetails { Controller = User, Action = GetUpdateUser, ErrorCode = FE-T, CreatedAt = 9/13/2023 3:35:14 PM }
+18:35:29.1700  WARN  LogDetails { Controller = User, Action = GetUpdateUser, ErrorCode = FE-T, CreatedAt = 9/13/2023 3:35:29 PM }
+18:39:52.2671  WARN  LogDetails { Controller = User, Action = GetUpdateUser, ErrorCode = FE-T, CreatedAt = 9/13/2023 3:39:52 PM }
+18:40:54.4755  WARN  LogDetails { Controller = User, Action = GetUpdateUser, ErrorCode = FE-E, CreatedAt = 9/13/2023 3:40:54 PM }
+18:42:08.2926  WARN  LogDetails { Controller = User, Action = GetUpdateUser, ErrorCode = FE-E, CreatedAt = 9/13/2023 3:42:08 PM }
+18:43:56.3692  WARN  LogDetails { Controller = User, Action = GetUpdateUser, ErrorCode = FE-E, CreatedAt = 9/13/2023 3:43:56 PM }

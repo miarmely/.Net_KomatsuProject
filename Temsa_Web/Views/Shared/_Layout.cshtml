@@ -253,9 +253,16 @@
 
 			function writeErrorMessage(responseText, resultLabelId)
 			{
-				var errorMsg = JSON.parse(responseText);
-				var convertedErrorMsg = convertErrorCodeToErrorMessage(errorMsg["errorCode"]);
-				updateResultLabel(convertedErrorMsg, "rgb(255, 75, 75)", resultLabelId);
+				// convert error code to error message
+				var responseTextInJson = JSON.parse(responseText);
+				var errorMessage = convertErrorCodeToErrorMessage(
+					responseTextInJson["errorCode"]);
+				
+				// show resultLabel
+				$(resultLabelId).removeAttr("hidden");
+
+				// write error
+				updateResultLabel(errorMessage, "rgb(255, 75, 75)", resultLabelId);
 			}
 
 			function updateResultLabel(message, color, resultLabelId)
@@ -272,6 +279,9 @@
 					margin-bottom: 30px;
 					text-align: center`);
 				//#endregion
+
+				// show resultLabel
+				$(resultLabelId).removeAttr("hidden");
 
 				// update
 				resultLabel.text(message);

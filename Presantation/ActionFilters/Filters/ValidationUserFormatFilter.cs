@@ -116,14 +116,29 @@ namespace Presantation.ActionFilters.Attributes
                     UpdateErrorModel("C", "CompanyName ");
             });
 
-        private async Task ControlTelNo(string? telNo) =>
-            await Task.Run(() =>
-            {
-                // length control
-                if (telNo.Length != _userSettings.TelNo.Length)
-                    UpdateErrorModel("T", "TelNo ");
-            });
+        private async Task ControlTelNo(string? telNo)
+        {
+			var isTelNoValid = await Task.Run(() =>
+			{
+				#region length control
+				if (telNo.Length != _userSettings.TelNo.Length)
+					return false;
+				#endregion
 
+				#region when telNo not convert to int
+				else if (!CanConvertToInt(telNo))
+                    return false;
+                #endregion
+
+                return true;
+			});
+
+			#region when telNo not valid
+			if (!isTelNoValid)
+				UpdateErrorModel("T", "TelNo ");
+            #endregion
+        }
+            
         private async Task ControlEmail(string? email)
         {
             var isEmailValid = await Task.Run(() =>
@@ -194,5 +209,24 @@ namespace Presantation.ActionFilters.Attributes
             _errorModel.ErrorCode += newErrorCode;
             _errorModel.ErrorDescription += newErrorDescription;
         }
+
+        private bool CanConvertToInt(string input)
+        {
+			#region control left chunk of string
+			var leftChunkOfString = input.Substring(0, input.Length / 2);
+
+            if (!int.TryParse(leftChunkOfString, out int _))
+                return false;
+			#endregion
+
+			#region control right chunk of string
+			var rightChunkOfString = input.Substring(input.Length / 2);
+
+			if (!int.TryParse(rightChunkOfString, out int _))
+				return false;
+			#endregion
+
+            return true;
+		}
     }
 }
