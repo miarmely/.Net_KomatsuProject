@@ -79,5 +79,16 @@ namespace Presantation.Controllers
 
             return NoContent();
         }
+
+
+        [HttpDelete("delete")]
+        public async Task<IActionResult> DeleteUsersAsync(
+            [FromBody] UserDtoForDelete userDtoD)
+        {
+            await _manager.UserService
+                .DeleteUsersAsync(userDtoD);
+
+            return NoContent();
+		}
 	}
 }

@@ -12,5 +12,6 @@ namespace Services.Contracts
 		Task<ICollection<UserDto>> GetAllUsersWithPagingAsync(
 			PagingParameters pagingParameters, HttpResponse response);
 		Task UpdateUserAsync(string email, UserDtoForUpdate userDtoU);
+		Task DeleteUsersAsync(UserDtoForDelete userDtoD);
     }
 }

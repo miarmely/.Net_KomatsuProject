@@ -9,22 +9,25 @@
         @*menubar*@
         <div class="row w3-res-tb">
             <div class="col-sm-5 m-b-xs">
-            <select class="input-sm form-control w-sm inline v-middle">
-                <option value="0">Seçilenleri Sil</option>
-                <option value="1">...</option>
-            </select>
-            <button class="btn btn-sm btn-default">Uygula</button>                
+				<select id="slct_menubar" class="input-sm form-control w-sm inline v-middle">
+					<option value="1">Seçilenleri Sil</option>
+				</select>
+				<button id="btn_apply" class="btn btn-sm btn-default">Uygula</button>                
             </div>
             <div class="col-sm-4">
             </div>
+			@*search bar*@
             <div class="col-sm-3">
-            <div class="input-group">
-                <input type="text" class="input-sm form-control" placeholder="Search">
-                <span class="input-group-btn">
-                <button class="btn btn-sm btn-default" type="button">Ara</button>
-                </span>
+				<div class="input-group">
+					<input type="text" class="input-sm form-control" placeholder="Ara">
+					<span class="input-group-btn">
+						<button class="btn btn-sm btn-default" type="button">
+							Ara
+						</button>
+					</span>
+				</div>
             </div>
-            </div>
+			@*/search bar*@
         </div>
         @*/menubar*@
 
@@ -35,7 +38,7 @@
                     <tr>
                         <th style="width:20px;">
                             <label class="i-checks m-b-none">
-                            <input type="checkbox"><i></i>
+								<input id="box_all" type="checkbox"><i></i>
                             </label>
                         </th>
                         <th>Ad</th>
@@ -63,12 +66,6 @@
                 </div>
                 <div class="col-sm-7 text-right text-center-xs">                
                     <ul id="ul_pagination" class="pagination pagination-sm m-t-none m-b-none">
-                        <li>
-                            <a id="a_paginationBack" href="#" hidden>
-                                <i class="fa fa-chevron-left"></i>
-                            </a>
-                        </li>
-                        <li><a id="a_pagination1" href="#">1</a></li>
                     </ul>
                 </div>
             </div>
@@ -80,7 +77,7 @@
 <script type="module" src="~/js/userDisplay.js"></script>
 
 <script>
-    function Click_SaveButton(no) {
+    function click_saveButton(no) {
 		//#region set variables
 		let oldColumnValues = JSON.parse(
 			sessionStorage.getItem(`tr_row${no}`)
@@ -200,7 +197,7 @@
 
 				// add
 				td_processes.append(
-					`<button onclick="window.Click_UpdateButton(${no})" class="active" ui-toggle-class="">
+					`<button onclick="window.click_updateButton(${no})" class="active" ui-toggle-class="">
 						<i class="fa fa-pencil text-info"> 
 							Güncelle
 						</i>
@@ -219,7 +216,7 @@
 		});
 	}
 
-	function Click_CancelButton(no) {
+	function click_cancelButton(no) {
 		//#region set variables
 		let row = $(`#tr_row${no}`);
 		let columnValuesInStorage = JSON.parse(
@@ -268,7 +265,7 @@
 
 		// add
 		td_processes.append(
-			`<button onclick="window.Click_UpdateButton(${no});" class="active" ui-toggle-class="">
+			`<button onclick="window.click_updateButton(${no});" class="active" ui-toggle-class="">
 				<i class="fa fa-pencil text-info"> 
 					Güncelle
 				</i>
@@ -277,7 +274,7 @@
 		//#endregion
 	}
 
-	function Click_UpdateButton(no) {
+	function click_updateButton(no) {
 		//#region set variables
 		let row = $(`#tr_row${no}`);
 		let columnsForAddInput = {
@@ -351,9 +348,9 @@
 
 		// add
 		td_processes.append(
-			`<button onclick="window.Click_SaveButton(${no})"" class="active" ui-toggle-class="">
+			`<button onclick="window.click_saveButton(${no})"" class="active" ui-toggle-class="">
 				<i class="fa fa-check text-success"> Kaydet</i>
-			<button onclick="window.Click_CancelButton(${no})" class="active" ui-toggle-class="">
+			<button onclick="window.click_cancelButton(${no})" class="active" ui-toggle-class="">
 				<i class="fa fa-times text-danger"> Vazgeç</i>`
 		);
 		//#endregion
