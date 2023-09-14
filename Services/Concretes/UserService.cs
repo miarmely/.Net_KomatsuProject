@@ -161,7 +161,9 @@ namespace Services.Concretes
 				.GetAllUsersAsync(pagingParameters);
 
 			if (users.Count == 0)
-				throw new ErrorWithCodeException(404, "NF-U", "Not Found - User");
+				throw new ErrorWithCodeException(404, 
+					"NF-U", 
+					"Not Found - User");
 			#endregion
 
 			#region convert user to userDto

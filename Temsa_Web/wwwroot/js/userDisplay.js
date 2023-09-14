@@ -1,7 +1,7 @@
 ﻿$(function () {
     //#region variables
     const pageNumber = 1;
-    const pageSize = 10;
+    const pageSize = 5;
     const paginationButtonQuantity = 5;
     const tableBody = $("#tbl_user tbody");
     const nameOfPaginationHeader = "User-Pagination";
@@ -11,27 +11,37 @@
     let userPaginationInJson;
     //#endregion
 
-    //#region initializer
-    fillTable(pageNumber);
-    addPaginationButtons();
-    //#endregion
-
     //#region events
-    //$("#a_pagination1").click(() => fillTable(1));
-    //$("#a_pagination2").click(() => fillTable(2));
-    //$("#a_pagination3").click(() => fillTable(3));
-    //$("#a_pagination4").click(() => fillTable(4));
-    $("#a_paginationBack").click(() => {
-        //#region open previous page if previous page exists
-        if (userPaginationInJson.HasPrevious)
-            fillTable(userPaginationInJson.CurrentPageNo - 1);
+    $("#ul_pagination").click(() => {
+        //#region do unchecked "box_all"
+        if ($("#box_all").is(":checked"))
+            $("#box_all").prop("checked", false);
         //#endregion
-    });
-    $("#a_paginationNext").click(() => {
-        //#region open next page if next page exists
-        if (userPaginationInJson.HasNext)
-            fillTable(userPaginationInJson.CurrentPageNo + 1);
-        //#endregion
+
+        //#region click control of pagination buttons
+        var clickedButton = $(":focus");
+
+        switch (clickedButton.attr("id")) {
+            //#region click paginationBack
+            case "a_paginationBack":
+                click_paginationBack();
+                break;
+            //#endregion
+
+            //#region click paginationBack
+            case "a_paginationNext":
+                click_paginationNext();
+                break;
+            //#endregion
+
+            //#region click pagination button with number
+            default:
+                let pageNo = clickedButton.prop("innerText");
+                fillTable(pageNo);
+                break;
+            //#endregion
+        }
+        //#endregion 
     });
     $("#box_all").click(() => {
         //#region do checked/unchecked all checkbox
@@ -54,25 +64,21 @@
         }
         //#endregion
     })
-    $("#btn_apply").click(() => {
-        let selectedOption = $("#slct_menubar option:selected");
+    $("#btn_apply").click(async () => {
+        let opt_selected = $("#slct_menubar option:selected");
 
-        switch (selectedOption.val()) {
-            case "1":  // delete selected values
-                deleteSelectedEntities();
+        switch (opt_selected.val()) {
+            //#region delete selected values
+            case "1":  
+                await deleteSelectedEntitiesAsync();
                 break;
+            //#endregion 
         }
-    });
-
-    $(".paginationButtons").click(() => {
-        var clickedPaginationButton = $(":focus");
-        alert(clickedPaginationButton.id)
-
     });
     //#endregion events
 
     //#region functions
-    function fillTable(pageNumber) {
+    function fillTable(pageNumber, refreshPaginationButtons=false) {
         $.ajax({
             method: "GET",
             url: "https://localhost:7091/api/services/user/display",
@@ -89,15 +95,12 @@
                 //#endregion
             },
             success: (response, status, xhr) => {
-                //#region save userPagination to sessionStorage
-                let userPaginationHeader = xhr.getResponseHeader(nameOfPaginationHeader);
-
-                sessionStorage.setItem(nameOfPaginationHeader, userPaginationHeader);
+                //#region get userPaginationInJson
+                userPaginationInJson = JSON.parse(
+                    xhr.getResponseHeader(nameOfPaginationHeader));
                 //#endregion
 
                 //#region set "entityCountOfPage"
-                userPaginationInJson = JSON.parse(userPaginationHeader);
-
                 entityCountOfPage =
                     userPaginationInJson.CurrentPageNo == userPaginationInJson.TotalPage ?
                         userPaginationInJson.LastPageCount  // when current page is last page
@@ -110,17 +113,19 @@
                     `<b>${entityCountOfPage}/${pageSize}</b> görüntüleniyor`);
                 //#endregion
 
-                addEntitiesToTable(response);
+                addUsersToTable(response);
                 hideOrShowPaginationBackAndNextButtons();
+
+                //#region add pagination buttons
+                if (refreshPaginationButtons)
+                    addPaginationButtons();
+                //#endregion
             },
             error: (response) => {
                 //#region write error
-                var errorMessage = window.getErrorMessage(response.responseText);
-
-                lbl_entityQuantity.text(errorMessage);
-                lbl_entityQuantity.attr("style", "color:red");
+                window.writeErrorMessage(response.responseText, lbl_entityQuantity);
                 //#endregion
-            }
+            },
         });
     }
 
@@ -138,19 +143,20 @@
         //#endregion
 
         //#region add paginationBack button
-        ul_pagination.append(
-            `<li>
-                <a id="a_paginationBack" href="#" hidden>
-                    <i class="fa fa-chevron-left"></i>
-                </a>
-            </li>`);
+        if (userPaginationInJson.CurrentPageNo != 1)
+            ul_pagination.append(
+                `<li>
+                    <a id="a_paginationBack" href="#" hidden>
+                        <i class="fa fa-chevron-left"></i>
+                    </a>
+                </li>`);
         //#endregion
 
         //#region add pagination buttons
         for (let pageNo = 1; pageNo <= buttonQuantity; pageNo += 1)
             ul_pagination.append(
                 `<li>
-                    <a id="a_pagination${pageNo}" class="paginationButtons"  href="#"> 
+                    <a id="a_pagination${pageNo}" href="#"> 
                         ${pageNo}
                     </a>
                 </li> `);
@@ -191,7 +197,7 @@
         }
     }
 
-    function addEntitiesToTable(response) {
+    function addUsersToTable(response) {
         let no = 1;
 
         response.forEach(user => {
@@ -230,23 +236,32 @@
         });
     }
 
-    function deleteSelectedEntities() {
+    async function deleteSelectedEntitiesAsync() {
         //#region set telNoList and rowNoList
         let telNoList = [];
         let rowNoList = [];
 
-        for (let rowNo = 1; rowNo <= entityCountOfPage; rowNo += 1) {
-            let checkBox = $(`#tr_row${rowNo} #td_checkBox input`);
+        await new Promise(resolve => {
+            for (let rowNo = 1; rowNo <= entityCountOfPage; rowNo += 1) {
+                let checkBox = $(`#tr_row${rowNo} #td_checkBox input`);
 
-            //#region add telNo to telNoList if user checked
-            if (checkBox.is(":checked")) {
-                let telNo = $(`#tr_row${rowNo} #td_telNo`).text();
+                //#region add telNo to telNoList if user checked
+                if (checkBox.is(":checked")) {
+                    let telNo = $(`#tr_row${rowNo} #td_telNo`).text();
 
-                telNoList.push(telNo);
-                rowNoList.push(rowNo);
+                    telNoList.push(telNo);
+                    rowNoList.push(rowNo);
+                }
+                //#endregion
             }
-            //#endregion
-        }
+
+            resolve();
+        })
+        //#endregion
+
+        //#region when any user not select
+        if (telNoList.length == 0)
+            return;
         //#endregion
 
         $.ajax({
@@ -256,19 +271,18 @@
             contentType: "application/json",
             dataType: "json",
             success: () => {
-                alert("success");
-
                 //#region when all users on page deleted
-                if (telNoList.length == pageSize) {
+                 if (telNoList.length == pageSize) {
                     let previousPageNo = userPaginationInJson.CurrentPageNo - 1;
 
                     // when previous page not exists
                     if (previousPageNo == 0)
                         tableBody.empty();
-                        
+
                     // fill table with previous page
-                    else
-                        fillTable(previousPageNo);
+                    else {
+                        fillTable(previousPageNo, true);
+                    }
                 }
                 //#endregion
 
@@ -276,12 +290,36 @@
                 else
                     fillTable(userPaginationInJson.CurrentPageNo);  // refresh current page
                 //#endregion
+
+                //#region do unchecked 'box_all'
+                $("#box_all").prop("checked", false);
+                //#endregion
+
+                //#region reset "lbl_entityQuantity"
+                lbl_entityQuantity.empty()
+                lbl_entityQuantity.append(`0/${pageSize} Kullanıcı Görüntüleniyor`);
+                //#endregion
             },
             error: (response) => {
-                alert("error");
                 window.writeErrorMessage(responseText, lbl_entityQuantity);
             }
-        })
+        });
+    }
+
+    function click_paginationBack() {
+        //#region open previous page if previous page exists
+        if (userPaginationInJson.HasPrevious)
+            fillTable(userPaginationInJson.CurrentPageNo - 1);
+        //#endregion
+    }
+
+    function click_paginationNext() {
+        //#region open next page if next page exists
+        if (userPaginationInJson.HasNext)
+            fillTable(userPaginationInJson.CurrentPageNo + 1);
+        //#endregion
     }
     //#endregion
+
+    fillTable(pageNumber, true);
 });

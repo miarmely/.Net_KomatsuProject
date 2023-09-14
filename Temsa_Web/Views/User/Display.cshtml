@@ -62,7 +62,9 @@
         <footer class="panel-footer">
             <div class="row">
                 <div class="col-sm-5 text-left">
-                    <small id="lbl_entityQuantity" class="text-muted inline m-t-sm m-b-s"><b>0</b> kullanıcı görüntüleniyor</small>
+                    <small id="lbl_entityQuantity" class="text-muted inline m-t-sm m-b-s">
+						<b>0</b> kullanıcı görüntüleniyor
+					</small>
                 </div>
                 <div class="col-sm-7 text-right text-center-xs">                
                     <ul id="ul_pagination" class="pagination pagination-sm m-t-none m-b-none">
@@ -205,8 +207,9 @@
 				);
 				//#endregion
 
-				// hide error row
-				$(`#tr_error${no}`).attr("hidden", "");
+				//#region hide error message row
+				$(`#tr_error${no} td`).attr("hidden", "");
+				//#endregion
 			},
 			error: (response) => {
 				window.writeErrorMessage(
