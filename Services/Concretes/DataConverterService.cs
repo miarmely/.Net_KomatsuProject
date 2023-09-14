@@ -73,19 +73,20 @@ namespace Services.Concretes
 			#region set mainCategory
 			var mainCategory = await _repository.MainCategoryRepository
 				.GetMainCategoryByNameAsync(machineDto.MainCategoryName);
+
+			
 			#endregion
 
 			return new Machine
 			{
 				BrandId = brand.Id,
-				MainCategoryId = mainCategory.Id,
-				SubCategoryName = machineDto.SubCategoryName,
+				CategoryId = ,
 				Model = machineDto.Model,
 				IsSecondHand = machineDto.IsSecondHand,
 				ImagePath = machineDto.ImagePath,
 				Stock = (int)machineDto.Stock,
-				Rented = (int)machineDto.Rented,
-				Sold = (int)machineDto.Sold,
+				Rented = machineDto.Rented ?? 0,
+				Sold = machineDto.Sold ?? 0,
 				Year = (int)machineDto.Year,
 				RegistrationDate = (DateTime)machineDto.RegistrationDate,
 				IsDeleted = false

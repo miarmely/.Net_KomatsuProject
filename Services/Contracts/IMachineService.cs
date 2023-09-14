@@ -1,6 +1,4 @@
-﻿using Entities.DataModels;
-using Entities.DtoModels;
-using System.Linq.Expressions;
+﻿using Entities.DtoModels;
 
 namespace Services.Contracts
 {
@@ -8,5 +6,7 @@ namespace Services.Contracts
 	{
 		Task<List<MachineDto>> GetMachinesByConditionAsync(MachineDtoForSearch machineDtoS);
 		Task CreateMachineAsync(MachineDtoForCreate machineDtoC);
+		Task<IEnumerable<string>> GetSubCategoriesOfMainCategoryAsync(
+			string mainCategoryName);
 	}
 }

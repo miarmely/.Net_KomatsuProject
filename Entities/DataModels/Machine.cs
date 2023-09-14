@@ -11,11 +11,8 @@ namespace Entities.DataModels
 		[Column(TypeName = "smallint")]
 		public int BrandId { get; set; }
 
-		[Column(TypeName = "tinyint")]
-		public int MainCategoryId { get; set; }
-
-		[Column(TypeName = "varchar(50)")]
-		public string SubCategoryName { get; set; }
+		[Column(TypeName = "smallint")]
+		public int CategoryId { get; set; }
 
 		[Column(TypeName = "varchar(50)")]
 		public string Model { get; set; }
@@ -44,8 +41,8 @@ namespace Entities.DataModels
 		[ForeignKey("BrandId")]
 		public Brand Brand { get; set; }
 
-		[ForeignKey("MainCategoryId")]
-		public MainCategory MainCategory { get; set; }
+		[ForeignKey("CategoryId")]
+		public Category? Category { get; set; }
 		#endregion
 	}
 }

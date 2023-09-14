@@ -1,5 +1,4 @@
 ﻿using Entities.DtoModels;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Presantation.ActionFilters;
 using Services.Contracts;
@@ -11,27 +10,37 @@ namespace Presantation.Controllers
     [ModifyError]
     public class MachineController : ControllerBase
     {
-        private readonly IServiceManager _services;
+        private readonly IServiceManager _manager;
 
         public MachineController(IServiceManager services) =>
-            _services = services;
+            _manager = services;
 
         [HttpPost("display")]
         public async Task<IActionResult> GetMachinesByConditionAsync(
             [FromBody] MachineDtoForSearch machineDtoS)
         {
-            var entity = await _services.MachineService
+            var entity = await _manager.MachineService
                 .GetMachinesByConditionAsync(machineDtoS);
 
             return Ok(entity);
         }
 
 
+        [HttpGet("display/{mainCategoryName}/subCategories")]
+        public async Task<IActionResult> GetSubCategoriesOfMainCategoryAsync(
+            [FromRoute(Name = "mainCategoryName")] string mainCategoryName)
+        {
+            var subCategories = await _manager.MachineService
+                .GetSubCategoriesOfMainCategoryAsync(mainCategoryName);
+
+            return Ok(subCategories);
+        }
+
         [HttpPost("create")]
         public async Task<IActionResult> CreateMachineAsync(
             [FromBody] MachineDtoForCreate machineDtoC)
         {
-            await _services.MachineService
+            await _manager.MachineService
                 .CreateMachineAsync(machineDtoC);
 
             return NoContent();

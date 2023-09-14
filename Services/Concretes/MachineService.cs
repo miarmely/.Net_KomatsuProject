@@ -1,7 +1,6 @@
 ﻿using AutoMapper;
 using Entities.DtoModels;
 using Entities.Exceptions;
-using Microsoft.EntityFrameworkCore.Diagnostics;
 using Repositories.Contracts;
 using Services.Contracts;
 
@@ -9,7 +8,7 @@ namespace Services.Concretes
 {
     public class MachineService : IMachineService
 	{
-		private readonly IRepositoryManager _repository;
+		private readonly IRepositoryManager _manager;
 		private readonly IDtoConverterService _dtoConverterService;
 		private readonly IDataConverterService _dataConverterService;
 		private readonly IMapper _mapper;
@@ -19,7 +18,7 @@ namespace Services.Concretes
 			IDataConverterService dataConverterService,
 			IMapper mapper)
 		{
-			_repository = repository;
+			_manager = repository;
 			_dtoConverterService = dtoConverterService;
 			_mapper = mapper;
 			_dataConverterService = dataConverterService;
@@ -41,10 +40,10 @@ namespace Services.Concretes
 			#endregion
 
 			#region create machine
-			_repository.MachineRepository
+			_manager.MachineRepository
 				.Create(machine);
 
-			await _repository.SaveAsync();
+			await _manager.SaveAsync();
 			#endregion
 		}
 
@@ -54,19 +53,19 @@ namespace Services.Concretes
 			#region set brand if entered
 			var brand = machineDtoS.BrandName == null ?
 				null
-				: await _repository.BrandRepository
+				: await _manager.BrandRepository
 					.GetBrandByNameAsync(machineDtoS.BrandName);
 			#endregion
 
 			#region set mainCategory if entered
 			var mainCategory = machineDtoS.MainCategoryName == null ?
 				null
-				: await _repository.MainCategoryRepository
+				: await _manager.MainCategoryRepository
 					.GetMainCategoryByNameAsync(machineDtoS.MainCategoryName);
 			#endregion
 
 			#region get machines
-			var machines = await _repository.MachineRepository
+			var machines = await _manager.MachineRepository
 				.GetMachinesByConditionAsync(m =>
 				#region brand
 					(brand == null ?
@@ -114,11 +113,46 @@ namespace Services.Concretes
 				.MachineToMachineDtoAsync(machines);
 		}
 
+		public async Task<IEnumerable<string>> GetSubCategoriesOfMainCategoryAsync(
+			string mainCategoryName)
+		{
+			#region get mainCategory (throw)
+			var mainCategory = await _manager.MainCategoryRepository
+				.GetMainCategoryByNameAsync(mainCategoryName);
 
+			// when not found
+			if (mainCategory == null)
+				new ErrorWithCodeException(404,
+					"NF-MC",
+					"Not Found - Main Category");
+			#endregion
+
+			#region get machines (throw)
+			var machines = await _manager.MachineRepository
+				.GetMachinesByConditionAsync(m => m.MainCategoryId == mainCategory.Id);
+
+			// when not found
+			if (machines == null)
+				new ErrorWithCodeException(404,
+					"NF-M",
+					"Not Found - Machine");
+			#endregion
+
+			#region get subCategories
+			var subCategories = await Task.Run(() =>
+			{
+				 return machines.Select(m => m.SubCategoryName);
+			});
+			#endregion
+
+			return subCategories;
+		}
+
+		#region private
 		private async Task ControlConflictErrorAsync(MachineDto machineDto)
 		{
 			#region get entity that have same subCategory and Model
-			var entity = await _repository.MachineRepository
+			var entity = await _manager.MachineRepository
 				.GetMachinesByConditionAsync(m => 
 					m.SubCategoryName.Equals(machineDto.SubCategoryName)
 					&& m.Model.Equals(machineDto.Model));
@@ -131,5 +165,6 @@ namespace Services.Concretes
 					"Conflict Error - Model");
 			#endregion
 		}
+		#endregion
 	}
 }

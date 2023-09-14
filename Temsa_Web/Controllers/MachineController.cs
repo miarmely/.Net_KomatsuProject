@@ -2,7 +2,7 @@
 
 namespace Temsa_Web.Controllers
 {
-	public class UserController : Controller
+	public class MachineController : Controller
 	{
 		public IActionResult Create()
 		{
@@ -13,5 +13,5 @@ namespace Temsa_Web.Controllers
 		{
 			return View("Display");
 		}
-    }
+	}
 }
