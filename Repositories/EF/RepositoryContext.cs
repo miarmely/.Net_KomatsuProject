@@ -14,6 +14,7 @@ namespace Repositories.EF
 		private DbSet<Machine> Machines { get; set; }
 		private DbSet<Brand> Brands { get; set; }
 		private DbSet<MainCategory> MainCategories { get; set; }
+		private DbSet<Category> Categories { get; set; }
 
 		public RepositoryContext(DbContextOptions options) : base(options)
         {}

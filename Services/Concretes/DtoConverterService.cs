@@ -21,21 +21,22 @@ namespace Services.Concretes
 
 				foreach (var machine in machineList)
 				{
-					#region set brand
+					#region set data
 					var brand = await _manager.BrandRepository
 						.GetBrandByIdAsync(machine.BrandId);
-					#endregion
-
-					#region set mainCategory
+					
+					var category = await _manager.CategoryRepository
+						.GetCategoryByIdAsync(machine.CategoryId);
+					
 					var mainCategory = await _manager.MainCategoryRepository
-						.GetMainCategoryByIdAsync(machine.MainCategoryId);
+						.GetMainCategoryByIdAsync(category.MainCategoryId);
 					#endregion
 
 					machineDtoList.Add(new MachineDto
 					{
 						BrandName = brand.Name,
 						MainCategoryName = mainCategory.Name,
-						SubCategoryName = machine.SubCategoryName,
+						SubCategoryName = category.SubCategoryName,
 						Model = machine.Model,
 						IsSecondHand = machine.IsSecondHand ? true : false,
 						ImagePath = machine.ImagePath,
@@ -53,21 +54,22 @@ namespace Services.Concretes
 
 		public async Task<MachineDto> MachineToMachineDtoAsync(Machine machine)
 		{
-			#region set brand
+			#region set data
 			var brand = await _manager.BrandRepository
 				.GetBrandByIdAsync(machine.BrandId);
-			#endregion
 
-			#region set mainCategory
+			var category = await _manager.CategoryRepository
+				.GetCategoryByIdAsync(machine.CategoryId);
+
 			var mainCategory = await _manager.MainCategoryRepository
-				.GetMainCategoryByIdAsync(machine.MainCategoryId);
+				.GetMainCategoryByIdAsync(category.MainCategoryId);
 			#endregion
 
 			return new MachineDto
 			{
 				BrandName = brand.Name,
 				MainCategoryName = mainCategory.Name,
-				SubCategoryName = machine.SubCategoryName,
+				SubCategoryName = category.SubCategoryName,
 				Model = machine.Model,
 				IsSecondHand = machine.IsSecondHand ? true : false,
 				ImagePath = machine.ImagePath,

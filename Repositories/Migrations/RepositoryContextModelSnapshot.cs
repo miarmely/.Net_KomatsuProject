@@ -39,6 +39,60 @@ namespace Repositories.Migrations
                     b.ToTable("Brands");
                 });
 
+            modelBuilder.Entity("Entities.DataModels.Category", b =>
+                {
+                    b.Property<short>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("smallint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<short>("Id"));
+
+                    b.Property<byte>("MainCategoryId")
+                        .HasColumnType("tinyint");
+
+                    b.Property<string>("SubCategoryName")
+                        .IsRequired()
+                        .HasColumnType("varchar(50)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("MainCategoryId");
+
+                    b.ToTable("Categories");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = (short)1,
+                            MainCategoryId = (byte)1,
+                            SubCategoryName = "Paletli Ekskavatör"
+                        },
+                        new
+                        {
+                            Id = (short)2,
+                            MainCategoryId = (byte)1,
+                            SubCategoryName = "Lastikli Ekskavatör"
+                        },
+                        new
+                        {
+                            Id = (short)3,
+                            MainCategoryId = (byte)1,
+                            SubCategoryName = "Lastikli Yükleyici"
+                        },
+                        new
+                        {
+                            Id = (short)4,
+                            MainCategoryId = (byte)1,
+                            SubCategoryName = "Dozer"
+                        },
+                        new
+                        {
+                            Id = (short)6,
+                            MainCategoryId = (byte)1,
+                            SubCategoryName = "Kaya Kamyonu"
+                        });
+                });
+
             modelBuilder.Entity("Entities.DataModels.Company", b =>
                 {
                     b.Property<short>("Id")
@@ -65,6 +119,9 @@ namespace Repositories.Migrations
                     b.Property<short>("BrandId")
                         .HasColumnType("smallint");
 
+                    b.Property<short>("CategoryId")
+                        .HasColumnType("smallint");
+
                     b.Property<string>("ImagePath")
                         .IsRequired()
                         .HasColumnType("varchar(60)");
@@ -74,9 +131,6 @@ namespace Repositories.Migrations
 
                     b.Property<bool>("IsSecondHand")
                         .HasColumnType("bit");
-
-                    b.Property<byte>("MainCategoryId")
-                        .HasColumnType("tinyint");
 
                     b.Property<string>("Model")
                         .IsRequired()
@@ -94,10 +148,6 @@ namespace Repositories.Migrations
                     b.Property<short>("Stock")
                         .HasColumnType("smallint");
 
-                    b.Property<string>("SubCategoryName")
-                        .IsRequired()
-                        .HasColumnType("varchar(50)");
-
                     b.Property<short>("Year")
                         .HasColumnType("smallint");
 
@@ -105,7 +155,7 @@ namespace Repositories.Migrations
 
                     b.HasIndex("BrandId");
 
-                    b.HasIndex("MainCategoryId");
+                    b.HasIndex("CategoryId");
 
                     b.ToTable("Machines");
                 });
@@ -246,6 +296,17 @@ namespace Repositories.Migrations
                     b.ToTable("UsersAndRoles");
                 });
 
+            modelBuilder.Entity("Entities.DataModels.Category", b =>
+                {
+                    b.HasOne("Entities.DataModels.MainCategory", "MainCategory")
+                        .WithMany()
+                        .HasForeignKey("MainCategoryId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("MainCategory");
+                });
+
             modelBuilder.Entity("Entities.DataModels.Machine", b =>
                 {
                     b.HasOne("Entities.DataModels.Brand", "Brand")
@@ -254,15 +315,15 @@ namespace Repositories.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Entities.DataModels.MainCategory", "MainCategory")
+                    b.HasOne("Entities.DataModels.Category", "Category")
                         .WithMany()
-                        .HasForeignKey("MainCategoryId")
+                        .HasForeignKey("CategoryId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Brand");
 
-                    b.Navigation("MainCategory");
+                    b.Navigation("Category");
                 });
 
             modelBuilder.Entity("Entities.DataModels.User", b =>

@@ -25,9 +25,11 @@ namespace Presantation.ActionFilters.Attributes
                 };
                 #endregion
 
-                // save error details on httpContext
-                context.HttpContext.Items.Add("errorDetails", errorDetails);
-            });
+                #region save error details on httpContext
+                context.HttpContext.Items
+                    .Add("errorDetails", errorDetails);
+				#endregion
+			});
             #endregion
         }
     }

@@ -6,9 +6,14 @@ namespace Entities.DataModels
 	public class Category
 	{
         [Key]
+		[Column(TypeName = "smallint")]
         public int Id { get; set; }
+		
+		[Column(TypeName = "tinyint")]
         public int MainCategoryId { get; set; }
-        public int SubCategoryName { get; set; }
+
+		[Column(TypeName = "varchar(50)")]
+        public string SubCategoryName { get; set; }
 
 		#region navigation properties
 		[ForeignKey("MainCategoryId")]

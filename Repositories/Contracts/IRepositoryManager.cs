@@ -9,6 +9,7 @@
 		IMachineRepository MachineRepository { get; }
 		IMainCategoryRepository MainCategoryRepository { get; }
 		IBrandRepository BrandRepository { get; }
+		ICategoryRepository CategoryRepository { get; } 
 		Task SaveAsync();
 	}
 }

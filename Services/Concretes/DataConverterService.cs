@@ -7,10 +7,10 @@ namespace Services.Concretes
 {
     public class DataConverterService : IDataConverterService
 	{
-		private readonly IRepositoryManager _repository;
+		private readonly IRepositoryManager _manager;
 
 		public DataConverterService(IRepositoryManager repository) =>
-			_repository = repository;
+			_manager = repository;
 		
 		public async Task<List<Machine>> MachineDtoToMachineAsync(List<MachineDto> machineDtoList) =>
 			await Task.Run(async () =>
@@ -20,19 +20,18 @@ namespace Services.Concretes
 
 				foreach (var machineDto in machineDtoList)
 				{
-					#region set properties
-					var brand = await _repository.BrandRepository
+					#region set data
+					var brand = await _manager.BrandRepository
 						.GetBrandByNameAsync(machineDto.BrandName);
 
-					var mainCategory = await _repository.MainCategoryRepository
-						.GetMainCategoryByNameAsync(machineDto.MainCategoryName);
+					var category = await _manager.CategoryRepository
+						.GetCategoryBySubCategoryNameAsync(machineDto.SubCategoryName);
 					#endregion
 
 					machineList.Add(new Machine
 					{
 						BrandId = brand.Id,
-						MainCategoryId = mainCategory.Id,
-						SubCategoryName = machineDto.SubCategoryName,
+						CategoryId = category.Id,
 						Model = machineDto.Model,
 						IsSecondHand = machineDto.IsSecondHand,
 						ImagePath = machineDto.ImagePath,
@@ -52,7 +51,7 @@ namespace Services.Concretes
 		public async Task<Machine> MachineDtoToMachineAsync(MachineDto machineDto)
 		{
 			#region set brand
-			var brand = await _repository.BrandRepository
+			var brand = await _manager.BrandRepository
 				.GetBrandByNameAsync(machineDto.BrandName);
 
 			#region create brand if isn't exits on database
@@ -63,25 +62,23 @@ namespace Services.Concretes
 					Name = machineDto.BrandName
 				};
 
-				_repository.BrandRepository.Create(brand);
-				await _repository.SaveAsync();
+				_manager.BrandRepository.Create(brand);
+				await _manager.SaveAsync();
 			}
 			#endregion
 
 			#endregion
 
 			#region set mainCategory
-			var mainCategory = await _repository.MainCategoryRepository
-				.GetMainCategoryByNameAsync(machineDto.MainCategoryName);
-
-			
+			var category = await _manager.CategoryRepository
+				.GetCategoryBySubCategoryNameAsync(machineDto.SubCategoryName);
 			#endregion
 
 			return new Machine
 			{
 				BrandId = brand.Id,
-				CategoryId = ,
 				Model = machineDto.Model,
+				CategoryId = category.Id,
 				IsSecondHand = machineDto.IsSecondHand,
 				ImagePath = machineDto.ImagePath,
 				Stock = (int)machineDto.Stock,

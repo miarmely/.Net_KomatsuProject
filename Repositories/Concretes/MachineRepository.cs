@@ -1,6 +1,7 @@
 ﻿using Entities.DataModels;
 using Entities.QueryModels;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Query.SqlExpressions;
 using Repositories.Contracts;
 using Repositories.EF;
 using Repositories.Utilies;
@@ -13,14 +14,22 @@ namespace Repositories.Concretes
 		public MachineRepository(RepositoryContext context) : base(context)
 		{ }
 
-		public async Task<Machine?> GetMachineByMachineIdAsync(Guid machineId, bool trackChanges) =>
-			await base
-				.FindWithCondition(m => m.Id.Equals(machineId), trackChanges)
-				.SingleOrDefaultAsync();
+		public async Task<Machine?> GetMachineByMachineIdAsync(
+			Guid machineId, 
+			bool trackChanges) =>
+				await base
+					.FindWithCondition(m => m.Id.Equals(machineId), trackChanges)
+					.SingleOrDefaultAsync();
+
 
 		#region GetAllMachinesAsync
+		public async Task<List<Machine>> GetAllMachinesAsync(
+			bool trackChanges = false) =>
+				await base
+					.FindAll(trackChanges)
+					.ToListAsync();
 		/*
-		 * default
+		 * with pagination
 		 */
 		public async Task<PagingList<Machine>> GetAllMachinesAsync(
 			PagingParameters pagingParameters,
@@ -31,7 +40,7 @@ namespace Repositories.Concretes
 						pagingParameters.PageNumber,
 						pagingParameters.PageSize);
 		/*
-		 * with orderBy
+		 * with pagination + orderBy
 		 */
 		public async Task<PagingList<Machine>> GetAllMachinesAsync<TResult>(
 			PagingParameters pagingParameters,
@@ -48,32 +57,47 @@ namespace Repositories.Concretes
 		#endregion
 
 		#region GetMachinesByConditionAsync
-		/*
-		 * default
-		 */
 		public async Task<List<Machine>> GetMachinesByConditionAsync(
-			Expression<Func<Machine, bool>> expression,
-			bool trackChanges) =>
+			Expression<Func<Machine, bool>> condition,
+			bool trackChanges = false) =>
 				await base
-					.FindWithCondition(expression, trackChanges)
-					.ToListAsync();
+				.FindWithCondition(condition, trackChanges)
+				.ToListAsync();
 		/*
-		 * with orderBy
+		 * with pagination:
 		 */
-		public async Task<List<Machine>> GetMachinesByConditionAsync<TResult>(
+		public async Task<PagingList<Machine>> GetMachinesByConditionAsync(
+			PagingParameters paginationParameters,
+			Expression<Func<Machine, bool>> condition,
+			bool trackChanges = false) =>
+				await PagingList<Machine>
+					.ToPagingListAsync(
+						base.FindWithCondition(condition, trackChanges),
+						paginationParameters.PageNumber,
+						paginationParameters.PageSize);
+		/*
+		 * with pagination + orderBy:
+		 */
+		public async Task<PagingList<Machine>> GetMachinesByConditionAsync<TResult>(
+			PagingParameters paginationParameters,
 			Expression<Func<Machine, bool>> condition,
 			Expression<Func<Machine, TResult>> orderBy,
 			bool asAscending = true,
 			bool trackChanges = false) =>
 				asAscending ?
-					await base
-						.FindWithCondition(condition, trackChanges)
-						.OrderBy(orderBy)
-						.ToListAsync()
-					: await base
-						.FindWithCondition(condition, trackChanges)
-						.OrderByDescending(orderBy)
-						.ToListAsync();
+					await PagingList<Machine>
+						.ToPagingListAsync(
+							base.FindWithCondition(condition, trackChanges)
+								.OrderBy(orderBy),
+							paginationParameters.PageNumber,
+							paginationParameters.PageSize)
+
+					: await PagingList<Machine>
+						.ToPagingListAsync(
+							base.FindWithCondition(condition, trackChanges)
+								.OrderByDescending(orderBy),
+							paginationParameters.PageNumber,
+							paginationParameters.PageSize);
 		#endregion
 	}
 }

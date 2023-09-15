@@ -18,8 +18,8 @@ namespace Presantation.ActionFilters.Attributes
             _errorModel = new ErrorDetails()
             {
                 StatusCode = 400,
-                ErrorCode = "FE-",
-                ErrorDescription = "Format Error - ",
+                ErrorCode = "FE-U-",
+                ErrorDescription = "Format Error - User -",
             };
             _userSettings = userSettings.Value;
         }

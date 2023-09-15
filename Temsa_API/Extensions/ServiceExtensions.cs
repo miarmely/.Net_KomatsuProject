@@ -93,12 +93,15 @@ namespace Temsa.Extensions
 				#region for Temsa_Web projects
 				setup.AddPolicy("Temsa_Web", configure => 
 					configure
-						.WithOrigins("https://localhost:7091", 
+						.WithOrigins(
+							"https://localhost:7091", 
 							"https://localhost:7136",
 							"http://127.0.0.1:5500")
 						.AllowAnyHeader()
 						.AllowAnyMethod()
-						.WithExposedHeaders("User-Pagination"));
+						.WithExposedHeaders(
+							"User-Pagination",
+							"Machine-Pagination"));
 				#endregion
 			});
 	}

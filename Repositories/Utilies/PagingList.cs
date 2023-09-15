@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using System.Text.Json;
 
 namespace Repositories.Utilies
 {
@@ -41,5 +42,16 @@ namespace Repositories.Utilies
 
 			return new PagingList<T>(entity, source.Count(), pageNumber, pageSize);
 		}
+
+		public string GetMetaDataForHeaders() =>
+			JsonSerializer.Serialize(new
+			{
+				TotalPage,
+				TotalCount,
+				CurrentPageNo,
+				PageSize,
+				HasPrevious,
+				HasNext
+			});
 	}
 }

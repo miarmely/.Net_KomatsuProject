@@ -1,7 +1,9 @@
 ﻿using Entities.DtoModels;
+using Entities.QueryModels;
 using Microsoft.AspNetCore.Mvc;
 using Presantation.ActionFilters;
 using Services.Contracts;
+
 
 namespace Presantation.Controllers
 {
@@ -15,18 +17,45 @@ namespace Presantation.Controllers
         public MachineController(IServiceManager services) =>
             _manager = services;
 
-        [HttpPost("display")]
-        public async Task<IActionResult> GetMachinesByConditionAsync(
-            [FromBody] MachineDtoForSearch machineDtoS)
-        {
-            var entity = await _manager.MachineService
-                .GetMachinesByConditionAsync(machineDtoS);
 
-            return Ok(entity);
+		[HttpPost("create")]
+		public async Task<IActionResult> CreateMachineAsync(
+			[FromBody] MachineDtoForCreate machineDtoC)
+		{
+			await _manager.MachineService
+				.CreateMachineAsync(machineDtoC);
+
+			return NoContent();
+		}
+
+
+		[HttpGet("display/all")]
+        public async Task<IActionResult> GetAllMachinesAsync(
+            [FromQuery] PagingParameters paginationParameters)
+        {
+            var machines = await _manager.MachineService
+                .GetAllMachinesWithPagingAsync(paginationParameters, Response);
+
+            return Ok(machines);
         }
 
 
-        [HttpGet("display/{mainCategoryName}/subCategories")]
+        [HttpGet("display")]
+        public async Task<IActionResult> GetMachinesByConditionAsync(
+            [FromQuery] MachineDtoForDisplay machineDtoD,
+            [FromQuery] PagingParameters paginationParameters)
+        {
+            var machines = await _manager.MachineService
+                .GetMachinesByConditionWithPagingAsync(
+                    machineDtoD,
+                    paginationParameters, 
+                    Response);
+
+            return Ok(machines);
+        }
+
+
+        [HttpGet("display/subCategories/{mainCategoryName}")]
         public async Task<IActionResult> GetSubCategoriesOfMainCategoryAsync(
             [FromRoute(Name = "mainCategoryName")] string mainCategoryName)
         {
@@ -34,16 +63,6 @@ namespace Presantation.Controllers
                 .GetSubCategoriesOfMainCategoryAsync(mainCategoryName);
 
             return Ok(subCategories);
-        }
-
-        [HttpPost("create")]
-        public async Task<IActionResult> CreateMachineAsync(
-            [FromBody] MachineDtoForCreate machineDtoC)
-        {
-            await _manager.MachineService
-                .CreateMachineAsync(machineDtoC);
-
-            return NoContent();
         }
     }
 }

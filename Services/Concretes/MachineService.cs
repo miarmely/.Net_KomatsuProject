@@ -1,12 +1,14 @@
 ﻿using AutoMapper;
 using Entities.DtoModels;
 using Entities.Exceptions;
+using Entities.QueryModels;
+using Microsoft.AspNetCore.Http;
 using Repositories.Contracts;
 using Services.Contracts;
 
 namespace Services.Concretes
 {
-    public class MachineService : IMachineService
+	public class MachineService : IMachineService
 	{
 		private readonly IRepositoryManager _manager;
 		private readonly IDtoConverterService _dtoConverterService;
@@ -19,8 +21,8 @@ namespace Services.Concretes
 			IMapper mapper)
 		{
 			_manager = repository;
-			_dtoConverterService = dtoConverterService;
 			_mapper = mapper;
+			_dtoConverterService = dtoConverterService;
 			_dataConverterService = dataConverterService;
 		}
 
@@ -47,70 +49,182 @@ namespace Services.Concretes
 			#endregion
 		}
 
-		public async Task<List<MachineDto>> GetMachinesByConditionAsync(
-			MachineDtoForSearch machineDtoS)
+		public async Task<IEnumerable<MachineDto>> GetAllMachinesWithPagingAsync(
+			PagingParameters paginationParameters,
+			HttpResponse response,
+			bool trackChanges = false)
 		{
-			#region set brand if entered
-			var brand = machineDtoS.BrandName == null ?
-				null
-				: await _manager.BrandRepository
-					.GetBrandByNameAsync(machineDtoS.BrandName);
-			#endregion
-
-			#region set mainCategory if entered
-			var mainCategory = machineDtoS.MainCategoryName == null ?
-				null
-				: await _manager.MainCategoryRepository
-					.GetMainCategoryByNameAsync(machineDtoS.MainCategoryName);
-			#endregion
-
-			#region get machines
+			#region get machines (throw)
 			var machines = await _manager.MachineRepository
-				.GetMachinesByConditionAsync(m =>
-				#region brand
-					(brand == null ?
-						true
-						: m.BrandId == brand.Id)
-				#endregion
-				#region mainCategory
-					&& (mainCategory == null ?
-						true
-						: m.MainCategoryId == mainCategory.Id)
-				#endregion
-				#region SubCategoryName
-					&& (machineDtoS.SubCategoryName == null ?
-						true
-						: m.SubCategoryName.Equals(machineDtoS.SubCategoryName))
-				#endregion
-				#region Model
-					&& (machineDtoS.Model == null ?
-						true
-						: m.Model.Equals(machineDtoS.Model))
-				#endregion
-				#region IsSecondHand
-					&& (machineDtoS.IsSecondHand == null ?
-						true
-						: m.IsSecondHand == machineDtoS.IsSecondHand)
-				#endregion
-				#region SoldOrRentedStatus
-					&& (machineDtoS.SoldOrRentedStatus == null ?
-						true
-						: (machineDtoS.SoldOrRentedStatus.Equals("sold") ?
-							m.Sold > 0  // "sold" column > 0
-							: m.Rented > 0)));  // "rented" column > 0
-			#endregion
+				.GetAllMachinesAsync(paginationParameters);
 
-			#endregion
-
-			#region when any machine not found (throw)
+			// when not found
 			if (machines.Count == 0)
 				throw new ErrorWithCodeException(404,
 					"NF-M",
 					"Not Found - Machine");
 			#endregion
 
-			return await _dtoConverterService
+			#region add pagination infos to headers
+			response.Headers.Add(
+				"Machine-Pagination",
+				machines.GetMetaDataForHeaders());
+			#endregion
+
+			#region convert machine to machineDto
+			var machineDtoList = await _dtoConverterService
 				.MachineToMachineDtoAsync(machines);
+			#endregion
+
+			return machineDtoList;
+		}
+
+		public async Task<IEnumerable<MachineDto>> GetMachinesByConditionWithPagingAsync(
+			MachineDtoForDisplay machineDtoD,
+			PagingParameters pagingParameters,
+			HttpResponse response)
+		{
+			#region set brandId
+			int? brandId = null;
+
+			// when brandName entered
+			if (machineDtoD.BrandName != null)
+			{
+				#region get brand (throw)
+				var brand = await _manager.BrandRepository
+					.GetBrandByNameAsync(machineDtoD.BrandName);
+				
+				// when not found
+				if (brand == null)
+					throw new ErrorWithCodeException(404,
+						"VE-M-B",
+						"Verification Error - Machine - Brand");
+				#endregion
+
+				brandId = brand.Id;
+			}
+			#endregion
+
+			#region get categoryId
+			int? categoryId;
+
+			#region when subCategoryName entered
+			if (machineDtoD.SubCategoryName != null)
+			{
+				#region get category (throw)
+				var category = await _manager.CategoryRepository
+					.GetCategoryBySubCategoryNameAsync(machineDtoD.BrandName);
+
+				// when not found
+				if (category == null)
+					throw new ErrorWithCodeException(404,
+						"VE-M-C",
+						"Verification Error - Machine - Category");
+				#endregion
+
+				categoryId = category.Id;
+			}
+			#endregion
+
+			#region when subCategoryName didn't enter
+			else
+			{
+				#region when mainCategory entered
+				if (machineDtoD.MainCategoryName != null)
+				{
+					#region get mainCategory
+					var mainCategory = await _manager.MainCategoryRepository
+						.GetMainCategoryByNameAsync(machineDtoD.MainCategoryName);
+
+					// when not found
+					if (mainCategory == null)
+						throw new ErrorWithCodeException(404,
+							"VE-M-M",
+							"Verification Error - Machine - MainCategory");
+					#endregion
+
+					#region get category
+					var categories = await _manager.CategoryRepository
+						.GetCategoriesByMainCategoryIdAsync(mainCategory.Id);
+
+					// when not found
+					if (categories == null)
+						throw new ErrorWithCodeException(404,
+							"VE-M-C",
+							"Verification Error - Machine - Category");
+
+					// get first category on list
+					var category = categories.First(c => true);
+					#endregion
+
+					categoryId = category.Id;
+				}
+				#endregion
+
+				#region when mainCategory didn't enter
+				else
+					categoryId = null;
+				#endregion
+			}
+			#endregion
+		
+			#endregion
+
+			#region get machines(throw)
+			var machines = await _manager.MachineRepository
+				.GetMachinesByConditionAsync(pagingParameters, m =>
+					#region BrandName
+						(machineDtoD.BrandName == null ?
+							true
+							: m.BrandId == brandId)
+					#endregion
+					#region CategoryId
+						&& (categoryId == null ?
+							true
+							: m.CategoryId == categoryId)
+					#endregion
+					#region Model
+						&& (machineDtoD.Model == null ?
+							true
+							: m.Model == machineDtoD.Model)
+					#endregion
+					#region IsSecondHand
+						&& (machineDtoD.IsSecondHand == null ?
+							true
+							: m.IsSecondHand == machineDtoD.IsSecondHand)
+					#endregion
+					#region SoldOrRentedStatus
+						&& (machineDtoD.SoldOrRentedStatus == null ?
+							true
+							: machineDtoD.SoldOrRentedStatus.Equals("sold") ?
+								m.Sold > 0
+								: m.Rented > 0) // SoldOrRentedStatus = "rented"
+					#endregion
+					#region Year
+						&& machineDtoD.Year == null ?
+							true
+							: m.Year == machineDtoD.Year);
+			#endregion
+
+			// when not found
+			if (machines.Count == 0)
+				throw new ErrorWithCodeException(404,
+					"NF-M",
+					"Not Found - Machine");
+			#endregion
+
+			#region add pagination infos to headers
+			response.Headers.Add(
+				"Machine-Pagination",
+				machines.GetMetaDataForHeaders());
+			#endregion
+
+			#region convert machine to machineDto
+			var machineDtoList = await _dtoConverterService
+				.MachineToMachineDtoAsync(machines);
+			#endregion
+
+			return machineDtoList;
 		}
 
 		public async Task<IEnumerable<string>> GetSubCategoriesOfMainCategoryAsync(
@@ -122,47 +236,48 @@ namespace Services.Concretes
 
 			// when not found
 			if (mainCategory == null)
-				new ErrorWithCodeException(404,
-					"NF-MC",
-					"Not Found - Main Category");
-			#endregion
-
-			#region get machines (throw)
-			var machines = await _manager.MachineRepository
-				.GetMachinesByConditionAsync(m => m.MainCategoryId == mainCategory.Id);
-
-			// when not found
-			if (machines == null)
-				new ErrorWithCodeException(404,
-					"NF-M",
-					"Not Found - Machine");
+				throw new ErrorWithCodeException(404,
+					"VE-M-M",
+					"Not Found - Machine - Main Category");
 			#endregion
 
 			#region get subCategories
-			var subCategories = await Task.Run(() =>
-			{
-				 return machines.Select(m => m.SubCategoryName);
-			});
+			var categories = await _manager.CategoryRepository
+				.GetCategoriesByMainCategoryIdAsync(mainCategory.Id);
+
+			var subCategories = categories.Select(c => c.SubCategoryName);
 			#endregion
 
 			return subCategories;
 		}
 
+
 		#region private
 		private async Task ControlConflictErrorAsync(MachineDto machineDto)
 		{
-			#region get entity that have same subCategory and Model
-			var entity = await _manager.MachineRepository
-				.GetMachinesByConditionAsync(m => 
-					m.SubCategoryName.Equals(machineDto.SubCategoryName)
+			#region get category
+			var category = await _manager.CategoryRepository
+				.GetCategoryBySubCategoryNameAsync(machineDto.SubCategoryName);
+			
+			// when not found
+			if (category == null)
+				throw new ErrorWithCodeException(404,
+					"VE-M-S",
+					"Verification Error - Machine - Sub Category");
+			#endregion
+
+			#region get entity matched same categoryId and model
+			var machines = await _manager.MachineRepository
+				.GetMachinesByConditionAsync(m =>
+					m.CategoryId == category.Id
 					&& m.Model.Equals(machineDto.Model));
 			#endregion
 
-			#region throw error
-			if (entity.Count != 0)
+			#region throw conflict error
+			if (machines.Count != 0)
 				throw new ErrorWithCodeException(409,
-					"CE-M",
-					"Conflict Error - Model");
+					"CE-M-M",
+					"Conflict Error - Machine - Model");
 			#endregion
 		}
 		#endregion

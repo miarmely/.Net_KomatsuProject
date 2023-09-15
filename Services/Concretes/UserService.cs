@@ -47,7 +47,7 @@ namespace Services.Concretes
 
 			#region when telNo not found (throw)
 			_ = user ?? throw new ErrorWithCodeException(404,
-				"VE-T",
+				"VE-U-T",
 				"Verification Error - Telephone");
 			#endregion
 
@@ -56,7 +56,7 @@ namespace Services.Concretes
 
 			if (!user.Password.Equals(hashedPassword))
 				throw new ErrorWithCodeException(404,
-					"VE-P",
+					"VE-U-P",
 					"Verification Error - Password");
 			#endregion
 
@@ -162,7 +162,7 @@ namespace Services.Concretes
 
 			if (users.Count == 0)
 				throw new ErrorWithCodeException(404, 
-					"NF-U", 
+					"NF-U-U", 
 					"Not Found - User");
 			#endregion
 
@@ -172,18 +172,9 @@ namespace Services.Concretes
 			#endregion
 
 			#region add pagination details to headers
-			var metaData = new
-			{
-				users.TotalPage,
-				users.TotalCount,
-				users.LastPageCount,
-				users.CurrentPageNo,
-				users.PageSize,
-				users.HasPrevious,
-				users.HasNext
-			};
-
-			response.Headers.Add("User-Pagination", JsonSerializer.Serialize(metaData));
+			response.Headers.Add(
+				"User-Pagination", 
+				users.GetMetaDataForHeaders());
 			#endregion
 
 			return userDtos;
@@ -207,7 +198,7 @@ namespace Services.Concretes
 
 			if (user == null)
 				throw new ErrorWithCodeException(404,
-					"VE-E",
+					"VE-U-E",
 					"Verification Error - Email");
 			#endregion
 
@@ -324,7 +315,7 @@ namespace Services.Concretes
 			#region when any telNo not Found (throw)
 			if (IsFalseTelNoExists)
 				throw new ErrorWithCodeException(409,
-					"VE-T",
+					"VE-U-T",
 					"Verification Error - Telephone");
 			#endregion
 

@@ -13,6 +13,7 @@ namespace Repositories.Concretes
 		private readonly Lazy<IMachineRepository> _machineRepository;
 		private readonly Lazy<IMainCategoryRepository> _mainCategoryRepository;
 		private readonly Lazy<IBrandRepository> _brandRepository;
+		private readonly Lazy<ICategoryRepository> _categoryRepository;
 		
  		public IUserRepository UserRepository => _userRepository.Value;
 		public ICompanyRepository CompanyRepository => _companyRepository.Value;
@@ -21,6 +22,7 @@ namespace Repositories.Concretes
 		public IMachineRepository MachineRepository => _machineRepository.Value;
 		public IMainCategoryRepository MainCategoryRepository => _mainCategoryRepository.Value;
 		public IBrandRepository BrandRepository => _brandRepository.Value;
+		public ICategoryRepository CategoryRepository => _categoryRepository.Value;
 
 		public RepositoryManager(RepositoryContext context)
 		{
@@ -39,6 +41,8 @@ namespace Repositories.Concretes
 				new MainCategoryRepository(context));
 			_brandRepository = new Lazy<IBrandRepository>(() => 
 				new BrandRepository(context));
+			_categoryRepository = new Lazy<ICategoryRepository>(() =>
+				new CategoryRepository(context));
 		}
 
 		public async Task SaveAsync() =>

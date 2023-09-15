@@ -36,7 +36,7 @@ namespace Services.Concretes
 			_mailService = new Lazy<IMailService>(() =>
 				new MailService(config));
 			_machineService = new Lazy<IMachineService>(() => 
-				new MachineService(manager, DtoConverterServcice, 
+				new MachineService(manager, DtoConverterServcice,
 					DataConverterService, mapper));
 			_fileService = new Lazy<IFileService>(() => 
 				new FileService(config));
