@@ -1,4 +1,6 @@
-﻿namespace Entities.DtoModels
+﻿using Entities.DtoModels.Enums;
+
+namespace Entities.DtoModels
 {
     public record MachineDto
     {
@@ -6,7 +8,7 @@
         public string? MainCategoryName { get; init; }
         public string? SubCategoryName { get; init; }
         public string? Model { get; init; }
-        public bool IsSecondHand { get; init; }
+        public HandStatus? ZerothHandOrSecondHand { get; init; }
         public string? ImagePath { get; init; }
         public int? Stock { get; init; }
         public int? Rented { get; init; }

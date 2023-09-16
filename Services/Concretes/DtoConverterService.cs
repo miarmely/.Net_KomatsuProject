@@ -1,5 +1,6 @@
 ﻿using Entities.DataModels;
 using Entities.DtoModels;
+using Entities.DtoModels.Enums;
 using Repositories.Contracts;
 using Services.Contracts;
 using System.Collections.ObjectModel;
@@ -38,7 +39,7 @@ namespace Services.Concretes
 						MainCategoryName = mainCategory.Name,
 						SubCategoryName = category.SubCategoryName,
 						Model = machine.Model,
-						IsSecondHand = machine.IsSecondHand ? true : false,
+						ZerothHandOrSecondHand = (HandStatus)machine.HandStatus,
 						ImagePath = machine.ImagePath,
 						Stock = machine.Stock,
 						Rented = machine.Rented,
@@ -71,7 +72,7 @@ namespace Services.Concretes
 				MainCategoryName = mainCategory.Name,
 				SubCategoryName = category.SubCategoryName,
 				Model = machine.Model,
-				IsSecondHand = machine.IsSecondHand ? true : false,
+				ZerothHandOrSecondHand = (HandStatus)machine.HandStatus,
 				ImagePath = machine.ImagePath,
 				Stock = machine.Stock,
 				Rented = machine.Rented,

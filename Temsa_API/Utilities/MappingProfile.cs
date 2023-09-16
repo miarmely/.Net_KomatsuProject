@@ -1,11 +1,12 @@
 ﻿using AutoMapper;
 using Entities.DataModels;
 using Entities.DtoModels;
+using Entities.DtoModels.Enums;
 using Entities.ErrorModels;
 
 namespace Temsa.Utilities
 {
-    public class MappingProfile : Profile
+	public class MappingProfile : Profile
 	{
 		public MappingProfile()
 		{

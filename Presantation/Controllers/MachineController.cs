@@ -1,4 +1,5 @@
 ﻿using Entities.DtoModels;
+using Entities.DtoModels.Enums;
 using Entities.QueryModels;
 using Microsoft.AspNetCore.Mvc;
 using Presantation.ActionFilters;
@@ -7,7 +8,7 @@ using Services.Contracts;
 
 namespace Presantation.Controllers
 {
-    [ApiController]
+	[ApiController]
     [Route("api/services/[Controller]")]
     [ModifyError]
     public class MachineController : ControllerBase
@@ -40,7 +41,7 @@ namespace Presantation.Controllers
         }
 
 
-        [HttpGet("display")]
+        [HttpGet("display/condition")]
         public async Task<IActionResult> GetMachinesByConditionAsync(
             [FromQuery] MachineDtoForDisplay machineDtoD,
             [FromQuery] PagingParameters paginationParameters)

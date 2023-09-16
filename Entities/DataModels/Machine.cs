@@ -17,7 +17,8 @@ namespace Entities.DataModels
 		[Column(TypeName = "varchar(50)")]
 		public string Model { get; set; }
 
-        public bool IsSecondHand { get; set; }
+		[Column(TypeName = "tinyint")]
+        public int HandStatus { get; set; }
 
         [Column(TypeName = "varchar(60)")]
 		public string ImagePath { get; set; }

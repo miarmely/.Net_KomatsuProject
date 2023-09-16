@@ -122,14 +122,14 @@ namespace Repositories.Migrations
                     b.Property<short>("CategoryId")
                         .HasColumnType("smallint");
 
+                    b.Property<byte>("HandStatus")
+                        .HasColumnType("tinyint");
+
                     b.Property<string>("ImagePath")
                         .IsRequired()
                         .HasColumnType("varchar(60)");
 
                     b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("IsSecondHand")
                         .HasColumnType("bit");
 
                     b.Property<string>("Model")

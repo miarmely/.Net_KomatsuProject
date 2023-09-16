@@ -1,11 +1,12 @@
 ﻿using Entities.DataModels;
 using Entities.DtoModels;
+using Entities.DtoModels.Enums;
 using Entities.QueryModels;
 using Microsoft.AspNetCore.Http;
 
 namespace Services.Contracts
 {
-    public interface IMachineService
+	public interface IMachineService
 	{
 		Task CreateMachineAsync(MachineDtoForCreate machineDtoC);
 
