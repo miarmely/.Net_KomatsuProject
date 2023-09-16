@@ -51,7 +51,7 @@ namespace Presantation.ActionFilters.Attributes
             #region control format of dtoModel properties
             foreach (var property in properties)
             {
-                #region don't check value if is null.
+                #region don't check value if null
                 value = property.GetValue(dtoModel);
 
                 if (value == null)

@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Presantation;
 using Presantation.ActionFilters.Attributes;
+using Presantation.ActionFilters.Filters;
 using Repositories.Concretes;
 using Repositories.Contracts;
 using Repositories.EF;
@@ -35,7 +36,8 @@ namespace Temsa.Extensions
 		public static void ConfigureActionFilters(this IServiceCollection services)
 		{
 			services.AddScoped<ErrorFilter>();
-			services.AddScoped<ValidationUserFormatFilter>();
+			services.AddSingleton<ValidationUserFormatFilter>();
+			services.AddSingleton<NullArgumentsFilter>();
 		}
 
 		public static void ConfigureConfigModels(this IServiceCollection services

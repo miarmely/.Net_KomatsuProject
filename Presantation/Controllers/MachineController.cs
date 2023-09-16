@@ -3,6 +3,7 @@ using Entities.DtoModels.Enums;
 using Entities.QueryModels;
 using Microsoft.AspNetCore.Mvc;
 using Presantation.ActionFilters;
+using Presantation.ActionFilters.Filters;
 using Services.Contracts;
 
 
@@ -56,14 +57,28 @@ namespace Presantation.Controllers
         }
 
 
-        [HttpGet("display/subCategories/{mainCategoryName}")]
+        [HttpGet("display/subCategories/{MainCategoryName}")]
         public async Task<IActionResult> GetSubCategoriesOfMainCategoryAsync(
-            [FromRoute(Name = "mainCategoryName")] string mainCategoryName)
+            [FromRoute(Name = "MainCategoryName")] string mainCategoryName)
         {
             var subCategories = await _manager.MachineService
                 .GetSubCategoriesOfMainCategoryAsync(mainCategoryName);
 
             return Ok(subCategories);
+        }
+
+
+        [HttpPut("update")]
+        [ServiceFilter(typeof(NullArgumentsFilter))]
+        public async Task<IActionResult> UpdateMachineAsync(
+			[FromQuery(Name = "SubCategoryName")] string subCategoryName,
+			[FromQuery(Name = "Model")] string model,
+            [FromBody] MachineDtoForUpdate machineDtoForU)
+        {
+            await _manager.MachineService
+                .UpdateMachineAsync(subCategoryName, model, machineDtoForU);
+
+            return NoContent();
         }
     }
 }

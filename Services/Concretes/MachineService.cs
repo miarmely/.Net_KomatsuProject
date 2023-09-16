@@ -7,7 +7,6 @@ using Entities.QueryModels;
 using Microsoft.AspNetCore.Http;
 using Repositories.Contracts;
 using Services.Contracts;
-using System.Linq;
 
 namespace Services.Concretes
 {
@@ -18,7 +17,8 @@ namespace Services.Concretes
 		private readonly IDataConverterService _dataConverterService;
 		private readonly IMapper _mapper;
 
-		public MachineService(IRepositoryManager repository,
+		public MachineService(
+			IRepositoryManager repository,
 			IDtoConverterService dtoConverterService,
 			IDataConverterService dataConverterService,
 			IMapper mapper)
@@ -34,7 +34,7 @@ namespace Services.Concretes
 			#region convert machineDtoC to machineDto
 			var machineDto = _mapper.Map<MachineDto>(machineDtoC);
 
-			await ControlConflictErrorAsync(machineDto);
+			await ControlConflictErrorAsync(machineDto.Model);
 
 			machineDto.RegistrationDate = DateTime.UtcNow;
 			#endregion
@@ -112,7 +112,7 @@ namespace Services.Concretes
 			int? categoryId = null;
 			IEnumerable<Category>? categories = null;
 			IEnumerable<int>? categoryIdList = null;
-			
+
 			#region when mainCategoryName entered
 			if (machineDtoD.MainCategoryName != null)
 			{
@@ -130,7 +130,7 @@ namespace Services.Concretes
 				#region set categories and categoryIdList
 				categories = await _manager.CategoryRepository
 					.GetCategoriesByMainCategoryIdAsync(mainCategory.Id);
-				
+
 				categoryIdList = categories.Select(c => c.Id);
 				#endregion
 			}
@@ -209,7 +209,7 @@ namespace Services.Concretes
 					&& (machineDtoD.Year == null ?
 						true
 						: m.Year == machineDtoD.Year));
-				#endregion
+			#endregion
 
 			// when not found
 			if (machines.Count == 0)
@@ -264,32 +264,142 @@ namespace Services.Concretes
 			return subCategories;
 		}
 
-
-		#region private
-		private async Task ControlConflictErrorAsync(MachineDto machineDto)
+		public async Task UpdateMachineAsync(
+			string subCategoryName,
+			string model,
+			MachineDtoForUpdate machineDtoForU)
 		{
-			#region get category
-			var category = await _manager.CategoryRepository
-				.GetCategoryBySubCategoryNameAsync(machineDto.SubCategoryName);
+			#region get category for to get machine
+			var categoryForVerification = await _manager.CategoryRepository
+				.GetCategoryBySubCategoryNameAsync(subCategoryName);
 
-			// when not found
-			if (category == null)
+			// when subCategory not found
+			if (categoryForVerification == null)
 				throw new ErrorWithCodeException(404,
 					"VE-M-S",
-					"Verification Error - Machine - Sub Category");
+					"Verification Error - Machine - SubCategory");
+
+			await ControlConflictErrorAsync(machineDtoForU.Model, categoryForVerification);
 			#endregion
 
-			#region get entity matched same categoryId and model
+			#region get machine
+			var machine = await _manager.MachineRepository
+				.GetMachineByCategoryIdAndModelAsync(categoryForVerification.Id, model);
+
+			// when model not found
+			if (machine == null)
+				throw new ErrorWithCodeException(404,
+					"VE-M-Mo",
+					"Verifiction Error - Machine - Model");
+			#endregion
+
+			#region get brand if changed (throw)
+			Brand? brand = null;
+
+			if (machineDtoForU.BrandName != null)
+			{
+				brand = await _manager.BrandRepository
+					.GetBrandByNameAsync(machineDtoForU.BrandName);
+
+				// when brand not found
+				if (brand == null)
+					throw new ErrorWithCodeException(404,
+						"VE-M-B",
+						"Verification Error - Machine - Brand");
+			}
+			#endregion
+
+			#region get category if subCategoryName changed (throw)
+			Category? category = null;
+
+			if (machineDtoForU.SubCategoryName != null)
+			{
+				category = await _manager.CategoryRepository
+					.GetCategoryBySubCategoryNameAsync(machineDtoForU.SubCategoryName);
+
+				// when subCategory not found
+				if (category == null)
+					throw new ErrorWithCodeException(404,
+						"VE-M-S",
+						"Verification Error - Machine - SubCategory");
+			}
+			#endregion
+
+			#region update machine
+			machine.BrandId = brand == null ?
+				machine.BrandId
+				: brand.Id;
+
+			machine.CategoryId = category == null ?
+				machine.CategoryId
+				: category.Id;
+
+			machine.Model = machineDtoForU.Model == null ?
+				machine.Model
+				: machineDtoForU.Model;
+
+			machine.HandStatus = machineDtoForU.ZerothHandOrSecondHand == null ?
+				machine.HandStatus
+				: (int)machineDtoForU.ZerothHandOrSecondHand;
+
+			machine.ImagePath = machineDtoForU.ImagePath == null ?
+				machine.ImagePath
+				: machineDtoForU.ImagePath;
+
+			machine.Stock = machineDtoForU.Stock == null ?
+				machine.Stock
+				: (int)machineDtoForU.Stock;
+
+			machine.Rented = machineDtoForU.Rented == null ?
+				machine.Rented
+				: (int)machineDtoForU.Rented;
+
+			machine.Sold = machineDtoForU.Sold == null ?
+				machine.Sold
+				: (int)machineDtoForU.Sold;
+
+			machine.Year = machineDtoForU.Year == null ?
+				machine.Year
+				: (int)machineDtoForU.Year;
+
+			_manager.MachineRepository
+				.Update(machine);
+
+			await _manager.SaveAsync();
+			#endregion
+		}
+
+		#region private
+		private async Task ControlConflictErrorAsync(
+			string model, 
+			Category category = null)
+		{
+			#region get category if category null (throw)
+			if (category == null)
+			{
+				#region get category (throw)
+				category = await _manager.CategoryRepository
+					.GetCategoryBySubCategoryNameAsync(category.SubCategoryName);
+
+				// when not found
+				if (category == null)
+					throw new ErrorWithCodeException(404,
+						"VE-M-S",
+						"Verification Error - Machine - Sub Category");
+				#endregion
+			}
+			#endregion
+
+			#region control conflict error 
 			var machines = await _manager.MachineRepository
 				.GetMachinesByConditionAsync(m =>
 					m.CategoryId == category.Id
-					&& m.Model.Equals(machineDto.Model));
-			#endregion
+					&& m.Model.Equals(model));
 
-			#region throw conflict error
+			// when same model of category is already exists
 			if (machines.Count != 0)
 				throw new ErrorWithCodeException(409,
-					"CE-M-M",
+					"CE-M-Mo",
 					"Conflict Error - Machine - Model");
 			#endregion
 		}

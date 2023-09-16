@@ -21,6 +21,15 @@ namespace Repositories.Concretes
 					.FindWithCondition(m => m.Id.Equals(machineId), trackChanges)
 					.SingleOrDefaultAsync();
 
+		public async Task<Machine?> GetMachineByCategoryIdAndModelAsync(
+			int categoryId,
+			string model,
+			bool trackChanges = false) =>
+				await base
+					.FindWithCondition(m => 
+						m.CategoryId == categoryId
+						&& m.Model.Equals(model), trackChanges)
+					.SingleOrDefaultAsync();
 
 		#region GetAllMachinesAsync
 		public async Task<List<Machine>> GetAllMachinesAsync(

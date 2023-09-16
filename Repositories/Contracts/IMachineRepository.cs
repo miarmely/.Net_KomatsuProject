@@ -39,5 +39,10 @@ namespace Repositories.Contracts
 		Task<Machine?> GetMachineByMachineIdAsync(
 			Guid machineId, 
 			bool trackChanges = false);
+
+		Task<Machine?> GetMachineByCategoryIdAndModelAsync(
+			int categoryId,
+			string model, 
+			bool trackChanges = false);
 	}
 }

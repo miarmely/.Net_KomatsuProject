@@ -1,6 +1,4 @@
-﻿using Entities.DataModels;
-using Entities.DtoModels;
-using Entities.DtoModels.Enums;
+﻿using Entities.DtoModels;
 using Entities.QueryModels;
 using Microsoft.AspNetCore.Http;
 
@@ -22,5 +20,10 @@ namespace Services.Contracts
 
 		Task<IEnumerable<string>> GetSubCategoriesOfMainCategoryAsync(
 			string mainCategoryName);
+
+		Task UpdateMachineAsync(
+			string subCategoryName, 
+			string model, 
+			MachineDtoForUpdate machineDtoU);
 	}
 }

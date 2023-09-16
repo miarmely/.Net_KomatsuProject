@@ -52,3 +52,16 @@
 13:36:20.4344  WARN  LogDetails { Controller = Machine, Action = GetSubCategoriesOfMainCategory, ErrorCode = VE-M-M, CreatedAt = 9/16/2023 10:36:20 AM }
 13:37:30.0773  WARN  LogDetails { Controller = Machine, Action = GetSubCategoriesOfMainCategory, ErrorCode = VE-M-M, CreatedAt = 9/16/2023 10:37:29 AM }
 13:37:40.3105  WARN  LogDetails { Controller = Machine, Action = GetSubCategoriesOfMainCategory, ErrorCode = VE-M-S, CreatedAt = 9/16/2023 10:37:40 AM }
+17:01:35.2262  WARN  LogDetails { Controller = Machine, Action = CreateMachine, ErrorCode = VE-M-S, CreatedAt = 9/16/2023 2:01:35 PM }
+17:02:15.7753  WARN  LogDetails { Controller = Machine, Action = CreateMachine, ErrorCode = CE-M-M, CreatedAt = 9/16/2023 2:02:15 PM }
+17:18:04.1981  WARN  LogDetails { Controller = Machine, Action = GetMachinesByCondition, ErrorCode = NF-M, CreatedAt = 9/16/2023 2:18:04 PM }
+17:21:26.0621  WARN  LogDetails { Controller = Machine, Action = GetMachinesByCondition, ErrorCode = NF-M, CreatedAt = 9/16/2023 2:21:25 PM }
+17:40:03.1429  WARN  LogDetails { Controller = Machine, Action = GetMachinesByCondition, ErrorCode = NF-M, CreatedAt = 9/16/2023 2:40:03 PM }
+18:29:17.2120  WARN  LogDetails { Controller = Machine, Action = UpdateMachine, ErrorCode = CE-M-Mo, CreatedAt = 9/16/2023 3:29:17 PM }
+18:29:42.4210  WARN  LogDetails { Controller = Machine, Action = GetMachinesByCondition, ErrorCode = NF-M, CreatedAt = 9/16/2023 3:29:42 PM }
+18:29:45.8717  WARN  LogDetails { Controller = Machine, Action = GetMachinesByCondition, ErrorCode = NF-M, CreatedAt = 9/16/2023 3:29:45 PM }
+18:31:54.0983  WARN  LogDetails { Controller = Machine, Action = UpdateMachine, ErrorCode = CE-M-Mo, CreatedAt = 9/16/2023 3:31:54 PM }
+18:32:00.7931  WARN  LogDetails { Controller = Machine, Action = UpdateMachine, ErrorCode = CE-M-Mo, CreatedAt = 9/16/2023 3:32:00 PM }
+18:32:26.7025  WARN  LogDetails { Controller = Machine, Action = GetMachinesByCondition, ErrorCode = NF-M, CreatedAt = 9/16/2023 3:32:26 PM }
+19:19:47.5358  ERROR  LogDetails { Controller = Machine, Action = UpdateMachine, ErrorCode = Internal Error, CreatedAt = 9/16/2023 4:19:47 PM }
+19:25:09.5838  ERROR  LogDetails { Controller = Machine, Action = UpdateMachine, ErrorCode = Internal Server Error, CreatedAt = 9/16/2023 4:25:09 PM }
