@@ -37,7 +37,7 @@ namespace Temsa.Extensions
 		{
 			services.AddScoped<ErrorFilter>();
 			services.AddSingleton<ValidationUserFormatFilter>();
-			services.AddSingleton<NullArgumentsFilter>();
+			services.AddSingleton<ValidationNullArgumentsFilter>();
 		}
 
 		public static void ConfigureConfigModels(this IServiceCollection services

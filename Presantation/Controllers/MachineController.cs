@@ -43,6 +43,7 @@ namespace Presantation.Controllers
 
 
         [HttpGet("display/condition")]
+        [ValidationNullArguments]
         public async Task<IActionResult> GetMachinesByConditionAsync(
             [FromQuery] MachineDtoForDisplay machineDtoD,
             [FromQuery] PagingParameters paginationParameters)
@@ -69,7 +70,7 @@ namespace Presantation.Controllers
 
 
         [HttpPut("update")]
-        [ServiceFilter(typeof(NullArgumentsFilter))]
+        [ValidationNullArguments]
         public async Task<IActionResult> UpdateMachineAsync(
 			[FromQuery(Name = "SubCategoryName")] string subCategoryName,
 			[FromQuery(Name = "Model")] string model,

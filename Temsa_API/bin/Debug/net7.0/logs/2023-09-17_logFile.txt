@@ -1,0 +1,10 @@
+08:48:24.4828  WARN  LogDetails { Controller = Machine, Action = GetMachinesByCondition, ErrorCode = NF-M, CreatedAt = 9/17/2023 5:48:24 AM }
+08:48:58.7277  WARN  LogDetails { Controller = Machine, Action = UpdateMachine, ErrorCode = NA, CreatedAt = 9/17/2023 5:48:58 AM }
+08:49:51.3808  WARN  LogDetails { Controller = Machine, Action = UpdateMachine, ErrorCode = NA, CreatedAt = 9/17/2023 5:49:51 AM }
+08:51:44.0010  WARN  LogDetails { Controller = Machine, Action = UpdateMachine, ErrorCode = NA, CreatedAt = 9/17/2023 5:51:43 AM }
+08:55:13.8726  WARN  LogDetails { Controller = Machine, Action = UpdateMachine, ErrorCode = NA, CreatedAt = 9/17/2023 5:55:13 AM }
+08:55:15.6101  WARN  LogDetails { Controller = Machine, Action = UpdateMachine, ErrorCode = NA, CreatedAt = 9/17/2023 5:55:15 AM }
+08:57:45.9971  WARN  LogDetails { Controller = Machine, Action = UpdateMachine, ErrorCode = NA, CreatedAt = 9/17/2023 5:57:45 AM }
+09:03:36.4031  WARN  LogDetails { Controller = Machine, Action = GetMachinesByCondition, ErrorCode = NA, CreatedAt = 9/17/2023 6:03:36 AM }
+09:04:00.7236  WARN  LogDetails { Controller = Machine, Action = GetMachinesByCondition, ErrorCode = NA, CreatedAt = 9/17/2023 6:04:00 AM }
+09:04:24.1838  WARN  LogDetails { Controller = Machine, Action = UpdateMachine, ErrorCode = NA, CreatedAt = 9/17/2023 6:04:24 AM }
