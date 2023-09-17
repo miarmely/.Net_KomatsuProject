@@ -10,7 +10,7 @@ using Services.Contracts;
 
 namespace Services.Concretes
 {
-	public class MailService : IMailService
+    public class MailService : IMailService
 	{
 		private readonly IConfigManager _config;
 

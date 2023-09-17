@@ -1,4 +1,4 @@
-﻿using Entities.DtoModels.Enums;
+﻿using Entities.DtoModels.EnumModels;
 
 namespace Entities.DtoModels
 {

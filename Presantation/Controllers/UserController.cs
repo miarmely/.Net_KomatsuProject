@@ -1,5 +1,5 @@
-﻿using Entities.DtoModels;
-using Entities.QueryModels;
+﻿using Entities.DtoModels.BodyModels;
+using Entities.DtoModels.QueryModels;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Presantation.ActionFilters;
@@ -21,7 +21,7 @@ namespace Presantation.Controllers
 
         [HttpPost("login")]
         [ValidationUserFormat]
-        public async Task<IActionResult> LoginAsync(UserDtoForLogin userDto)
+        public async Task<IActionResult> LoginAsync(UserBodyDtoForLogin userDto)
         {
             var token = await _manager.UserService
                 .LoginAsync(userDto);
@@ -36,7 +36,7 @@ namespace Presantation.Controllers
         [HttpPost("register")]
         [ValidationUserFormat]
         public async Task<IActionResult> RegisterAsync(
-            [FromBody] UserDtoForRegister userDtoR)
+            [FromBody] UserBodyDtoForRegister userDtoR)
         {
             await _manager.UserService
                 .RegisterAsync(userDtoR);
@@ -48,7 +48,7 @@ namespace Presantation.Controllers
 		[HttpPost("create")]
 		[ValidationUserFormat]
 		public async Task<IActionResult> CreateUserAsync(
-            [FromBody] UserDtoForCreate userDtoC)
+            [FromBody] UserBodyDtoForCreate userDtoC)
 		{
             await _manager.UserService
                 .CreateUserAsync(userDtoC);
@@ -59,7 +59,7 @@ namespace Presantation.Controllers
 
         [HttpGet("display")]
         public async Task<IActionResult> GetAllUsersWithPagingAsync(
-            [FromQuery] PagingParameters pagingParameters)
+            [FromQuery] PaginationQueryDto pagingParameters)
         {
             var entity = await _manager.UserService
                 .GetAllUsersWithPagingAsync(pagingParameters, Response);
@@ -70,9 +70,10 @@ namespace Presantation.Controllers
 
         [HttpPut("update/{email}")]
         [ValidationUserFormat]
+        [ValidationNullArguments]
         public async Task<IActionResult> GetUpdateUserAsync(
             [FromRoute(Name = "email")] string email,
-            [FromBody] UserDtoForUpdate userDtoU)
+            [FromBody] UserBodyDtoForUpdate userDtoU)
         {
             await _manager.UserService
                 .UpdateUserAsync(email, userDtoU);
@@ -82,8 +83,9 @@ namespace Presantation.Controllers
 
 
         [HttpDelete("delete")]
-        public async Task<IActionResult> DeleteUsersAsync(
-            [FromBody] UserDtoForDelete userDtoD)
+		[ValidationNullArguments]
+		public async Task<IActionResult> DeleteUsersAsync(
+            [FromBody] UserBodyDtoForDelete userDtoD)
         {
             await _manager.UserService
                 .DeleteUsersAsync(userDtoD);

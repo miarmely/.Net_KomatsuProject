@@ -1,21 +1,21 @@
 ﻿using Entities.DataModels;
-using Entities.QueryModels;
+using Entities.DtoModels.QueryModels;
 using Repositories.Utilies;
 using System.Linq.Expressions;
 
 namespace Repositories.Contracts
 {
-	public interface IMachineRepository : IRepositoryBase<Machine>
+    public interface IMachineRepository : IRepositoryBase<Machine>
 	{
 		Task<List<Machine>> GetAllMachinesAsync(
 			bool trackChanges = false);
 
 		Task<PagingList<Machine>> GetAllMachinesAsync(
-			PagingParameters pagingParameters,
+			PaginationQueryDto pagingParameters,
 			bool trackChanges = false);
 
 		Task<PagingList<Machine>> GetAllMachinesAsync<TResult>(
-			PagingParameters pagingParameters,
+			PaginationQueryDto pagingParameters,
 			Expression<Func<Machine, TResult>> orderBy, 
 			bool asAscending = true, 
 			bool trackChanges = false);
@@ -25,12 +25,12 @@ namespace Repositories.Contracts
 			bool trackChanges = false);
 
 		Task<PagingList<Machine>> GetMachinesByConditionAsync(
-			PagingParameters paginationParameters,
+			PaginationQueryDto paginationParameters,
 			Expression<Func<Machine, bool>> condition,
 			bool trackChanges = false);
 
 		Task<PagingList<Machine>> GetMachinesByConditionAsync<TResult>(
-			PagingParameters paginationParameters,
+			PaginationQueryDto paginationParameters,
 			Expression<Func<Machine, bool>> condition,
 			Expression<Func<Machine, TResult>> orderBy,
 			bool asAscending = true,

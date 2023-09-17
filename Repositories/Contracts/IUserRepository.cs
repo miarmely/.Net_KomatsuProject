@@ -1,21 +1,21 @@
 ﻿using Entities.DataModels;
-using Entities.QueryModels;
+using Entities.DtoModels.QueryModels;
 using Repositories.Utilies;
 using System.Linq.Expressions;
 using System.Runtime.InteropServices;
 
 namespace Repositories.Contracts
 {
-	public interface IUserRepository : IRepositoryBase<User>
+    public interface IUserRepository : IRepositoryBase<User>
 	{
 		Task<User?> GetUserByIdAsync(Guid id, bool trackChanges = false);
 		Task<User?> GetUserByTelNoAsync(string telNo, bool trackChanges = false);
 		Task<User?> GetUserByEmailAsync(string email, bool trackChanges = false);
 		Task<PagingList<User>> GetAllUsersAsync(
-			PagingParameters pagingParameters, 
+			PaginationQueryDto pagingParameters, 
 			bool trackChanges = false);
 		Task<PagingList<User>> GetAllUsersAsync<T>
-			(PagingParameters pagingParameters,
+			(PaginationQueryDto pagingParameters,
 			Expression<Func<User, T>> orderBy, 
 			bool asAscending = true, 
 			bool trackChanges = false);

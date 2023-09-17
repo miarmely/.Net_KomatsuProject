@@ -1,5 +1,5 @@
 ﻿using Entities.DataModels;
-using Entities.RelationModels;
+using Entities.DataModels.RelationModels;
 using Microsoft.EntityFrameworkCore;
 using System.Reflection;
 

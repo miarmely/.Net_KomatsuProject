@@ -1,5 +1,4 @@
 ﻿using Entities.ConfigModels;
-using Entities.ErrorModels;
 using Entities.Exceptions;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.Extensions.Options;
@@ -11,19 +10,12 @@ namespace Presantation.ActionFilters.Attributes
     public class ValidationUserFormatFilter : IAsyncActionFilter
     {
         private readonly UserSettingsConfig _userSettings;
-        private readonly ErrorDetails _errorModel;
+        private string _errorCode = "FE-U-";
+        private string _errorDescription = "Format Error - User - ";
 
-        public ValidationUserFormatFilter(IOptions<UserSettingsConfig> userSettings)
-        {
-            _errorModel = new ErrorDetails()
-            {
-                StatusCode = 400,
-                ErrorCode = "FE-U-",
-                ErrorDescription = "Format Error - User -",
-            };
-            _userSettings = userSettings.Value;
-        }
-
+		public ValidationUserFormatFilter(IOptions<UserSettingsConfig> userSettings) =>
+			_userSettings = userSettings.Value;
+        
         public async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
         {
             #region get dto model
@@ -40,21 +32,20 @@ namespace Presantation.ActionFilters.Attributes
             #endregion
 
             await FormatControl(dtoModel, properties);
-
             await next();
         }
 
         private async Task FormatControl(object dtoModel, IEnumerable<PropertyInfo> properties)
         {
-            object value;
+            object propertyValue;
 
             #region control format of dtoModel properties
             foreach (var property in properties)
             {
-                #region don't check value if null
-                value = property.GetValue(dtoModel);
+				#region don't check property if null
+				propertyValue = property.GetValue(dtoModel);
 
-                if (value == null)
+                if (propertyValue == null)
                     continue;
                 #endregion
 
@@ -62,22 +53,22 @@ namespace Presantation.ActionFilters.Attributes
                 switch (property.Name)
                 {
                     case "FirstName":
-                        await ControlFirstName(value as string);
+                        await ControlFirstName(propertyValue as string);
                         break;
                     case "LastName":
-                        await ControlLastName(value as string);
+                        await ControlLastName(propertyValue as string);
                         break;
                     case "CompanyName":
-                        await ControlCompanyName(value as string);
+                        await ControlCompanyName(propertyValue as string);
                         break;
                     case "TelNo":
-                        await ControlTelNo(value as string);
+                        await ControlTelNo(propertyValue as string);
                         break;
                     case "Email":
-                        await ControlEmail(value as string);
+                        await ControlEmail(propertyValue as string);
                         break;
                     case "Password":
-                        await ControlPassword(value as string);
+                        await ControlPassword(propertyValue as string);
                         break;
                 };
                 #endregion
@@ -85,12 +76,11 @@ namespace Presantation.ActionFilters.Attributes
             #endregion
 
             #region when format error occured (throw)
-            if (!_errorModel.ErrorCode.Equals("FE-"))
+            if (!_errorCode.Equals("FE-"))
             {
-                _errorModel.ErrorDescription = _errorModel.ErrorDescription
-                    .TrimEnd();
+                _errorDescription = _errorDescription.TrimEnd();
 
-                throw new ErrorWithCodeException(_errorModel);
+                throw new ErrorWithCodeException(404, _errorCode, _errorDescription);
             }
             #endregion
         }
@@ -203,11 +193,10 @@ namespace Presantation.ActionFilters.Attributes
                     UpdateErrorModel("P", "Password ");
             });
 
-        private void UpdateErrorModel(object newErrorCode
-            , string newErrorDescription)
+        private void UpdateErrorModel(string newErrorCode, string newErrorDescription)
         {
-            _errorModel.ErrorCode += newErrorCode;
-            _errorModel.ErrorDescription += newErrorDescription;
+            _errorCode += newErrorCode;
+            _errorDescription += newErrorDescription;
         }
 
         private bool CanConvertToInt(string input)

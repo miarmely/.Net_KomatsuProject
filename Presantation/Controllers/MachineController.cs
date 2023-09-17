@@ -1,15 +1,13 @@
-﻿using Entities.DtoModels;
-using Entities.DtoModels.Enums;
-using Entities.QueryModels;
+﻿using Entities.DtoModels.BodyModels;
+using Entities.DtoModels.QueryModels;
 using Microsoft.AspNetCore.Mvc;
 using Presantation.ActionFilters;
-using Presantation.ActionFilters.Filters;
 using Services.Contracts;
 
 
 namespace Presantation.Controllers
 {
-	[ApiController]
+    [ApiController]
     [Route("api/services/[Controller]")]
     [ModifyError]
     public class MachineController : ControllerBase
@@ -22,21 +20,21 @@ namespace Presantation.Controllers
 
 		[HttpPost("create")]
 		public async Task<IActionResult> CreateMachineAsync(
-			[FromBody] MachineDtoForCreate machineDtoC)
+			[FromBody] MachineBodyDtoForCreate machineBodyDto)
 		{
 			await _manager.MachineService
-				.CreateMachineAsync(machineDtoC);
+				.CreateMachineAsync(machineBodyDto);
 
 			return NoContent();
 		}
 
 
 		[HttpGet("display/all")]
-        public async Task<IActionResult> GetAllMachinesAsync(
-            [FromQuery] PagingParameters paginationParameters)
+		public async Task<IActionResult> GetAllMachinesAsync(
+            [FromQuery] PaginationQueryDto paginationQueryDto)
         {
             var machines = await _manager.MachineService
-                .GetAllMachinesWithPagingAsync(paginationParameters, Response);
+                .GetAllMachinesWithPagingAsync(paginationQueryDto, Response);
 
             return Ok(machines);
         }
@@ -45,13 +43,13 @@ namespace Presantation.Controllers
         [HttpGet("display/condition")]
         [ValidationNullArguments]
         public async Task<IActionResult> GetMachinesByConditionAsync(
-            [FromQuery] MachineDtoForDisplay machineDtoD,
-            [FromQuery] PagingParameters paginationParameters)
+            [FromQuery] MachineBodyDtoForDisplay machineDtoD,
+            [FromQuery] PaginationQueryDto paginationQueryDto)
         {
             var machines = await _manager.MachineService
                 .GetMachinesByConditionWithPagingAsync(
                     machineDtoD,
-                    paginationParameters, 
+					paginationQueryDto, 
                     Response);
 
             return Ok(machines);
@@ -72,12 +70,23 @@ namespace Presantation.Controllers
         [HttpPut("update")]
         [ValidationNullArguments]
         public async Task<IActionResult> UpdateMachineAsync(
-			[FromQuery(Name = "SubCategoryName")] string subCategoryName,
-			[FromQuery(Name = "Model")] string model,
-            [FromBody] MachineDtoForUpdate machineDtoForU)
+            [FromQuery] MachineQueryDtoForUpdate machineQueryDto,
+            [FromBody] MachineBodyDtoForUpdate machineBodyDto)
         {
             await _manager.MachineService
-                .UpdateMachineAsync(subCategoryName, model, machineDtoForU);
+                .UpdateMachineAsync(machineQueryDto, machineBodyDto);
+
+            return NoContent();
+        }
+
+
+        [HttpDelete("delete")]
+        [ValidationNullArguments]
+        public async Task<IActionResult> DeleteMachinesAsync(
+            [FromBody] MachineQueryDtoForDelete machineQueryDto)
+        {
+            await _manager.MachineService
+                .DeleteMachinesAsync(machineQueryDto);
 
             return NoContent();
         }

@@ -2,7 +2,7 @@
 
 namespace Services.Contracts
 {
-	public interface IMailService
+    public interface IMailService
 	{
 		Task SendMailAsync(MailDto mailDto);
 	}

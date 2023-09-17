@@ -6,7 +6,8 @@ namespace Presantation.ActionFilters
 {
 	public class ValidationNullArgumentsAttribute : ServiceFilterAttribute
 	{
-        public ValidationNullArgumentsAttribute() : base(typeof(ValidationNullArgumentsFilter))
+        public ValidationNullArgumentsAttribute() 
+            : base(typeof(ValidationNullArgumentsFilter))
         {}
     }
 }

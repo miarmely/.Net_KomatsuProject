@@ -1,5 +1,5 @@
 ﻿using Entities.DataModels;
-using Entities.QueryModels;
+using Entities.DtoModels.QueryModels;
 using Microsoft.EntityFrameworkCore;
 using Repositories.Contracts;
 using Repositories.EF;
@@ -8,7 +8,7 @@ using System.Linq.Expressions;
 
 namespace Repositories.Concretes
 {
-	public class UserRepository : RepositoryBase<User>, IUserRepository
+    public class UserRepository : RepositoryBase<User>, IUserRepository
 	{
 		public UserRepository(RepositoryContext context) : base(context)
 		{ }
@@ -36,7 +36,7 @@ namespace Repositories.Concretes
 
 		#region GetAllUsersAsync
 		public async Task<PagingList<User>> GetAllUsersAsync(
-			PagingParameters pagingParameters,
+			PaginationQueryDto pagingParameters,
 			bool trackChanges = false) =>
 				await PagingList<User>
 					.ToPagingListAsync(
@@ -47,7 +47,7 @@ namespace Repositories.Concretes
 		 * with orderBy
 		 */
 		public async Task<PagingList<User>> GetAllUsersAsync<T>(
-			PagingParameters pagingParameters,
+			PaginationQueryDto pagingParameters,
 			Expression<Func<User, T>> orderBy,
 			bool asAscending = true,
 			bool trackChanges = false) =>

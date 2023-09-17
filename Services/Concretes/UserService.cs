@@ -1,11 +1,11 @@
 ﻿using AutoMapper;
 using Entities.ConfigModels.Contracts;
 using Entities.DataModels;
+using Entities.DataModels.RelationModels;
 using Entities.DtoModels;
-using Entities.ErrorModels;
+using Entities.DtoModels.BodyModels;
+using Entities.DtoModels.QueryModels;
 using Entities.Exceptions;
-using Entities.QueryModels;
-using Entities.RelationModels;
 using Microsoft.AspNetCore.Http;
 using Microsoft.IdentityModel.Tokens;
 using Repositories.Contracts;
@@ -16,11 +16,10 @@ using System.Linq.Expressions;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
-using System.Text.Json;
 
 namespace Services.Concretes
 {
-	public class UserService : IUserService
+    public class UserService : IUserService
 	{
 		private readonly IRepositoryManager _manager;
 		private readonly IConfigManager _config;
@@ -38,7 +37,7 @@ namespace Services.Concretes
 			_dtoConverterService = dtoConverterService;
 		}
 
-		public async Task<string> LoginAsync(UserDtoForLogin UserDtoL)
+		public async Task<string> LoginAsync(UserBodyDtoForLogin UserDtoL)
 		{
 			#region get user by telNo
 			var user = await _manager.UserRepository
@@ -63,7 +62,7 @@ namespace Services.Concretes
 			return await GenerateTokenForUserAsync(user);
 		}
 
-		public async Task RegisterAsync(UserDtoForRegister userDtoR)
+		public async Task RegisterAsync(UserBodyDtoForRegister userDtoR)
 		{
 			#region control conflict errors
 			var userDtoC = _mapper.Map<UserDtoForConflictControl>(userDtoR);
@@ -111,7 +110,7 @@ namespace Services.Concretes
 			#endregion
 		}
 
-		public async Task CreateUserAsync(UserDtoForCreate userDtoC)
+		public async Task CreateUserAsync(UserBodyDtoForCreate userDtoC)
 		{
 			#region control conflict error
 			var userDtoConf = _mapper.Map<UserDtoForConflictControl>(userDtoC);
@@ -154,7 +153,7 @@ namespace Services.Concretes
 		}
 
 		public async Task<ICollection<UserDto>> GetAllUsersWithPagingAsync(
-			PagingParameters pagingParameters, HttpResponse response)
+			PaginationQueryDto pagingParameters, HttpResponse response)
 		{
 			#region when user not found (throw)
 			var users = await _manager.UserRepository
@@ -180,7 +179,7 @@ namespace Services.Concretes
 			return userDtos;
 		}
 
-		public async Task UpdateUserAsync(string email, UserDtoForUpdate userDtoU)
+		public async Task UpdateUserAsync(string email, UserBodyDtoForUpdate userDtoU)
 		{
 			#region control conflict error
 			var userDtoC = _mapper.Map<UserDtoForConflictControl>(userDtoU);
@@ -275,7 +274,7 @@ namespace Services.Concretes
 			#endregion
 		}
 
-		public async Task DeleteUsersAsync(UserDtoForDelete userDtoD)
+		public async Task DeleteUsersAsync(UserBodyDtoForDelete userDtoD)
 		{
 			#region delete users
 			var IsFalseTelNoExists = false;
@@ -337,38 +336,32 @@ namespace Services.Concretes
 			#region control conflict error
 			if (users.Count != 0)
 			{
-				var errorModel = new ErrorDetails()
-				{
-					StatusCode = 409,
-					ErrorCode = "CE-",
-					ErrorDescription = "Conflict Error - ",
-				};
+				var errorCode = "CE-";
+				var errorDescription = "Conflict Error - ";
 
 				#region control telNo
 				if (users.Any(u => u.TelNo.Equals(userDtoC.TelNo)))
-					UpdateErrorCode(ref errorModel, "T", "TelNo ");
+				{
+					errorCode += "T";
+					errorDescription += "TelNo ";
+				}
 				#endregion
 
 				#region control email
 				if (users.Any(u => u.Email.Equals(userDtoC.Email)))
-					UpdateErrorCode(ref errorModel, "E", "Email ");
+				{
+					errorCode += "E";
+					errorDescription += "Email ";
+				}
 				#endregion
 
 				#region throw exception
-				errorModel.ErrorDescription = errorModel.ErrorDescription.TrimEnd();
+				errorDescription = errorDescription.TrimEnd();
 
-				throw new ErrorWithCodeException(errorModel);
+				throw new ErrorWithCodeException(409, errorCode, errorDescription);
 				#endregion
 			}
 			#endregion
-		}
-
-		private void UpdateErrorCode(ref ErrorDetails errorModel
-			, string newErrorCode
-			, string newErrorDescription)
-		{
-			errorModel.ErrorCode += newErrorCode;
-			errorModel.ErrorDescription += newErrorDescription;
 		}
 
 		private async Task<ICollection<string>> GetRoleNamesOfUserAsync(Guid userId)

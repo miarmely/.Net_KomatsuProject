@@ -1,29 +1,31 @@
 ﻿using Entities.DtoModels;
-using Entities.QueryModels;
+using Entities.DtoModels.BodyModels;
+using Entities.DtoModels.QueryModels;
 using Microsoft.AspNetCore.Http;
 
 namespace Services.Contracts
 {
-	public interface IMachineService
+    public interface IMachineService
 	{
-		Task CreateMachineAsync(MachineDtoForCreate machineDtoC);
+		Task CreateMachineAsync(MachineBodyDtoForCreate machineDtoC);
 
 		Task<IEnumerable<MachineDto>> GetAllMachinesWithPagingAsync(
-			PagingParameters paginationParameters,
+			PaginationQueryDto paginationParameters,
 			HttpResponse response,
 			bool trackChanges = false);
 
 		Task<IEnumerable<MachineDto>> GetMachinesByConditionWithPagingAsync(
-			MachineDtoForDisplay machineDtoD,
-			PagingParameters pagingParameters,
+			MachineBodyDtoForDisplay machineDtoD,
+			PaginationQueryDto pagingParameters,
 			HttpResponse response);
 
 		Task<IEnumerable<string>> GetSubCategoriesOfMainCategoryAsync(
 			string mainCategoryName);
 
 		Task UpdateMachineAsync(
-			string subCategoryName, 
-			string model, 
-			MachineDtoForUpdate machineDtoU);
+			MachineQueryDtoForUpdate machineQueryDtoU,
+            MachineBodyDtoForUpdate machineBodyDtoU);
+
+		Task DeleteMachinesAsync(MachineQueryDtoForDelete machineQueryDto);
 	}
 }

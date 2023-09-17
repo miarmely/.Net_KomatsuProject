@@ -1,16 +1,18 @@
 ﻿using AutoMapper;
 using Entities.DataModels;
 using Entities.DtoModels;
-using Entities.DtoModels.Enums;
+using Entities.DtoModels.BodyModels;
+using Entities.DtoModels.EnumModels;
+using Entities.DtoModels.QueryModels;
 using Entities.Exceptions;
-using Entities.QueryModels;
 using Microsoft.AspNetCore.Http;
+using NLog.Filters;
 using Repositories.Contracts;
 using Services.Contracts;
 
 namespace Services.Concretes
 {
-	public class MachineService : IMachineService
+    public class MachineService : IMachineService
 	{
 		private readonly IRepositoryManager _manager;
 		private readonly IDtoConverterService _dtoConverterService;
@@ -29,12 +31,15 @@ namespace Services.Concretes
 			_dataConverterService = dataConverterService;
 		}
 
-		public async Task CreateMachineAsync(MachineDtoForCreate machineDtoC)
+		public async Task CreateMachineAsync(MachineBodyDtoForCreate machineDtoC)
 		{
 			#region convert machineDtoC to machineDto
 			var machineDto = _mapper.Map<MachineDto>(machineDtoC);
 
-			await ControlConflictErrorAsync(machineDto.Model);
+			// control conflict error
+			await ControlConflictErrorAsync(
+				machineDto.Model, 
+				machineDto.SubCategoryName);
 
 			machineDto.RegistrationDate = DateTime.UtcNow;
 			#endregion
@@ -53,7 +58,7 @@ namespace Services.Concretes
 		}
 
 		public async Task<IEnumerable<MachineDto>> GetAllMachinesWithPagingAsync(
-			PagingParameters paginationParameters,
+			PaginationQueryDto paginationParameters,
 			HttpResponse response,
 			bool trackChanges = false)
 		{
@@ -83,8 +88,8 @@ namespace Services.Concretes
 		}
 
 		public async Task<IEnumerable<MachineDto>> GetMachinesByConditionWithPagingAsync(
-			MachineDtoForDisplay machineDtoD,
-			PagingParameters pagingParameters,
+			MachineBodyDtoForDisplay machineDtoD,
+			PaginationQueryDto pagingParameters,
 			HttpResponse response)
 		{
 			#region set brandId
@@ -265,26 +270,31 @@ namespace Services.Concretes
 		}
 
 		public async Task UpdateMachineAsync(
-			string subCategoryName,
-			string model,
-			MachineDtoForUpdate machineDtoForU)
+			MachineQueryDtoForUpdate machineQueryDto,
+			MachineBodyDtoForUpdate machineBodyDto)
 		{
 			#region get category for to get machine
 			var categoryForVerification = await _manager.CategoryRepository
-				.GetCategoryBySubCategoryNameAsync(subCategoryName);
+				.GetCategoryBySubCategoryNameAsync(machineQueryDto.SubCategoryName);
 
 			// when subCategory not found
 			if (categoryForVerification == null)
 				throw new ErrorWithCodeException(404,
 					"VE-M-S",
 					"Verification Error - Machine - SubCategory");
+			#endregion
 
-			await ControlConflictErrorAsync(machineDtoForU.Model, categoryForVerification);
+			#region control conflict error (throw)
+			await ControlConflictErrorAsync(
+				machineBodyDto.Model,
+				category: categoryForVerification);
 			#endregion
 
 			#region get machine
 			var machine = await _manager.MachineRepository
-				.GetMachineByCategoryIdAndModelAsync(categoryForVerification.Id, model);
+				.GetMachineByCategoryIdAndModelAsync(
+					categoryForVerification.Id, 
+					machineQueryDto.Model);
 
 			// when model not found
 			if (machine == null)
@@ -296,10 +306,10 @@ namespace Services.Concretes
 			#region get brand if changed (throw)
 			Brand? brand = null;
 
-			if (machineDtoForU.BrandName != null)
+			if (machineBodyDto.BrandName != null)
 			{
 				brand = await _manager.BrandRepository
-					.GetBrandByNameAsync(machineDtoForU.BrandName);
+					.GetBrandByNameAsync(machineBodyDto.BrandName);
 
 				// when brand not found
 				if (brand == null)
@@ -312,10 +322,10 @@ namespace Services.Concretes
 			#region get category if subCategoryName changed (throw)
 			Category? category = null;
 
-			if (machineDtoForU.SubCategoryName != null)
+			if (machineBodyDto.SubCategoryName != null)
 			{
 				category = await _manager.CategoryRepository
-					.GetCategoryBySubCategoryNameAsync(machineDtoForU.SubCategoryName);
+					.GetCategoryBySubCategoryNameAsync(machineBodyDto.SubCategoryName);
 
 				// when subCategory not found
 				if (category == null)
@@ -325,7 +335,7 @@ namespace Services.Concretes
 			}
 			#endregion
 
-			#region update machine
+			#region set machine
 			machine.BrandId = brand == null ?
 				machine.BrandId
 				: brand.Id;
@@ -334,34 +344,36 @@ namespace Services.Concretes
 				machine.CategoryId
 				: category.Id;
 
-			machine.Model = machineDtoForU.Model == null ?
+			machine.Model = machineBodyDto.Model == null ?
 				machine.Model
-				: machineDtoForU.Model;
+				: machineBodyDto.Model;
 
-			machine.HandStatus = machineDtoForU.ZerothHandOrSecondHand == null ?
+			machine.HandStatus = machineBodyDto.ZerothHandOrSecondHand == null ?
 				machine.HandStatus
-				: (int)machineDtoForU.ZerothHandOrSecondHand;
+				: (int)machineBodyDto.ZerothHandOrSecondHand;
 
-			machine.ImagePath = machineDtoForU.ImagePath == null ?
+			machine.ImagePath = machineBodyDto.ImagePath == null ?
 				machine.ImagePath
-				: machineDtoForU.ImagePath;
+				: machineBodyDto.ImagePath;
 
-			machine.Stock = machineDtoForU.Stock == null ?
+			machine.Stock = machineBodyDto.Stock == null ?
 				machine.Stock
-				: (int)machineDtoForU.Stock;
+				: (int)machineBodyDto.Stock;
 
-			machine.Rented = machineDtoForU.Rented == null ?
+			machine.Rented = machineBodyDto.Rented == null ?
 				machine.Rented
-				: (int)machineDtoForU.Rented;
+				: (int)machineBodyDto.Rented;
 
-			machine.Sold = machineDtoForU.Sold == null ?
+			machine.Sold = machineBodyDto.Sold == null ?
 				machine.Sold
-				: (int)machineDtoForU.Sold;
+				: (int)machineBodyDto.Sold;
 
-			machine.Year = machineDtoForU.Year == null ?
+			machine.Year = machineBodyDto.Year == null ?
 				machine.Year
-				: (int)machineDtoForU.Year;
+				: (int)machineBodyDto.Year;
+			#endregion
 
+			#region update machine
 			_manager.MachineRepository
 				.Update(machine);
 
@@ -369,9 +381,51 @@ namespace Services.Concretes
 			#endregion
 		}
 
+		public async Task DeleteMachinesAsync(MachineQueryDtoForDelete machineQueryDto)
+		{
+			#region delete machines (throw)
+			await Task.Run(async () =>
+			{
+				foreach (var machineInfo in machineQueryDto.MachineInfos)
+				{
+					#region get category (throw)
+					var category = await _manager.CategoryRepository
+						.GetCategoryBySubCategoryNameAsync(machineInfo.SubCategoryName);
+
+					// when subCategoryName not found
+					if (category == null)
+						throw new ErrorWithCodeException(404,
+							"VE-M-S",
+							"Verification Error - Machine - SubCategory");
+					#endregion
+
+					#region get machine (throw)
+					var machine = await _manager.MachineRepository
+						.GetMachineByCategoryIdAndModelAsync(
+							category.Id, 
+							machineInfo.Model);
+
+					// when model not found
+					if (machine == null)
+						throw new ErrorWithCodeException(404,
+							"VE-M-Mo",
+							"Verification Error - Machine - Model");
+					#endregion
+
+					_manager.MachineRepository
+						.Delete(machine);
+				}
+			});
+
+			await _manager.SaveAsync();
+			#endregion
+		}
+
+
 		#region private
 		private async Task ControlConflictErrorAsync(
 			string model, 
+			string subCategoryName = null,
 			Category category = null)
 		{
 			#region get category if category null (throw)
@@ -379,7 +433,7 @@ namespace Services.Concretes
 			{
 				#region get category (throw)
 				category = await _manager.CategoryRepository
-					.GetCategoryBySubCategoryNameAsync(category.SubCategoryName);
+					.GetCategoryBySubCategoryNameAsync(subCategoryName);
 
 				// when not found
 				if (category == null)

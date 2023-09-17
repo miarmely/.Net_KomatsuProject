@@ -1,51 +1,57 @@
-﻿using Entities.ErrorModels;
+﻿using Entities.DtoModels;
 using Microsoft.AspNetCore.Mvc.Filters;
 using System.Text.Json;
 
 namespace Presantation.ActionFilters.Attributes
 {
-	public class ErrorFilter : ExceptionFilterAttribute
+    public class ErrorFilter : ExceptionFilterAttribute
 	{
 		public override async Task OnExceptionAsync(ExceptionContext context)
 		{
-			#region add log details to error details
+			#region save error message to httpContext
 			await Task.Run(() =>
 			{
-				#region set errorDetails
-				ErrorDetails errorDetails;
+				#region set errorDto
+				ErrorDtoForExceptionFilter errorDto;
+
+				#region get controller and action names
+				var controllerName = context.RouteData
+					.Values["controller"]
+					.ToString();
+
+				var actionName = context.RouteData
+					.Values["controller"]
+					.ToString();
+				#endregion
 
 				try
 				{
 					#region for expected errors
-					errorDetails = JsonSerializer
-						.Deserialize<ErrorDetails>(context.Exception.Message);
+					errorDto = JsonSerializer
+						.Deserialize<ErrorDtoForExceptionFilter>(
+							context.Exception.Message);
+
+					errorDto.Controller = controllerName;
+					errorDto.Action = actionName;
 					#endregion
 				}
 				catch
 				{
 					#region for unexpected errors
-					errorDetails = new ErrorDetails
+					errorDto = new ErrorDtoForExceptionFilter
 					{
 						StatusCode = 500,
 						ErrorCode = "Internal Server Error",
-						ErrorDescription = context.Exception.Message
+						ErrorDescription = context.Exception.Message,
+						Controller = controllerName,
+						Action = actionName
 					};
 					#endregion
 				}
 				#endregion
 
-				#region add logDetails to errorDetails
-				errorDetails.LogDetails = new LogDetails()
-				{
-					Controller = context.RouteData.Values["controller"] as string,
-					Action = context.RouteData.Values["action"] as string,
-					ErrorCode = errorDetails.ErrorCode
-				};
-				#endregion
-
-				#region save error details on httpContext
-				context.HttpContext.Items
-					.Add("errorDetails", errorDetails);
+				#region save errorDto to httpContext
+				context.HttpContext.Items.Add("errorDetails", errorDto);
 				#endregion
 			});
 			#endregion

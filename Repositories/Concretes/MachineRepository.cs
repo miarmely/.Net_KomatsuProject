@@ -1,5 +1,5 @@
 ﻿using Entities.DataModels;
-using Entities.QueryModels;
+using Entities.DtoModels.QueryModels;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Query.SqlExpressions;
 using Repositories.Contracts;
@@ -9,7 +9,7 @@ using System.Linq.Expressions;
 
 namespace Repositories.Concretes
 {
-	public class MachineRepository : RepositoryBase<Machine>, IMachineRepository
+    public class MachineRepository : RepositoryBase<Machine>, IMachineRepository
 	{
 		public MachineRepository(RepositoryContext context) : base(context)
 		{ }
@@ -41,7 +41,7 @@ namespace Repositories.Concretes
 		 * with pagination
 		 */
 		public async Task<PagingList<Machine>> GetAllMachinesAsync(
-			PagingParameters pagingParameters,
+			PaginationQueryDto pagingParameters,
 			bool trackChanges = false) =>
 				await PagingList<Machine>
 					.ToPagingListAsync(
@@ -52,7 +52,7 @@ namespace Repositories.Concretes
 		 * with pagination + orderBy
 		 */
 		public async Task<PagingList<Machine>> GetAllMachinesAsync<TResult>(
-			PagingParameters pagingParameters,
+			PaginationQueryDto pagingParameters,
 			Expression<Func<Machine, TResult>> orderBy,
 			bool asAscending = true,
 			bool trackChanges = false) =>
@@ -76,7 +76,7 @@ namespace Repositories.Concretes
 		 * with pagination:
 		 */
 		public async Task<PagingList<Machine>> GetMachinesByConditionAsync(
-			PagingParameters paginationParameters,
+			PaginationQueryDto paginationParameters,
 			Expression<Func<Machine, bool>> condition,
 			bool trackChanges = false) =>
 				await PagingList<Machine>
@@ -88,7 +88,7 @@ namespace Repositories.Concretes
 		 * with pagination + orderBy:
 		 */
 		public async Task<PagingList<Machine>> GetMachinesByConditionAsync<TResult>(
-			PagingParameters paginationParameters,
+			PaginationQueryDto paginationParameters,
 			Expression<Func<Machine, bool>> condition,
 			Expression<Func<Machine, TResult>> orderBy,
 			bool asAscending = true,

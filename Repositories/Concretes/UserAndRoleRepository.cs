@@ -1,11 +1,11 @@
-﻿using Entities.RelationModels;
+﻿using Entities.DataModels.RelationModels;
 using Microsoft.EntityFrameworkCore;
 using Repositories.Contracts;
 using Repositories.EF;
 
 namespace Repositories.Concretes
 {
-	public class UserAndRoleRepository : RepositoryBase<UserAndRole>
+    public class UserAndRoleRepository : RepositoryBase<UserAndRole>
 		, IUserAndRoleRepository
 	{
 		public UserAndRoleRepository(RepositoryContext context)

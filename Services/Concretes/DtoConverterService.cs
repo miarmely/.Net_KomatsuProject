@@ -1,6 +1,6 @@
 ﻿using Entities.DataModels;
 using Entities.DtoModels;
-using Entities.DtoModels.Enums;
+using Entities.DtoModels.EnumModels;
 using Repositories.Contracts;
 using Services.Contracts;
 using System.Collections.ObjectModel;
