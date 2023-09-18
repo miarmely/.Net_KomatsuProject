@@ -12,8 +12,8 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.ConfigureAddControllersWithView();
 builder.Services.AddAutoMapper(Assembly.GetExecutingAssembly());
-builder.Services.ConfigureLoggerService();
-builder.Services.ConfigureConfigModels();
+builder.Services.ConfigureServices();
+builder.Services.ConfigureConfigModels(builder.Configuration);
 builder.Services.ConfigureJwt(builder.Configuration);
 
 var app = builder.Build();
@@ -33,7 +33,7 @@ app.UseAuthorization();
 
 app.MapControllerRoute(
 	name: "default",
-	pattern: "{controller=Machine}/{action=Create}/{id?}");
+	pattern: "{controller=Machine}/{action=Display}/{id?}");
 #endregion
 
 app.Run();

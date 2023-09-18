@@ -45,7 +45,7 @@ namespace Services.Concretes
 						Rented = machine.Rented,
 						Sold = machine.Sold,
 						Year = machine.Year,
-						RegistrationDate = machine.RegistrationDate
+						CreatedAt = machine.CreatedAt
 					});
 				}
 				#endregion
@@ -78,7 +78,7 @@ namespace Services.Concretes
 				Rented = machine.Rented,
 				Sold = machine.Sold,
 				Year = machine.Year,
-				RegistrationDate = machine.RegistrationDate
+				CreatedAt = machine.CreatedAt
 			};
 		}
 

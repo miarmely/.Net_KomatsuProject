@@ -35,7 +35,7 @@ namespace Entities.DataModels
 		[Column(TypeName = "smallint")]
 		public int Year { get; set; }
 
-		public DateTime RegistrationDate { get; set; }
+		public DateTime CreatedAt { get; set; }
 		public bool IsDeleted { get; set; }
 
 		#region navigation properties

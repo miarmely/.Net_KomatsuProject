@@ -12,31 +12,31 @@ namespace Repositories.EF.Configs
 				new Category {
 					Id = 1,
 					MainCategoryId = 1,
-					SubCategoryName =  "Paletli Ekskavatör"
+					SubCategoryName =  "Paletli Ekskavatörler"
 				},
 				new Category
 				{
 					Id = 2,
 					MainCategoryId = 1,
-					SubCategoryName = "Lastikli Ekskavatör"
+					SubCategoryName = "Lastikli Yükleyiciler"
 				},
 				new Category
 				{
 					Id = 3,
 					MainCategoryId = 1,
-					SubCategoryName = "Lastikli Yükleyici"
+					SubCategoryName = "Greyderler"
 				},
 				new Category
 				{
 					Id = 4,
 					MainCategoryId = 1,
-					SubCategoryName = "Dozer"
+					SubCategoryName = "Dozerler"
 				},
 				new Category
 				{
-					Id = 6,
+					Id = 5,
 					MainCategoryId = 1,
-					SubCategoryName = "Kaya Kamyonu"
+					SubCategoryName = "Kazıcı Yükleyiciler"
 				} 
 			);
 		}

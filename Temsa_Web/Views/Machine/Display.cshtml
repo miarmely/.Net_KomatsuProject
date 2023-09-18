@@ -2,7 +2,7 @@
     <div class="panel panel-default">
         @*title*@
         <div class="panel-heading">
-            Kayıtlı Kullanıcılar
+            Kayıtlı Makineler
         </div>
         @*/title*@
 
@@ -41,12 +41,15 @@
 								<input id="box_all" type="checkbox"><i></i>
                             </label>
                         </th>
-                        <th>Ad</th>
-                        <th>Soyad</th>
-                        <th>Şirket Adı</th>
-                        <th>Telefon Numarası</th>
-                        <th>Email</th>
-                        <th>Roller</th>
+                        <th>Marka</th>
+                        <th>Ana Kategori</th>
+                        <th>Alt Kategori</th>
+                        <th>Model</th>
+                        <th>Kullanım Durumu</th>
+                        <th>Stok</th>
+						<th>Kiralık</th>
+						<th>Satılık</th>
+						<th>Yıl</th>
                         <th>Kayıt Tarihi</th>
                         <th>İşlemler</th>
                         <th style="width:30px;"></th>
@@ -76,7 +79,7 @@
     </div>
 </div>
 
-<script type="module" src="~/js/userDisplay.js"></script>
+<script type="module" src="~/js/machineForDisplay.js"></script>
 
 <script>
     function click_saveButton(no) {
@@ -84,50 +87,66 @@
 		let oldColumnValues = JSON.parse(
 			sessionStorage.getItem(`tr_row${no}`)
 		);
-		let data = {
-			"firstName": $(`#tr_row${no} #inpt_firstName`).val().trim() 
-				== oldColumnValues["firstName"] ?
-					null 
-					: $(`#tr_row${no} #inpt_firstName`).val().trim(),
-
-			"lastName": $(`#tr_row${no} #inpt_lastName`).val().trim() 
-				== oldColumnValues["lastName"] ?
-					null 
-					: $(`#tr_row${no} #inpt_lastName`).val().trim(),
-
-			"companyName": $(`#tr_row${no} #inpt_companyName`).val().trim() 
-				== oldColumnValues["companyName"] ?
-					null 
-					: $(`#tr_row${no} #inpt_companyName`).val().trim(),
-
-			"telNo": $(`#tr_row${no} #inpt_telNo`).val().trim() 
-				== oldColumnValues["telNo"] ?
-					null 
-					: $(`#tr_row${no} #inpt_telNo`).val().trim(),
-
-			"email": $(`#tr_row${no} #inpt_email`).val().trim() 
-				== oldColumnValues["email"] ?
-					null 
-					: $(`#tr_row${no} #inpt_email`).val().trim(),
-
-			"roleNames": $(`#tr_row${no} option:selected`).val().trim()
-				== oldColumnValues["roleNames"] ?
-					null
-					: [ $(`#tr_row${no} option:selected`).val().trim() ]
+		let columns = {
+			"brandName": $(`#tr_row${no} #td_brandName`),
+			"mainCategoryName": $(`#tr_row${no} #td_mainCategoryName`),
+			"subCategoryName": $(`#tr_row${no} #td_subCategoryName`),
+			"model": $(`#tr_row${no} #td_model`),
+			"usageStatus": $(`#tr_row${no} #td_usageStatus`),
+			"stock": $(`#tr_row${no} #td_stock`),
+			"rented": $(`#tr_row${no} #td_rented`),
+			"sold": $(`#tr_row${no} #td_sold`),
+			"year": $(`#tr_row${no} #td_year`)
 		};
-		let columnsWithInput = {
-			"firstName": $(`#tr_row${no} #td_firstName`),
-			"lastName": $(`#tr_row${no} #td_lastName`),
-			"companyName": $(`#tr_row${no} #td_companyName`),
-			"telNo": $(`#tr_row${no} #td_telNo`),
-			"email": $(`#tr_row${no} #td_email`)
-		}
-		let emailInStorage = oldColumnValues["email"];
+		let subCategoryNameInStorage = oldColumnValues["subCategoryName"];
+		let modelInStorage = oldColumnValues["model"];
+		let data = {
+			"brandName": columns["brandName"].children("#inpt_brandName").val().trim() 
+				== oldColumnValues["brandName"] ?
+					null 
+					: columns["brandName"].children("#inpt_brandName").val().trim(),
+
+			"subCategoryName": columns["subCategoryName"].children("#inpt_subCategoryName")
+				.val().trim() == oldColumnValues["subCategoryName"] ?
+					null 
+					: columns["subCategoryName"].children("#inpt_subCategoryName").val().trim(),
+
+			"model": columns["model"].children("#inpt_model").val().trim() 
+				== oldColumnValues["model"] ?
+					null 
+					: columns["model"].children("#inpt_model").val().trim(),
+
+			"zerothHandOrSecondHand": columns["usageStatus"].children("#inpt_usageStatus").val().trim() 
+				== oldColumnValues["usageStatus"] ?
+					null 
+					: (columns["usageStatus"].children("#inpt_usageStatus")
+						.val().trim() == "Sıfır" ? 0 : 2),
+
+			"stock": columns["stock"].children("#inpt_stock").val().trim() 
+				== oldColumnValues["stock"] ?
+					null 
+					: columns["stock"].children("#inpt_stock").val().trim(),
+
+			"rented": columns["rented"].children("#inpt_rented").val().trim() 
+				== oldColumnValues["rented"] ?
+					null 
+					: columns["rented"].children("#inpt_rented").val().trim(),
+
+			"sold": columns["sold"].children("#inpt_sold").val().trim() 
+				== oldColumnValues["sold"] ?
+					null 
+					: columns["sold"].children("#inpt_sold").val().trim(),
+
+			"year": columns["year"].children("#inpt_year").val().trim() 
+				== oldColumnValues["year"] ?
+					null 
+					: columns["year"].children("#inpt_year").val().trim()
+		};
 		//#endregion
 
 		//#region when any <input> is blank (error)
-		for(var columnName in columnsWithInput)
-			if(columnsWithInput[columnName]
+		for(var columnName in columns)
+			if(columns[columnName]
 				.children(`#inpt_${columnName}`)  // get <input>
 				.val()
 				.trim() == "")
@@ -141,17 +160,21 @@
 		//#endregion
 		
 		//#region when any column not changed
-		// count null column quantity
+
+		//#region count null column quantity
 		let nullColumnQuantity = 0;
+
 		for(var columnName in data){
 			if(data[columnName] != null)
 				break;
 
 			nullColumnQuantity+=1;
 		}
+		//#endregion
 		
-		// write errorMessage
+		//#region write errorMessage
 		let dataLength = Object.keys(data).length;
+
 		if(nullColumnQuantity == dataLength){
 			window.updateResultLabel(
 				"herhangi Bir Değişiklik Yapılmadı", 
@@ -161,17 +184,21 @@
 		}
 		//#endregion
 
+		//#endregion
+
 		$.ajax({
 			method: "PUT",
-			url: `https://localhost:7091/api/services/user/update/${emailInStorage}`,
+			url: `https://localhost:7091/api/services/machine/update?
+				SubCategoryName=${subCategoryNameInStorage}
+				&Model=${modelInStorage}`,
 			data: JSON.stringify(data),
 			contentType: "application/json",
 			dataType: "json",
 			success: () => {
 				//#region convert all <input> to text
-				for (var columnName in columnsWithInput) {
+				for (var columnName in columns) {
 					// remove <input>
-					let column = columnsWithInput[columnName];
+					let column = columns[columnName];
 					column.empty();
 
 					// add <input> value as text
@@ -179,17 +206,6 @@
 						data[columnName] ?? oldColumnValues[columnName]
 					);
 				}
-				//#endregion
-
-				//#region convert <select> to text
-				// remove <select>
-				let td_roleNames = $(`#tr_row${no} #td_roleNames`);
-				td_roleNames.empty();
-
-				// add <select> text
-				td_roleNames.append(
-					data["roleNames"] ?? oldColumnValues["roleNames"]
-				);
 				//#endregion
 
 				//#region add "update" button
@@ -222,22 +238,26 @@
 	function click_cancelButton(no) {
 		//#region set variables
 		let row = $(`#tr_row${no}`);
+		let columns = {
+			"brandName": row.children("#td_brandName"),
+			"mainCategoryName": row.children("#td_mainCategoryName"),
+			"subCategoryName": row.children("#td_subCategoryName"),
+			"model": row.children("#td_model"),
+			"usageStatus": row.children("#td_usageStatus"),
+			"stock": row.children("#td_stock"),
+			"rented": row.children("#td_rented"),
+			"sold": row.children("#td_sold"),
+			"year": row.children("#td_year"),
+		};
 		let columnValuesInStorage = JSON.parse(
 			sessionStorage.getItem(`tr_row${no}`)
 		);
-		let columnsWithInput = {
-			"firstName": row.children("#td_firstName"),
-			"lastName": row.children("#td_lastName"),
-			"companyName": row.children("#td_companyName"),
-			"telNo": row.children("#td_telNo"),
-			"email": row.children("#td_email")
-		};
 		//#endregion
 
 		//#region convert all <input> to text
-		for (var columnName in columnsWithInput) {
+		for (var columnName in columns) {
 			// remove <input>
-			let column = columnsWithInput[columnName];
+			let column = columns[columnName];
 			column.empty();
 
 			// add previous value as text
@@ -245,17 +265,6 @@
 				columnValuesInStorage[columnName]
 			);
 		}
-		//#endregion
-
-		//#region convert <select> to text
-		// remove <select> of role
-		let td_roleNames = $(`#tr_row${no} #td_roleNames`);
-		td_roleNames.empty();
-
-		// add previous role as text
-		td_roleNames.append(
-			columnValuesInStorage["roleNames"]
-		);
 		//#endregion
 
 		//#region add "update" button
@@ -280,26 +289,34 @@
 	function click_updateButton(no) {
 		//#region set variables
 		let row = $(`#tr_row${no}`);
-		let columnsForAddInput = {
-			"firstName": row.children("#td_firstName"),
-			"lastName": row.children("#td_lastName"),
-			"companyName": row.children("#td_companyName"),
-			"telNo": row.children("#td_telNo"),
-			"email": row.children("#td_email")
-		}
+		let columns = {
+			"brandName": row.children("#td_brandName"),
+			"mainCategoryName": row.children("#td_mainCategoryName"),
+			"subCategoryName": row.children("#td_subCategoryName"),
+			"model": row.children("#td_model"),
+			"usageStatus": row.children("#td_usageStatus"),
+			"stock": row.children("#td_stock"),
+			"rented": row.children("#td_rented"),
+			"sold": row.children("#td_sold"),
+			"year": row.children("#td_year"),
+		};
 		let columnValues = {
-			"firstName": columnsForAddInput.firstName.text(),
-			"lastName": columnsForAddInput.lastName.text(),
-			"companyName": columnsForAddInput.companyName.text(),
-			"telNo": columnsForAddInput.telNo.text(),
-			"email": columnsForAddInput.email.text(),
+			"brandName": columns.brandName.text(),
+			"mainCategoryName": columns.mainCategoryName.text(),
+			"subCategoryName": columns.subCategoryName.text(),
+			"model": columns.model.text(),
+			"usageStatus": columns.usageStatus.text(),
+			"stock": columns.stock.text(),
+			"rented": columns.rented.text(),
+			"sold": columns.sold.text(),
+			"year": columns.year.text(),
 		}
 		//#endregion
 
 		//#region add <input> to columns (dynamic)
-		for (let columnName in columnsForAddInput) {
+		for (let columnName in columns) {
 			// add <input> to column
-			let column = columnsForAddInput[columnName];
+			let column = columns[columnName];
 			column.empty()
 			column.append(`<input id="inpt_${columnName}">`);
 
@@ -308,40 +325,6 @@
 				.children(`#inpt_${columnName}`)
 				.val(columnValues[columnName]);
 		}
-		//#endregion
-
-		//#region add <select> to roleName column
-		// get roleName on column
-		let td_roleNames = row.children("#td_roleNames");
-		let roleNameOnColumn = td_roleNames.text();
-
-		// add <select>
-		td_roleNames.empty();
-		td_roleNames.append(`<select> </select>`);
-		
-		$.ajax({
-			method: "GET",
-			url: "https://localhost:7091/api/services/role/display",
-			dataType: "json",
-			success: (response) => {
-				//#region add <option> to <select>
-				let slct_roleNames = td_roleNames.children("select");
-
-				// add options
-				response.forEach(roleName => {
-					slct_roleNames.append(
-						`<option>${roleName}</option>`
-					);
-				});
-
-				// add value on select
-				slct_roleNames.val(roleNameOnColumn);
-				//#endregion
-			},
-			error: (response) => {
-				alert(response.responseText)
-			}
-		});
 		//#endregion
 		
 		//#region add "save" and "cancel" buttons
@@ -359,7 +342,6 @@
 		//#endregion
 
 		//#region save column values to sessionStorage
-		columnValues["roleNames"] = roleNameOnColumn;
 		sessionStorage.setItem(
 			`tr_row${no}`,
 			JSON.stringify(columnValues)

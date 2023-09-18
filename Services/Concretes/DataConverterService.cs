@@ -39,7 +39,7 @@ namespace Services.Concretes
 						Rented = (int)machineDto.Rented,
 						Sold = (int)machineDto.Sold,
 						Year = (int)machineDto.Year,
-						RegistrationDate = (DateTime)machineDto.RegistrationDate,
+						CreatedAt = (DateTime)machineDto.CreatedAt,
 						IsDeleted = false
 					});
 				}
@@ -85,7 +85,7 @@ namespace Services.Concretes
 				Rented = machineDto.Rented ?? 0,
 				Sold = machineDto.Sold ?? 0,
 				Year = (int)machineDto.Year,
-				RegistrationDate = (DateTime)machineDto.RegistrationDate,
+				CreatedAt = (DateTime)machineDto.CreatedAt,
 				IsDeleted = false
 			};
 		}

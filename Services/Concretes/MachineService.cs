@@ -41,12 +41,14 @@ namespace Services.Concretes
 				machineDto.Model, 
 				machineDto.SubCategoryName);
 
-			machineDto.RegistrationDate = DateTime.UtcNow;
+			machineDto.CreatedAt = DateTime.UtcNow;
 			#endregion
 
 			#region convert machineDto to machine
 			var machine = await _dataConverterService
 				.MachineDtoToMachineAsync(machineDto);
+
+			machine.ImagePath = $"{machine.Model}.jpg";
 			#endregion
 
 			#region create machine
@@ -307,16 +309,7 @@ namespace Services.Concretes
 			Brand? brand = null;
 
 			if (machineBodyDto.BrandName != null)
-			{
-				brand = await _manager.BrandRepository
-					.GetBrandByNameAsync(machineBodyDto.BrandName);
-
-				// when brand not found
-				if (brand == null)
-					throw new ErrorWithCodeException(404,
-						"VE-M-B",
-						"Verification Error - Machine - Brand");
-			}
+				brand = await GetBrandOrCreateIfNotExistsAsync(machineBodyDto.BrandName);
 			#endregion
 
 			#region get category if subCategoryName changed (throw)
@@ -457,6 +450,31 @@ namespace Services.Concretes
 					"Conflict Error - Machine - Model");
 			#endregion
 		}
-		#endregion
-	}
+
+		private async Task<Brand> GetBrandOrCreateIfNotExistsAsync(string brandName)
+		{
+            #region get brand
+            var brand = await _manager.BrandRepository
+				.GetBrandByNameAsync(brandName);
+			#endregion
+
+			#region create brand if not exists
+			if (brand == null)
+			{
+				brand = new Brand
+                {
+                    Name = brandName
+                };
+
+                _manager.BrandRepository
+					.Create(brand);
+
+				await _manager.SaveAsync();
+			}
+			#endregion
+
+			return brand;
+        }
+        #endregion
+    }
 }

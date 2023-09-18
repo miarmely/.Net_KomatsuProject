@@ -65,31 +65,31 @@ namespace Repositories.Migrations
                         {
                             Id = (short)1,
                             MainCategoryId = (byte)1,
-                            SubCategoryName = "Paletli Ekskavatör"
+                            SubCategoryName = "Paletli Ekskavatörler"
                         },
                         new
                         {
                             Id = (short)2,
                             MainCategoryId = (byte)1,
-                            SubCategoryName = "Lastikli Ekskavatör"
+                            SubCategoryName = "Lastikli Yükleyiciler"
                         },
                         new
                         {
                             Id = (short)3,
                             MainCategoryId = (byte)1,
-                            SubCategoryName = "Lastikli Yükleyici"
+                            SubCategoryName = "Greyderler"
                         },
                         new
                         {
                             Id = (short)4,
                             MainCategoryId = (byte)1,
-                            SubCategoryName = "Dozer"
+                            SubCategoryName = "Dozerler"
                         },
                         new
                         {
-                            Id = (short)6,
+                            Id = (short)5,
                             MainCategoryId = (byte)1,
-                            SubCategoryName = "Kaya Kamyonu"
+                            SubCategoryName = "Kazıcı Yükleyiciler"
                         });
                 });
 
@@ -122,6 +122,9 @@ namespace Repositories.Migrations
                     b.Property<short>("CategoryId")
                         .HasColumnType("smallint");
 
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
                     b.Property<byte>("HandStatus")
                         .HasColumnType("tinyint");
 
@@ -135,9 +138,6 @@ namespace Repositories.Migrations
                     b.Property<string>("Model")
                         .IsRequired()
                         .HasColumnType("varchar(50)");
-
-                    b.Property<DateTime>("RegistrationDate")
-                        .HasColumnType("datetime2");
 
                     b.Property<short>("Rented")
                         .HasColumnType("smallint");
@@ -197,6 +197,27 @@ namespace Repositories.Migrations
                             Id = (byte)4,
                             Name = "Hizmetler"
                         });
+                });
+
+            modelBuilder.Entity("Entities.DataModels.RelationModels.UserAndRole", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<byte>("RoleId")
+                        .HasColumnType("tinyint");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("RoleId");
+
+                    b.ToTable("UsersAndRoles");
                 });
 
             modelBuilder.Entity("Entities.DataModels.Role", b =>
@@ -275,27 +296,6 @@ namespace Repositories.Migrations
                     b.ToTable("Users");
                 });
 
-            modelBuilder.Entity("Entities.RelationModels.UserAndRole", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<byte>("RoleId")
-                        .HasColumnType("tinyint");
-
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("RoleId");
-
-                    b.ToTable("UsersAndRoles");
-                });
-
             modelBuilder.Entity("Entities.DataModels.Category", b =>
                 {
                     b.HasOne("Entities.DataModels.MainCategory", "MainCategory")
@@ -326,6 +326,17 @@ namespace Repositories.Migrations
                     b.Navigation("Category");
                 });
 
+            modelBuilder.Entity("Entities.DataModels.RelationModels.UserAndRole", b =>
+                {
+                    b.HasOne("Entities.DataModels.Role", "Role")
+                        .WithMany()
+                        .HasForeignKey("RoleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Role");
+                });
+
             modelBuilder.Entity("Entities.DataModels.User", b =>
                 {
                     b.HasOne("Entities.DataModels.Company", "Company")
@@ -335,17 +346,6 @@ namespace Repositories.Migrations
                         .IsRequired();
 
                     b.Navigation("Company");
-                });
-
-            modelBuilder.Entity("Entities.RelationModels.UserAndRole", b =>
-                {
-                    b.HasOne("Entities.DataModels.Role", "Role")
-                        .WithMany()
-                        .HasForeignKey("RoleId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Role");
                 });
 #pragma warning restore 612, 618
         }

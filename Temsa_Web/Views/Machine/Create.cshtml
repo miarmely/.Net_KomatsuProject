@@ -1,4 +1,6 @@
-﻿<div class="form-w3layouts">
+﻿@model IConfigManager;
+
+<div class="form-w3layouts">
     <div class="row">
         <div class="col-lg-12">    
             <section class="panel">
@@ -15,10 +17,23 @@
                                 </label>
                                 <div class="col-sm-6">
                                     <select id="slct_mainCategory" class="form-control m-bot15">
-                                        <option value="1">İş Makineleri</option>
-                                        <option value="2">Güç Makineleri</option>
-                                        <option value="3">Yedek Parça</option>
-                                        <option value="4">Hizmetler</option>
+                                        <option>İş Makineleri</option>
+                                        @*@{
+                                            #region get properties
+                                            var SubCategoryNamesProperties = Model
+                                                .SubCategoryNamesConfig
+                                                .GetType()
+                                                .GetProperties();
+                                            #endregion
+
+                                            foreach(var subCategoryProperty in SubCategoryNamesProperties)
+                                            {
+                                                var propertyValue = subCategoryProperty
+                                                    .GetValue(Model.SubCategoryNamesConfig);
+
+                                                <option>@propertyValue.</option>
+                                            }
+                                        }*@
                                     </select>
                                 </div>
                             </div>
@@ -30,8 +45,16 @@
                                 </label>
                                 <div class="col-sm-6">
                                     <select id="slct_subCategory" class="form-control m-bot15">
-                                        <option value="1">Trying</option>
-                                        <option value="2">Trying2</option>
+                                        @{
+                                            var subCategoryNames = Model.SubCategoryNamesConfig
+                                                .WorkMachines
+                                                .SubCategoryNames;
+                                            
+                                            foreach(var subCategoryName in subCategoryNames)
+                                            {
+                                                <option>@subCategoryName</option>
+                                            }
+                                        }
                                     </select>
                                 </div>
                             </div>
@@ -68,7 +91,7 @@
                                 </div>
                             </div>
                             <!-- /Year --> 
-                            <!-- IsSecondHand -->
+                            <!-- usageStatus -->
                             <div class="form-group">
                                 <label class="col-sm-3 control-label">
                                     Kullanım Durumu
@@ -76,17 +99,17 @@
                                 <div class="col-sm-6">
                                     <div class="radio">
                                         <label style="margin-right:20px">
-                                            <input type="radio" name="optionsRadios" id="radioButtons" value="0" checked="">
+                                            <input type="radio" name="usageStatus" value=0 checked="">
                                             Sıfır
                                         </label>
                                         <label>
-                                            <input type="radio" name="optionsRadios" id="radioButtons" value="1">
+                                            <input type="radio" name="usageStatus" value=2>
                                             İkinci El
                                         </label>
                                     </div>
                                 </div>
                             </div>
-                            <!-- /IsSecondHand-->
+                            <!-- /usageStatus-->
 
                             <!-- ImagePath -->
                             @*<div class="form-group">
@@ -112,7 +135,7 @@
                             </div>
                             <!-- /Stock -->
 
-                            <!-- register button -->
+                            <!-- registration button -->
                             <div class="form-group">
                                 <div class="col-sm-6; text-center">
                                     <button id="btn_register" type="submit" class="btn btn-danger">Kaydet</button>
@@ -121,7 +144,7 @@
                                     <p id="p_resultLabel"></p>
                                 </div>
                             </div>
-                            <!-- /register button-->
+                            <!-- /registration button-->
                         </div>
                     </form>
                 </div>
@@ -130,4 +153,4 @@
     </div>
 </div>
 
-<script type="module" src="~/js/machineCreate.js"></script>
+<script type="module"  src="~/js/machineForCreate.js"></script>
