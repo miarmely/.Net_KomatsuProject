@@ -10,7 +10,6 @@ namespace Temsa_Web.Controllers
         public MachineController(IConfigManager configManager) =>
             _configManager = configManager;
         
-
         public IActionResult Create()
 		{
 			return View("Create", _configManager);
@@ -18,7 +17,7 @@ namespace Temsa_Web.Controllers
 
 		public IActionResult Display()
 		{
-			return View("Display");
+			return View("Display", _configManager);
 		}
 	}
 }

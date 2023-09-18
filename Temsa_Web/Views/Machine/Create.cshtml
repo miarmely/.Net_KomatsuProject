@@ -17,23 +17,19 @@
                                 </label>
                                 <div class="col-sm-6">
                                     <select id="slct_mainCategory" class="form-control m-bot15">
-                                        <option>İş Makineleri</option>
-                                        @*@{
-                                            #region get properties
-                                            var SubCategoryNamesProperties = Model
-                                                .SubCategoryNamesConfig
-                                                .GetType()
-                                                .GetProperties();
+                                        @{
+                                            #region get mainCategoryNames
+                                            var mainCategoryNames = Model.CategoryNamesConfig
+                                                .MainCategoryNames;
                                             #endregion
 
-                                            foreach(var subCategoryProperty in SubCategoryNamesProperties)
+                                            #region add mainCategoryNames
+                                            foreach(var mainCategoryName in mainCategoryNames)
                                             {
-                                                var propertyValue = subCategoryProperty
-                                                    .GetValue(Model.SubCategoryNamesConfig);
-
-                                                <option>@propertyValue.</option>
+                                                <option>@mainCategoryName</option>    
                                             }
-                                        }*@
+                                            #endregion
+                                        }                                        
                                     </select>
                                 </div>
                             </div>
@@ -46,14 +42,17 @@
                                 <div class="col-sm-6">
                                     <select id="slct_subCategory" class="form-control m-bot15">
                                         @{
-                                            var subCategoryNames = Model.SubCategoryNamesConfig
-                                                .WorkMachines
-                                                .SubCategoryNames;
-                                            
+                                            #region get subCategoryNames
+                                            var subCategoryNames = Model.CategoryNamesConfig
+                                                .SubCategoryNames.ElementAt(0);
+                                            #endregion
+
+                                            #region add all <option> of subCategoryName
                                             foreach(var subCategoryName in subCategoryNames)
                                             {
-                                                <option>@subCategoryName</option>
+                                                <option>@subCategoryName</option>    
                                             }
+                                            #endregion
                                         }
                                     </select>
                                 </div>

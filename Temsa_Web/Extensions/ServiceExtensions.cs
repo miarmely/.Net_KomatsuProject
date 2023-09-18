@@ -23,8 +23,8 @@ namespace Temsa_Web.Extensions
 			services.Configure<JwtSettingsConfig>(configuration
 				.GetSection(nameof(JwtSettingsConfig)));
 
-			services.Configure<SubCategoryNamesConfig>(configuration
-				.GetSection(nameof(SubCategoryNamesConfig)));
+			services.Configure<CategoryNamesConfig>(configuration
+				.GetSection(nameof(CategoryNamesConfig)));
 		}
 
 		public static void ConfigureServices(this IServiceCollection services)

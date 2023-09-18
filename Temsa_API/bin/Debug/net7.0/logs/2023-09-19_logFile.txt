@@ -1,0 +1,21 @@
+00:09:10.2346  ERROR  {"Controller":"Machine","Action":"Machine","ErrorCode":"Internal Server Error","CreatedAt":"2023-09-18T21:09:09.4698511Z"}
+00:09:10.2346  ERROR  {"Controller":"Machine","Action":"Machine","ErrorCode":"Internal Server Error","CreatedAt":"2023-09-18T21:09:09.5396661Z"}
+00:09:10.2772  ERROR  {"Controller":"Machine","Action":"Machine","ErrorCode":"Internal Server Error","CreatedAt":"2023-09-18T21:09:09.4362425Z"}
+00:26:20.5366  WARN  {"Controller":"Machine","Action":"Machine","ErrorCode":"NA","CreatedAt":"2023-09-18T21:26:20.216523Z"}
+00:26:44.2191  WARN  {"Controller":"Machine","Action":"Machine","ErrorCode":"NA","CreatedAt":"2023-09-18T21:26:44.2099218Z"}
+00:29:28.3972  WARN  {"Controller":"Machine","Action":"Machine","ErrorCode":"NA","CreatedAt":"2023-09-18T21:29:28.3248112Z"}
+00:30:25.6233  WARN  {"Controller":"Machine","Action":"Machine","ErrorCode":"NA","CreatedAt":"2023-09-18T21:30:25.6114109Z"}
+00:30:46.1157  WARN  {"Controller":"Machine","Action":"Machine","ErrorCode":"NA","CreatedAt":"2023-09-18T21:30:46.0989314Z"}
+00:30:50.6230  WARN  {"Controller":"Machine","Action":"Machine","ErrorCode":"NA","CreatedAt":"2023-09-18T21:30:50.6055639Z"}
+00:31:15.7400  WARN  {"Controller":"Machine","Action":"Machine","ErrorCode":"NA","CreatedAt":"2023-09-18T21:31:15.6780947Z"}
+00:31:59.3768  WARN  {"Controller":"Machine","Action":"Machine","ErrorCode":"NA","CreatedAt":"2023-09-18T21:31:59.3609786Z"}
+00:38:29.4358  ERROR  {"Controller":"Machine","Action":"Machine","ErrorCode":"Internal Server Error","CreatedAt":"2023-09-18T21:38:29.3452371Z"}
+00:38:34.8655  ERROR  {"Controller":"Machine","Action":"Machine","ErrorCode":"Internal Server Error","CreatedAt":"2023-09-18T21:38:34.8536963Z"}
+00:39:01.6241  ERROR  {"Controller":"Machine","Action":"Machine","ErrorCode":"Internal Server Error","CreatedAt":"2023-09-18T21:39:01.6122918Z"}
+00:39:06.3199  ERROR  {"Controller":"Machine","Action":"Machine","ErrorCode":"Internal Server Error","CreatedAt":"2023-09-18T21:39:06.3082968Z"}
+00:39:07.2118  ERROR  {"Controller":"Machine","Action":"Machine","ErrorCode":"Internal Server Error","CreatedAt":"2023-09-18T21:39:07.2029658Z"}
+00:39:13.3641  ERROR  {"Controller":"Machine","Action":"Machine","ErrorCode":"Internal Server Error","CreatedAt":"2023-09-18T21:39:13.3487574Z"}
+00:39:21.7619  ERROR  {"Controller":"Machine","Action":"Machine","ErrorCode":"Internal Server Error","CreatedAt":"2023-09-18T21:39:21.7510826Z"}
+00:39:46.7329  ERROR  {"Controller":"Machine","Action":"Machine","ErrorCode":"Internal Server Error","CreatedAt":"2023-09-18T21:39:46.7225227Z"}
+00:39:53.4711  ERROR  {"Controller":"Machine","Action":"Machine","ErrorCode":"Internal Server Error","CreatedAt":"2023-09-18T21:39:53.4600358Z"}
+00:40:50.5596  ERROR  {"Controller":"Machine","Action":"Machine","ErrorCode":"Internal Server Error","CreatedAt":"2023-09-18T21:40:50.5495844Z"}

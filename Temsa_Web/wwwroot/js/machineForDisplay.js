@@ -151,7 +151,7 @@
 
         response.forEach(machine => {
             //#region set usageStatus
-            var usageStatus = machine.zerothHandOrSecondHand == 0 ?
+            var usageStatus = machine.usageStatus == 0 ?
                 "Sıfır"
                 : "İkinci El";
             //#endregion
@@ -186,7 +186,7 @@
                     <td hidden></td>
                 </tr>
                 <tr id="tr_error${no}">
-                    <td colspan="10" hidden>
+                    <td colspan="13" hidden>
                     </td>
                 </tr>`
             );

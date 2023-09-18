@@ -1,10 +1,5 @@
 ﻿@model IConfigManager;
 
-@{
-
-
-
-}
 
 <div class="table-agile-info">
     <div class="panel panel-default">
@@ -25,7 +20,7 @@
             <div class="col-sm-4">
             </div>
 			@*search bar*@
-            <div class="col-sm-3">
+            @*<div class="col-sm-3">
 				<div class="input-group">
 					<input type="text" class="input-sm form-control" placeholder="Ara">
 					<span class="input-group-btn">
@@ -34,7 +29,7 @@
 						</button>
 					</span>
 				</div>
-            </div>
+            </div>*@
 			@*/search bar*@
         </div>
         @*/menubar*@
@@ -90,71 +85,76 @@
 <script type="module" src="~/js/machineForDisplay.js"></script>
 
 <script>
+	//#region get model
+	var model = @Html.Raw(Json
+		.Serialize(Model.CategoryNamesConfig));
+	//#endregion
+
     function click_saveButton(no) {
 		//#region set variables
 		let oldColumnValues = JSON.parse(
 			sessionStorage.getItem(`tr_row${no}`)
 		);
-		let columns = {
+		let columnsWithInput = {
 			"brandName": $(`#tr_row${no} #td_brandName`),
-			"mainCategoryName": $(`#tr_row${no} #td_mainCategoryName`),
-			"subCategoryName": $(`#tr_row${no} #td_subCategoryName`),
 			"model": $(`#tr_row${no} #td_model`),
-			"usageStatus": $(`#tr_row${no} #td_usageStatus`),
 			"stock": $(`#tr_row${no} #td_stock`),
 			"rented": $(`#tr_row${no} #td_rented`),
 			"sold": $(`#tr_row${no} #td_sold`),
 			"year": $(`#tr_row${no} #td_year`)
 		};
-		let subCategoryNameInStorage = oldColumnValues["subCategoryName"];
-		let modelInStorage = oldColumnValues["model"];
+		let columnsWithSelect = {
+			"mainCategoryName": $(`#tr_row${no} #td_mainCategoryName`),
+			"subCategoryName": $(`#tr_row${no} #td_subCategoryName`),
+			"usageStatus": $(`#tr_row${no} #td_usageStatus`),
+		}
 		let data = {
-			"brandName": columns["brandName"].children("#inpt_brandName").val().trim() 
+			"brandName": columnsWithInput["brandName"].children("#inpt_brandName").val().trim() 
 				== oldColumnValues["brandName"] ?
 					null 
-					: columns["brandName"].children("#inpt_brandName").val().trim(),
+					: columnsWithInput["brandName"].children("#inpt_brandName").val().trim(),
 
-			"subCategoryName": columns["subCategoryName"].children("#inpt_subCategoryName")
-				.val().trim() == oldColumnValues["subCategoryName"] ?
+			"subCategoryName": columnsWithSelect["subCategoryName"].children("select")
+				.val() == oldColumnValues["subCategoryName"] ?
 					null 
-					: columns["subCategoryName"].children("#inpt_subCategoryName").val().trim(),
-
-			"model": columns["model"].children("#inpt_model").val().trim() 
+					: columnsWithSelect["subCategoryName"].children("select").val(),
+			
+			"model": columnsWithInput["model"].children("#inpt_model").val().trim() 
 				== oldColumnValues["model"] ?
 					null 
-					: columns["model"].children("#inpt_model").val().trim(),
+					: columnsWithInput["model"].children("#inpt_model").val().trim(),
 
-			"zerothHandOrSecondHand": columns["usageStatus"].children("#inpt_usageStatus").val().trim() 
-				== oldColumnValues["usageStatus"] ?
+			"zerothHandOrSecondHand": columnsWithSelect["usageStatus"]
+				.children("select").val() == oldColumnValues["usageStatus"] ?
 					null 
-					: (columns["usageStatus"].children("#inpt_usageStatus")
-						.val().trim() == "Sıfır" ? 0 : 2),
+					: (columnsWithSelect["usageStatus"].children("select").val() 
+						== "Sıfır" ? 0 : 2),
 
-			"stock": columns["stock"].children("#inpt_stock").val().trim() 
+			"stock": columnsWithInput["stock"].children("#inpt_stock").val().trim() 
 				== oldColumnValues["stock"] ?
 					null 
-					: columns["stock"].children("#inpt_stock").val().trim(),
+					: columnsWithInput["stock"].children("#inpt_stock").val().trim(),
 
-			"rented": columns["rented"].children("#inpt_rented").val().trim() 
+			"rented": columnsWithInput["rented"].children("#inpt_rented").val().trim() 
 				== oldColumnValues["rented"] ?
 					null 
-					: columns["rented"].children("#inpt_rented").val().trim(),
+					: columnsWithInput["rented"].children("#inpt_rented").val().trim(),
 
-			"sold": columns["sold"].children("#inpt_sold").val().trim() 
+			"sold": columnsWithInput["sold"].children("#inpt_sold").val().trim() 
 				== oldColumnValues["sold"] ?
 					null 
-					: columns["sold"].children("#inpt_sold").val().trim(),
+					: columnsWithInput["sold"].children("#inpt_sold").val().trim(),
 
-			"year": columns["year"].children("#inpt_year").val().trim() 
+			"year": columnsWithInput["year"].children("#inpt_year").val().trim() 
 				== oldColumnValues["year"] ?
 					null 
-					: columns["year"].children("#inpt_year").val().trim()
+					: columnsWithInput["year"].children("#inpt_year").val().trim()
 		};
 		//#endregion
 
 		//#region when any <input> is blank (error)
-		for(var columnName in columns)
-			if(columns[columnName]
+		for(var columnName in columnsWithInput)
+			if(columnsWithInput[columnName]
 				.children(`#inpt_${columnName}`)  // get <input>
 				.val()
 				.trim() == "")
@@ -168,6 +168,7 @@
 		//#endregion
 		
 		//#region when any column not changed
+		//xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 
 		//#region count null column quantity
 		let nullColumnQuantity = 0;
@@ -192,27 +193,55 @@
 		}
 		//#endregion
 
+		//xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 		//#endregion
 
 		$.ajax({
 			method: "PUT",
 			url: `https://localhost:7091/api/services/machine/update?
-				SubCategoryName=${subCategoryNameInStorage}
-				&Model=${modelInStorage}`,
+				SubCategoryName=${oldColumnValues["subCategoryName"]}
+				&Model=${oldColumnValues["model"]}`,
 			data: JSON.stringify(data),
 			contentType: "application/json",
 			dataType: "json",
 			success: () => {
 				//#region convert all <input> to text
-				for (var columnName in columns) {
+				for (var columnName in columnsWithInput) {
 					// remove <input>
-					let column = columns[columnName];
+					let column = columnsWithInput[columnName];
 					column.empty();
 
-					// add <input> value as text
+					// add default <input> value as text
 					column.append(
 						data[columnName] ?? oldColumnValues[columnName]
 					);
+				}
+				//#endregion
+
+				//#region convert all <select> to text
+				for(var columnName in columnsWithSelect){
+					//#region remove <select>
+					let column = columnsWithSelect[columnName];
+					column.empty();
+					//#endregion
+
+					//#region set default mainCategoryName and subCategoryName as text
+					if(columnName != "usageStatus")
+						column.append(
+							data[columnName] ?? oldColumnValues[columnName]
+						);
+					//#endregion
+					
+					//#region set default usageStatus as text
+					else
+						column.append(
+							data.zerothHandOrSecondHand == null? 
+								oldColumnValues[columnName]
+								: (data.zerothHandOrSecondHand == 0 ?
+									"Sıfır"
+									: "İkinci El")
+						);
+					//#endregion
 				}
 				//#endregion
 
@@ -297,6 +326,7 @@
 	function click_updateButton(no) {
 		//#region set variables
 		let row = $(`#tr_row${no}`);
+		let rowDataInStorage = sessionStorage.getItem(`tr_row${no}`);
 		let columnsForAddInput = {
 			"brandName": row.children("#td_brandName"),
 			"model": row.children("#td_model"),
@@ -305,30 +335,39 @@
 			"sold": row.children("#td_sold"),
 			"year": row.children("#td_year"),
 		};
-		let columnsForAddSelect{
+		let columnsForAddSelect = {
 			"mainCategoryName": row.children("#td_mainCategoryName"),
 			"subCategoryName": row.children("#td_subCategoryName"),
 			"usageStatus": row.children("#td_usageStatus"),
 		}
 		let columnValues = {
-			"brandName": columns.brandName.text(),
-			"mainCategoryName": columns.mainCategoryName.text(),
-			"subCategoryName": columns.subCategoryName.text(),
-			"model": columns.model.text(),
-			"usageStatus": columns.usageStatus.text(),
-			"stock": columns.stock.text(),
-			"rented": columns.rented.text(),
-			"sold": columns.sold.text(),
-			"year": columns.year.text(),
+			"brandName": columnsForAddInput.brandName.text(),
+			"mainCategoryName": columnsForAddSelect.mainCategoryName.text(),
+			"subCategoryName": columnsForAddSelect.subCategoryName.text(),
+			"model": columnsForAddInput.model.text(),
+			"usageStatus": columnsForAddSelect.usageStatus.text(),
+			"stock": columnsForAddInput.stock.text(),
+			"rented": columnsForAddInput.rented.text(),
+			"sold": columnsForAddInput.sold.text(),
+			"year": columnsForAddInput.year.text(),
 		}
 		//#endregion
 
 		//#region add <input> to columns (dynamic)
+		let intColumns = ["stock", "rented", "sold", "year"];
+		
 		for (let columnName in columnsForAddInput) {
 			// add <input> to column
 			let column = columnsForAddInput[columnName];
 			column.empty()
-			column.append(`<input id="inpt_${columnName}">`);
+			
+			// when column type is number
+			if(intColumns.indexOf(columnName) != -1)
+				column.append(`<input type="number" id="inpt_${columnName}">`);
+			
+			// when column type is string
+			else
+				column.append(`<input id="inpt_${columnName}">`);
 
 			// add placeholder to column
 			column
@@ -337,19 +376,103 @@
 		}
 		//#endregion
 
+		//#region add <select> to columns
+		//XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 
-		
-
-
+		//#region add <select> to columns
 		for(let columnName in columnsForAddSelect){
 			let column = columnsForAddSelect[columnName];
-			
 			column.empty();
-			column.append(
-				`<select></select>`);
-
-			for()
+			column.append("<select> </select>")
 		}
+		//#endregion
+		
+		//#region fill mainCategoryNames <select> 
+		//XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+
+		//#region get <select> of mainCategoryName
+			var slct_mainCategoryName = columnsForAddSelect
+				.mainCategoryName
+				.children("select");
+		//#endregion
+
+		//#region add <option>
+		for(let index in model.mainCategoryNames)
+			slct_mainCategoryName.append(
+				`<option>
+					${model.mainCategoryNames[index]}
+				</option>`);
+		//#endregion
+
+		//#region set default value of <select>
+		slct_mainCategoryName.val(
+			columnValues["mainCategoryName"]);
+		//#endregion
+
+		//XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+		//#endregion
+
+		//#region fill subcategories <select>
+		//XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+
+		//#region set selectedIndex of mainCategoryName
+		let selectedMainCategoryIndex = columnsForAddSelect.mainCategoryName
+			.children("select")
+			.prop("selectedIndex");	
+		//#endregion
+
+		//#region get subCategoryNames
+		let subCategoryNames = model
+			.subCategoryNames[selectedMainCategoryIndex]
+		//#endregion
+		
+		//#region get <select> of subCategoryName
+		var slct_subCategoryName = columnsForAddSelect
+			.subCategoryName
+			.children("select");
+		//#endregion
+
+		//#region add <option>
+		for(let index in subCategoryNames)
+			slct_subCategoryName.append(
+				`<option>
+					${subCategoryNames[index]}
+				</option>`);
+		//#endregion
+		
+		//#region set default value of <select>
+		slct_subCategoryName.val(
+			columnValues["subCategoryName"]);
+		//#endregion
+
+		//XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+		//#endregion
+
+		//#region fill usageStatus <select>
+		//XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+
+		//#region add <option>
+		let slct_usageStatus = columnsForAddSelect.usageStatus
+			.children("select");
+
+		slct_usageStatus.empty();
+		slct_usageStatus.append(`
+			<option>Sıfır</option>
+			<option>İkinci El</option>`
+		);
+		//#endregion
+
+		//#region set default value
+		slct_usageStatus.val(
+			columnValues["usageStatus"]
+		);
+		//#endregion
+
+		//XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+		//#endregion
+
+		//XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+		//#endregion
 		
 		//#region add "save" and "cancel" buttons
 		// remove 'update' button
