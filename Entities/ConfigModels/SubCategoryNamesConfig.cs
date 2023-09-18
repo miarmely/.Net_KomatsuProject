@@ -2,7 +2,7 @@
 {
     public record SubCategoryNamesConfig
     {
-        public WorkMachines WorkMachines { get; init; }
+        public WorkMachines MainCategoryNames { get; init; }
     }
 
     public record WorkMachines

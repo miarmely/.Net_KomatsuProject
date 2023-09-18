@@ -78,57 +78,6 @@
     //#endregion events
 
     //#region functions
-    function fillTable(pageNumber, refreshPaginationButtons = false) {
-        $.ajax({
-            method: "GET",
-            url: "https://localhost:7091/api/services/machine/display/all",
-            contentType: "application/json",
-            data: {  // for [FromQuery]
-                pageNumber: pageNumber,
-                pageSize: pageSize
-            },
-            dataType: "json",
-            beforeSend: () => {
-                //#region reset table if not empty
-                if (tableBody.children("tr").length != 0)
-                    tableBody.empty();
-                //#endregion
-            },
-            success: (response, status, xhr) => {
-                //#region get machinePaginationInJson
-                machinePaginationInJson = JSON.parse(
-                    xhr.getResponseHeader(nameOfPaginationHeader));
-                //#endregion
-
-                //#region set "entityCountOfPage"
-                entityCountOfPage =
-                    machinePaginationInJson.CurrentPageNo == machinePaginationInJson.TotalPage ?
-                        machinePaginationInJson.LastPageCount  // when current page is last page
-                        : machinePaginationInJson.PageSize  // when not last page
-                //#endregion
-
-                //#region add entity quantity to lbl_entityQuantity
-                lbl_entityQuantity.empty();
-                lbl_entityQuantity.append(
-                    `<b>${entityCountOfPage}/${pageSize}</b> görüntüleniyor`);
-                //#endregion
-
-                addMachinesToTable(response);
-                hideOrShowPaginationBackAndNextButtons();
-
-                //#region add pagination buttons
-                if (refreshPaginationButtons)
-                    addPaginationButtons();
-                //#endregion
-            },
-            error: (response) => {
-                //#region write error
-                window.writeErrorMessage(response.responseText, lbl_entityQuantity);
-                //#endregion
-            },
-        });
-    }
-
     function addPaginationButtons() {
         //#region set buttonQauntity for pagination
         let buttonQuantity =
@@ -327,6 +276,57 @@
         if (machinePaginationInJson.HasNext)
             fillTable(machinePaginationInJson.CurrentPageNo + 1);
         //#endregion
+    }
+
+    function fillTable(pageNumber, refreshPaginationButtons = false) {
+        $.ajax({
+            method: "GET",
+            url: "https://localhost:7091/api/services/machine/display/all",
+            contentType: "application/json",
+            data: {  // for [FromQuery]
+                pageNumber: pageNumber,
+                pageSize: pageSize
+            },
+            dataType: "json",
+            beforeSend: () => {
+                //#region reset table if not empty
+                if (tableBody.children("tr").length != 0)
+                    tableBody.empty();
+                //#endregion
+            },
+            success: (response, status, xhr) => {
+                //#region get machinePaginationInJson
+                machinePaginationInJson = JSON.parse(
+                    xhr.getResponseHeader(nameOfPaginationHeader));
+                //#endregion
+
+                //#region set "entityCountOfPage"
+                entityCountOfPage =
+                    machinePaginationInJson.CurrentPageNo == machinePaginationInJson.TotalPage ?
+                        machinePaginationInJson.LastPageCount  // when current page is last page
+                        : machinePaginationInJson.PageSize  // when not last page
+                //#endregion
+
+                //#region add entity quantity to lbl_entityQuantity
+                lbl_entityQuantity.empty();
+                lbl_entityQuantity.append(
+                    `<b>${entityCountOfPage}/${pageSize}</b> görüntüleniyor`);
+                //#endregion
+
+                addMachinesToTable(response);
+                hideOrShowPaginationBackAndNextButtons();
+
+                //#region add pagination buttons
+                if (refreshPaginationButtons)
+                    addPaginationButtons();
+                //#endregion
+            },
+            error: (response) => {
+                //#region write error
+                window.writeErrorMessage(response.responseText, lbl_entityQuantity);
+                //#endregion
+            },
+        });
     }
     //#endregion
 

@@ -1,4 +1,12 @@
-﻿<div class="table-agile-info">
+﻿@model IConfigManager;
+
+@{
+
+
+
+}
+
+<div class="table-agile-info">
     <div class="panel panel-default">
         @*title*@
         <div class="panel-heading">
@@ -289,17 +297,19 @@
 	function click_updateButton(no) {
 		//#region set variables
 		let row = $(`#tr_row${no}`);
-		let columns = {
+		let columnsForAddInput = {
 			"brandName": row.children("#td_brandName"),
-			"mainCategoryName": row.children("#td_mainCategoryName"),
-			"subCategoryName": row.children("#td_subCategoryName"),
 			"model": row.children("#td_model"),
-			"usageStatus": row.children("#td_usageStatus"),
 			"stock": row.children("#td_stock"),
 			"rented": row.children("#td_rented"),
 			"sold": row.children("#td_sold"),
 			"year": row.children("#td_year"),
 		};
+		let columnsForAddSelect{
+			"mainCategoryName": row.children("#td_mainCategoryName"),
+			"subCategoryName": row.children("#td_subCategoryName"),
+			"usageStatus": row.children("#td_usageStatus"),
+		}
 		let columnValues = {
 			"brandName": columns.brandName.text(),
 			"mainCategoryName": columns.mainCategoryName.text(),
@@ -314,9 +324,9 @@
 		//#endregion
 
 		//#region add <input> to columns (dynamic)
-		for (let columnName in columns) {
+		for (let columnName in columnsForAddInput) {
 			// add <input> to column
-			let column = columns[columnName];
+			let column = columnsForAddInput[columnName];
 			column.empty()
 			column.append(`<input id="inpt_${columnName}">`);
 
@@ -326,6 +336,20 @@
 				.val(columnValues[columnName]);
 		}
 		//#endregion
+
+
+		
+
+
+		for(let columnName in columnsForAddSelect){
+			let column = columnsForAddSelect[columnName];
+			
+			column.empty();
+			column.append(
+				`<select></select>`);
+
+			for()
+		}
 		
 		//#region add "save" and "cancel" buttons
 		// remove 'update' button
