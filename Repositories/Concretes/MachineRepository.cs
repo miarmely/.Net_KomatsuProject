@@ -1,7 +1,6 @@
 ﻿using Entities.DataModels;
 using Entities.DtoModels.QueryModels;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Query.SqlExpressions;
 using Repositories.Contracts;
 using Repositories.EF;
 using Repositories.Utilies;

@@ -151,7 +151,7 @@
 
         response.forEach(machine => {
             //#region set usageStatus
-            var usageStatus = machine.usageStatus == 0 ?
+            var usageStatus = machine.zerothHandOrSecondHand == 0 ?
                 "Sıfır"
                 : "İkinci El";
             //#endregion

@@ -275,27 +275,41 @@ namespace Services.Concretes
 			MachineQueryDtoForUpdate machineQueryDto,
 			MachineBodyDtoForUpdate machineBodyDto)
 		{
-			#region get category for to get machine
-			var categoryForVerification = await _manager.CategoryRepository
-				.GetCategoryBySubCategoryNameAsync(machineQueryDto.SubCategoryName);
+			#region control conflict error (throw)
+
+			#region set subCategoryName
+			var subCategoryName = machineBodyDto.SubCategoryName ??
+				machineQueryDto.SubCategoryName;
+            #endregion
+
+            #region get category of machineQueryDto
+            var categoryForConflictError = await _manager.CategoryRepository
+				.GetCategoryBySubCategoryNameAsync(subCategoryName);
 
 			// when subCategory not found
-			if (categoryForVerification == null)
+			if (categoryForConflictError == null)
 				throw new ErrorWithCodeException(404,
 					"VE-M-S",
 					"Verification Error - Machine - SubCategory");
-			#endregion
+            #endregion
 
-			#region control conflict error (throw)
-			await ControlConflictErrorAsync(
-				machineBodyDto.Model,
-				category: categoryForVerification);
-			#endregion
+            #region control conflict error (throw)
+            await ControlConflictErrorAsync(
+                machineBodyDto.Model,
+                category: categoryForConflictError);
+            #endregion
 
-			#region get machine
-			var machine = await _manager.MachineRepository
+            #endregion
+
+            #region get category of machineBodyDto
+            var categoryForGetMachine = await _manager.CategoryRepository
+				.GetCategoryBySubCategoryNameAsync(machineQueryDto.SubCategoryName);
+            #endregion
+
+            #region get machine
+            var machine = await _manager.MachineRepository
 				.GetMachineByCategoryIdAndModelAsync(
-					categoryForVerification.Id, 
+                    categoryForGetMachine.Id, 
 					machineQueryDto.Model);
 
 			// when model not found
