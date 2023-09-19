@@ -195,20 +195,36 @@
     }
 
     async function deleteSelectedEntitiesAsync() {
-        //#region set telNoList and rowNoList
-        let telNoList = [];
+        //#region set subCategoryNameAndModelList and rowNoList
+        let subCategoryNameAndModelList = [];
         let rowNoList = [];
 
         await new Promise(resolve => {
             for (let rowNo = 1; rowNo <= entityCountOfPage; rowNo += 1) {
+                //#region set variables
                 let checkBox = $(`#tr_row${rowNo} #td_checkBox input`);
-
-                //#region add telNo to telNoList if user checked
+                let row = $(`#tr_row${rowNo}`);
+                //#endregion 
+                
+                //#region add subCategoryName and model if checked
                 if (checkBox.is(":checked")) {
-                    let telNo = $(`#tr_row${rowNo} #td_telNo`).text();
+                    //#region when update process continuing
+                    if (row.children("td").children("input").length != 0)
+                        click_cancelButton(rowNo);  // cancel update process
+                    //#endregion
 
-                    telNoList.push(telNo);
+                    //#region get subCategoryName and model
+                    let subCategoryName = row.children("#td_subCategoryName").text();
+                    let model = row.children("#td_model").text();
+                    //#endregion
+
+                    //#region fill "rowNoList" and "subCategoryNameAndModelList"
                     rowNoList.push(rowNo);
+                    subCategoryNameAndModelList.push({
+                        "SubCategoryName": subCategoryName,
+                        "Model": model
+                    });
+                    //#endregion
                 }
                 //#endregion
             }
@@ -218,19 +234,21 @@
         //#endregion
 
         //#region when any user not select
-        if (telNoList.length == 0)
+        if (subCategoryNameAndModelList.length == 0)
             return;
         //#endregion
 
         $.ajax({
             method: "DELETE",
-            url: "https://localhost:7091/api/services/user/delete",
-            data: JSON.stringify({ "TelNos": telNoList }),
+            url: "https://localhost:7091/api/services/machine/delete",
+            data: JSON.stringify({
+                "MachineInfos": subCategoryNameAndModelList
+            }),
             contentType: "application/json",
             dataType: "json",
             success: () => {
                 //#region when all users on page deleted
-                if (telNoList.length == pageSize) {
+                if (subCategoryNameAndModelList.length == pageSize) {
                     let previousPageNo = machinePaginationInJson.CurrentPageNo - 1;
 
                     // when previous page not exists
@@ -238,9 +256,8 @@
                         tableBody.empty();
 
                     // fill table with previous page
-                    else {
+                    else 
                         fillTable(previousPageNo, true);
-                    }
                 }
                 //#endregion
 
@@ -255,11 +272,11 @@
 
                 //#region reset "lbl_entityQuantity"
                 lbl_entityQuantity.empty()
-                lbl_entityQuantity.append(`0/${pageSize} Kullanıcı Görüntüleniyor`);
+                lbl_entityQuantity.append(`0/${pageSize} Görüntüleniyor`);
                 //#endregion
             },
             error: (response) => {
-                window.writeErrorMessage(responseText, lbl_entityQuantity);
+                window.writeErrorMessage(response.ResponseText, lbl_entityQuantity);
             }
         });
     }

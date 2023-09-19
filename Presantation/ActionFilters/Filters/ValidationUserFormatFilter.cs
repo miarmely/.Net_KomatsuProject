@@ -10,12 +10,18 @@ namespace Presantation.ActionFilters.Attributes
     public class ValidationUserFormatFilter : IAsyncActionFilter
     {
         private readonly UserSettingsConfig _userSettings;
-        private string _errorCode = "FE-U-";
-        private string _errorDescription = "Format Error - User - ";
+        private string _baseErrorCode = "FE-U-";
+        private string _baseErrorDescription = "Format Error - User - ";
+        private string _errorCode;
+        private string _errorDescription;
 
-		public ValidationUserFormatFilter(IOptions<UserSettingsConfig> userSettings) =>
-			_userSettings = userSettings.Value;
-        
+        public ValidationUserFormatFilter(IOptions<UserSettingsConfig> userSettings)
+        {
+            _userSettings = userSettings.Value;
+            _errorCode = _baseErrorCode;
+            _errorDescription = _baseErrorDescription;
+        }
+
         public async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
         {
             #region get dto model
@@ -35,15 +41,16 @@ namespace Presantation.ActionFilters.Attributes
             await next();
         }
 
-        private async Task FormatControl(object dtoModel, IEnumerable<PropertyInfo> properties)
+        private async Task FormatControl(object dtoModel,
+            IEnumerable<PropertyInfo> properties)
         {
             object propertyValue;
 
             #region control format of dtoModel properties
             foreach (var property in properties)
             {
-				#region don't check property if null
-				propertyValue = property.GetValue(dtoModel);
+                #region don't check property if null
+                propertyValue = property.GetValue(dtoModel);
 
                 if (propertyValue == null)
                     continue;
@@ -53,22 +60,22 @@ namespace Presantation.ActionFilters.Attributes
                 switch (property.Name)
                 {
                     case "FirstName":
-                        await ControlFirstName(propertyValue as string);
+                        ControlFirstName(propertyValue as string);
                         break;
                     case "LastName":
-                        await ControlLastName(propertyValue as string);
+                        ControlLastName(propertyValue as string);
                         break;
                     case "CompanyName":
-                        await ControlCompanyName(propertyValue as string);
+                        ControlCompanyName(propertyValue as string);
                         break;
                     case "TelNo":
-                        await ControlTelNo(propertyValue as string);
+                        await ControlTelNoAsync(propertyValue as string);
                         break;
                     case "Email":
-                        await ControlEmail(propertyValue as string);
+                        await ControlEmailAsync(propertyValue as string);
                         break;
                     case "Password":
-                        await ControlPassword(propertyValue as string);
+                        await ControlPasswordAsync(propertyValue as string);
                         break;
                 };
                 #endregion
@@ -76,7 +83,7 @@ namespace Presantation.ActionFilters.Attributes
             #endregion
 
             #region when format error occured (throw)
-            if (!_errorCode.Equals("FE-"))
+            if (!_errorCode.Equals(_baseErrorCode))
             {
                 _errorDescription = _errorDescription.TrimEnd();
 
@@ -85,51 +92,38 @@ namespace Presantation.ActionFilters.Attributes
             #endregion
         }
 
-        private async Task ControlFirstName(string? firstName) =>
-            await Task.Run(() =>
-            {
-                if (firstName.Length > _userSettings.FirstName.MaxLength)
-                    UpdateErrorModel("F", "Firstname ");
-            });
-
-        private async Task ControlLastName(string? lastName) =>
-            await Task.Run(() =>
-            {
-                if (lastName.Length > _userSettings.LastName.MaxLength)
-                    UpdateErrorModel("L", "LastName ");
-            });
-
-        private async Task ControlCompanyName(string? companyName) =>
-            await Task.Run(() =>
-            {
-                if (companyName.Length > _userSettings.CompanyName.MaxLength)
-                    UpdateErrorModel("C", "CompanyName ");
-            });
-
-        private async Task ControlTelNo(string? telNo)
+        private void ControlFirstName(string? firstName)
         {
-			var isTelNoValid = await Task.Run(() =>
-			{
-				#region length control
-				if (telNo.Length != _userSettings.TelNo.Length)
-					return false;
-				#endregion
+            if (firstName.Length > _userSettings.FirstName.MaxLength)
+                UpdateErrorModel("F", "Firstname ");
+        }
 
-				#region when telNo not convert to int
-				else if (!CanConvertToInt(telNo))
-                    return false;
-                #endregion
+        private void ControlLastName(string? lastName)
+        {
+            if (lastName.Length > _userSettings.LastName.MaxLength)
+                UpdateErrorModel("L", "LastName ");
+        }
 
-                return true;
-			});
+        private void ControlCompanyName(string? companyName)
+        {
+            if (companyName.Length > _userSettings.CompanyName.MaxLength)
+                UpdateErrorModel("C", "CompanyName ");
+        }
 
-			#region when telNo not valid
-			if (!isTelNoValid)
-				UpdateErrorModel("T", "TelNo ");
+        private async Task ControlTelNoAsync(string? telNo)
+        {
+            #region length control
+            if (telNo.Length != _userSettings.TelNo.Length)
+                UpdateErrorModel("T", "TelNo ");
+            #endregion
+
+            #region when telNo not convert to int
+            else if (!await CanConvertToIntAsync(telNo))
+                UpdateErrorModel("T", "TelNo ");
             #endregion
         }
-            
-        private async Task ControlEmail(string? email)
+
+        private async Task ControlEmailAsync(string? email)
         {
             var isEmailValid = await Task.Run(() =>
             {
@@ -181,16 +175,37 @@ namespace Presantation.ActionFilters.Attributes
                 return true;
             });
 
+            #region when email not valid
             if (!isEmailValid)
                 UpdateErrorModel("E", "Email ");
-		}
+            #endregion
+        }
 
-        private async Task ControlPassword(string? password) =>
+        private async Task ControlPasswordAsync(string? password)
+        {
+            if (password.Length < _userSettings.Password.MinLength
+                || password.Length > _userSettings.Password.MaxLength)
+                UpdateErrorModel("P", "Password ");
+        }
+
+        private async Task<bool> CanConvertToIntAsync(string input) =>
             await Task.Run(() =>
             {
-                if (password.Length < _userSettings.Password.MinLength
-                    || password.Length > _userSettings.Password.MaxLength)
-                    UpdateErrorModel("P", "Password ");
+                #region control left chunk of string
+                var leftChunkOfString = input.Substring(0, input.Length / 2);
+
+                if (!int.TryParse(leftChunkOfString, out int _))
+                    return false;
+                #endregion
+
+                #region control right chunk of string
+                var rightChunkOfString = input.Substring(input.Length / 2);
+
+                if (!int.TryParse(rightChunkOfString, out int _))
+                    return false;
+                #endregion
+
+                return true;
             });
 
         private void UpdateErrorModel(string newErrorCode, string newErrorDescription)
@@ -198,24 +213,5 @@ namespace Presantation.ActionFilters.Attributes
             _errorCode += newErrorCode;
             _errorDescription += newErrorDescription;
         }
-
-        private bool CanConvertToInt(string input)
-        {
-			#region control left chunk of string
-			var leftChunkOfString = input.Substring(0, input.Length / 2);
-
-            if (!int.TryParse(leftChunkOfString, out int _))
-                return false;
-			#endregion
-
-			#region control right chunk of string
-			var rightChunkOfString = input.Substring(input.Length / 2);
-
-			if (!int.TryParse(rightChunkOfString, out int _))
-				return false;
-			#endregion
-
-            return true;
-		}
     }
 }

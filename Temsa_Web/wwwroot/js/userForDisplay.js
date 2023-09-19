@@ -243,11 +243,19 @@
 
         await new Promise(resolve => {
             for (let rowNo = 1; rowNo <= entityCountOfPage; rowNo += 1) {
+                //#region set variables
                 let checkBox = $(`#tr_row${rowNo} #td_checkBox input`);
+                let row = $(`#tr_row${rowNo}`);
+                //#endregion 
 
-                //#region add telNo to telNoList if user checked
+                //#region add "telNo" to "telNoList" if user checked
                 if (checkBox.is(":checked")) {
-                    let telNo = $(`#tr_row${rowNo} #td_telNo`).text();
+                    //#region when update process continuing
+                    if (row.children("td").children("input").length != 0)
+                        click_cancelButton(rowNo);  // cancel update process
+                    //#endregion
+
+                    let telNo = row.children("#td_telNo").text();
 
                     telNoList.push(telNo);
                     rowNoList.push(rowNo);

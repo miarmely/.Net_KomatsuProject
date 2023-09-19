@@ -83,10 +83,10 @@ namespace Presantation.Controllers
         [HttpDelete("delete")]
         [ValidationNullArguments]
         public async Task<IActionResult> DeleteMachinesAsync(
-            [FromBody] MachineQueryDtoForDelete machineQueryDto)
+            [FromBody] MachineBodyDtoForDelete machineBodyDto)
         {
             await _manager.MachineService
-                .DeleteMachinesAsync(machineQueryDto);
+                .DeleteMachinesAsync(machineBodyDto);
 
             return NoContent();
         }

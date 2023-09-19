@@ -388,12 +388,12 @@ namespace Services.Concretes
 			#endregion
 		}
 
-		public async Task DeleteMachinesAsync(MachineQueryDtoForDelete machineQueryDto)
+		public async Task DeleteMachinesAsync(MachineBodyDtoForDelete machineBodyDto)
 		{
 			#region delete machines (throw)
 			await Task.Run(async () =>
 			{
-				foreach (var machineInfo in machineQueryDto.MachineInfos)
+				foreach (var machineInfo in machineBodyDto.MachineInfos)
 				{
 					#region get category (throw)
 					var category = await _manager.CategoryRepository
