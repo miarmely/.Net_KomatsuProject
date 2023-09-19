@@ -92,20 +92,19 @@
         //#endregion
 
         //#region add paginationBack button
-        if (machinePaginationInJson.CurrentPageNo != 1)
-            ul_pagination.append(
-                `<li>
-                    <a id="a_paginationBack" href="#" hidden>
-                        <i class="fa fa-chevron-left"></i>
-                    </a>
-                </li>`);
+        ul_pagination.append(
+            `<li>
+                <a id="a_paginationBack" href="#" hidden>
+                    <i class="fa fa-chevron-left"></i>
+                </a>
+            </li>`);
         //#endregion
 
         //#region add pagination buttons
         for (let pageNo = 1; pageNo <= buttonQuantity; pageNo += 1)
             ul_pagination.append(
                 `<li>
-                    <a id="a_pagination${pageNo}" href="#"> 
+                    <a href="#"> 
                         ${pageNo}
                     </a>
                 </li> `);
@@ -195,7 +194,7 @@
     }
 
     async function deleteSelectedEntitiesAsync() {
-        //#region set subCategoryNameAndModelList and rowNoList
+        //#region set "subCategoryNameAndModelList" and "rowNoList"
         let subCategoryNameAndModelList = [];
         let rowNoList = [];
 
@@ -205,7 +204,7 @@
                 let checkBox = $(`#tr_row${rowNo} #td_checkBox input`);
                 let row = $(`#tr_row${rowNo}`);
                 //#endregion 
-                
+
                 //#region add subCategoryName and model if checked
                 if (checkBox.is(":checked")) {
                     //#region when update process continuing
@@ -247,21 +246,28 @@
             contentType: "application/json",
             dataType: "json",
             success: () => {
-                //#region when all users on page deleted
+                //#region when all machines on page deleted
                 if (subCategoryNameAndModelList.length == pageSize) {
-                    let previousPageNo = machinePaginationInJson.CurrentPageNo - 1;
+                    let currentPageNo = machinePaginationInJson.CurrentPageNo;
 
-                    // when previous page not exists
-                    if (previousPageNo == 0)
+                    //#region when next page exists
+                    if (machinePaginationInJson.HasNext)
+                        fillTable(currentPageNo, true);
+                     //#endregion
+
+                    //#region when previous page exists
+                    else if (machinePaginationInJson.HasPrevious)
+                        fillTable(currentPageNo - 1, true);
+                    //#endregion
+
+                    //#region when any machines not exists
+                    else
                         tableBody.empty();
-
-                    // fill table with previous page
-                    else 
-                        fillTable(previousPageNo, true);
+                    //#endregion
                 }
                 //#endregion
 
-                //#region when some users on page deleted
+                //#region when some machines on page deleted
                 else
                     fillTable(machinePaginationInJson.CurrentPageNo);  // refresh current page
                 //#endregion

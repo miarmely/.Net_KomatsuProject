@@ -23,9 +23,9 @@
 	</head>
 	<body>
 		<section id="container">
-			<!--header start-->
+			<!-- header start -->
 			<header class="header fixed-top clearfix">
-				<!--logo start-->
+				<!-- logo -->
 				<div class="brand">
 					<a href="index.html" class="logo">
 						KOMATSU
@@ -34,7 +34,7 @@
 						<div class="fa fa-bars"></div>
 					</div>
 				</div>
-				<!--logo end-->
+				<!-- /logo -->
 				<div class="top-nav clearfix">
 					<ul class="nav pull-right top-menu">
 						<!-- search start -->
@@ -52,7 +52,7 @@
 							<ul class="dropdown-menu extended logout">
 								<li><a href="#"><i class="fa fa-user"></i> Profil</a></li>
 								<li><a href="#"><i class="fa fa-cog"></i>Ayarlar</a></li>
-								<li><a href="login.html"><i class="fa fa-close"></i>Çıkış Yap</a></li>
+								<li><a href="#"><i class="fa fa-close"></i>Çıkış Yap</a></li>
 							</ul>
 						</li>
 						<!-- user login dropdown end -->
@@ -67,12 +67,15 @@
 					<!-- sidebar menu start-->
 					<div class="leftside-navigation">
 						<ul class="sidebar-menu" id="nav-accordion">
-							@*<li>
-								<a class="active" href="index.html">
+							@*homepage*@
+							<li>
+								<a class="active" href="#">
 									<i class="fa fa-dashboard"></i>
 									<span>Ana Sayfa</span>
 								</a>
-							</li>*@
+							</li>
+							@*/homepage*@
+							@*users*@
 							<li class="sub-menu">
 								<a href="javascript:;">
 									<i class="fa fa-book"></i>
@@ -83,6 +86,8 @@
 									<li><a href="/user/display">Kayıtlı Kullanıcılar</a></li>
 								</ul>
 							</li>
+							@*/users*@
+							@*machines*@
 							<li class="sub-menu">
 								<a href="javascript:;">
 									<i class="fa fa-book"></i>
@@ -93,7 +98,9 @@
 									<li><a href="/machine/display">Kayıtlı Makineler</a></li>
 								</ul>
 							</li>
-							@*<li class="sub-menu">
+							@*/machines*@
+							@*forms*@
+							<li class="sub-menu">
 								<a href="javascript:;">
 									<i class="fa fa-briefcase"></i>
 									<span>Formlar</span>
@@ -105,18 +112,15 @@
 									<li><a href="#">Bilgi Talep Formu</a></li>
 								</ul>
 							</li>
-							<li class="sub-menu">
-								<a href="javascript:;">
-									<i class="fa fa-briefcase"></i>
+							@*/forms*@
+							@*settings*@
+							<li>
+								<a href="#">
+									<i class="fa fa-cog"></i>
 									<span>Ayarlar</span>
 								</a>
-								<ul class="sub">
-									<li><a href="#">Yeni Oluştur</a></li>
-									<li><a href="#">Kayıtlı Olanları Görüntüle</a></li>
-									<li><a href="#">Bilgileri Güncelle</a></li>
-									<li><a href="#">Sil</a></li>
-								</ul>
-							</li*@>
+							</li>
+							@*/settings*@
 						</ul>            
 					</div>
 					<!-- sidebar menu end-->
@@ -133,7 +137,7 @@
 				<!-- footer -->
 				<div class="footer">
 					<div class="wthree-copyright">
-						<p>© 2023 Visitors. All rights reserved | Design by 
+						<p>© 2023 Tüm hakları saklıdır | Design by 
 							<a href="https://mostidea.com.tr">MostIdea</a>
 						</p>
 					</div>
@@ -156,7 +160,7 @@
 			{
 				switch (errorCode) {
 					//#region user error codes
-					/******************************/
+					//xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 					//#region format error codes
 					// with one code
 					case "FE-U-F": return "ad geçerli değil";
@@ -243,9 +247,8 @@
 					case "CE-U-T": return "girilen telefon numarası daha önceden kullanılmış";
 					case "CE-U-E": return "girilen email daha önceden kullanılmış";
 					case "CE-U-TE": return "girilen telefon numarası ve email daha önceden kullanılmış";
-					case "CE-U-M": return "girilen model daha önceden kaydedilmiş";
 					//#endregion
-					/******************************/
+					//xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 					//#endregion
 
 					//#region machine error codes

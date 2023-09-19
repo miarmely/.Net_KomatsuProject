@@ -25,8 +25,10 @@ namespace Services.Concretes
 		private readonly IConfigManager _config;
 		private readonly IMapper _mapper;
 		private readonly IDtoConverterService _dtoConverterService;
+		private string _conflictErrorCode = "CE-U-";
+		private string _conflictErrorDescription = "Conflict Error - User - ";
 
-		public UserService(IRepositoryManager manager,
+        public UserService(IRepositoryManager manager,
 			IConfigManager config,
 			IMapper mapper,
 			IDtoConverterService dtoConverterService)
@@ -333,32 +335,31 @@ namespace Services.Concretes
 				.GetUsersByConditionAsync(condition);
 			#endregion
 
-			#region control conflict error
+			#region control conflict error (throw)
 			if (users.Count != 0)
 			{
-				var errorCode = "CE-";
-				var errorDescription = "Conflict Error - ";
-
 				#region control telNo
 				if (users.Any(u => u.TelNo.Equals(userDtoC.TelNo)))
 				{
-					errorCode += "T";
-					errorDescription += "TelNo ";
+					_conflictErrorCode += "T";
+					_conflictErrorDescription += "TelNo ";
 				}
 				#endregion
 
 				#region control email
 				if (users.Any(u => u.Email.Equals(userDtoC.Email)))
 				{
-					errorCode += "E";
-					errorDescription += "Email ";
+                    _conflictErrorCode += "E";
+                    _conflictErrorDescription += "Email ";
 				}
-				#endregion
+                #endregion
 
-				#region throw exception
-				errorDescription = errorDescription.TrimEnd();
+                #region throw exception
+                _conflictErrorDescription = _conflictErrorDescription.TrimEnd();
 
-				throw new ErrorWithCodeException(409, errorCode, errorDescription);
+				throw new ErrorWithCodeException(409, 
+					_conflictErrorCode, 
+					_conflictErrorDescription);
 				#endregion
 			}
 			#endregion
@@ -468,7 +469,6 @@ namespace Services.Concretes
 
 			return company;
 		}
-
 		#endregion
 	}
 }

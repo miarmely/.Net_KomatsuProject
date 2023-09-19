@@ -1,7 +1,7 @@
 ﻿$(function () {
     //#region variables
     const pageNumber = 1;
-    const pageSize = 10;
+    const pageSize =3;
     const paginationButtonQuantity = 5;
     const tableBody = $("#tbl_user tbody");
     const nameOfPaginationHeader = "User-Pagination";
@@ -13,7 +13,7 @@
 
     //#region events
     $("#ul_pagination").click(() => {
-        //#region do unchecked "box_all"
+        //#region do unchecked "box_all" if checked
         if ($("#box_all").is(":checked"))
             $("#box_all").prop("checked", false);
         //#endregion
@@ -69,7 +69,7 @@
 
         switch (opt_selected.val()) {
             //#region delete selected values
-            case "1":  
+            case "1":
                 await deleteSelectedEntitiesAsync();
                 break;
             //#endregion 
@@ -78,7 +78,7 @@
     //#endregion events
 
     //#region functions
-    function fillTable(pageNumber, refreshPaginationButtons=false) {
+    function fillTable(pageNumber, refreshPaginationButtons = false) {
         $.ajax({
             method: "GET",
             url: "https://localhost:7091/api/services/user/display",
@@ -86,7 +86,7 @@
             data: {  // for [FromQuery]
                 pageNumber: pageNumber,
                 pageSize: pageSize
-            },  
+            },
             dataType: "json",
             beforeSend: () => {
                 //#region reset table if not empty
@@ -143,20 +143,19 @@
         //#endregion
 
         //#region add paginationBack button
-        if (userPaginationInJson.CurrentPageNo != 1)
-            ul_pagination.append(
-                `<li>
-                    <a id="a_paginationBack" href="#" hidden>
-                        <i class="fa fa-chevron-left"></i>
-                    </a>
-                </li>`);
+        ul_pagination.append(
+            `<li>
+                <a id="a_paginationBack" href="#" hidden>
+                    <i class="fa fa-chevron-left"></i>
+                </a>
+            </li>`);
         //#endregion
 
         //#region add pagination buttons
         for (let pageNo = 1; pageNo <= buttonQuantity; pageNo += 1)
             ul_pagination.append(
                 `<li>
-                    <a id="a_pagination${pageNo}" href="#"> 
+                    <a href="#"> 
                         ${pageNo}
                     </a>
                 </li> `);
@@ -280,17 +279,23 @@
             dataType: "json",
             success: () => {
                 //#region when all users on page deleted
-                 if (telNoList.length == pageSize) {
-                    let previousPageNo = userPaginationInJson.CurrentPageNo - 1;
+                if (telNoList.length == pageSize) {
+                    let currentPageNo = userPaginationInJson.CurrentPageNo;
 
-                    // when previous page not exists
-                    if (previousPageNo == 0)
+                    //#region when next page exists
+                    if (userPaginationInJson.HasNext)
+                        fillTable(currentPageNo, true);
+                    //#endregion
+
+                    //#region when previous page exists
+                    else if (userPaginationInJson.HasPrevious)
+                        fillTable(currentPageNo - 1, true);
+                    //#endregion
+
+                    //#region when any user not exists
+                    else
                         tableBody.empty();
-
-                    // fill table with previous page
-                    else {
-                        fillTable(previousPageNo, true);
-                    }
+                    //#endregion
                 }
                 //#endregion
 

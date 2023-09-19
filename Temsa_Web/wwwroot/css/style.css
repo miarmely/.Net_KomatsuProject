@@ -9,12 +9,13 @@ h1, h2, h3 {margin: 0;}
 ul, ol {margin: 0;}
 p {margin: 0;}
 
-html, body{
-	font-family: 'Roboto', sans-serif;
+html, body {
+    font-family: 'Roboto', sans-serif;
     font-size: 100%;
     overflow-x: hidden;
     background: url(../images/bg.jpg) no-repeat 0px 0px;
-	background-size:cover;
+    background: white;
+    background-size: cover;
 }
 body a{
 	transition: 0.5s all ease;
@@ -216,14 +217,14 @@ ul.sidebar-menu li a.active i {
     color: #fff;
 }
 .header {
-    left:0;
-    right:0;
-    z-index:1002;
-    background:rgb(240, 188, 180);
-    -webkit-transition:all .3s ease-in-out;
-    -moz-transition:all .3s ease-in-out;
-    -o-transition:all .3s ease-in-out;
-    transition:all .3s ease-in-out;
+    left: 0;
+    right: 0;
+    z-index: 1002;
+    background: #120a8f;
+    -webkit-transition: all .3s ease-in-out;
+    -moz-transition: all .3s ease-in-out;
+    -o-transition: all .3s ease-in-out;
+    transition: all .3s ease-in-out;
 }
 .merge-header {
     margin-right:240px;
@@ -239,11 +240,11 @@ ul.sidebar-menu li a.active i {
     width:100%;
 }
 .brand {
-    background:#8b5c7e;
-    float:left;
-    width:240px;
-    height:80px;
-    position:relative;
+    background: #120a8f;
+    float: left;
+    width: 240px;
+    height: 80px;
+    position: relative;
 }
 a.logo {
     font-size:32px;
@@ -272,16 +273,16 @@ ul.top-menu {
     margin-right:15px;
     margin-top: 0;
 }
-ul.top-menu > li > a {
-    color: #fff;
-    font-size: 16px;
-    background: #8b5c7e;
-    padding: 4px 8px;
-    margin-right: 15px;
-    border-radius: 50%;
-    -webkit-border-radius: 50%;
-    padding-right: 8px !important;
-}
+    ul.top-menu > li > a {
+        color: #fff;
+        font-size: 16px;
+        background: #251da2;
+        padding: 4px 8px;
+        margin-right: 15px;
+        border-radius: 50%;
+        -webkit-border-radius: 50%;
+        padding-right: 8px !important;
+    }
 ul.top-menu>li>a:hover,ul.top-menu>li>a:focus {
     background:#fa9fa4;
     text-decoration:none;
@@ -500,14 +501,14 @@ ul.top-menu>li>a:hover,ul.top-menu>li>a:focus {
     font-size:13px;
     color:#fff;
 }
-.top-nav ul.top-menu>li>a {
+.top-nav ul.top-menu > li > a {
     border-radius: 100px;
     -webkit-border-radius: 100px;
     padding: 0px;
     background: none;
     margin-right: 0;
-    border: 1px solid #8b5c7e;
-    background: #8b5c7e;
+    border: 1px solid #251da2;
+    background: #251da2;
 }
 .top-nav ul.top-menu>li.language>a {
     margin-top:-2px;
@@ -572,42 +573,42 @@ ul.top-menu>li>a:hover,ul.top-menu>li>a:focus {
     -ms-transition: all .3s ease;
     -o-transition: all .3s ease;
     transition: all .3s ease;
-    border: 1px solid #8b5c7e;
+    border: 1px solid #251da2;
     box-shadow: none;
-    background: #8b5c7e url(../images/search-icon.png) no-repeat 10px 8px;
+    background: #251da2 url(../images/search-icon.png) no-repeat 10px 8px;
     padding: 0 5px 0 30px;
     color: #fff;
     border-radius: 100px;
     -webkit-border-radius: 100px;
-	cursor:pointer;
+    cursor: pointer;
 }
-.search:focus {
-    width:180px;
-    border:1px solid #8b5c7e;
-    box-shadow:none;
-    -webkit-transition:all .3s ease;
-    -moz-transition:all .3s ease;
-    -ms-transition:all .3s ease;
-    -o-transition:all .3s ease;
-    transition:all .3s ease;
-    color:#c8c8c8;
-    font-weight: 300;
-}
+    .search:focus {
+        width: 180px;
+        border: 1px solid #251da2;
+        box-shadow: none;
+        -webkit-transition: all .3s ease;
+        -moz-transition: all .3s ease;
+        -ms-transition: all .3s ease;
+        -o-transition: all .3s ease;
+        transition: all .3s ease;
+        color: #c8c8c8;
+        font-weight: 300;
+    }
 .todo-search:focus{
     width:100% !important;
 }
 /*--sidebar toggle---*/
 .sidebar-toggle-box {
-    float:left;
-    margin-top:23px;
-    margin-left:-15px;
-    background:#8b5c7e;
-    border-radius:50%;
-    -webkit-border-radius:50%;
-    width:32px;
-    height:32px;
-    position:absolute;
-    right:-15px;
+    float: left;
+    margin-top: 23px;
+    margin-left: -15px;
+    background: #251da2;
+    border-radius: 50%;
+    -webkit-border-radius: 50%;
+    width: 32px;
+    height: 32px;
+    position: absolute;
+    right: -15px;
 }
 .sidebar-toggle-box .fa-bars {
     cursor:pointer;
