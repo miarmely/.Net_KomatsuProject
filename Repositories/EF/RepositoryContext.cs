@@ -9,7 +9,7 @@ namespace Repositories.EF
     public class RepositoryContext : DbContext
     {
         #region DbSets
-        private DbSet<User> Users { get; set; }
+        private DbSet<Entities.DataModels.User> Users { get; set; }
         private DbSet<Company> Companies { get; set; }
         private DbSet<Role> Roles { get; set; }
         private DbSet<UserAndRole> UsersAndRoles { get; set; }
@@ -18,7 +18,7 @@ namespace Repositories.EF
         private DbSet<MainCategory> MainCategories { get; set; }
         private DbSet<Category> Categories { get; set; }
         private DbSet<MachineView> MachineView { get; set; }
-        private DbSet<UserView> UserView { get; set; }
+        private DbSet<Entities.ViewModels.UserView> UserView { get; set; }
         private DbSet<UserAndRoleView> UserAndRoleView { get; set; }
         #endregion
 
@@ -42,11 +42,6 @@ namespace Repositories.EF
                 .Entity<UserView>()
                 .ToView(nameof(UserView))
                 .HasKey(u => u.Id);
-
-            modelBuilder
-                .Entity<UserAndRoleView>()
-                .ToView(nameof(UserAndRoleView))
-                .HasNoKey();
             #endregion
         }
     }

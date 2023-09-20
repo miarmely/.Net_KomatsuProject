@@ -12,20 +12,20 @@ namespace Repositories.Concretes
 
 		public async Task<List<Brand>> GetAllBrandsAsync(bool trackChanges = false) =>
 			 await base
-				.DisplayAll<Brand>(trackChanges)
+				.DisplayAll<Brand>()
 				.OrderBy(b => b.Name)
 				.ToListAsync();
 
 		public async Task<Brand?> GetBrandByIdAsync(int id, 
 			bool trackChanges = false) =>
 				await base
-					.FindWithCondition(b => b.Id == id, trackChanges)
+                    .DisplayByCondition<Brand>(b => b.Id == id)
 					.SingleOrDefaultAsync();
 
 		public async Task<Brand?> GetBrandByNameAsync(string name, 
 			bool trackChanges = false) =>
 				await base
-					.FindWithCondition(b => b.Name.Equals(name), trackChanges)
-					.FirstOrDefaultAsync();
+                    .DisplayByCondition<Brand>(b => b.Name.Equals(name))
+					.SingleOrDefaultAsync();
 		}
 }

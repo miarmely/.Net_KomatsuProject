@@ -1,5 +1,4 @@
-﻿using Entities.DataModels;
-using Entities.DtoModels.QueryModels;
+﻿using Entities.DtoModels.QueryModels;
 using Entities.ViewModels;
 using Microsoft.EntityFrameworkCore;
 using Repositories.Contracts;
@@ -9,22 +8,22 @@ using System.Linq.Expressions;
 
 namespace Repositories.Concretes
 {
-    public class UserRepository : RepositoryBase<User>, IUserRepository
+    public class UserRepository : RepositoryBase<Entities.DataModels.User>, IUserRepository
 	{
 		public UserRepository(RepositoryContext context) : base(context)
 		{ }
 
-		public async Task<UserView?> GetUserByIdAsync(Guid id) =>
+		public async Task<Entities.ViewModels.UserView?> GetUserByIdAsync(Guid id) =>
 			await base
 				.DisplayByCondition<UserView>(u => u.Id == id)
 				.FirstOrDefaultAsync();
 
-		public async Task<UserView?> GetUserByTelNoAsync(string telNo) =>
+		public async Task<Entities.ViewModels.UserView?> GetUserByTelNoAsync(string telNo) =>
 			await base
 				.DisplayByCondition<UserView>(u => u.TelNo.Equals(telNo))
 				.FirstOrDefaultAsync();
 
-		public async Task<UserView?> GetUserByEmailAsync(string email) =>
+		public async Task<Entities.ViewModels.UserView?> GetUserByEmailAsync(string email) =>
 			await base
 				.DisplayByCondition<UserView>(u => u.Email.Equals(email))
 				.FirstOrDefaultAsync();
@@ -32,19 +31,19 @@ namespace Repositories.Concretes
 
 		#region GetAllUsersAsync
 
-		public async Task<PagingList<UserView>> GetAllUsersAsync(
+		public async Task<PagingList<Entities.ViewModels.UserView>> GetAllUsersAsync(
 			PaginationQueryDto pagingParameters) =>
-				await PagingList<UserView>
-					.ToPagingListAsync(
-						base.DisplayAll<UserView>(),
+				await PagingList<Entities.ViewModels.UserView>
+                    .ToPagingListAsync(
+						base.DisplayAll<Entities.ViewModels.UserView>(),
 						pagingParameters.PageNumber,
 						pagingParameters.PageSize);
 		/*
 		 * with orderBy:
 		 */
-		public async Task<PagingList<UserView>> GetAllUsersAsync<T>(
+		public async Task<PagingList<Entities.ViewModels.UserView>> GetAllUsersAsync<T>(
 			PaginationQueryDto pagingParameters,
-			Expression<Func<UserView, T>> orderBy,
+			Expression<Func<Entities.ViewModels.UserView, T>> orderBy,
 			bool asAscending = true) =>
 				await PagingList<UserView>
 					.ToPagingListAsync(
@@ -58,21 +57,21 @@ namespace Repositories.Concretes
 
 		#region GetUsersByConditionAsync
 
-		public async Task<List<UserView>> GetUsersByConditionAsync(
+		public async Task<List<Entities.ViewModels.UserView>> GetUsersByConditionAsync(
 			PaginationQueryDto paginationQueryDto,
-			Expression<Func<UserView, bool>> condition) =>
-				await PagingList<UserView>
-					.ToPagingListAsync(
-						base.DisplayByCondition<UserView>(condition),
+			Expression<Func<Entities.ViewModels.UserView, bool>> condition) =>
+				await PagingList<Entities.ViewModels.UserView>
+                    .ToPagingListAsync(
+						base.DisplayByCondition<Entities.ViewModels.UserView>(condition),
 						paginationQueryDto.PageNumber,
 						paginationQueryDto.PageSize);
 		/*
 		 * with orderBy:
 		 */
-		public async Task<List<UserView>> GetUsersByConditionAsync<T>(
+		public async Task<List<Entities.ViewModels.UserView>> GetUsersByConditionAsync<T>(
 			PaginationQueryDto paginationQueryDto,
-			Expression<Func<UserView, bool>> condition,
-			Expression<Func<UserView, T>> orderBy,
+			Expression<Func<Entities.ViewModels.UserView, bool>> condition,
+			Expression<Func<Entities.ViewModels.UserView, T>> orderBy,
 			bool asAscending = true) =>
                 await PagingList<UserView>
 				.ToPagingListAsync(

@@ -6,6 +6,7 @@ using Entities.DtoModels;
 using Entities.DtoModels.BodyModels;
 using Entities.DtoModels.QueryModels;
 using Entities.Exceptions;
+using Entities.ViewModels;
 using Microsoft.AspNetCore.Http;
 using Microsoft.IdentityModel.Tokens;
 using Repositories.Contracts;
@@ -41,13 +42,13 @@ namespace Services.Concretes
 
 		public async Task<string> LoginAsync(UserBodyDtoForLogin UserDtoL)
 		{
-			#region get user by telNo
-			var user = await _manager.UserRepository
-				.GetUserByTelNoAsync(UserDtoL.TelNo, false);
+			#region get userView by telNo
+			var userView = await _manager.UserRepository
+				.GetUserByTelNoAsync(UserDtoL.TelNo);
 			#endregion
 
 			#region when telNo not found (throw)
-			_ = user ?? throw new ErrorWithCodeException(404,
+			_ = userView ?? throw new ErrorWithCodeException(404,
 				"VE-U-T",
 				"Verification Error - Telephone");
 			#endregion
@@ -55,13 +56,13 @@ namespace Services.Concretes
 			#region when password is wrong (throw)
 			var hashedPassword = await ComputeMd5Async(UserDtoL.Password);
 
-			if (!user.Password.Equals(hashedPassword))
+			if (!userView.Password.Equals(hashedPassword))
 				throw new ErrorWithCodeException(404,
 					"VE-U-P",
-					"Verification Error - Password");
+					"Verification Error - User - Password");
 			#endregion
 
-			return await GenerateTokenForUserAsync(user);
+			return await GenerateTokenForUserAsync(userView);
 		}
 
 		public async Task RegisterAsync(UserBodyDtoForRegister userDtoR)
@@ -76,8 +77,8 @@ namespace Services.Concretes
 			#endregion
 
 			#region convert userDtoR to user
-			var company = await
-				GetCompanyAndCreateIfNotExistsAsync(userDtoR.CompanyName);
+			var company = await GetCompanyAndCreateIfNotExistsAsync(
+				userDtoR.CompanyName);
 
 			// convert
 			var user = _mapper.Map<User>(userDtoR);
@@ -126,7 +127,7 @@ namespace Services.Concretes
 			#region convert userDtoC to user
 			var company = await GetCompanyAndCreateIfNotExistsAsync(userDtoC.CompanyName);
 
-			var user = _mapper.Map<User>(userDtoC);
+			var user = _mapper.Map<UserView>(userDtoC);
 			user.CompanyId = company.Id;
 			user.Password = await ComputeMd5Async(userDtoC.Password);
 			user.CreatedAt = DateTime.UtcNow;
@@ -327,7 +328,7 @@ namespace Services.Concretes
 		#region private
 
 		private async Task ConflictControlAsync(
-			Expression<Func<User, bool>> condition,
+			Expression<Func<UserView, bool>> condition,
 			UserDtoForConflictControl userDtoC)
 		{
 			#region get users
@@ -365,29 +366,6 @@ namespace Services.Concretes
 			#endregion
 		}
 
-		private async Task<ICollection<string>> GetRoleNamesOfUserAsync(Guid userId)
-		{
-			#region get userAndRoles
-			var userAndRoles = await _manager.UserAndRoleRepository
-				.GetUserAndRolesByUserIdAsync(userId, false);
-			#endregion
-
-			#region add roleNames to collection
-			var roleNames = new Collection<string>();
-			Role role;
-
-			foreach (var userAndRole in userAndRoles)
-			{
-				role = await _manager.RoleRepository
-					.GetRoleByIdAsync(userAndRole.RoleId, false);
-
-				roleNames.Add(role.Name);
-			}
-			#endregion
-
-			return roleNames;
-		}
-
 		private async Task<string> ComputeMd5Async(string input) =>
 			await Task.Run(() =>
 			{
@@ -404,21 +382,23 @@ namespace Services.Concretes
 				}
 			});
 
-		private async Task<string> GenerateTokenForUserAsync(User user)
+		private async Task<string> GenerateTokenForUserAsync(UserView userView)
 		{
 			#region set claims
 			var claims = new Collection<Claim>
 			{
-				new Claim("Id", user.Id.ToString()),
-				new Claim("firstName", user.FirstName),
-				new Claim("LastName", user.LastName)
+				new Claim("Id", userView.Id.ToString()),
+				new Claim("FirstName", userView.FirstName),
+				new Claim("LastName", userView.LastName)
 			};
 
 			#region add roles
-			var roleNames = await GetRoleNamesOfUserAsync(user.Id);
+			var roleNames = await _manager.UserAndRoleRepository
+				.GetRoleNamesOfUserByUserIdAsync(userView.Id);
 
 			foreach (var roleName in roleNames)
-				claims.Add(new Claim("Role", roleName));
+				claims.Add(
+					new Claim("Role", roleName));
 			#endregion
 
 			#endregion

@@ -6,7 +6,7 @@ using System.Linq.Expressions;
 
 namespace Repositories.Contracts
 {
-    public interface IUserRepository : IRepositoryBase<User>
+    public interface IUserRepository : IRepositoryBase<Entities.DataModels.User>
     {
         Task<UserView?> GetUserByIdAsync(Guid id);
         Task<UserView?> GetUserByTelNoAsync(string telNo);

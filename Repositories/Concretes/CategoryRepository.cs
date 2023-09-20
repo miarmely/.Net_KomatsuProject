@@ -14,21 +14,21 @@ namespace Repositories.Concretes
 			int id,
 			bool trackChanges = false) =>
 				await base
-					.FindWithCondition(c => c.Id == id, trackChanges)
+					.DisplayByCondition<Category>(c => c.Id == id)
 					.SingleOrDefaultAsync();
 					
 		public async Task<List<Category>> GetCategoriesByMainCategoryIdAsync(
 			int id,
 			bool trackChanges = false) =>
 				await base
-					.FindWithCondition(c => c.MainCategoryId == id, trackChanges)
+                    .DisplayByCondition<Category>(c => c.MainCategoryId == id)
 					.ToListAsync();
 
 		public async Task<Category?> GetCategoryBySubCategoryNameAsync(
 			string name,
 			bool trackChanges = false) =>
 				await base
-					.FindWithCondition(c => c.SubCategoryName.Equals(name), trackChanges)
+                    .DisplayByCondition<Category>(c => c.SubCategoryName.Equals(name))
 					.SingleOrDefaultAsync();
 
 	}

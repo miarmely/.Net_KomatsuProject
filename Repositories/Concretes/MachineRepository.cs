@@ -51,8 +51,7 @@ namespace Repositories.Concretes
         public async Task<PagingList<MachineView>> GetAllMachinesAsync<TResult>(
             PaginationQueryDto pagingParameters,
             Expression<Func<MachineView, TResult>> orderBy,
-            bool asAscending = true) 
-            =>
+            bool asAscending = true) =>
                 await PagingList<MachineView>
                     .ToPagingListAsync(
                         asAscending ?
@@ -64,41 +63,41 @@ namespace Repositories.Concretes
         #endregion
 
         #region GetMachinesByConditionAsync
-        public async Task<List<Machine>> GetMachinesByConditionAsync(
-            Expression<Func<Machine, bool>> condition) =>
+        public async Task<List<MachineView>> GetMachinesByConditionAsync(
+            Expression<Func<MachineView, bool>> condition) =>
                 await base
-                    .DisplayByCondition<Machine>(condition, false)
+                    .DisplayByCondition<MachineView>(condition)
                     .ToListAsync();
         /*
 		 * with pagination:
 		 */
-        public async Task<PagingList<Machine>> GetMachinesByConditionAsync(
+        public async Task<PagingList<MachineView>> GetMachinesByConditionAsync(
             PaginationQueryDto paginationParameters,
-            Expression<Func<Machine, bool>> condition) =>
-                await PagingList<Machine>
+            Expression<Func<MachineView, bool>> condition) =>
+                await PagingList<MachineView>
                     .ToPagingListAsync(
-                        base.DisplayByCondition<Machine>(condition, false),
+                        base.DisplayByCondition<MachineView>(condition),
                         paginationParameters.PageNumber,
                         paginationParameters.PageSize);
         /*
 		 * with pagination + orderBy:
 		 */
-        public async Task<PagingList<Machine>> GetMachinesByConditionAsync<TResult>(
+        public async Task<PagingList<MachineView>> GetMachinesByConditionAsync<TResult>(
             PaginationQueryDto paginationParameters,
-            Expression<Func<Machine, bool>> condition,
-            Expression<Func<Machine, TResult>> orderBy,
+            Expression<Func<MachineView, bool>> condition,
+            Expression<Func<MachineView, TResult>> orderBy,
             bool asAscending = true) =>
                 asAscending ?
-                    await PagingList<Machine>
+                    await PagingList<MachineView>
                         .ToPagingListAsync(
-                            base.DisplayByCondition<Machine>(condition, false)
+                            base.DisplayByCondition<MachineView>(condition)
                                 .OrderBy(orderBy),
                             paginationParameters.PageNumber,
                             paginationParameters.PageSize)
 
-                    : await PagingList<Machine>
+                    : await PagingList<MachineView>
                         .ToPagingListAsync(
-                            base.DisplayByCondition<Machine>(condition, false)
+                            base.DisplayByCondition<MachineView>(condition)
                                 .OrderByDescending(orderBy),
                             paginationParameters.PageNumber,
                             paginationParameters.PageSize);

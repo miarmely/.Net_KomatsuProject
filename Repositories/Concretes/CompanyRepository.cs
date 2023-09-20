@@ -1,7 +1,9 @@
 ﻿using Entities.DataModels;
+using Entities.DtoModels.QueryModels;
 using Microsoft.EntityFrameworkCore;
 using Repositories.Contracts;
 using Repositories.EF;
+using Repositories.Utilies;
 
 namespace Repositories.Concretes
 {
@@ -9,23 +11,23 @@ namespace Repositories.Concretes
 	{
 		public CompanyRepository(RepositoryContext context) : base(context)
 		{ }
-
-		public async Task<List<Company>> GetAllCompaniesAsync(
-			bool trackChanges = false) =>
+						
+		public async Task<Company?> GetCompanyByIdAsync(int id) =>
 				await base
-					.DisplayAll<Company>(trackChanges)
-					.OrderBy(c => c.Name)
-					.ToListAsync();
+					.DisplayByCondition<Company>(c => c.Id == id)
+					.SingleOrDefaultAsync();
 
-		public async Task<Company?> GetCompanyByIdAsync(int id,
-			bool trackChanges = false) =>
-				await base.FindWithCondition(c => c.Id == id, trackChanges)
-					.FirstOrDefaultAsync();
-
-		public async Task<Company?> GetCompanyByNameAsync(string name,
-			bool trackChanges = false) =>
+		public async Task<Company?> GetCompanyByNameAsync(string name) =>
 				await base
-					.FindWithCondition(c => c.Name.Equals(name), trackChanges)
-					.FirstOrDefaultAsync();
-	}
+                    .DisplayByCondition<Company>(c => c.Name.Equals(name))
+					.SingleOrDefaultAsync();
+
+        public async Task<PagingList<Company>> GetAllCompaniesAsync(
+        PaginationQueryDto paginationQueryDto) =>
+            await PagingList<Company>
+                .ToPagingListAsync(
+                    base.DisplayAll<Company>().OrderBy(c => c.Name),
+                    paginationQueryDto.PageNumber,
+                    paginationQueryDto.PageSize);
+    }
 }

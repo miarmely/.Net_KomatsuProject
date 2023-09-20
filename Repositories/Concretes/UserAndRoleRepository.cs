@@ -6,8 +6,8 @@ using Repositories.EF;
 
 namespace Repositories.Concretes
 {
-    public class UserAndRoleRepository : RepositoryBase<UserAndRole>
-        , IUserAndRoleRepository
+    public class UserAndRoleRepository 
+        : RepositoryBase<UserAndRole>, IUserAndRoleRepository
     {
         public UserAndRoleRepository(RepositoryContext context)
             : base(context)
@@ -16,15 +16,20 @@ namespace Repositories.Concretes
         public void CreateUserAndRole(UserAndRole userAndRole) =>
             base.Create(userAndRole);
 
-        public async Task<List<UserAndRoleView>> GetUserAndRolesByUserIdAsync(Guid? id) =>
+        public async Task<List<UserAndRole>> GetUserAndRolesByUserIdAsync(Guid? id) =>
             await base
-                .DisplayByCondition<UserAndRoleView>(ur => ur.UserId.Equals(id))
+                .DisplayByCondition<UserAndRole>(ur => ur.UserId.Equals(id))
                 .ToListAsync();
 
-        public async Task<List<UserAndRoleView>> GetUserAndRolesByRoleNameAsync(
-            string roleName) =>
+        public async Task<List<UserAndRole>> GetUserAndRolesByRoleIdAsync(int id) =>
                 await base
-                    .DisplayByCondition<UserAndRoleView>(ur => ur.RoleName.Equals(roleName))
+                    .DisplayByCondition<UserAndRole>(ur => ur.RoleId == id)
                     .ToListAsync();
+
+        public async Task<List<string>> GetRoleNamesOfUserByUserIdAsync(Guid id) =>
+            await base.ExecProcedureAsync<string>($@"
+                EXEC GetRoleNamesOfUserByUserId 
+                @UserId = {id}");
+ 
     }
 }
