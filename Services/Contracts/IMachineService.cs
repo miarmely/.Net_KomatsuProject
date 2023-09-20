@@ -27,5 +27,5 @@ namespace Services.Contracts
             MachineBodyDtoForUpdate machineBodyDtoU);
 
 		Task DeleteMachinesAsync(MachineBodyDtoForDelete machineQueryDto);
-	}
+    }
 }

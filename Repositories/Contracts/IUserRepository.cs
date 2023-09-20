@@ -1,31 +1,31 @@
 ﻿using Entities.DataModels;
 using Entities.DtoModels.QueryModels;
+using Entities.ViewModels;
 using Repositories.Utilies;
 using System.Linq.Expressions;
-using System.Runtime.InteropServices;
 
 namespace Repositories.Contracts
 {
     public interface IUserRepository : IRepositoryBase<User>
-	{
-		Task<User?> GetUserByIdAsync(Guid id, bool trackChanges = false);
-		Task<User?> GetUserByTelNoAsync(string telNo, bool trackChanges = false);
-		Task<User?> GetUserByEmailAsync(string email, bool trackChanges = false);
-		Task<PagingList<User>> GetAllUsersAsync(
-			PaginationQueryDto pagingParameters, 
-			bool trackChanges = false);
-		Task<PagingList<User>> GetAllUsersAsync<T>
+    {
+        Task<UserView?> GetUserByIdAsync(Guid id);
+        Task<UserView?> GetUserByTelNoAsync(string telNo);
+        Task<UserView?> GetUserByEmailAsync(string email);
+        Task<PagingList<UserView>> GetAllUsersAsync(PaginationQueryDto pagingParameters);
+
+		Task<PagingList<UserView>> GetAllUsersAsync<T>
 			(PaginationQueryDto pagingParameters,
-			Expression<Func<User, T>> orderBy, 
-			bool asAscending = true, 
-			bool trackChanges = false);
-		Task<List<User>> GetUsersByConditionAsync(
-			Expression<Func<User, bool>> condition,
-			bool trackChanges = false);
-		Task<List<User>> GetUsersByConditionAsync<T>(
-			Expression<Func<User, bool>> condition, 
-			Expression<Func<User, T>> orderBy, 
-			bool asAscending = true, 
-			bool trackChanges = false);		
+			Expression<Func<UserView, T>> orderBy, 
+			bool asAscending = true);
+
+		Task<List<UserView>> GetUsersByConditionAsync(
+            PaginationQueryDto paginationQueryDto,
+            Expression<Func<UserView, bool>> condition);
+
+		Task<List<UserView>> GetUsersByConditionAsync<T>(
+            PaginationQueryDto paginationQueryDto,
+            Expression<Func<UserView, bool>> condition, 
+			Expression<Func<UserView, T>> orderBy, 
+			bool asAscending = true);		
 	}
 }

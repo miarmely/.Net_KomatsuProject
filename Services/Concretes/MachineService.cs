@@ -5,10 +5,11 @@ using Entities.DtoModels.BodyModels;
 using Entities.DtoModels.EnumModels;
 using Entities.DtoModels.QueryModels;
 using Entities.Exceptions;
+using Entities.ViewModels;
 using Microsoft.AspNetCore.Http;
-using NLog.Filters;
 using Repositories.Contracts;
 using Services.Contracts;
+
 
 namespace Services.Concretes
 {
@@ -61,15 +62,14 @@ namespace Services.Concretes
 
 		public async Task<IEnumerable<MachineDto>> GetAllMachinesWithPagingAsync(
 			PaginationQueryDto paginationParameters,
-			HttpResponse response,
-			bool trackChanges = false)
+			HttpResponse response)
 		{
 			#region get machines (throw)
 			var machines = await _manager.MachineRepository
 				.GetAllMachinesAsync(paginationParameters);
 
-			// when not found
-			if (machines.Count == 0)
+			//when not found
+            if (machines.Count == 0)
 				throw new ErrorWithCodeException(404,
 					"NF-M",
 					"Not Found - Machine");
@@ -429,8 +429,8 @@ namespace Services.Concretes
 		}
 
 
-		#region private
-		private async Task ControlConflictErrorAsync(
+        #region private
+        private async Task ControlConflictErrorAsync(
 			string model, 
 			string subCategoryName = null,
 			Category category = null)

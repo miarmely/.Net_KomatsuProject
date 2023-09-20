@@ -12,40 +12,39 @@ namespace Repositories.Concretes
         public MainCategoryRepository(RepositoryContext context) : base(context)
         {}
 
-		public async Task<MainCategory?> GetMainCategoryByIdAsync(
-			int id, 
-			bool trackChanges)
-			=> await base
-				.FindWithCondition(m => m.Id == id, trackChanges)
+		public async Task<MainCategory?> GetMainCategoryByIdAsync(int id) => 
+			await base
+				.FindWithCondition(m => m.Id == id, false)
 				.SingleOrDefaultAsync();
 
-		public async Task<MainCategory?> GetMainCategoryByNameAsync(
-			string name, 
-			bool trackChanges)
-			=> await base
-				.FindWithCondition(m => m.Name.Equals(name), trackChanges)
+		public async Task<MainCategory?> GetMainCategoryByNameAsync(string name)=> 
+			await base
+				.FindWithCondition(m => m.Name.Equals(name), false)
 				.SingleOrDefaultAsync();
 
 		#region GetAllMainCategoriesAsync
-		public async Task<List<MainCategory>> GetAllMainCategoriesAsync(
-			bool trackChanges) => await base
-				.FindAll(trackChanges)
+		public async Task<List<MainCategory>> GetAllMainCategoriesAsync() => 
+			await base
+				.DisplayAll<MainCategory>()
+				.AsNoTracking()
 				.ToListAsync();
 		/*
 		 * with orderBy
 		 */
 		public async Task<List<MainCategory>> GetAllMainCategoriesAsync<TResult>(
 			Expression<Func<MainCategory, TResult>> orderBy,
-			bool asAscending = true,
-			bool trackChanges = false) =>
+			bool asAscending = true) =>
 				asAscending ?
 					await base
-						.FindAll(trackChanges)
-						.OrderBy(orderBy)
+						.DisplayAll<MainCategory>()
+						.AsNoTracking()
+                        .OrderBy(orderBy)
 						.ToListAsync()
+
 					: await base
-						.FindAll(trackChanges)
-						.OrderByDescending(orderBy)
+						.DisplayAll<MainCategory>()
+						.AsNoTracking()
+                        .OrderByDescending(orderBy)
 						.ToListAsync();
 		#endregion
 	}

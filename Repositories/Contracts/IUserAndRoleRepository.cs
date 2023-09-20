@@ -1,15 +1,11 @@
 ﻿using Entities.DataModels.RelationModels;
+using Entities.ViewModels;
 
 namespace Repositories.Contracts
 {
     public interface IUserAndRoleRepository : IRepositoryBase<UserAndRole>
 	{
-		Task<List<UserAndRole>> GetUserAndRolesByUserIdAsync(
-			Guid? id,
-			bool trackChanges = false);
-
-		Task<List<UserAndRole>> GetUserAndRolesByRoleIdAsync(
-			int id,
-			bool trackChanges = false);
+		Task<List<UserAndRoleView>> GetUserAndRolesByUserIdAsync(Guid? id);
+		Task<List<UserAndRoleView>> GetUserAndRolesByRoleNameAsync(string roleName);
 	}
 }

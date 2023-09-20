@@ -1,5 +1,6 @@
 ﻿using Entities.DataModels;
 using Entities.DtoModels.QueryModels;
+using Entities.ViewModels;
 using Repositories.Utilies;
 using System.Linq.Expressions;
 
@@ -7,42 +8,35 @@ namespace Repositories.Contracts
 {
     public interface IMachineRepository : IRepositoryBase<Machine>
 	{
-		Task<List<Machine>> GetAllMachinesAsync(
-			bool trackChanges = false);
+		Task<MachineView?> GetMachineByMachineIdAsync(Guid machineId);
 
-		Task<PagingList<Machine>> GetAllMachinesAsync(
-			PaginationQueryDto pagingParameters,
-			bool trackChanges = false);
+		Task<MachineView?> GetMachineByCategoryIdAndModelAsync(int categoryId, string model);
 
-		Task<PagingList<Machine>> GetAllMachinesAsync<TResult>(
-			PaginationQueryDto pagingParameters,
-			Expression<Func<Machine, TResult>> orderBy, 
-			bool asAscending = true, 
-			bool trackChanges = false);
+        #region GetAllMachines
+        Task<List<MachineView>> GetAllMachinesAsync();
 
-		Task<List<Machine>> GetMachinesByConditionAsync(
-			Expression<Func<Machine, bool>> condition,
-			bool trackChanges = false);
+        Task<PagingList<MachineView>> GetAllMachinesAsync(
+            PaginationQueryDto pagingParameters);
 
-		Task<PagingList<Machine>> GetMachinesByConditionAsync(
-			PaginationQueryDto paginationParameters,
-			Expression<Func<Machine, bool>> condition,
-			bool trackChanges = false);
+        Task<PagingList<MachineView>> GetAllMachinesAsync<TResult>(
+            PaginationQueryDto pagingParameters,
+            Expression<Func<MachineView, TResult>> orderBy,
+            bool asAscending = true);
+        #endregion
 
-		Task<PagingList<Machine>> GetMachinesByConditionAsync<TResult>(
-			PaginationQueryDto paginationParameters,
-			Expression<Func<Machine, bool>> condition,
-			Expression<Func<Machine, TResult>> orderBy,
-			bool asAscending = true,
-			bool trackChanges = false);
+        #region GetMachinesByCndition
+        Task<List<Machine>> GetMachinesByConditionAsync(
+            Expression<Func<Machine, bool>> condition);
 
-		Task<Machine?> GetMachineByMachineIdAsync(
-			Guid machineId, 
-			bool trackChanges = false);
+        Task<PagingList<Machine>> GetMachinesByConditionAsync(
+            PaginationQueryDto paginationParameters,
+            Expression<Func<Machine, bool>> condition);
 
-		Task<Machine?> GetMachineByCategoryIdAndModelAsync(
-			int categoryId,
-			string model, 
-			bool trackChanges = false);
-	}
+        Task<PagingList<Machine>> GetMachinesByConditionAsync<TResult>(
+            PaginationQueryDto paginationParameters,
+            Expression<Func<Machine, bool>> condition,
+            Expression<Func<Machine, TResult>> orderBy,
+            bool asAscending = true);
+        #endregion
+    }
 }

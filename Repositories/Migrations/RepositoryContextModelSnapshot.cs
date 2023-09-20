@@ -36,7 +36,7 @@ namespace Repositories.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Brands");
+                    b.ToTable("Brands", (string)null);
                 });
 
             modelBuilder.Entity("Entities.DataModels.Category", b =>
@@ -58,7 +58,7 @@ namespace Repositories.Migrations
 
                     b.HasIndex("MainCategoryId");
 
-                    b.ToTable("Categories");
+                    b.ToTable("Categories", (string)null);
 
                     b.HasData(
                         new
@@ -107,7 +107,7 @@ namespace Repositories.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Companies");
+                    b.ToTable("Companies", (string)null);
                 });
 
             modelBuilder.Entity("Entities.DataModels.Machine", b =>
@@ -122,9 +122,6 @@ namespace Repositories.Migrations
                     b.Property<short>("CategoryId")
                         .HasColumnType("smallint");
 
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
                     b.Property<byte>("HandStatus")
                         .HasColumnType("tinyint");
 
@@ -138,6 +135,9 @@ namespace Repositories.Migrations
                     b.Property<string>("Model")
                         .IsRequired()
                         .HasColumnType("varchar(50)");
+
+                    b.Property<DateTime>("RegistrationDate")
+                        .HasColumnType("datetime2");
 
                     b.Property<short>("Rented")
                         .HasColumnType("smallint");
@@ -157,7 +157,7 @@ namespace Repositories.Migrations
 
                     b.HasIndex("CategoryId");
 
-                    b.ToTable("Machines");
+                    b.ToTable("Machines", (string)null);
                 });
 
             modelBuilder.Entity("Entities.DataModels.MainCategory", b =>
@@ -174,7 +174,7 @@ namespace Repositories.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("MainCategories");
+                    b.ToTable("MainCategories", (string)null);
 
                     b.HasData(
                         new
@@ -217,7 +217,7 @@ namespace Repositories.Migrations
 
                     b.HasIndex("RoleId");
 
-                    b.ToTable("UsersAndRoles");
+                    b.ToTable("UsersAndRoles", (string)null);
                 });
 
             modelBuilder.Entity("Entities.DataModels.Role", b =>
@@ -234,7 +234,7 @@ namespace Repositories.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Roles");
+                    b.ToTable("Roles", (string)null);
 
                     b.HasData(
                         new
@@ -293,7 +293,7 @@ namespace Repositories.Migrations
 
                     b.HasIndex("CompanyId");
 
-                    b.ToTable("Users");
+                    b.ToTable("Users", (string)null);
                 });
 
             modelBuilder.Entity("Entities.DataModels.Category", b =>

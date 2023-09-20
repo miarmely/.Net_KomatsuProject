@@ -1,5 +1,6 @@
 ﻿using Entities.DataModels;
 using Entities.DtoModels.QueryModels;
+using Entities.ViewModels;
 using Microsoft.EntityFrameworkCore;
 using Repositories.Contracts;
 using Repositories.EF;
@@ -13,78 +14,76 @@ namespace Repositories.Concretes
 		public UserRepository(RepositoryContext context) : base(context)
 		{ }
 
-		public async Task<User?> GetUserByIdAsync(
-			Guid id,
-			bool trackChanges = false) =>
-				await base
-					.FindWithCondition(u => u.Id == id, trackChanges)
-					.FirstOrDefaultAsync();
-
-		public async Task<User?> GetUserByTelNoAsync(
-			string telNo,
-			bool trackChanges = false) =>
+		public async Task<UserView?> GetUserByIdAsync(Guid id) =>
 			await base
-				.FindWithCondition(u => u.TelNo.Equals(telNo), trackChanges)
+				.DisplayByCondition<UserView>(u => u.Id == id)
 				.FirstOrDefaultAsync();
 
-		public async Task<User?> GetUserByEmailAsync(
-			string email,
-			bool trackChanges = false) =>
+		public async Task<UserView?> GetUserByTelNoAsync(string telNo) =>
 			await base
-				.FindWithCondition(u => u.Email.Equals(email), trackChanges)
+				.DisplayByCondition<UserView>(u => u.TelNo.Equals(telNo))
 				.FirstOrDefaultAsync();
+
+		public async Task<UserView?> GetUserByEmailAsync(string email) =>
+			await base
+				.DisplayByCondition<UserView>(u => u.Email.Equals(email))
+				.FirstOrDefaultAsync();
+
 
 		#region GetAllUsersAsync
-		public async Task<PagingList<User>> GetAllUsersAsync(
-			PaginationQueryDto pagingParameters,
-			bool trackChanges = false) =>
-				await PagingList<User>
+
+		public async Task<PagingList<UserView>> GetAllUsersAsync(
+			PaginationQueryDto pagingParameters) =>
+				await PagingList<UserView>
 					.ToPagingListAsync(
-						base.FindAll(trackChanges),
+						base.DisplayAll<UserView>(),
 						pagingParameters.PageNumber,
 						pagingParameters.PageSize);
 		/*
-		 * with orderBy
+		 * with orderBy:
 		 */
-		public async Task<PagingList<User>> GetAllUsersAsync<T>(
+		public async Task<PagingList<UserView>> GetAllUsersAsync<T>(
 			PaginationQueryDto pagingParameters,
-			Expression<Func<User, T>> orderBy,
-			bool asAscending = true,
-			bool trackChanges = false) =>
-				await PagingList<User>
+			Expression<Func<UserView, T>> orderBy,
+			bool asAscending = true) =>
+				await PagingList<UserView>
 					.ToPagingListAsync(
 						asAscending ?
-							base.FindAll(trackChanges).OrderBy(orderBy)
-							: base.FindAll(trackChanges).OrderByDescending(orderBy),
+							base.DisplayAll<UserView>().OrderBy(orderBy)
+							: base.DisplayAll<UserView>().OrderByDescending(orderBy),
 						pagingParameters.PageNumber,
 						pagingParameters.PageSize);
-		
+
 		#endregion
 
 		#region GetUsersByConditionAsync
-		public async Task<List<User>> GetUsersByConditionAsync(
-			Expression<Func<User, bool>> condition,
-			bool trackChanges = false) =>
-			await base
-				.FindWithCondition(condition, trackChanges)
-				.ToListAsync();
+
+		public async Task<List<UserView>> GetUsersByConditionAsync(
+			PaginationQueryDto paginationQueryDto,
+			Expression<Func<UserView, bool>> condition) =>
+				await PagingList<UserView>
+					.ToPagingListAsync(
+						base.DisplayByCondition<UserView>(condition),
+						paginationQueryDto.PageNumber,
+						paginationQueryDto.PageSize);
 		/*
-		 * with orderBy
+		 * with orderBy:
 		 */
-		public async Task<List<User>> GetUsersByConditionAsync<T>(
-			Expression<Func<User, bool>> condition,
-			Expression<Func<User, T>> orderBy,
-			bool asAscending = true,
-			bool trackChanges = false) =>
-				asAscending ?
-					await base
-						.FindWithCondition(condition, trackChanges)
-						.OrderBy(orderBy)
-						.ToListAsync()
-					: await base
-						.FindWithCondition(condition, trackChanges)
-						.OrderByDescending(orderBy)
-						.ToListAsync();
-		#endregion
-	}
+		public async Task<List<UserView>> GetUsersByConditionAsync<T>(
+			PaginationQueryDto paginationQueryDto,
+			Expression<Func<UserView, bool>> condition,
+			Expression<Func<UserView, T>> orderBy,
+			bool asAscending = true) =>
+                await PagingList<UserView>
+				.ToPagingListAsync(
+						asAscending ?
+							base.DisplayByCondition<UserView>(condition)
+								.OrderBy(orderBy)
+							: base.DisplayByCondition<UserView>(condition)
+								.OrderByDescending(orderBy),
+                        paginationQueryDto.PageNumber,
+                        paginationQueryDto.PageSize);
+
+        #endregion
+    }
 }

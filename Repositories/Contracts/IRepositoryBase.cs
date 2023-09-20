@@ -1,4 +1,5 @@
-﻿using System.Linq.Expressions;
+﻿using Microsoft.EntityFrameworkCore;
+using System.Linq.Expressions;
 
 namespace Repositories.Contracts
 {
@@ -6,10 +7,12 @@ namespace Repositories.Contracts
 	{
 		int Count { get; }
 		void Create(T entity);
-		IQueryable<T> FindAll(bool trackChanges);
-		IQueryable<T> FindWithCondition(Expression<Func<T, bool>> expression
-			, bool trackChanges);
-		void Update(T entity);
+        void Update(T entity);
 		void Delete(T entity);
-	}
+        IQueryable<TDbSet> DisplayAll<TDbSet>() where TDbSet : class;
+
+        public IQueryable<TDbSet> DisplayByCondition<TDbSet>(
+            Expression<Func<TDbSet, bool>> condition) 
+            where TDbSet : class;
+    }
 }
