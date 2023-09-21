@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
 using Entities.ConfigModels.Contracts;
-using Entities.DataModels;
 using Entities.DataModels.RelationModels;
 using Entities.DtoModels;
 using Entities.DtoModels.BodyModels;
@@ -26,8 +25,6 @@ namespace Services.Concretes
 		private readonly IConfigManager _config;
 		private readonly IMapper _mapper;
 		private readonly IDtoConverterService _dtoConverterService;
-		private string _conflictErrorCode = "CE-U-";
-		private string _conflictErrorDescription = "Conflict Error - User - ";
 
         public UserService(IRepositoryManager manager,
 			IConfigManager config,
@@ -65,121 +62,48 @@ namespace Services.Concretes
 			return await GenerateTokenForUserAsync(userView);
 		}
 
-		public async Task RegisterAsync(UserBodyDtoForRegister userDtoR)
+		public async Task CreateUserAsync(UserBodyDtoForCreate userDtoC, string roleName)
 		{
-			#region control conflict errors
-			var userDtoC = _mapper.Map<UserDtoForConflictControl>(userDtoR);
-
-			await ConflictControlAsync(u =>
-				u.TelNo.Equals(userDtoC.TelNo)  // telNo
-				|| u.Email.Equals(userDtoC.Email)  // email
-				, userDtoC);
-			#endregion
-
-			#region convert userDtoR to user
-			var company = await GetCompanyAndCreateIfNotExistsAsync(
-				userDtoR.CompanyName);
-
-			// convert
-			var user = _mapper.Map<User>(userDtoR);
-			user.CompanyId = company.Id;
-			user.Password = await ComputeMd5Async(userDtoR.Password);
-			user.CreatedAt = DateTime.UtcNow;
+            #region set variables
+            var hashedPassword = await ComputeMd5Async(userDtoC.Password);
+			var errorCode = "";
 			#endregion
 
 			#region create user
-			_manager.UserRepository
-				.Create(user);
-
-			await _manager.SaveAsync();
-			#endregion
-
-			#region create userAndRole
-			// get "User" role
-			var role = await _manager.RoleRepository
-				.GetRoleByNameAsync("User", false);
-
-			// create,
-			var entity = new UserAndRole()
-			{
-				UserId = user.Id,
-				RoleId = role.Id
-			};
-
-			_manager.UserAndRoleRepository
-				.Create(entity);
-
-			await _manager.SaveAsync();
+			await _manager.UserRepository
+				.ExecProcedureAsync<string>($@"EXEC CreateUser 
+					@FirstName = ${userDtoC.FirstName},
+					@LastName = ${userDtoC.LastName},
+					@CompanyName = ${userDtoC.CompanyName},
+					@TelNo = ${userDtoC.TelNo},
+					@Email = ${userDtoC.Email},
+					@Password = ${hashedPassword},
+					@RoleName = ${roleName}
+					@ErrorCode = ${errorCode} out");
 			#endregion
 		}
 
-		public async Task CreateUserAsync(UserBodyDtoForCreate userDtoC)
-		{
-			#region control conflict error
-			var userDtoConf = _mapper.Map<UserDtoForConflictControl>(userDtoC);
-
-			await ConflictControlAsync(u =>
-				u.Email.Equals(userDtoConf.Email)
-				|| u.TelNo.Equals(userDtoConf.TelNo)
-				, userDtoConf);
-			#endregion
-
-			#region convert userDtoC to user
-			var company = await GetCompanyAndCreateIfNotExistsAsync(userDtoC.CompanyName);
-
-			var user = _mapper.Map<UserView>(userDtoC);
-			user.CompanyId = company.Id;
-			user.Password = await ComputeMd5Async(userDtoC.Password);
-			user.CreatedAt = DateTime.UtcNow;
-			#endregion
-
-			#region create user
-			_manager.UserRepository
-				.Create(user);
-
-			await _manager.SaveAsync();
-			#endregion
-
-			#region create userAndRole
-			var role = await _manager.RoleRepository
-				.GetRoleByNameAsync(userDtoC.RoleName, false);
-
-			_manager.UserAndRoleRepository
-				.Create(new UserAndRole
-				{
-					UserId = user.Id,
-					RoleId = role.Id
-				});
-
-			await _manager.SaveAsync();
-			#endregion
-		}
-
-		public async Task<ICollection<UserDto>> GetAllUsersWithPagingAsync(
-			PaginationQueryDto pagingParameters, HttpResponse response)
+        public async Task<ICollection<UserView>> GetAllUsersAsync(
+			PaginationQueryDto pagingParameters, 
+			HttpResponse response)
 		{
 			#region when user not found (throw)
-			var users = await _manager.UserRepository
+			var userViewList = await _manager.UserRepository
 				.GetAllUsersAsync(pagingParameters);
 
-			if (users.Count == 0)
+			if (userViewList.Count == 0)
 				throw new ErrorWithCodeException(404, 
-					"NF-U-U", 
+					"NF-U", 
 					"Not Found - User");
-			#endregion
-
-			#region convert user to userDto
-			var userDtos = await _dtoConverterService
-				.UserToUserDtoAsync(users);
 			#endregion
 
 			#region add pagination details to headers
 			response.Headers.Add(
 				"User-Pagination", 
-				users.GetMetaDataForHeaders());
+				userViewList.GetMetaDataForHeaders());
 			#endregion
 
-			return userDtos;
+			return userViewList;
 		}
 
 		public async Task UpdateUserAsync(string email, UserBodyDtoForUpdate userDtoU)
@@ -329,18 +253,19 @@ namespace Services.Concretes
 
 		private async Task ConflictControlAsync(
 			Expression<Func<UserView, bool>> condition,
-			UserDtoForConflictControl userDtoC)
+			string telNo, 
+			string email)
 		{
 			#region get users
-			var users = await _manager.UserRepository
+			var userViewList = await _manager.UserRepository
 				.GetUsersByConditionAsync(condition);
 			#endregion
 
 			#region control conflict error (throw)
-			if (users.Count != 0)
+			if (userViewList.Count != 0)
 			{
 				#region control telNo
-				if (users.Any(u => u.TelNo.Equals(userDtoC.TelNo)))
+				if (userViewList.Any(u => u.TelNo.Equals(telNo)))
 				{
 					_conflictErrorCode += "T";
 					_conflictErrorDescription += "TelNo ";
@@ -348,7 +273,7 @@ namespace Services.Concretes
 				#endregion
 
 				#region control email
-				if (users.Any(u => u.Email.Equals(userDtoC.Email)))
+				if (userViewList.Any(u => u.Email.Equals(email)))
 				{
                     _conflictErrorCode += "E";
                     _conflictErrorDescription += "Email ";
@@ -372,10 +297,10 @@ namespace Services.Concretes
 				using (var md5 = MD5.Create())
 				{
 					#region hash to input
-					var hashAsByte = md5.ComputeHash(Encoding.UTF8
+					var hashInBytes = md5.ComputeHash(Encoding.UTF8
 						.GetBytes(input));
 
-					var hashAsString = Convert.ToBase64String(hashAsByte);
+					var hashAsString = Convert.ToBase64String(hashInBytes);
 					#endregion
 
 					return hashAsString;
@@ -424,31 +349,5 @@ namespace Services.Concretes
 			return new JwtSecurityTokenHandler()
 				.WriteToken(token);
 		}
-
-		private async Task<Company> GetCompanyAndCreateIfNotExistsAsync(string companyName)
-		{
-			#region get company
-			var company = await _manager.CompanyRepository
-				.GetCompanyByNameAsync(companyName, false);
-			#endregion
-
-			#region create company if not exists on database
-			if (company == null)
-			{
-				company = new Company()
-				{
-					Name = companyName
-				};
-
-				_manager.CompanyRepository
-					.Create(company);
-
-				await _manager.SaveAsync();
-			}
-			#endregion
-
-			return company;
-		}
-		#endregion
 	}
 }

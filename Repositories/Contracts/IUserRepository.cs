@@ -6,7 +6,7 @@ using System.Linq.Expressions;
 
 namespace Repositories.Contracts
 {
-    public interface IUserRepository : IRepositoryBase<Entities.DataModels.User>
+    public interface IUserRepository : IRepositoryBase<User>
     {
         Task<UserView?> GetUserByIdAsync(Guid id);
         Task<UserView?> GetUserByTelNoAsync(string telNo);
@@ -17,8 +17,10 @@ namespace Repositories.Contracts
 			(PaginationQueryDto pagingParameters,
 			Expression<Func<UserView, T>> orderBy, 
 			bool asAscending = true);
+        Task<List<UserView>> GetUsersByConditionAsync(
+            Expression<Func<UserView, bool>> condition);
 
-		Task<List<UserView>> GetUsersByConditionAsync(
+        Task<List<UserView>> GetUsersByConditionAsync(
             PaginationQueryDto paginationQueryDto,
             Expression<Func<UserView, bool>> condition);
 
