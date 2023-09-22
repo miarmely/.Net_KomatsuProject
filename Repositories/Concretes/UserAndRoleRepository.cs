@@ -28,8 +28,7 @@ namespace Repositories.Concretes
 
         public async Task<List<string>> GetRoleNamesOfUserByUserIdAsync(Guid id) =>
             await base.ExecProcedureAsync<string>($@"
-                EXEC GetRoleNamesOfUserByUserId 
+                EXEC User_GetRoleNamesOfUser
                 @UserId = {id}");
- 
     }
 }

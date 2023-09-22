@@ -8,6 +8,7 @@ using Entities.Exceptions;
 using Entities.ViewModels;
 using Microsoft.AspNetCore.Http;
 using Microsoft.IdentityModel.Tokens;
+using NLog.Filters;
 using Repositories.Contracts;
 using Services.Contracts;
 using System.Collections.ObjectModel;
@@ -47,7 +48,7 @@ namespace Services.Concretes
 			#region when telNo not found (throw)
 			_ = userView ?? throw new ErrorWithCodeException(404,
 				"VE-U-T",
-				"Verification Error - Telephone");
+				"Verification Error - User - Telephone");
 			#endregion
 
 			#region when password is wrong (throw)
@@ -64,22 +65,32 @@ namespace Services.Concretes
 
 		public async Task CreateUserAsync(UserBodyDtoForCreate userDtoC, string roleName)
 		{
-            #region set variables
+            #region create user
             var hashedPassword = await ComputeMd5Async(userDtoC.Password);
-			var errorCode = "";
-			#endregion
+            int? statusCode = null;
+            string? errorCode = null;
+            string? errorDescription = null;
 
-			#region create user
-			await _manager.UserRepository
-				.ExecProcedureAsync<string>($@"EXEC CreateUser 
+            await _manager.UserRepository
+				.ExecProcedureAsync<string>($@"EXEC User_Create 
 					@FirstName = ${userDtoC.FirstName},
 					@LastName = ${userDtoC.LastName},
 					@CompanyName = ${userDtoC.CompanyName},
 					@TelNo = ${userDtoC.TelNo},
 					@Email = ${userDtoC.Email},
 					@Password = ${hashedPassword},
-					@RoleName = ${roleName}
-					@ErrorCode = ${errorCode} out");
+					@RoleName = ${roleName},
+					@StatusCode = ${statusCode} OUT,
+					@ErrorCode = ${errorCode} OUT,
+					@ErrorDescription = ${errorDescription} OUT");
+			#endregion
+
+			#region when error eccured (throw)
+			if (errorCode != null)
+				throw new ErrorWithCodeException(
+					(int)statusCode, 
+					errorCode, 
+					errorDescription);
 			#endregion
 		}
 
@@ -87,10 +98,12 @@ namespace Services.Concretes
 			PaginationQueryDto pagingParameters, 
 			HttpResponse response)
 		{
-			#region when user not found (throw)
+			#region get userViews
 			var userViewList = await _manager.UserRepository
 				.GetAllUsersAsync(pagingParameters);
+			#endregion
 
+			#region when any userView not found (throw)
 			if (userViewList.Count == 0)
 				throw new ErrorWithCodeException(404, 
 					"NF-U", 
@@ -106,99 +119,26 @@ namespace Services.Concretes
 			return userViewList;
 		}
 
-		public async Task UpdateUserAsync(string email, UserBodyDtoForUpdate userDtoU)
+		public async Task UpdateUserAsync(string telNo, UserBodyDtoForUpdate userDtoU)
 		{
-			#region control conflict error
-			var userDtoC = _mapper.Map<UserDtoForConflictControl>(userDtoU);
+            #region update user
+            string? statusCode = null;
+			string? errorCode = null;
+			string? errorDescription = null;
 
-			// if values null, then they didn't change.
-			await ConflictControlAsync(u =>
-				u.TelNo == null ? true : u.TelNo == userDtoU.TelNo
-				|| u.Email == null ? true : u.Email == userDtoU.Email,
-				userDtoC);
-			#endregion
-
-			#region when user not found (throw)
-			var user = await _manager.UserRepository
-				.GetUserByEmailAsync(email);
-
-			if (user == null)
-				throw new ErrorWithCodeException(404,
-					"VE-U-E",
-					"Verification Error - Email");
-			#endregion
-
-			#region get company
-			var company = userDtoU.CompanyName == null ?
-				null  // if company name not updated
-				: await GetCompanyAndCreateIfNotExistsAsync(userDtoU.CompanyName);
-			#endregion
-
-			#region update user
-			user.FirstName = userDtoU.FirstName ?? user.FirstName;
-			user.LastName = userDtoU.LastName ?? user.LastName;
-			user.TelNo = userDtoU.TelNo ?? user.TelNo;
-			user.CompanyId = company == null ? user.CompanyId : company.Id;
-			user.Email = userDtoU.Email ?? user.Email;
-
-			_manager.UserRepository.Update(user);
-			#endregion
-
-			#region create&delete userAndRole
-			if (userDtoU.RoleNames != null)
-			{
-				#region delete userAndRole that not exists userDto
-				var userAndRoles = await _manager.UserAndRoleRepository
-					.GetUserAndRolesByUserIdAsync(user.Id);
-
-				#region delete UserAndRole 
-				var roleNamesInDatabase = new Collection<string>();
-
-				foreach (var userAndRole in userAndRoles)
-				{
-					#region get role
-					var role = await _manager.RoleRepository
-						.GetRoleByIdAsync(userAndRole.RoleId);
-
-					roleNamesInDatabase.Add(role.Name);
-					#endregion
-
-					#region when exists database but not exists current data
-					if (!userDtoU.RoleNames.Contains(role.Name))
-						_manager.UserAndRoleRepository
-							.Delete(userAndRole);
-					#endregion
-				}
-				#endregion
-
-				#endregion
-
-				#region create userAndRole that not exists database
-				foreach (var roleNameInDto in userDtoU.RoleNames)
-				{
-					// when not exists database but exists userDto
-					if (!roleNamesInDatabase.Contains(roleNameInDto))
-					{
-						#region get role
-						var role = await _manager.RoleRepository
-							.GetRoleByNameAsync(roleNameInDto);
-						#endregion
-
-						#region create userAndRole
-						_manager.UserAndRoleRepository
-							.Create(new UserAndRole
-							{
-								UserId = user.Id,
-								RoleId = role.Id
-							});
-						#endregion
-					}
-				}
-				#endregion
-			}
-
-			await _manager.SaveAsync();
-			#endregion
+			await _manager.UserRepository
+				.ExecProcedureAsync<string>($@" EXEC User_Update
+					@TelNoForValidation = {telNo},
+					@FirstName = {userDtoU.FirstName}
+					@LastName = {userDtoU.LastName}
+					@CompanyName = {userDtoU.CompanyName},
+					@TelNo = {userDtoU.TelNo},
+					@Email = {userDtoU.Email},
+					@RoleName = {userDtoU.RoleName},
+					@StatusCode = {statusCode} OUT,
+					@ErrorCode = {errorCode} OUT,
+					@ErrorDescription = {errorDescription} OUT");
+            #endregion
 		}
 
 		public async Task DeleteUsersAsync(UserBodyDtoForDelete userDtoD)
