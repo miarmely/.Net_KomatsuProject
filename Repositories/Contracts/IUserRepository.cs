@@ -1,16 +1,15 @@
-﻿using Entities.DataModels;
+﻿using Dapper;
+using Entities.DataModels;
 using Entities.DtoModels.QueryModels;
 using Entities.ViewModels;
-using Repositories.Utilies;
 using System.Linq.Expressions;
 
 namespace Repositories.Contracts
 {
     public interface IUserRepository : IRepositoryBase<User>
     {
-        Task<UserView?> GetUserByIdAsync(Guid id);
-        Task<UserView?> GetUserByTelNoAsync(string telNo);
-        Task<UserView?> GetUserByEmailAsync(string email);
+        Task CreateUserAsync(string procedureName, DynamicParameters parameters);
+
         Task<PagingList<UserView>> GetAllUsersAsync(PaginationQueryDto pagingParameters);
 
 		Task<PagingList<UserView>> GetAllUsersAsync<T>

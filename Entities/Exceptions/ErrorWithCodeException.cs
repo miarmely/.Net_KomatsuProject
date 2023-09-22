@@ -1,4 +1,5 @@
-﻿using System.Text.Json;
+﻿using Entities.DtoModels;
+using System.Text.Json;
 
 namespace Entities.Exceptions
 {
@@ -16,5 +17,9 @@ namespace Entities.Exceptions
 
 			}))
 		{ }
-	}
+
+        public ErrorWithCodeException(ErrorDto errorDto)
+            : base(JsonSerializer.Serialize(errorDto))
+        { }
+    }
 }

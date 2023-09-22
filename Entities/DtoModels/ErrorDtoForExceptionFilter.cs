@@ -1,6 +1,6 @@
 ﻿namespace Entities.DtoModels
 {
-    public record ErrorDtoForExceptionFilter : ErrorDto
+    public class ErrorDtoForExceptionFilter : ErrorDto
     {
         public string Controller { get; set; }
         public string Action { get; set; }

@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Dapper;
 using Entities.ConfigModels.Contracts;
 using Entities.DataModels.RelationModels;
 using Entities.DtoModels;
@@ -12,11 +13,13 @@ using NLog.Filters;
 using Repositories.Contracts;
 using Services.Contracts;
 using System.Collections.ObjectModel;
+using System.Data;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq.Expressions;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
+
 
 namespace Services.Concretes
 {
@@ -63,35 +66,39 @@ namespace Services.Concretes
 			return await GenerateTokenForUserAsync(userView);
 		}
 
-		public async Task CreateUserAsync(UserBodyDtoForCreate userDtoC, string roleName)
+		public async Task CreateUserAsync(UserBodyDtoForCreate userDtoC)
 		{
-            #region create user
+            #region set parameters
+            // set variables
+			var errorDto = new ErrorDto();
+            var parameters = new DynamicParameters();
             var hashedPassword = await ComputeMd5Async(userDtoC.Password);
-            int? statusCode = null;
-            string? errorCode = null;
-            string? errorDescription = null;
+            
+			// set parameters
+            parameters.Add("FirstName", userDtoC.FirstName, DbType.String);
+            parameters.Add("LastName", userDtoC.LastName, DbType.String);
+            parameters.Add("CompanyName", userDtoC.CompanyName, DbType.String);
+            parameters.Add("TelNo", userDtoC.TelNo, DbType.String);
+            parameters.Add("Email", userDtoC.Email, DbType.String);
+            parameters.Add("Password", hashedPassword, DbType.String);
+            parameters.Add("RoleName", userDtoC.RoleName, DbType.String);
+            parameters.Add("StatusCode", errorDto.StatusCode, DbType.Int16,
+                ParameterDirection.InputOutput);
+            parameters.Add("ErrorCode", errorDto.ErrorCode, DbType.String,
+                ParameterDirection.InputOutput);
+            parameters.Add("ErrorDescription", errorDto.ErrorDescription,
+                DbType.String, ParameterDirection.InputOutput);
+            #endregion
 
+            #region create user
             await _manager.UserRepository
-				.ExecProcedureAsync<string>($@"EXEC User_Create 
-					@FirstName = ${userDtoC.FirstName},
-					@LastName = ${userDtoC.LastName},
-					@CompanyName = ${userDtoC.CompanyName},
-					@TelNo = ${userDtoC.TelNo},
-					@Email = ${userDtoC.Email},
-					@Password = ${hashedPassword},
-					@RoleName = ${roleName},
-					@StatusCode = ${statusCode} OUT,
-					@ErrorCode = ${errorCode} OUT,
-					@ErrorDescription = ${errorDescription} OUT");
+				.CreateUserAsync("User_Create", parameters);
 			#endregion
 
-			#region when error eccured (throw)
-			if (errorCode != null)
-				throw new ErrorWithCodeException(
-					(int)statusCode, 
-					errorCode, 
-					errorDescription);
-			#endregion
+			#region when error occured (throw)
+			if (errorDto.ErrorCode != null)
+                throw new ErrorWithCodeException(errorDto);
+            #endregion
 		}
 
         public async Task<ICollection<UserView>> GetAllUsersAsync(

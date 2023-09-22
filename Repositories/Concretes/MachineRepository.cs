@@ -4,7 +4,6 @@ using Entities.ViewModels;
 using Microsoft.EntityFrameworkCore;
 using Repositories.Contracts;
 using Repositories.EF;
-using Repositories.Utilies;
 using System.Linq.Expressions;
 
 namespace Repositories.Concretes

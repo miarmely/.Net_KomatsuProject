@@ -1,37 +1,41 @@
-﻿using Entities.DtoModels.QueryModels;
+﻿using Dapper;
+using Entities.DataModels;
+using Entities.DtoModels;
+using Entities.DtoModels.BodyModels;
+using Entities.DtoModels.QueryModels;
+using Entities.Exceptions;
 using Entities.ViewModels;
-using Microsoft.EntityFrameworkCore;
 using Repositories.Contracts;
-using Repositories.EF;
-using Repositories.Utilies;
+using System.Data;
 using System.Linq.Expressions;
+
 
 namespace Repositories.Concretes
 {
-    public class UserRepository : RepositoryBase<Entities.DataModels.User>, IUserRepository
+    public class UserRepository : RepositoryBase<User>, IUserRepository
 	{
-		public UserRepository(RepositoryContext context) : base(context)
+		public UserRepository(DapperContext context) : base(context)
 		{ }
 
-		public async Task<UserView?> GetUserByIdAsync(Guid id) =>
-			await base
-				.DisplayByCondition<UserView>(u => u.Id == id)
-				.FirstOrDefaultAsync();
+		public async Task CreateUserAsync(
+			string procedureName,
+			DynamicParameters parameters)
+        {
+            #region create user
+            using (var connection = _context.CreateSqlConnection())
+			{
+                await connection.QueryAsync(
+					procedureName,
+					parameters,
+					commandType: CommandType.StoredProcedure);
+			}
+            #endregion
+        }
 
-		public async Task<UserView?> GetUserByTelNoAsync(string telNo) =>
-			await base
-				.DisplayByCondition<UserView>(u => u.TelNo.Equals(telNo))
-				.FirstOrDefaultAsync();
 
-		public async Task<UserView?> GetUserByEmailAsync(string email) =>
-			await base
-				.DisplayByCondition<UserView>(u => u.Email.Equals(email))
-				.FirstOrDefaultAsync();
+        #region GetAllUsersAsync
 
-
-		#region GetAllUsersAsync
-
-		public async Task<PagingList<UserView>> GetAllUsersAsync(
+        public async Task<PagingList<UserView>> GetAllUsersAsync(
 			PaginationQueryDto pagingParameters) =>
 				await PagingList<UserView>
                     .ToPagingListAsync(

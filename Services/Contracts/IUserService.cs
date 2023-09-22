@@ -8,7 +8,7 @@ namespace Services.Contracts
     public interface IUserService
 	{
 		Task<string> LoginAsync(UserBodyDtoForLogin userDtoL);
-		Task CreateUserAsync(UserBodyDtoForCreate userDtoC, string roleName);
+		Task CreateUserAsync(UserBodyDtoForCreate userDtoC);
 		Task UpdateUserAsync(string email, UserBodyDtoForUpdate userDtoU);
 		Task DeleteUsersAsync(UserBodyDtoForDelete userDtoD);
 

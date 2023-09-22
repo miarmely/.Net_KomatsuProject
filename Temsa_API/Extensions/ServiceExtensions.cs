@@ -1,37 +1,33 @@
 ﻿using Entities.ConfigModels;
 using Entities.ConfigModels.Contracts;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Presantation;
 using Presantation.ActionFilters.Attributes;
 using Presantation.ActionFilters.Filters;
+using Repositories;
 using Repositories.Concretes;
 using Repositories.Contracts;
-using Repositories.EF;
 using Services.Concretes;
 using Services.Contracts;
 using System.Text;
 
 namespace Temsa.Extensions
 {
-	public static class ServiceExtensions
-	{
-		public static void ConfigureRepositoryContext(this IServiceCollection services
-			, IConfiguration configuration) =>
-				services.AddDbContext<RepositoryContext>(options =>
-					options.UseSqlServer(configuration
-						.GetConnectionString("SqlServer")));
-
+    public static class ServiceExtensions
+	{		
 		public static void ConfigureAllManagers(this IServiceCollection services)
 		{
 			services.AddScoped<IRepositoryManager, RepositoryManager>();
 			services.AddScoped<IServiceManager, ServiceManager>();
 			services.AddScoped<IConfigManager, ConfigManager>();
 		}
-
-		public static void ConfigureLoggerService(this IServiceCollection services) =>
-			services.AddSingleton<ILoggerService, LoggerService>();
+	
+		public static void ConfigureServices(this IServiceCollection services)
+		{
+            services.AddSingleton<ILoggerService, LoggerService>();
+			services.AddSingleton<DapperContext>();
+        }
 
 		public static void ConfigureActionFilters(this IServiceCollection services)
 		{

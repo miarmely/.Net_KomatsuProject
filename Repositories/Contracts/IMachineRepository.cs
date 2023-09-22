@@ -1,7 +1,6 @@
 ﻿using Entities.DataModels;
 using Entities.DtoModels.QueryModels;
 using Entities.ViewModels;
-using Repositories.Utilies;
 using System.Linq.Expressions;
 
 namespace Repositories.Contracts

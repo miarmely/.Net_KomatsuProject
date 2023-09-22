@@ -113,25 +113,17 @@
               "target": "Package",
               "version": "[5.1.1, )"
             },
-            "Microsoft.EntityFrameworkCore": {
+            "Microsoft.Extensions.Configuration": {
               "target": "Package",
-              "version": "[7.0.10, )"
+              "version": "[7.0.0, )"
             },
-            "Microsoft.EntityFrameworkCore.Design": {
-              "include": "Runtime, Build, Native, ContentFiles, Analyzers, BuildTransitive",
-              "suppressParent": "All",
+            "Microsoft.Extensions.Configuration.Abstractions": {
               "target": "Package",
-              "version": "[7.0.10, )"
+              "version": "[7.0.0, )"
             },
-            "Microsoft.EntityFrameworkCore.SqlServer": {
+            "Microsoft.Extensions.Configuration.Json": {
               "target": "Package",
-              "version": "[7.0.10, )"
-            },
-            "Microsoft.EntityFrameworkCore.Tools": {
-              "include": "Runtime, Build, Native, ContentFiles, Analyzers, BuildTransitive",
-              "suppressParent": "All",
-              "target": "Package",
-              "version": "[7.0.10, )"
+              "version": "[7.0.0, )"
             }
           },
           "imports": [

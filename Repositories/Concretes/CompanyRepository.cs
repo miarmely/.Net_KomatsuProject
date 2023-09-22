@@ -3,11 +3,10 @@ using Entities.DtoModels.QueryModels;
 using Microsoft.EntityFrameworkCore;
 using Repositories.Contracts;
 using Repositories.EF;
-using Repositories.Utilies;
 
 namespace Repositories.Concretes
 {
-	public class CompanyRepository : RepositoryBase<Company>, ICompanyRepository
+    public class CompanyRepository : RepositoryBase<Company>, ICompanyRepository
 	{
 		public CompanyRepository(RepositoryContext context) : base(context)
 		{ }
