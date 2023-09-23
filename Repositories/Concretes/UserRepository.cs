@@ -4,6 +4,7 @@ using Entities.DtoModels;
 using Entities.DtoModels.QueryModels;
 using Entities.ViewModels;
 using Repositories.Contracts;
+using System.Collections.ObjectModel;
 using System.Data;
 
 
@@ -105,6 +106,7 @@ namespace Repositories.Concretes
             IEnumerable<UserView>? userViews;
             var userViewDict = new Dictionary<Guid, UserView>();
 
+            #region get userViews with multi-mapping
             using (var connection = _context.CreateSqlConnection())
             {
                 userViews = await connection
@@ -114,35 +116,38 @@ namespace Repositories.Concretes
                        {
                            #region add userView to dict if not exists
                            if (!userViewDict.TryGetValue(
-                               key: userView.Id,
+                               key: userView.UserId,
                                value: out var currentUserView))
                            {
                                currentUserView = userView;
-                               userViewDict.Add(userView.Id, currentUserView);
+                               userViewDict.Add(userView.UserId, currentUserView);
                            }
                            #endregion
 
-                           #region add roleName to userView in dict
+                           #region add roleName to userView
                            currentUserView.RoleNames.Add(rolePart.RoleName);
                            #endregion
 
                            return currentUserView;
                        },
                        parameters,
+                       splitOn: "RoleId",
                        commandType: CommandType.StoredProcedure);
             }
+            #endregion
+
             #endregion
 
             #region return paginationList if wanting pagination
             if (paginationQueryDto != null)
                 return await PagingList<UserView>.ToPagingListAsync(
-                    userViews,
+                    userViewDict.Values,
                     totalCount,
                     paginationQueryDto.PageNumber,
                     paginationQueryDto.PageSize);
             #endregion
 
-            return userViews;
+            return userViewDict.Values;
         }
 
         #endregion

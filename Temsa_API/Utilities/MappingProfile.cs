@@ -2,30 +2,32 @@
 using Entities.DataModels;
 using Entities.DtoModels;
 using Entities.DtoModels.BodyModels;
+using Entities.ViewModels;
 
-namespace Temsa.Utilities
+namespace Temsa_Api.Utilities
 {
     public class MappingProfile : Profile
 	{
 		public MappingProfile()
 		{
-			// to ErrorDto
-			CreateMap<ErrorDtoForExceptionFilter, ErrorDto>();
+            #region to ErrorDto
+            CreateMap<ErrorDtoForExceptionFilter, ErrorDto>();
+            #endregion
 
-			// to UserDto
-			CreateMap<User, UserDto>();
+			#region to UserDto
+            CreateMap<User, UserDto>();
 			CreateMap<UserBodyDtoForCreate, UserDto>();
-			
-            // to User
+			CreateMap<UserView, UserDto>();
+            #endregion
+
+            #region to User
             CreateMap<UserBodyDtoForCreate, User>();
+            #endregion
 
-			// to UserDtoForConflictControl
-            CreateMap<UserBodyDtoForCreate, UserDtoForConflictControl>();
-            CreateMap<UserBodyDtoForUpdate, UserDtoForConflictControl>();
-
-			// to MachineDto
-			CreateMap<MachineBodyDtoForCreate, MachineDto>();
+            #region to MachineDto
+            CreateMap<MachineBodyDtoForCreate, MachineDto>();
 			CreateMap<MachineBodyDtoForDisplay, MachineDto>();
+            #endregion
         }
 	}
 }

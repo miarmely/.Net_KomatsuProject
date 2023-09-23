@@ -14,9 +14,7 @@ namespace Services.Contracts
 		//Task UpdateUserAsync(string email, UserBodyDtoForUpdate userDtoU);
 		//Task DeleteUsersAsync(UserBodyDtoForDelete userDtoD);
 
-        Task<IEnumerable<UserView>> GetAllUsersAsync();
-
-        Task<IEnumerable<UserView>> GetAllUsersWithPagingAsync(
+        Task<IEnumerable<UserDto>> GetAllUsersWithPagingAsync(
             PaginationQueryDto pagingParameters,
             HttpResponse response);
     }

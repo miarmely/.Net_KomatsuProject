@@ -94,18 +94,7 @@ namespace Services.Concretes
             #endregion
 		}
 
-        public async Task<IEnumerable<UserView>> GetAllUsersAsync()
-		{
-			var users = await _manager.UserRepository
-				.GetAllUsersAsync();
-
-			if (users == null)
-				throw new ErrorWithCodeException(404, "NF-U", "Not Found - User");
-
-			return users;
-		}
-
-        public async Task<IEnumerable<UserView>> GetAllUsersWithPagingAsync(
+        public async Task<IEnumerable<UserDto>> GetAllUsersWithPagingAsync(
 			PaginationQueryDto pagingParameters, 
 			HttpResponse response)
 		{
@@ -127,7 +116,7 @@ namespace Services.Concretes
                 userViews.GetMetaDataForHeaders());
 			#endregion
 
-			return userViews;
+			return _mapper.Map<IEnumerable<UserDto>>(userViews);
 		}
 
 		//public async Task UpdateUserAsync(string telNo, UserBodyDtoForUpdate userDtoU)

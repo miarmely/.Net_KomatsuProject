@@ -56,16 +56,6 @@ namespace Presantation.Controllers
 			return StatusCode(StatusCodes.Status201Created);
 		}
 
-        [HttpGet("display/trying")]
-        public async Task<IActionResult> GetAllUsersAsync(
-            [FromQuery] PaginationQueryDto pagingParameters)
-        {
-            var entity = await _manager.UserService
-                .GetAllUsersAsync();
-
-            return Ok(entity);
-        }
-
 
         [HttpGet("display")]
         public async Task<IActionResult> GetAllUsersWithPaginationAsync(

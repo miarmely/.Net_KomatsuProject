@@ -12,7 +12,7 @@ using Services.Concretes;
 using Services.Contracts;
 using System.Text;
 
-namespace Temsa.Extensions
+namespace Temsa_Api.Extensions
 {
     public static class ServiceExtensions
 	{		

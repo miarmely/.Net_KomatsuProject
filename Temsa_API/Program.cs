@@ -1,5 +1,5 @@
 using NLog;
-using Temsa.Extensions;
+using Temsa_Api.Extensions;
 
 #region setup logger
 LogManager.Setup()

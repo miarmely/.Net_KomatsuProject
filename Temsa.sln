@@ -11,7 +11,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Presantation", "Presantatio
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Services", "Services\Services.csproj", "{2A9B8839-91EE-4289-8DA5-EE1E813B6826}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Temsa_API", "Temsa_API\Temsa_API.csproj", "{EE7983D6-B14D-4F8B-88E4-DB5E55DA3704}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Temsa_Api", "Temsa_API\Temsa_Api.csproj", "{EE7983D6-B14D-4F8B-88E4-DB5E55DA3704}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Temsa_Web", "Temsa_Web\Temsa_Web.csproj", "{CCB0CCC5-E996-4920-B51B-D624267EEC8F}"
 EndProject

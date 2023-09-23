@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Diagnostics;
 using Services.Contracts;
 using System.Text.Json;
 
-namespace Temsa.Extensions
+namespace Temsa_Api.Extensions
 {
     public static class ErrorMiddlewareExtensions
 	{
