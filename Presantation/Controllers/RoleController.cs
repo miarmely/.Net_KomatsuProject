@@ -13,13 +13,13 @@ namespace Presantation.Controllers
             _manager = manager;
 
 
-        [HttpGet("display")]
-        public async Task<IActionResult> GetAllRolesAsync()
-        {
-            var roles = await _manager.RoleService
-                .GetAllRolesAsync();
+        //[HttpGet("display")]
+        //public async Task<IActionResult> GetAllRolesAsync()
+        //{
+        //    var roles = await _manager.RoleService
+        //        .GetAllRolesAsync();
 
-            return Ok(roles);
-        }
+        //    return Ok(roles);
+        //}
     }
 }

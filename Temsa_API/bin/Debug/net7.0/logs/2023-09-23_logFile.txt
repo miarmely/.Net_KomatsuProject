@@ -1,0 +1,1 @@
+19:03:48.5902  ERROR  {"Controller":"User","Action":"User","ErrorCode":"Internal Server Error","CreatedAt":"2023-09-23T16:03:48.2172989Z"}

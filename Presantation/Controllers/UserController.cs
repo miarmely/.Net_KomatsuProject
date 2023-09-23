@@ -19,30 +19,30 @@ namespace Presantation.Controllers
 			_manager = services;
 
 
-        [HttpPost("login")]
-        [ValidationUserFormat]
-        public async Task<IActionResult> LoginAsync(UserBodyDtoForLogin userDto)
-        {
-            var token = await _manager.UserService
-                .LoginAsync(userDto);
+        //[HttpPost("login")]
+        //[ValidationUserFormat]
+        //public async Task<IActionResult> LoginAsync(UserBodyDtoForLogin userDto)
+        //{
+        //    var token = await _manager.UserService
+        //        .LoginAsync(userDto);
 
-            return Ok(new
-            {
-                Token = token
-            });
-        }
+        //    return Ok(new
+        //    {
+        //        Token = token
+        //    });
+        //}
 
 
-        [HttpPost("register")]
-        [ValidationUserFormat]
-        public async Task<IActionResult> RegisterAsync(
-            [FromBody] UserBodyDtoForRegister userDtoR)
-        {
-            await _manager.UserService
-                .RegisterAsync(userDtoR);
+        //[HttpPost("register")]
+        //[ValidationUserFormat]
+        //public async Task<IActionResult> RegisterAsync(
+        //    [FromBody] UserBodyDtoForRegister userDtoR)
+        //{
+        //    await _manager.UserService
+        //        .RegisterAsync(userDtoR);
 
-            return StatusCode(StatusCodes.Status201Created);
-        }
+        //    return StatusCode(StatusCodes.Status201Created);
+        //}
 
 
 		[HttpPost("create")]
@@ -56,9 +56,19 @@ namespace Presantation.Controllers
 			return StatusCode(StatusCodes.Status201Created);
 		}
 
+        [HttpGet("display/trying")]
+        public async Task<IActionResult> GetAllUsersAsync(
+            [FromQuery] PaginationQueryDto pagingParameters)
+        {
+            var entity = await _manager.UserService
+                .GetAllUsersAsync();
+
+            return Ok(entity);
+        }
+
 
         [HttpGet("display")]
-        public async Task<IActionResult> GetAllUsersWithPagingAsync(
+        public async Task<IActionResult> GetAllUsersWithPaginationAsync(
             [FromQuery] PaginationQueryDto pagingParameters)
         {
             var entity = await _manager.UserService
@@ -68,29 +78,29 @@ namespace Presantation.Controllers
         }
 
 
-        [HttpPut("update/{email}")]
-        [ValidationUserFormat]
-        [ValidationNullArguments]
-        public async Task<IActionResult> GetUpdateUserAsync(
-            [FromRoute(Name = "email")] string email,
-            [FromBody] UserBodyDtoForUpdate userDtoU)
-        {
-            await _manager.UserService
-                .UpdateUserAsync(email, userDtoU);
+        //      [HttpPut("update/{email}")]
+        //      [ValidationUserFormat]
+        //      [ValidationNullArguments]
+        //      public async Task<IActionResult> GetUpdateUserAsync(
+        //          [FromRoute(Name = "email")] string email,
+        //          [FromBody] UserBodyDtoForUpdate userDtoU)
+        //      {
+        //          await _manager.UserService
+        //              .UpdateUserAsync(email, userDtoU);
 
-            return NoContent();
-        }
+        //          return NoContent();
+        //      }
 
 
-        [HttpDelete("delete")]
-		[ValidationNullArguments]
-		public async Task<IActionResult> DeleteUsersAsync(
-            [FromBody] UserBodyDtoForDelete userDtoD)
-        {
-            await _manager.UserService
-                .DeleteUsersAsync(userDtoD);
+        //      [HttpDelete("delete")]
+        //[ValidationNullArguments]
+        //public async Task<IActionResult> DeleteUsersAsync(
+        //          [FromBody] UserBodyDtoForDelete userDtoD)
+        //      {
+        //          await _manager.UserService
+        //              .DeleteUsersAsync(userDtoD);
 
-            return NoContent();
-		}
-	}
+        //          return NoContent();
+        //}
+    }
 }

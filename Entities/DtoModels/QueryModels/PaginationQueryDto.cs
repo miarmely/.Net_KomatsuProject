@@ -16,7 +16,6 @@
             }
             set
             {
-                // control maxPageSize
                 _pageSize = value > 50 ?
                     MaxPageSize
                     : value;

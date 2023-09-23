@@ -1,11 +1,10 @@
 ﻿using Repositories.Contracts;
-using Repositories.EF;
+
 
 namespace Repositories.Concretes
 {
 	public class RepositoryManager : IRepositoryManager
 	{
-		private readonly RepositoryContext _context;
 		private readonly Lazy<IUserRepository> _userRepository;
 		private readonly Lazy<ICompanyRepository> _companyRepository;
 		private readonly Lazy<IUserAndRoleRepository> _userAndRoleRepository;
@@ -26,7 +25,6 @@ namespace Repositories.Concretes
 
 		public RepositoryManager(RepositoryContext context)
 		{
-			_context = context;
 			_userRepository = new Lazy<IUserRepository>(() =>
 				new UserRepository(context));
 			_companyRepository = new Lazy<ICompanyRepository>(() =>
@@ -44,8 +42,5 @@ namespace Repositories.Concretes
 			_categoryRepository = new Lazy<ICategoryRepository>(() =>
 				new CategoryRepository(context));
 		}
-
-		public async Task SaveAsync() =>
-			await _context.SaveChangesAsync();
 	}
 }

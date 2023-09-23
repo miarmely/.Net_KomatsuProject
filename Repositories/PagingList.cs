@@ -14,7 +14,10 @@ namespace Repositories
         public bool HasPrevious => CurrentPageNo > 1;
         public bool HasNext => CurrentPageNo < TotalPage;
 
-        public PagingList(List<T> entity, int totalCount, int pageNumber, int pageSize)
+        public PagingList(IEnumerable<T> entity,
+            int totalCount,
+            int pageNumber,
+            int pageSize)
         {
             #region initialize properties
             TotalCount = totalCount;
@@ -23,21 +26,17 @@ namespace Repositories
             TotalPage = (int)Math.Ceiling(totalCount / (double)pageSize);
             #endregion
 
-            // add source to list
+            // add  to list
             AddRange(entity);
         }
 
-        public static async Task<PagingList<T>> ToPagingListAsync(IQueryable<T> source, int pageNumber, int pageSize)
-        {
-            #region get data for pageNumber
-            var entity = await source
-                .Skip((pageNumber - 1) * pageSize)
-                .Take(pageSize)
-                .ToListAsync();
-            #endregion
-
-            return new PagingList<T>(entity, source.Count(), pageNumber, pageSize);
-        }
+        public async static Task<PagingList<T>> ToPagingListAsync(
+            IEnumerable<T> source,
+            int totalCount, 
+            int pageNumber, 
+            int pageSize) =>
+                await Task.Run(() => 
+                    new PagingList<T>(source, totalCount, pageNumber, pageSize));
 
         public string GetMetaDataForHeaders() =>
             JsonSerializer.Serialize(new

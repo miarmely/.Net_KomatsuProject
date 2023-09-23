@@ -1,6 +1,6 @@
 ﻿using Entities.Exceptions;
 using Microsoft.AspNetCore.Mvc.Filters;
-using Microsoft.EntityFrameworkCore;
+
 
 namespace Presantation.ActionFilters.Filters
 {

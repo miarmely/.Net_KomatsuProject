@@ -41,36 +41,35 @@ namespace Services.Concretes
 			_dtoConverterService = dtoConverterService;
 		}
 
-		public async Task<string> LoginAsync(UserBodyDtoForLogin UserDtoL)
-		{
-			#region get userView by telNo
-			var userView = await _manager.UserRepository
-				.GetUserByTelNoAsync(UserDtoL.TelNo);
-			#endregion
+		//public async Task<string> LoginAsync(UserBodyDtoForLogin UserDtoL)
+		//{
+		//	#region get userView by telNo
+		//	var userView = await _manager.UserRepository
+		//		.GetUserByTelNoAsync(UserDtoL.TelNo);
+		//	#endregion
 
-			#region when telNo not found (throw)
-			_ = userView ?? throw new ErrorWithCodeException(404,
-				"VE-U-T",
-				"Verification Error - User - Telephone");
-			#endregion
+		//	#region when telNo not found (throw)
+		//	_ = userView ?? throw new ErrorWithCodeException(404,
+		//		"VE-U-T",
+		//		"Verification Error - User - Telephone");
+		//	#endregion
 
-			#region when password is wrong (throw)
-			var hashedPassword = await ComputeMd5Async(UserDtoL.Password);
+		//	#region when password is wrong (throw)
+		//	var hashedPassword = await ComputeMd5Async(UserDtoL.Password);
 
-			if (!userView.Password.Equals(hashedPassword))
-				throw new ErrorWithCodeException(404,
-					"VE-U-P",
-					"Verification Error - User - Password");
-			#endregion
+		//	if (!userView.Password.Equals(hashedPassword))
+		//		throw new ErrorWithCodeException(404,
+		//			"VE-U-P",
+		//			"Verification Error - User - Password");
+		//	#endregion
 
-			return await GenerateTokenForUserAsync(userView);
-		}
+		//	return await GenerateTokenForUserAsync(userView);
+		//}
 
 		public async Task CreateUserAsync(UserBodyDtoForCreate userDtoC)
 		{
             #region set parameters
             // set variables
-			var errorDto = new ErrorDto();
             var parameters = new DynamicParameters();
             var hashedPassword = await ComputeMd5Async(userDtoC.Password);
             
@@ -82,17 +81,11 @@ namespace Services.Concretes
             parameters.Add("Email", userDtoC.Email, DbType.String);
             parameters.Add("Password", hashedPassword, DbType.String);
             parameters.Add("RoleName", userDtoC.RoleName, DbType.String);
-            parameters.Add("StatusCode", errorDto.StatusCode, DbType.Int16,
-                ParameterDirection.InputOutput);
-            parameters.Add("ErrorCode", errorDto.ErrorCode, DbType.String,
-                ParameterDirection.InputOutput);
-            parameters.Add("ErrorDescription", errorDto.ErrorDescription,
-                DbType.String, ParameterDirection.InputOutput);
             #endregion
 
             #region create user
-            await _manager.UserRepository
-				.CreateUserAsync("User_Create", parameters);
+            var errorDto = await _manager.UserRepository
+				.CreateUserAsync(parameters);
 			#endregion
 
 			#region when error occured (throw)
@@ -101,17 +94,28 @@ namespace Services.Concretes
             #endregion
 		}
 
-        public async Task<ICollection<UserView>> GetAllUsersAsync(
+        public async Task<IEnumerable<UserView>> GetAllUsersAsync()
+		{
+			var users = await _manager.UserRepository
+				.GetAllUsersAsync();
+
+			if (users == null)
+				throw new ErrorWithCodeException(404, "NF-U", "Not Found - User");
+
+			return users;
+		}
+
+        public async Task<IEnumerable<UserView>> GetAllUsersWithPagingAsync(
 			PaginationQueryDto pagingParameters, 
 			HttpResponse response)
 		{
 			#region get userViews
-			var userViewList = await _manager.UserRepository
-				.GetAllUsersAsync(pagingParameters);
+			var userViews = await _manager.UserRepository
+				.GetAllUsersWithPagingAsync(pagingParameters);
 			#endregion
 
 			#region when any userView not found (throw)
-			if (userViewList.Count == 0)
+			if (userViews.Count == 0)
 				throw new ErrorWithCodeException(404, 
 					"NF-U", 
 					"Not Found - User");
@@ -119,124 +123,84 @@ namespace Services.Concretes
 
 			#region add pagination details to headers
 			response.Headers.Add(
-				"User-Pagination", 
-				userViewList.GetMetaDataForHeaders());
+				"User-Pagination",
+                userViews.GetMetaDataForHeaders());
 			#endregion
 
-			return userViewList;
+			return userViews;
 		}
 
-		public async Task UpdateUserAsync(string telNo, UserBodyDtoForUpdate userDtoU)
-		{
-            #region update user
-            string? statusCode = null;
-			string? errorCode = null;
-			string? errorDescription = null;
+		//public async Task UpdateUserAsync(string telNo, UserBodyDtoForUpdate userDtoU)
+		//{
+		//	#region update user
+		//	string? statusCode = null;
+		//	string? errorCode = null;
+		//	string? errorDescription = null;
 
-			await _manager.UserRepository
-				.ExecProcedureAsync<string>($@" EXEC User_Update
-					@TelNoForValidation = {telNo},
-					@FirstName = {userDtoU.FirstName}
-					@LastName = {userDtoU.LastName}
-					@CompanyName = {userDtoU.CompanyName},
-					@TelNo = {userDtoU.TelNo},
-					@Email = {userDtoU.Email},
-					@RoleName = {userDtoU.RoleName},
-					@StatusCode = {statusCode} OUT,
-					@ErrorCode = {errorCode} OUT,
-					@ErrorDescription = {errorDescription} OUT");
-            #endregion
-		}
+		//	await _manager.UserRepository
+		//		.ExecProcedureAsync<string>($@" EXEC User_Update
+		//			@TelNoForValidation = {telNo},
+		//			@FirstName = {userDtoU.FirstName}
+		//			@LastName = {userDtoU.LastName}
+		//			@CompanyName = {userDtoU.CompanyName},
+		//			@TelNo = {userDtoU.TelNo},
+		//			@Email = {userDtoU.Email},
+		//			@RoleName = {userDtoU.RoleName},
+		//			@StatusCode = {statusCode} OUT,
+		//			@ErrorCode = {errorCode} OUT,
+		//			@ErrorDescription = {errorDescription} OUT");
+		//	#endregion
+		//}
 
-		public async Task DeleteUsersAsync(UserBodyDtoForDelete userDtoD)
-		{
-			#region delete users
-			var IsFalseTelNoExists = false;
+		//public async Task DeleteUsersAsync(UserBodyDtoForDelete userDtoD)
+		//{
+		//	#region delete users
+		//	var IsFalseTelNoExists = false;
 
-			foreach (var telNo in userDtoD.TelNos)
-			{
-				#region get user by telNo
-				var user = await _manager.UserRepository
-					.GetUserByTelNoAsync(telNo);
-				#endregion
+		//	foreach (var telNo in userDtoD.TelNos)
+		//	{
+		//		#region get user by telNo
+		//		var user = await _manager.UserRepository
+		//			.GetUserByTelNoAsync(telNo);
+		//		#endregion
 
-				#region when telNo not found
-				if (user == null)
-				{
-					IsFalseTelNoExists = true;
-					break;
-				}
-				#endregion
+		//		#region when telNo not found
+		//		if (user == null)
+		//		{
+		//			IsFalseTelNoExists = true;
+		//			break;
+		//		}
+		//		#endregion
 
-				#region delete user
-				_manager.UserRepository
-					.Delete(user);
-				#endregion
+		//		#region delete user
+		//		_manager.UserRepository
+		//			.Delete(user);
+		//		#endregion
 
-				#region delete userAndRoles of user
-				var userAndRoles = await _manager.UserAndRoleRepository
-					.GetUserAndRolesByUserIdAsync(user.Id);
+		//		#region delete userAndRoles of user
+		//		var userAndRoles = await _manager.UserAndRoleRepository
+		//			.GetUserAndRolesByUserIdAsync(user.Id);
 
-				userAndRoles.ForEach(userAndRole =>
-					_manager.UserAndRoleRepository
-						.Delete(userAndRole)
-				);
-				#endregion
-			}
-			#endregion
+		//		userAndRoles.ForEach(userAndRole =>
+		//			_manager.UserAndRoleRepository
+		//				.Delete(userAndRole)
+		//		);
+		//		#endregion
+		//	}
+		//	#endregion
 
-			#region when any telNo not Found (throw)
-			if (IsFalseTelNoExists)
-				throw new ErrorWithCodeException(409,
-					"VE-U-T",
-					"Verification Error - Telephone");
-			#endregion
+		//	#region when any telNo not Found (throw)
+		//	if (IsFalseTelNoExists)
+		//		throw new ErrorWithCodeException(409,
+		//			"VE-U-T",
+		//			"Verification Error - Telephone");
+		//	#endregion
 
-			await _manager.SaveAsync();
-		}
+		//	await _manager.SaveAsync();
+		//}
 
 
 		#region private
-
-		private async Task ConflictControlAsync(
-			Expression<Func<UserView, bool>> condition,
-			string telNo, 
-			string email)
-		{
-			#region get users
-			var userViewList = await _manager.UserRepository
-				.GetUsersByConditionAsync(condition);
-			#endregion
-
-			#region control conflict error (throw)
-			if (userViewList.Count != 0)
-			{
-				#region control telNo
-				if (userViewList.Any(u => u.TelNo.Equals(telNo)))
-				{
-					_conflictErrorCode += "T";
-					_conflictErrorDescription += "TelNo ";
-				}
-				#endregion
-
-				#region control email
-				if (userViewList.Any(u => u.Email.Equals(email)))
-				{
-                    _conflictErrorCode += "E";
-                    _conflictErrorDescription += "Email ";
-				}
-                #endregion
-
-                #region throw exception
-                _conflictErrorDescription = _conflictErrorDescription.TrimEnd();
-
-				throw new ErrorWithCodeException(409, 
-					_conflictErrorCode, 
-					_conflictErrorDescription);
-				#endregion
-			}
-			#endregion
-		}
 
 		private async Task<string> ComputeMd5Async(string input) =>
 			await Task.Run(() =>
@@ -254,47 +218,49 @@ namespace Services.Concretes
 				}
 			});
 
-		private async Task<string> GenerateTokenForUserAsync(UserView userView)
-		{
-			#region set claims
-			var claims = new Collection<Claim>
-			{
-				new Claim("Id", userView.Id.ToString()),
-				new Claim("FirstName", userView.FirstName),
-				new Claim("LastName", userView.LastName)
-			};
+		//private async Task<string> GenerateTokenForUserAsync(UserView userView)
+		//{
+		//	#region set claims
+		//	var claims = new Collection<Claim>
+		//	{
+		//		new Claim("Id", userView.Id.ToString()),
+		//		new Claim("FirstName", userView.FirstName),
+		//		new Claim("LastName", userView.LastName)
+		//	};
 
-			#region add roles
-			var roleNames = await _manager.UserAndRoleRepository
-				.GetRoleNamesOfUserByUserIdAsync(userView.Id);
+		//	#region add roles
+		//	var roleNames = await _manager.UserAndRoleRepository
+		//		.GetRoleNamesOfUserByUserIdAsync(userView.Id);
 
-			foreach (var roleName in roleNames)
-				claims.Add(
-					new Claim("Role", roleName));
-			#endregion
+		//	foreach (var roleName in roleNames)
+		//		claims.Add(
+		//			new Claim("Role", roleName));
+		//	#endregion
 
-			#endregion
+		//	#endregion
 
-			#region set signingCredentials
-			var secretKeyInBytes = Encoding.UTF8
-					.GetBytes(_config.JwtSettings.SecretKey);
+		//	#region set signingCredentials
+		//	var secretKeyInBytes = Encoding.UTF8
+		//			.GetBytes(_config.JwtSettings.SecretKey);
 
-			var signingCredentials = new SigningCredentials(
-				new SymmetricSecurityKey(secretKeyInBytes),
-				SecurityAlgorithms.HmacSha256);
-			#endregion
+		//	var signingCredentials = new SigningCredentials(
+		//		new SymmetricSecurityKey(secretKeyInBytes),
+		//		SecurityAlgorithms.HmacSha256);
+		//	#endregion
 
-			#region set token
-			var token = new JwtSecurityToken(
-				issuer: _config.JwtSettings.ValidIssuer,
-				audience: _config.JwtSettings.ValidAudience,
-				claims: claims,
-				expires: DateTime.Now.AddMinutes(_config.JwtSettings.Expires),
-				signingCredentials: signingCredentials);
-			#endregion
+		//	#region set token
+		//	var token = new JwtSecurityToken(
+		//		issuer: _config.JwtSettings.ValidIssuer,
+		//		audience: _config.JwtSettings.ValidAudience,
+		//		claims: claims,
+		//		expires: DateTime.Now.AddMinutes(_config.JwtSettings.Expires),
+		//		signingCredentials: signingCredentials);
+		//	#endregion
 
-			return new JwtSecurityTokenHandler()
-				.WriteToken(token);
-		}
-	}
+		//	return new JwtSecurityTokenHandler()
+		//		.WriteToken(token);
+		//}
+
+        #endregion
+    }
 }

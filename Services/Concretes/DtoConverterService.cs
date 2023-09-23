@@ -14,117 +14,117 @@ namespace Services.Concretes
 		public DtoConverterService(IRepositoryManager repository) =>
 			_manager = repository;
 
-		public async Task<List<MachineDto>> MachineToMachineDtoAsync(List<Machine> machineList) =>
-			await Task.Run(async () =>
-			{
-				#region set machineDtoList
-				var machineDtoList = new List<MachineDto>();
+		//public async Task<List<MachineDto>> MachineToMachineDtoAsync(List<Machine> machineList) =>
+		//	await Task.Run(async () =>
+		//	{
+		//		#region set machineDtoList
+		//		var machineDtoList = new List<MachineDto>();
 
-				foreach (var machine in machineList)
-				{
-					#region set data
-					var brand = await _manager.BrandRepository
-						.GetBrandByIdAsync(machine.BrandId);
+		//		foreach (var machine in machineList)
+		//		{
+		//			#region set data
+		//			var brand = await _manager.BrandRepository
+		//				.GetBrandByIdAsync(machine.BrandId);
 					
-					var category = await _manager.CategoryRepository
-						.GetCategoryByIdAsync(machine.CategoryId);
+		//			var category = await _manager.CategoryRepository
+		//				.GetCategoryByIdAsync(machine.CategoryId);
 					
-					var mainCategory = await _manager.MainCategoryRepository
-						.GetMainCategoryByIdAsync(category.MainCategoryId);
-					#endregion
+		//			var mainCategory = await _manager.MainCategoryRepository
+		//				.GetMainCategoryByIdAsync(category.MainCategoryId);
+		//			#endregion
 
-					machineDtoList.Add(new MachineDto
-					{
-						BrandName = brand.Name,
-						MainCategoryName = mainCategory.Name,
-						SubCategoryName = category.SubCategoryName,
-						Model = machine.Model,
-						ZerothHandOrSecondHand = (HandStatus)machine.HandStatus,
-						ImagePath = machine.ImagePath,
-						Stock = machine.Stock,
-						Rented = machine.Rented,
-						Sold = machine.Sold,
-						Year = machine.Year,
-						CreatedAt = machine.CreatedAt
-					});
-				}
-				#endregion
+		//			machineDtoList.Add(new MachineDto
+		//			{
+		//				BrandName = brand.Name,
+		//				MainCategoryName = mainCategory.Name,
+		//				SubCategoryName = category.SubCategoryName,
+		//				Model = machine.Model,
+		//				ZerothHandOrSecondHand = (HandStatus)machine.HandStatus,
+		//				ImagePath = machine.ImagePath,
+		//				Stock = machine.Stock,
+		//				Rented = machine.Rented,
+		//				Sold = machine.Sold,
+		//				Year = machine.Year,
+		//				CreatedAt = machine.CreatedAt
+		//			});
+		//		}
+		//		#endregion
 
-				return machineDtoList;
-			});
+		//		return machineDtoList;
+		//	});
 
-		public async Task<MachineDto> MachineToMachineDtoAsync(Machine machine)
-		{
-			#region set data
-			var brand = await _manager.BrandRepository
-				.GetBrandByIdAsync(machine.BrandId);
+		//public async Task<MachineDto> MachineToMachineDtoAsync(Machine machine)
+		//{
+		//	#region set data
+		//	var brand = await _manager.BrandRepository
+		//		.GetBrandByIdAsync(machine.BrandId);
 
-			var category = await _manager.CategoryRepository
-				.GetCategoryByIdAsync(machine.CategoryId);
+		//	var category = await _manager.CategoryRepository
+		//		.GetCategoryByIdAsync(machine.CategoryId);
 
-			var mainCategory = await _manager.MainCategoryRepository
-				.GetMainCategoryByIdAsync(category.MainCategoryId);
-			#endregion
+		//	var mainCategory = await _manager.MainCategoryRepository
+		//		.GetMainCategoryByIdAsync(category.MainCategoryId);
+		//	#endregion
 
-			return new MachineDto
-			{
-				BrandName = brand.Name,
-				MainCategoryName = mainCategory.Name,
-				SubCategoryName = category.SubCategoryName,
-				Model = machine.Model,
-				ZerothHandOrSecondHand = (HandStatus)machine.HandStatus,
-				ImagePath = machine.ImagePath,
-				Stock = machine.Stock,
-				Rented = machine.Rented,
-				Sold = machine.Sold,
-				Year = machine.Year,
-				CreatedAt = machine.CreatedAt
-			};
-		}
+		//	return new MachineDto
+		//	{
+		//		BrandName = brand.Name,
+		//		MainCategoryName = mainCategory.Name,
+		//		SubCategoryName = category.SubCategoryName,
+		//		Model = machine.Model,
+		//		ZerothHandOrSecondHand = (HandStatus)machine.HandStatus,
+		//		ImagePath = machine.ImagePath,
+		//		Stock = machine.Stock,
+		//		Rented = machine.Rented,
+		//		Sold = machine.Sold,
+		//		Year = machine.Year,
+		//		CreatedAt = machine.CreatedAt
+		//	};
+		//}
 
-		public async Task<ICollection<UserDto>> UserToUserDtoAsync(List<User> users) =>
-			await Task.Run(async () =>
-			{
-				#region set userDtos collection
-				var userDtos = new Collection<UserDto>();
+		//public async Task<ICollection<UserDto>> UserToUserDtoAsync(List<User> users) =>
+		//	await Task.Run(async () =>
+		//	{
+		//		#region set userDtos collection
+		//		var userDtos = new Collection<UserDto>();
 
-				foreach (var user in users)
-				{
-					#region get company and userAndRoles
-					var company = await _manager.CompanyRepository
-						.GetCompanyByIdAsync(user.CompanyId);
+		//		foreach (var user in users)
+		//		{
+		//			#region get company and userAndRoles
+		//			var company = await _manager.CompanyRepository
+		//				.GetCompanyByIdAsync(user.CompanyId);
 
-					var userAndRoles = await _manager.UserAndRoleRepository
-						.GetUserAndRolesByUserIdAsync(user.Id);
-					#endregion
+		//			var userAndRoles = await _manager.UserAndRoleRepository
+		//				.GetUserAndRolesByUserIdAsync(user.Id);
+		//			#endregion
 
-					#region set roleNames collection
-					var roleNames = new Collection<string>();
+		//			#region set roleNames collection
+		//			var roleNames = new Collection<string>();
 
-					foreach (var userAndRole in userAndRoles)
-					{
-						var role = await _manager.RoleRepository
-							.GetRoleByIdAsync(userAndRole.RoleId);
+		//			foreach (var userAndRole in userAndRoles)
+		//			{
+		//				var role = await _manager.RoleRepository
+		//					.GetRoleByIdAsync(userAndRole.RoleId);
 
-						roleNames.Add(role.Name);
-					}
-					#endregion
+		//				roleNames.Add(role.Name);
+		//			}
+		//			#endregion
 
-					userDtos.Add(new UserDto
-					{
-						Id = user.Id,
-						FirstName = user.FirstName,
-						LastName = user.LastName,
-						CompanyName = company.Name,
-						TelNo = user.TelNo,
-						Email = user.Email,
-						RoleNames = roleNames,
-						CreatedAt = user.CreatedAt
-					});
-				}
-				#endregion
+		//			userDtos.Add(new UserDto
+		//			{
+		//				Id = user.Id,
+		//				FirstName = user.FirstName,
+		//				LastName = user.LastName,
+		//				CompanyName = company.Name,
+		//				TelNo = user.TelNo,
+		//				Email = user.Email,
+		//				RoleNames = roleNames,
+		//				CreatedAt = user.CreatedAt
+		//			});
+		//		}
+		//		#endregion
 
-				return userDtos;
-			});
+		//		return userDtos;
+		//	});
     }
 }

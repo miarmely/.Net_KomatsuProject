@@ -4,6 +4,6 @@ namespace Services.Contracts
 {
     public interface IRoleService
     {
-        Task<IEnumerable<string>> GetAllRolesAsync();
+        //Task<IEnumerable<string>> GetAllRolesAsync();
     }
 }

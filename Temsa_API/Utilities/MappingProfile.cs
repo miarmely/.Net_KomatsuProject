@@ -15,14 +15,11 @@ namespace Temsa.Utilities
 			// to UserDto
 			CreateMap<User, UserDto>();
 			CreateMap<UserBodyDtoForCreate, UserDto>();
-			CreateMap<UserBodyDtoForRegister, UserDto>();
-
+			
             // to User
-            CreateMap<UserBodyDtoForRegister, User>();
             CreateMap<UserBodyDtoForCreate, User>();
 
 			// to UserDtoForConflictControl
-			CreateMap<UserBodyDtoForRegister, UserDtoForConflictControl>();
             CreateMap<UserBodyDtoForCreate, UserDtoForConflictControl>();
             CreateMap<UserBodyDtoForUpdate, UserDtoForConflictControl>();
 

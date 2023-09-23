@@ -1,32 +1,31 @@
 ﻿using Dapper;
 using Entities.DataModels;
+using Entities.DtoModels;
 using Entities.DtoModels.QueryModels;
 using Entities.ViewModels;
 using System.Linq.Expressions;
 
 namespace Repositories.Contracts
 {
-    public interface IUserRepository : IRepositoryBase<User>
+    public interface IUserRepository : IRepositoryBase<UserView>
     {
-        Task CreateUserAsync(string procedureName, DynamicParameters parameters);
+        Task<ErrorDto> CreateUserAsync(DynamicParameters parameters);
+        Task<IEnumerable<UserView>?> GetAllUsersAsync();
 
-        Task<PagingList<UserView>> GetAllUsersAsync(PaginationQueryDto pagingParameters);
+        Task<PagingList<UserView>?> GetAllUsersWithPagingAsync(
+            PaginationQueryDto paginationQueryDto);
 
-		Task<PagingList<UserView>> GetAllUsersAsync<T>
-			(PaginationQueryDto pagingParameters,
-			Expression<Func<UserView, T>> orderBy, 
-			bool asAscending = true);
-        Task<List<UserView>> GetUsersByConditionAsync(
-            Expression<Func<UserView, bool>> condition);
+  //      Task<List<UserView>> GetUsersByConditionAsync(
+  //          Expression<Func<UserView, bool>> condition);
 
-        Task<List<UserView>> GetUsersByConditionAsync(
-            PaginationQueryDto paginationQueryDto,
-            Expression<Func<UserView, bool>> condition);
+  //      Task<List<UserView>> GetUsersByConditionAsync(
+  //          PaginationQueryDto paginationQueryDto,
+  //          Expression<Func<UserView, bool>> condition);
 
-		Task<List<UserView>> GetUsersByConditionAsync<T>(
-            PaginationQueryDto paginationQueryDto,
-            Expression<Func<UserView, bool>> condition, 
-			Expression<Func<UserView, T>> orderBy, 
-			bool asAscending = true);		
+		//Task<List<UserView>> GetUsersByConditionAsync<T>(
+  //          PaginationQueryDto paginationQueryDto,
+  //          Expression<Func<UserView, bool>> condition, 
+		//	Expression<Func<UserView, T>> orderBy, 
+		//	bool asAscending = true);		
 	}
 }

@@ -7,9 +7,9 @@ namespace Repositories.Concretes
 {
     public class RepositoryBase<T> : IRepositoryBase<T> where T : class
     {
-        public DapperContext _context { get; }
+        public RepositoryContext _context { get; }
 
-        public RepositoryBase(DapperContext context) =>
+        public RepositoryBase(RepositoryContext context) =>
             _context = context;
 
         public async Task<int> Count(string tableName)

@@ -4,12 +4,12 @@ using System.Data;
 
 namespace Repositories
 {
-    public class DapperContext
+    public class RepositoryContext
     {
         private readonly IConfiguration _configuration;
         private readonly string _connectionString;
 
-        public DapperContext(IConfiguration configuration)
+        public RepositoryContext(IConfiguration configuration)
         {
             _configuration = configuration;
             _connectionString = _configuration.GetConnectionString("SqlServer");
