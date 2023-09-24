@@ -151,22 +151,12 @@ namespace Presantation.ActionFilters.Attributes
 
                 #region control '.'
 
-                #region dot quantity more than 1
-                var dotQuantity = emailExtension.Where(c => c.Equals('.'))
-                    .Count();
-
-                if (dotQuantity != 1)
-                    return false;
-                #endregion
-
-                #region general control
                 var dotIndex = emailExtension.IndexOf('.');
 
                 if (dotIndex == -1  // when '.' not found
                     || dotIndex == 0  // when no char between '@' and '.'
                     || dotIndex == emailExtension.Length - 1)  // when '.' last Index
                     return false;
-                #endregion
 
                 #endregion
 

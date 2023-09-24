@@ -1,8 +1,5 @@
 ﻿using Entities.DataModels;
-using Entities.DtoModels.QueryModels;
-using Entities.ViewModels;
 using Repositories.Contracts;
-using System.Linq.Expressions;
 
 namespace Repositories.Concretes
 {

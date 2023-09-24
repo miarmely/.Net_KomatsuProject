@@ -1,10 +1,8 @@
-﻿using Entities.DataModels;
-using Entities.DtoModels.QueryModels;
-using Repositories.Contracts;
+﻿using Repositories.Contracts;
 
 namespace Repositories.Concretes
 {
-    public class CompanyRepository : RepositoryBase<Company>, ICompanyRepository
+    public class CompanyRepository : RepositoryBase<string>, ICompanyRepository
 	{
 		public CompanyRepository(RepositoryContext context) : base(context)
 		{ }

@@ -1,4 +1,5 @@
-﻿using Repositories.Contracts;
+﻿using Entities.ConfigModels.Contracts;
+using Repositories.Contracts;
 
 
 namespace Repositories.Concretes
@@ -23,10 +24,12 @@ namespace Repositories.Concretes
 		public IBrandRepository BrandRepository => _brandRepository.Value;
 		public ICategoryRepository CategoryRepository => _categoryRepository.Value;
 
-		public RepositoryManager(RepositoryContext context)
+		public RepositoryManager(
+			RepositoryContext context,
+			IConfigManager configManager)
 		{
 			_userRepository = new Lazy<IUserRepository>(() =>
-				new UserRepository(context));
+				new UserRepository(context, configManager));
 			_companyRepository = new Lazy<ICompanyRepository>(() =>
 				new CompanyRepository(context));
 			_userAndRoleRepository = new Lazy<IUserAndRoleRepository>(() =>

@@ -1,7 +1,8 @@
 ﻿using Dapper;
 using Entities.DataModels;
 using Entities.DtoModels;
-using Entities.DtoModels.QueryModels;
+using Entities.DtoModels.UserDtos;
+using Entities.QueryModels;
 using Entities.ViewModels;
 using System.Linq.Expressions;
 
@@ -10,10 +11,13 @@ namespace Repositories.Contracts
     public interface IUserRepository : IRepositoryBase<UserView>
     {
         Task<ErrorDto?> CreateUserAsync(DynamicParameters parameters);
+        Task<ErrorDto?> UpdateUserByTelNoAsync(DynamicParameters parameters);
+        Task DeleteUsersByTelNoListAsync(IEnumerable<string> telNoList);
         Task<IEnumerable<UserView>?> GetAllUsersAsync();
 
         Task<PagingList<UserView>?> GetAllUsersWithPagingAsync(
-            PaginationQueryDto paginationQueryDto);
+            PaginationParameters paginationQueryDto);
+
 
   //      Task<List<UserView>> GetUsersByConditionAsync(
   //          Expression<Func<UserView, bool>> condition);

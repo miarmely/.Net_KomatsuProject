@@ -1,5 +1,5 @@
-﻿using Entities.DtoModels.QueryModels;
-using Entities.DtoModels.UserDtos;
+﻿using Entities.DtoModels.UserDtos;
+using Entities.QueryModels;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Presantation.ActionFilters;
@@ -33,21 +33,10 @@ namespace Presantation.Controllers
         //}
 
 
-        //[HttpPost("register")]
-        //[ValidationUserFormat]
-        //public async Task<IActionResult> RegisterAsync(
-        //    [FromBody] UserBodyDtoForRegister userDtoR)
-        //{
-        //    await _manager.UserService
-        //        .RegisterAsync(userDtoR);
-
-        //    return StatusCode(StatusCodes.Status201Created);
-        //}
-
-
 		[HttpPost("create")]
 		[ValidationUserFormat]
-		public async Task<IActionResult> CreateUserAsync(
+        [ValidationNullArguments]
+        public async Task<IActionResult> CreateUserAsync(
             [FromBody] UserDtoForCreate userDto)
 		{
             await _manager.UserService
@@ -59,7 +48,7 @@ namespace Presantation.Controllers
 
         [HttpGet("display")]
         public async Task<IActionResult> GetAllUsersWithPaginationAsync(
-            [FromQuery] PaginationQueryDto pagingParameters)
+            [FromQuery] PaginationParameters pagingParameters)
         {
             var entity = await _manager.UserService
                 .GetAllUsersWithPagingAsync(pagingParameters, Response);
@@ -68,29 +57,29 @@ namespace Presantation.Controllers
         }
 
 
-        //      [HttpPut("update/{email}")]
-        //      [ValidationUserFormat]
-        //      [ValidationNullArguments]
-        //      public async Task<IActionResult> GetUpdateUserAsync(
-        //          [FromRoute(Name = "email")] string email,
-        //          [FromBody] UserBodyDtoForUpdate userDtoU)
-        //      {
-        //          await _manager.UserService
-        //              .UpdateUserAsync(email, userDtoU);
+        [HttpPut("update/{telNo}")]
+        [ValidationUserFormat]
+        [ValidationNullArguments]
+        public async Task<IActionResult> UpdateUserByTelNoAsync(
+            [FromRoute(Name = "telNo")] string telNo,
+            [FromBody] UserDtoForUpdate userDto)
+        {
+            await _manager.UserService
+                .UpdateUserByTelNoAsync(telNo, userDto);
 
-        //          return NoContent();
-        //      }
+            return NoContent();
+        }
 
 
-        //      [HttpDelete("delete")]
-        //[ValidationNullArguments]
-        //public async Task<IActionResult> DeleteUsersAsync(
-        //          [FromBody] UserBodyDtoForDelete userDtoD)
-        //      {
-        //          await _manager.UserService
-        //              .DeleteUsersAsync(userDtoD);
+        [HttpDelete("delete")]
+        [ValidationNullArguments]
+        public async Task<IActionResult> DeleteUsersAsync(
+            [FromBody] UserDtoForDelete userDto)
+        {
+            await _manager.UserService
+                .DeleteUsersByTelNoListAsync(userDto);
 
-        //          return NoContent();
-        //}
+            return NoContent();
+        }
     }
 }

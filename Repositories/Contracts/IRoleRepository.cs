@@ -3,7 +3,7 @@
 
 namespace Repositories.Contracts
 {
-	public interface IRoleRepository : IRepositoryBase<Role>
+	public interface IRoleRepository : IRepositoryBase<string>
 	{
 		//Task<List<Role>> GetAllRolesAsync();
 		//Task<Role?> GetRoleByIdAsync(int id);

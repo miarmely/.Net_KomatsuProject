@@ -1,5 +1,5 @@
-﻿using Entities.DtoModels.QueryModels;
-using Entities.DtoModels.UserDtos;
+﻿using Entities.DtoModels.UserDtos;
+using Entities.QueryModels;
 using Microsoft.AspNetCore.Http;
 
 namespace Services.Contracts
@@ -9,11 +9,14 @@ namespace Services.Contracts
 		//Task<string> LoginAsync(UserBodyDtoForLogin userDtoL);
 		Task CreateUserAsync(UserDtoForCreate userDto);
 
-		//Task UpdateUserAsync(string email, UserBodyDtoForUpdate userDtoU);
-		//Task DeleteUsersAsync(UserBodyDtoForDelete userDtoD);
+		Task UpdateUserByTelNoAsync(string telNo, UserDtoForUpdate userDto);
+
+        Task DeleteUsersByTelNoListAsync(UserDtoForDelete userDto);
 
         Task<IEnumerable<UserDto>> GetAllUsersWithPagingAsync(
-            PaginationQueryDto pagingParameters,
+            PaginationParameters pagingParameters,
             HttpResponse response);
+
+
     }
 }

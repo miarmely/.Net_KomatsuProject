@@ -1,9 +1,6 @@
-﻿using Entities.DataModels.RelationModels;
-using Entities.ViewModels;
-
-namespace Repositories.Contracts
+﻿namespace Repositories.Contracts
 {
-    public interface IUserAndRoleRepository : IRepositoryBase<UserAndRole>
+    public interface IUserAndRoleRepository : IRepositoryBase<string>
 	{
 		//Task<List<UserAndRole>> GetUserAndRolesByUserIdAsync(Guid? id);
 		//Task<List<UserAndRole>> GetUserAndRolesByRoleIdAsync(int id);

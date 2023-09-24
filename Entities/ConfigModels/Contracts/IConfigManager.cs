@@ -6,6 +6,7 @@
 		JwtSettingsConfig JwtSettings { get; }
 		MailSettingsConfig MailSettings { get; }
 		FileServiceSettingsConfig FileServiceSettings { get; }
-		CategoryNamesConfig CategoryNamesConfig { get; }
+		CategoryNamesConfig CategoryNames { get; }
+		DbSettingsConfig DbSettings { get; }
 	}
 }

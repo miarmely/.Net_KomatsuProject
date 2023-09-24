@@ -3,7 +3,7 @@ using Repositories.Contracts;
 
 namespace Repositories.Concretes
 {
-	public class RoleRepository : RepositoryBase<Role>, IRoleRepository
+	public class RoleRepository : RepositoryBase<string>, IRoleRepository
 	{
 		public RoleRepository(RepositoryContext context) : base(context)
 		{ }

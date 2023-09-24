@@ -1,9 +1,4 @@
-﻿using Entities.DtoModels;
-using Entities.DtoModels.BodyModels;
-using Entities.DtoModels.QueryModels;
-using Microsoft.AspNetCore.Http;
-
-namespace Services.Contracts
+﻿namespace Services.Contracts
 {
     public interface IMachineService
 	{

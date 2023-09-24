@@ -1,12 +1,4 @@
 ﻿using AutoMapper;
-using Entities.DataModels;
-using Entities.DtoModels;
-using Entities.DtoModels.BodyModels;
-using Entities.DtoModels.EnumModels;
-using Entities.DtoModels.QueryModels;
-using Entities.Exceptions;
-using Entities.ViewModels;
-using Microsoft.AspNetCore.Http;
 using Repositories.Contracts;
 using Services.Contracts;
 

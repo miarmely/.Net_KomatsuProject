@@ -1,11 +1,9 @@
-﻿using Entities.DataModels.RelationModels;
-using Entities.ViewModels;
-using Repositories.Contracts;
+﻿using Repositories.Contracts;
 
 namespace Repositories.Concretes
 {
     public class UserAndRoleRepository 
-        : RepositoryBase<UserAndRole>, IUserAndRoleRepository
+        : RepositoryBase<string>, IUserAndRoleRepository
     {
         public UserAndRoleRepository(RepositoryContext context)
             : base(context)

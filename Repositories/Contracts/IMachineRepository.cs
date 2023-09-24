@@ -1,7 +1,4 @@
 ﻿using Entities.DataModels;
-using Entities.DtoModels.QueryModels;
-using Entities.ViewModels;
-using System.Linq.Expressions;
 
 namespace Repositories.Contracts
 {

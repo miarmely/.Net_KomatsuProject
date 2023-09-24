@@ -1,22 +1,12 @@
 ﻿using AutoMapper;
 using Dapper;
 using Entities.ConfigModels.Contracts;
-using Entities.DataModels.RelationModels;
-using Entities.DtoModels.BodyModels;
-using Entities.DtoModels.QueryModels;
 using Entities.DtoModels.UserDtos;
 using Entities.Exceptions;
-using Entities.ViewModels;
+using Entities.QueryModels;
 using Microsoft.AspNetCore.Http;
-using Microsoft.IdentityModel.Tokens;
-using NLog.Filters;
 using Repositories.Contracts;
 using Services.Contracts;
-using System.Collections.ObjectModel;
-using System.Data;
-using System.IdentityModel.Tokens.Jwt;
-using System.Linq.Expressions;
-using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
 
@@ -26,17 +16,17 @@ namespace Services.Concretes
     public class UserService : IUserService
     {
         private readonly IRepositoryManager _manager;
-        private readonly IConfigManager _config;
+        private readonly IConfigManager _configManager;
         private readonly IMapper _mapper;
         private readonly IDtoConverterService _dtoConverterService;
 
         public UserService(IRepositoryManager manager,
-            IConfigManager config,
+            IConfigManager configManager,
             IMapper mapper,
             IDtoConverterService dtoConverterService)
         {
             _manager = manager;
-            _config = config;
+            _configManager = configManager;
             _mapper = mapper;
             _dtoConverterService = dtoConverterService;
         }
@@ -70,11 +60,12 @@ namespace Services.Concretes
         {
             #region set parameters
 
-            #region sort roleNames if enter
+            #region sort roleNames if entered
             if (userDto.RoleNames != null)
                 userDto.RoleNames.Sort();
             #endregion
 
+            #region set parameters
             var userDtoForProc = new UserDtoForCreateProcedure
             {
                 FirstName = userDto.FirstName,
@@ -85,28 +76,27 @@ namespace Services.Concretes
                 Password = await ComputeMd5Async(userDto.Password),
                 #region RoleNames
                 RoleNames = userDto.RoleNames == null ?
-                    "User"
-                    : string.Join(", ", userDto.RoleNames)
+                    _configManager.UserSettings.DefaultRole  // set default role
+                    : string.Join(", ", userDto.RoleNames)  // convert list to string
                 #endregion
             };
-            var parameters = new DynamicParameters();
-
-            parameters.AddDynamicParams(userDtoForProc);
+            var parameters = new DynamicParameters(userDtoForProc);
             #endregion
-            
-            #region create user
+
+            #endregion
+
+            #region create user (throw)
             var errorDto = await _manager.UserRepository
                 .CreateUserAsync(parameters);
-            #endregion
-
-            #region when error occured (throw)
+            
+            // when any error occured
             if (errorDto != null)
                 throw new ErrorWithCodeException(errorDto);
             #endregion
         }
 
         public async Task<IEnumerable<UserDto>> GetAllUsersWithPagingAsync(
-            PaginationQueryDto pagingParameters,
+            PaginationParameters pagingParameters,
             HttpResponse response)
         {
             #region get userViews
@@ -130,75 +120,57 @@ namespace Services.Concretes
             return _mapper.Map<IEnumerable<UserDto>>(userViews);
         }
 
-        //public async Task UpdateUserAsync(string telNo, UserBodyDtoForUpdate userDtoU)
-        //{
-        //	#region update user
-        //	string? statusCode = null;
-        //	string? errorCode = null;
-        //	string? errorDescription = null;
+        public async Task UpdateUserByTelNoAsync(
+            string telNo,
+            UserDtoForUpdate userDto)
+        {
+            #region set parameters
 
-        //	await _manager.UserRepository
-        //		.ExecProcedureAsync<string>($@" EXEC User_Update
-        //			@TelNoForValidation = {telNo},
-        //			@FirstName = {userDtoU.FirstName}
-        //			@LastName = {userDtoU.LastName}
-        //			@CompanyName = {userDtoU.CompanyName},
-        //			@TelNo = {userDtoU.TelNo},
-        //			@Email = {userDtoU.Email},
-        //			@RoleName = {userDtoU.RoleName},
-        //			@StatusCode = {statusCode} OUT,
-        //			@ErrorCode = {errorCode} OUT,
-        //			@ErrorDescription = {errorDescription} OUT");
-        //	#endregion
-        //}
+            #region sort roleNames if entered
+            if (userDto.RoleNames != null  // when role name entered
+                && userDto.RoleNames.Count > 1)  // when role names more than 1
+                userDto.RoleNames.Sort();
+            #endregion
 
-        //public async Task DeleteUsersAsync(UserBodyDtoForDelete userDtoD)
-        //{
-        //	#region delete users
-        //	var IsFalseTelNoExists = false;
+            #region set parameters
+            var userDtoForProc = new UserDtoForUpdateProcedure
+            {
+                TelNoForValidation = telNo,
+                FirstName = userDto.FirstName,
+                LastName = userDto.LastName,
+                CompanyName = userDto.CompanyName,
+                TelNo = userDto.TelNo,
+                Email = userDto.Email,
+                #region Password
+                Password = userDto.Password == null ?
+                    null
+                    : await ComputeMd5Async(userDto.Password),
+                #endregion
+                #region RoleNames
+                RoleNames = userDto.RoleNames == null ?
+                    null
+                    : string.Join(", ", userDto.RoleNames)
+                #endregion
+            };
+            var parameters = new DynamicParameters(userDtoForProc);
+            #endregion
 
-        //	foreach (var telNo in userDtoD.TelNos)
-        //	{
-        //		#region get user by telNo
-        //		var user = await _manager.UserRepository
-        //			.GetUserByTelNoAsync(telNo);
-        //		#endregion
+            #endregion
 
-        //		#region when telNo not found
-        //		if (user == null)
-        //		{
-        //			IsFalseTelNoExists = true;
-        //			break;
-        //		}
-        //		#endregion
+            #region update user (throw)
+            var errorDto = await _manager.UserRepository
+                .UpdateUserByTelNoAsync(parameters);
+            
+            // when any error occured
+            if (errorDto != null)
+                throw new ErrorWithCodeException(errorDto);
+            #endregion
+        }
 
-        //		#region delete user
-        //		_manager.UserRepository
-        //			.Delete(user);
-        //		#endregion
-
-        //		#region delete userAndRoles of user
-        //		var userAndRoles = await _manager.UserAndRoleRepository
-        //			.GetUserAndRolesByUserIdAsync(user.Id);
-
-        //		userAndRoles.ForEach(userAndRole =>
-        //			_manager.UserAndRoleRepository
-        //				.Delete(userAndRole)
-        //		);
-        //		#endregion
-        //	}
-        //	#endregion
-
-        //	#region when any telNo not Found (throw)
-        //	if (IsFalseTelNoExists)
-        //		throw new ErrorWithCodeException(409,
-        //			"VE-U-T",
-        //			"Verification Error - Telephone");
-        //	#endregion
-
-        //	await _manager.SaveAsync();
-        //}
-
+        public async Task DeleteUsersByTelNoListAsync(UserDtoForDelete userDto) =>
+            await _manager.UserRepository
+                .DeleteUsersByTelNoListAsync(userDto.TelNoList);
+        
 
         #region private
 
@@ -207,7 +179,7 @@ namespace Services.Concretes
             {
                 using (var md5 = MD5.Create())
                 {
-                    #region hash to input
+                    #region do hash to input
                     var hashInBytes = md5.ComputeHash(Encoding.UTF8
                         .GetBytes(input));
 
