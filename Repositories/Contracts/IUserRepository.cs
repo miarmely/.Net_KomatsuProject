@@ -9,7 +9,7 @@ namespace Repositories.Contracts
 {
     public interface IUserRepository : IRepositoryBase<UserView>
     {
-        Task<ErrorDto> CreateUserAsync(DynamicParameters parameters);
+        Task<ErrorDto?> CreateUserAsync(DynamicParameters parameters);
         Task<IEnumerable<UserView>?> GetAllUsersAsync();
 
         Task<PagingList<UserView>?> GetAllUsersWithPagingAsync(

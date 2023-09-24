@@ -5,17 +5,17 @@ namespace Repositories
     public class PagingList<T> : List<T> where T : class
     {
         public int TotalPage { get; private set; }
-        public int TotalCount { get; private set; }
-        public int LastPageCount => TotalCount % PageSize == 0 ?
+        public Int64 TotalCount { get; private set; }
+        public int LastPageCount => (int)TotalCount % PageSize == 0 ?
             PageSize  // when lastPage full
-            : TotalCount % PageSize;  // when lastPage not full
+            : (int)TotalCount % PageSize;  // when lastPage not full
         public int CurrentPageNo { get; private set; }
         public int PageSize { get; private set; }
         public bool HasPrevious => CurrentPageNo > 1;
         public bool HasNext => CurrentPageNo < TotalPage;
 
         public PagingList(IEnumerable<T> entity,
-            int totalCount,
+            Int64 totalCount,
             int pageNumber,
             int pageSize)
         {
@@ -32,7 +32,7 @@ namespace Repositories
 
         public async static Task<PagingList<T>> ToPagingListAsync(
             IEnumerable<T> source,
-            int totalCount, 
+            Int64 totalCount, 
             int pageNumber, 
             int pageSize) =>
                 await Task.Run(() => 

@@ -15,19 +15,19 @@ namespace Repositories.Concretes
         public UserRepository(RepositoryContext context) : base(context)
         { }
 
-        public async Task<ErrorDto> CreateUserAsync(DynamicParameters parameters)
+        public async Task<ErrorDto?> CreateUserAsync(DynamicParameters parameters)
         {
-            #region create user
             using (var connection = _context.CreateSqlConnection())
             {
+                #region create user
                 var errorDto = await connection.QuerySingleOrDefaultAsync<ErrorDto>(
                     "User_Create",
                     parameters,
                     commandType: CommandType.StoredProcedure);
+                #endregion
 
                 return errorDto;
             }
-            #endregion
         }
 
         public async Task<IEnumerable<UserView>?> GetAllUsersAsync() =>
@@ -80,6 +80,7 @@ namespace Repositories.Concretes
 
         #region private
 
+
         private async Task<object> BaseGetAllUsersAsync(
             PaginationQueryDto? paginationQueryDto = null)
         {
@@ -87,12 +88,10 @@ namespace Repositories.Concretes
             var parameters = new DynamicParameters();
 
             #region add totalCount parameter
-            var totalCount = 0;
-
             parameters.Add("TotalCount",
-                totalCount,
+                0,
                 DbType.Int64,
-                ParameterDirection.InputOutput);
+                ParameterDirection.Output);
             #endregion
 
             #region add pagination infos to parameters
@@ -103,12 +102,12 @@ namespace Repositories.Concretes
             #endregion
 
             #region get userViews
-            IEnumerable<UserView>? userViews;
+            IEnumerable<UserView> userViews;
             var userViewDict = new Dictionary<Guid, UserView>();
 
-            #region get userViews with multi-mapping
             using (var connection = _context.CreateSqlConnection())
             {
+                #region get userViews with multi-mapping
                 userViews = await connection
                     .QueryAsync<UserView, RolePartForUserView, UserView>(
                        "User_GetAll",
@@ -133,18 +132,23 @@ namespace Repositories.Concretes
                        parameters,
                        splitOn: "RoleId",
                        commandType: CommandType.StoredProcedure);
+                #endregion
             }
             #endregion
 
-            #endregion
-
-            #region return paginationList if wanting pagination
-            if (paginationQueryDto != null)
+            #region return paginationList if wants
+            if (paginationQueryDto != null 
+                && userViews != null)
+            {
+                // get totalCount from output parameter in database
+                var totalCount = parameters.Get<Int64>("TotalCount");
+                
                 return await PagingList<UserView>.ToPagingListAsync(
                     userViewDict.Values,
                     totalCount,
                     paginationQueryDto.PageNumber,
                     paginationQueryDto.PageSize);
+            }
             #endregion
 
             return userViewDict.Values;

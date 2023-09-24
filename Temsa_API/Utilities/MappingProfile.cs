@@ -2,6 +2,7 @@
 using Entities.DataModels;
 using Entities.DtoModels;
 using Entities.DtoModels.BodyModels;
+using Entities.DtoModels.UserDtos;
 using Entities.ViewModels;
 
 namespace Temsa_Api.Utilities

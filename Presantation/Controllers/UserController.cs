@@ -1,5 +1,5 @@
-﻿using Entities.DtoModels.BodyModels;
-using Entities.DtoModels.QueryModels;
+﻿using Entities.DtoModels.QueryModels;
+using Entities.DtoModels.UserDtos;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Presantation.ActionFilters;
@@ -48,10 +48,10 @@ namespace Presantation.Controllers
 		[HttpPost("create")]
 		[ValidationUserFormat]
 		public async Task<IActionResult> CreateUserAsync(
-            [FromBody] UserBodyDtoForCreate userDtoC)
+            [FromBody] UserDtoForCreate userDto)
 		{
             await _manager.UserService
-                .CreateUserAsync(userDtoC);
+                .CreateUserAsync(userDto);
 
 			return StatusCode(StatusCodes.Status201Created);
 		}
