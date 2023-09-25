@@ -45,6 +45,37 @@ namespace Repositories.Concretes
             await BaseGetAllUsersAsync(paginationQueryDto)
                 as PagingList<UserView>;
 
+        public async Task<UserView?> GetUserByTelNoAsync(DynamicParameters parameters)
+        {
+            using(var connection = _context.CreateSqlConnection())
+            {
+                #region get userView
+                UserView? userView = null;
+
+                await connection.QueryAsync<UserView, RolePartForUserView, UserView>(
+                    _config.DbSettings.ProcedureNames.User_DisplayByTelNo,
+                    (userViewPart, rolePart) =>
+                    {
+                        #region populate userView
+                        // initialize if not initialized
+                        if (userView == null)
+                            userView = userViewPart;
+
+                        // add roleName
+                        userView.RoleNames.Add(rolePart.RoleName);
+                        #endregion
+
+                        return userView;
+                    },
+                    parameters,
+                    splitOn: "RoleId",
+                    commandType: CommandType.StoredProcedure);
+                #endregion
+
+                return userView;
+            }
+        }
+
         public async Task DeleteUsersByTelNoListAsync(IEnumerable<string> telNoList)
         {
             using (var connection = _context.CreateSqlConnection())

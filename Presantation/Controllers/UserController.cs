@@ -1,5 +1,6 @@
 ﻿using Entities.DtoModels.UserDtos;
 using Entities.QueryModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Presantation.ActionFilters;
@@ -19,22 +20,35 @@ namespace Presantation.Controllers
 			_manager = services;
 
 
-        //[HttpPost("login")]
-        //[ValidationUserFormat]
-        //public async Task<IActionResult> LoginAsync(UserBodyDtoForLogin userDto)
-        //{
-        //    var token = await _manager.UserService
-        //        .LoginAsync(userDto);
+        [HttpPost("login")]
+        [ValidationUserFormat]
+        public async Task<IActionResult> LoginAsync(UserDtoForLogin userDto)
+        {
+            var token = await _manager.UserService
+                .LoginAsync(userDto);
 
-        //    return Ok(new
-        //    {
-        //        Token = token
-        //    });
-        //}
+            return Ok(new
+            {
+                Token = token
+            });
+        }
+
+        [HttpPost("register")]
+        [ValidationUserFormat]
+        [ValidationNullArguments]
+        public async Task<IActionResult> RegisterAsync(
+            [FromBody] UserDtoForRegister userDto)
+        {
+            await _manager.UserService
+                .RegisterAsync(userDto);
+
+            return StatusCode(StatusCodes.Status201Created);
+        }
 
 
-		[HttpPost("create")]
-		[ValidationUserFormat]
+        [HttpPost("create")]
+        [Authorize(Roles = "Editor,Admin")]
+        [ValidationUserFormat]
         [ValidationNullArguments]
         public async Task<IActionResult> CreateUserAsync(
             [FromBody] UserDtoForCreate userDto)
@@ -46,6 +60,7 @@ namespace Presantation.Controllers
 		}
 
 
+        [Authorize]
         [HttpGet("display")]
         public async Task<IActionResult> GetAllUsersWithPaginationAsync(
             [FromQuery] PaginationParameters pagingParameters)
@@ -58,6 +73,7 @@ namespace Presantation.Controllers
 
 
         [HttpPut("update/{telNo}")]
+        [Authorize(Roles = "Editor,Admin")]
         [ValidationUserFormat]
         [ValidationNullArguments]
         public async Task<IActionResult> UpdateUserByTelNoAsync(
@@ -72,6 +88,7 @@ namespace Presantation.Controllers
 
 
         [HttpDelete("delete")]
+        [Authorize(Roles = "Admin")]
         [ValidationNullArguments]
         public async Task<IActionResult> DeleteUsersAsync(
             [FromBody] UserDtoForDelete userDto)

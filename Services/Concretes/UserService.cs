@@ -4,9 +4,15 @@ using Entities.ConfigModels.Contracts;
 using Entities.DtoModels.UserDtos;
 using Entities.Exceptions;
 using Entities.QueryModels;
+using Entities.ViewModels;
 using Microsoft.AspNetCore.Http;
+using Microsoft.IdentityModel.Tokens;
 using Repositories.Contracts;
 using Services.Contracts;
+using System.Collections.ObjectModel;
+using System.Data;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
 
@@ -16,45 +22,54 @@ namespace Services.Concretes
     public class UserService : IUserService
     {
         private readonly IRepositoryManager _manager;
-        private readonly IConfigManager _configManager;
+        private readonly IConfigManager _config;
         private readonly IMapper _mapper;
-        private readonly IDtoConverterService _dtoConverterService;
-
+        
         public UserService(IRepositoryManager manager,
-            IConfigManager configManager,
-            IMapper mapper,
-            IDtoConverterService dtoConverterService)
+            IConfigManager config,
+            IMapper mapper)
         {
             _manager = manager;
-            _configManager = configManager;
+            _config = config;
             _mapper = mapper;
-            _dtoConverterService = dtoConverterService;
         }
 
-        //public async Task<string> LoginAsync(UserBodyDtoForLogin UserDtoL)
-        //{
-        //	#region get userView by telNo
-        //	var userView = await _manager.UserRepository
-        //		.GetUserByTelNoAsync(UserDtoL.TelNo);
-        //	#endregion
+        public async Task<string> LoginAsync(UserDtoForLogin userDto)
+        {
+            #region set paramaters
+            var parameters = new DynamicParameters();
+            parameters.Add("TelNo", userDto.TelNo, DbType.String);
+            #endregion
 
-        //	#region when telNo not found (throw)
-        //	_ = userView ?? throw new ErrorWithCodeException(404,
-        //		"VE-U-T",
-        //		"Verification Error - User - Telephone");
-        //	#endregion
+            #region get userView by telNo
+            var userView = await _manager.UserRepository
+                .GetUserByTelNoAsync(parameters);
+            #endregion
 
-        //	#region when password is wrong (throw)
-        //	var hashedPassword = await ComputeMd5Async(UserDtoL.Password);
+            #region when telNo not found (throw)
+            _ = userView ?? throw new ErrorWithCodeException(404,
+                "VE-U-T",
+                "Verification Error - User - Telephone");
+            #endregion
 
-        //	if (!userView.Password.Equals(hashedPassword))
-        //		throw new ErrorWithCodeException(404,
-        //			"VE-U-P",
-        //			"Verification Error - User - Password");
-        //	#endregion
+            #region when password is wrong (throw)
+            var hashedPassword = await ComputeMd5Async(userDto.Password);
 
-        //	return await GenerateTokenForUserAsync(userView);
-        //}
+            if (!userView.Password.Equals(hashedPassword))
+                throw new ErrorWithCodeException(404,
+                    "VE-U-P",
+                    "Verification Error - User - Password");
+            #endregion
+
+            return await GenerateTokenForUserAsync(userView);
+        }
+
+        public async Task RegisterAsync(UserDtoForRegister userDto)
+        {
+            var userDtoForCreate = _mapper.Map<UserDtoForCreate>(userDto);
+
+            await CreateUserAsync(userDtoForCreate);
+        }
 
         public async Task CreateUserAsync(UserDtoForCreate userDto)
         {
@@ -76,7 +91,7 @@ namespace Services.Concretes
                 Password = await ComputeMd5Async(userDto.Password),
                 #region RoleNames
                 RoleNames = userDto.RoleNames == null ?
-                    _configManager.UserSettings.DefaultRole  // set default role
+                    _config.UserSettings.DefaultRole  // set default role
                     : string.Join(", ", userDto.RoleNames)  // convert list to string
                 #endregion
             };
@@ -190,49 +205,46 @@ namespace Services.Concretes
                 }
             });
 
-        //private async Task<string> GenerateTokenForUserAsync(UserView userView)
-        //{
-        //	#region set claims
-        //	var claims = new Collection<Claim>
-        //	{
-        //		new Claim("Id", userView.Id.ToString()),
-        //		new Claim("FirstName", userView.FirstName),
-        //		new Claim("LastName", userView.LastName)
-        //	};
+        private async Task<string> GenerateTokenForUserAsync(UserView userView) =>
+            await Task.Run(() => {
+                #region set claims
+                var claims = new Collection<Claim>
+                {
+                    new ("TelNo", userView.TelNo),  // add telNo
+                    new (ClaimTypes.Name, userView.FirstName),  // add firstName
+                    new (ClaimTypes.Surname, userView.LastName)  // add lastName
+                };
 
-        //	#region add roles
-        //	var roleNames = await _manager.UserAndRoleRepository
-        //		.GetRoleNamesOfUserByUserIdAsync(userView.Id);
+                #region add roles of user to claims
+                foreach (var roleName in userView.RoleNames)
+                    claims.Add(
+                        new Claim(ClaimTypes.Role, roleName));
+                #endregion
 
-        //	foreach (var roleName in roleNames)
-        //		claims.Add(
-        //			new Claim("Role", roleName));
-        //	#endregion
+                #endregion
 
-        //	#endregion
+                #region set signingCredentials
+                var secretKeyInBytes = Encoding.UTF8
+                    .GetBytes(_config.JwtSettings.SecretKey);
 
-        //	#region set signingCredentials
-        //	var secretKeyInBytes = Encoding.UTF8
-        //			.GetBytes(_config.JwtSettings.SecretKey);
+                var signingCredentials = new SigningCredentials(
+                    new SymmetricSecurityKey(secretKeyInBytes),
+                    SecurityAlgorithms.HmacSha256);
+                #endregion
 
-        //	var signingCredentials = new SigningCredentials(
-        //		new SymmetricSecurityKey(secretKeyInBytes),
-        //		SecurityAlgorithms.HmacSha256);
-        //	#endregion
+                #region set jwt token
+                var token = new JwtSecurityToken(
+                    issuer: _config.JwtSettings.ValidIssuer,
+                    audience: _config.JwtSettings.ValidAudience,
+                    claims: claims,
+                    expires: DateTime.Now.AddMinutes(_config.JwtSettings.Expires),
+                    signingCredentials: signingCredentials);
+                #endregion
 
-        //	#region set token
-        //	var token = new JwtSecurityToken(
-        //		issuer: _config.JwtSettings.ValidIssuer,
-        //		audience: _config.JwtSettings.ValidAudience,
-        //		claims: claims,
-        //		expires: DateTime.Now.AddMinutes(_config.JwtSettings.Expires),
-        //		signingCredentials: signingCredentials);
-        //	#endregion
-
-        //	return new JwtSecurityTokenHandler()
-        //		.WriteToken(token);
-        //}
-
+                return new JwtSecurityTokenHandler()
+                    .WriteToken(token);
+            });
+            
         #endregion
     }
 }

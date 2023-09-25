@@ -1,10 +1,7 @@
 ﻿using Dapper;
-using Entities.DataModels;
 using Entities.DtoModels;
-using Entities.DtoModels.UserDtos;
 using Entities.QueryModels;
 using Entities.ViewModels;
-using System.Linq.Expressions;
 
 namespace Repositories.Contracts
 {
@@ -14,6 +11,7 @@ namespace Repositories.Contracts
         Task<ErrorDto?> UpdateUserByTelNoAsync(DynamicParameters parameters);
         Task DeleteUsersByTelNoListAsync(IEnumerable<string> telNoList);
         Task<IEnumerable<UserView>?> GetAllUsersAsync();
+        Task<UserView?> GetUserByTelNoAsync(DynamicParameters parameters);
 
         Task<PagingList<UserView>?> GetAllUsersWithPagingAsync(
             PaginationParameters paginationQueryDto);

@@ -1,6 +1,6 @@
-﻿namespace Entities.DtoModels.BodyModels
+﻿namespace Entities.DtoModels.UserDtos
 {
-    public record UserBodyDtoForCreate
+    public class UserDtoForRegister
     {
         public string FirstName { get; init; }
         public string LastName { get; init; }
@@ -8,6 +8,5 @@
         public string TelNo { get; init; }
         public string Email { get; init; }
         public string Password { get; init; }
-        public string RoleName { get; init; }
     }
 }

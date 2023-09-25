@@ -9,6 +9,7 @@
     {
         public string User_Create { get; init; }
         public string User_DisplayAll { get; init; }
+        public string User_DisplayByTelNo { get; init; }
         public string User_Update { get; init; }
         public string User_Delete { get; init; }
     }

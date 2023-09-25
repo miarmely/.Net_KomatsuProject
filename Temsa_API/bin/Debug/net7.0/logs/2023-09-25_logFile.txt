@@ -1,0 +1,19 @@
+12:23:39.9951  WARN  {"Controller":"User","Action":"User","ErrorCode":"VE-U-T","CreatedAt":"2023-09-25T09:23:39.8597174Z"}
+12:24:10.8920  ERROR  {"Controller":"User","Action":"User","ErrorCode":"Internal Server Error","CreatedAt":"2023-09-25T09:24:10.8406039Z"}
+12:24:56.8587  ERROR  {"Controller":"User","Action":"User","ErrorCode":"Internal Server Error","CreatedAt":"2023-09-25T09:24:56.8444367Z"}
+16:55:31.9722  WARN  {"Controller":"User","Action":"User","ErrorCode":"VE-U-T","CreatedAt":"2023-09-25T13:55:31.7982976Z"}
+16:57:12.2363  WARN  {"Controller":"User","Action":"User","ErrorCode":"VE-U-P","CreatedAt":"2023-09-25T13:57:12.1955221Z"}
+16:57:25.6934  WARN  {"Controller":"User","Action":"User","ErrorCode":"VE-U-P","CreatedAt":"2023-09-25T13:57:25.6658407Z"}
+17:01:16.5205  ERROR  {"Controller":"User","Action":"User","ErrorCode":"Internal Server Error","CreatedAt":"2023-09-25T14:01:16.5039319Z"}
+17:14:24.7858  WARN  {"Controller":"User","Action":"User","ErrorCode":"VE-U-T","CreatedAt":"2023-09-25T14:14:24.6827207Z"}
+17:15:09.6412  WARN  {"Controller":"User","Action":"User","ErrorCode":"VE-U-P","CreatedAt":"2023-09-25T14:15:09.6274961Z"}
+17:15:13.9799  WARN  {"Controller":"User","Action":"User","ErrorCode":"FE-U-P","CreatedAt":"2023-09-25T14:15:13.97314Z"}
+17:15:16.0646  WARN  {"Controller":"User","Action":"User","ErrorCode":"FE-U-P","CreatedAt":"2023-09-25T14:15:16.0500274Z"}
+17:15:18.3320  WARN  {"Controller":"User","Action":"User","ErrorCode":"FE-U-P","CreatedAt":"2023-09-25T14:15:18.3173838Z"}
+17:15:21.3645  WARN  {"Controller":"User","Action":"User","ErrorCode":"VE-U-P","CreatedAt":"2023-09-25T14:15:21.3520596Z"}
+17:15:26.2149  WARN  {"Controller":"User","Action":"User","ErrorCode":"FE-U-P","CreatedAt":"2023-09-25T14:15:26.2001001Z"}
+17:15:31.0154  WARN  {"Controller":"User","Action":"User","ErrorCode":"VE-U-P","CreatedAt":"2023-09-25T14:15:31.0022809Z"}
+17:23:40.8963  WARN  {"Controller":"User","Action":"User","ErrorCode":"CE-U-TE","CreatedAt":"2023-09-25T14:23:40.883949Z"}
+17:25:48.2969  WARN  {"Controller":"User","Action":"User","ErrorCode":"NF-U","CreatedAt":"2023-09-25T14:25:48.2890506Z"}
+17:39:24.1267  ERROR  {"Controller":"User","Action":"User","ErrorCode":"Internal Server Error","CreatedAt":"2023-09-25T14:39:24.0820725Z"}
+18:01:29.9936  WARN  {"Controller":"User","Action":"User","ErrorCode":"VE-U-P","CreatedAt":"2023-09-25T15:01:29.8822246Z"}

@@ -1,6 +1,6 @@
-﻿namespace Entities.DtoModels.BodyModels
+﻿namespace Entities.DtoModels.UserDtos
 {
-    public record UserBodyDtoForLogin
+    public record UserDtoForLogin
     {
         public string TelNo { get; init; }
         public string Password { get; init; }

@@ -7,22 +7,21 @@ using Entities.ViewModels;
 namespace Temsa_Api.Utilities
 {
     public class MappingProfile : Profile
-	{
-		public MappingProfile()
-		{
-            #region to ErrorDto
+    {
+        public MappingProfile()
+        {
             CreateMap<ErrorDtoForExceptionFilter, ErrorDto>();
-            #endregion
-
-			#region to UserDto
-			CreateMap<UserBodyDtoForCreate, UserDto>();
-			CreateMap<UserView, UserDto>();
-            #endregion
-
-            #region to MachineDto
+            CreateMap<UserView, UserDto>();
             CreateMap<MachineBodyDtoForCreate, MachineDto>();
-			CreateMap<MachineBodyDtoForDisplay, MachineDto>();
+            CreateMap<MachineBodyDtoForDisplay, MachineDto>();
+
+            #region userDtoForRegister to userDtoForCreate
+            CreateMap<UserDtoForRegister, UserDtoForCreate>()
+                .ForMember(
+                    dst => dst.RoleNames,
+                    opt => opt.MapFrom(r =>
+                        new List<string> { "User" }));  // add default role as "User"
             #endregion
         }
-	}
+    }
 }
