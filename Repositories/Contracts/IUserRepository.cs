@@ -10,11 +10,12 @@ namespace Repositories.Contracts
         Task<ErrorDto?> CreateUserAsync(DynamicParameters parameters);
         Task<ErrorDto?> UpdateUserByTelNoAsync(DynamicParameters parameters);
         Task DeleteUsersByTelNoListAsync(IEnumerable<string> telNoList);
-        Task<IEnumerable<UserView>?> GetAllUsersAsync();
+        Task<IEnumerable<UserView>?> GetAllUsersAsync(string language);
         Task<UserView?> GetUserByTelNoAsync(DynamicParameters parameters);
 
         Task<PagingList<UserView>?> GetAllUsersWithPagingAsync(
-            PaginationParameters paginationQueryDto);
+            PaginationParameters paginationQueryDto,
+            string language);
 
 
   //      Task<List<UserView>> GetUsersByConditionAsync(

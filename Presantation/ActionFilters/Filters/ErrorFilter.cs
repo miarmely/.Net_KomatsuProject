@@ -12,7 +12,7 @@ namespace Presantation.ActionFilters.Attributes
 			await Task.Run(() =>
 			{
 				#region set errorDto
-				ErrorDtoForExceptionFilter errorDto;
+				ErrorDtoForGlobalExceptionHandling errorDto;
 
 				#region get controller and action names
 				var controllerName = context.RouteData
@@ -28,7 +28,7 @@ namespace Presantation.ActionFilters.Attributes
 				{
 					#region for expected errors
 					errorDto = JsonSerializer
-						.Deserialize<ErrorDtoForExceptionFilter>(
+						.Deserialize<ErrorDtoForGlobalExceptionHandling>(
 							context.Exception.Message);
 
 					errorDto.Controller = controllerName;
@@ -38,7 +38,7 @@ namespace Presantation.ActionFilters.Attributes
 				catch
 				{
 					#region for unexpected errors
-					errorDto = new ErrorDtoForExceptionFilter
+					errorDto = new ErrorDtoForGlobalExceptionHandling
 					{
 						StatusCode = 500,
 						ErrorCode = "Internal Server Error",

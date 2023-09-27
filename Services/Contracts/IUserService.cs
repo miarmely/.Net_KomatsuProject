@@ -14,6 +14,7 @@ namespace Services.Contracts
 
         Task<IEnumerable<UserDto>> GetAllUsersWithPagingAsync(
             PaginationParameters pagingParameters,
+            string language,
             HttpResponse response);
 
 

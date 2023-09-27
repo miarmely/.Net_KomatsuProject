@@ -1,19 +1,19 @@
-﻿using Entities.ConfigModels.Contracts;
-using Entities.DtoModels.UserDtos;
+﻿using Entities.DtoModels.UserDtos;
 using Entities.QueryModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Razor;
 using Presantation.ActionFilters;
-using Presantation.ActionFilters.Filters;
 using Services.Contracts;
-using System.Diagnostics;
+
 
 namespace Presantation.Controllers
 {
     [ApiController]
     [Route("api/services/[Controller]")]
     [ModifyError]
+
     public class UserController : ControllerBase
     {
         private readonly IServiceManager _manager;
@@ -50,7 +50,7 @@ namespace Presantation.Controllers
 
 
         [HttpPost("create")]
-        [Authorization("Editor,Admin")]
+        [Authorization("Editor,Admin,Editör,Yönetici")]
         [ValidationUserFormat]
         [ValidationNullArguments]
         public async Task<IActionResult> CreateUserAsync(
@@ -63,20 +63,21 @@ namespace Presantation.Controllers
 		}
 
 
-        [Authorize]
         [HttpGet("display")]
+        [Authorization("Admin,Editor,User,Yönetici,Editör,Kullanıcı")]
         public async Task<IActionResult> GetAllUsersWithPaginationAsync(
+            [FromQuery] string language,
             [FromQuery] PaginationParameters pagingParameters)
         {
             var entity = await _manager.UserService
-                .GetAllUsersWithPagingAsync(pagingParameters, Response);
+                .GetAllUsersWithPagingAsync(pagingParameters, language, Response);
 
             return Ok(entity);
         }
 
 
         [HttpPut("update/{telNo}")]
-        [Authorization("Editor,Admin")]
+        [Authorization("Admin,Editor,Yönetici,Editör")]
         [ValidationUserFormat]
         [ValidationNullArguments]
         public async Task<IActionResult> UpdateUserByTelNoAsync(
@@ -91,7 +92,7 @@ namespace Presantation.Controllers
 
 
         [HttpDelete("delete")]
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin,Yönetici")]
         [ValidationNullArguments]
         public async Task<IActionResult> DeleteUsersAsync(
             [FromBody] UserDtoForDelete userDto)

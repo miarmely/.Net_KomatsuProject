@@ -13,6 +13,7 @@ namespace Entities.ViewModels
         public string Password { get; init; }
         public ICollection<string> RoleNames { get; } 
         public DateTime CreatedAt { get; init; }
+        public string Language { get; init; }
 
         public UserView() => 
             RoleNames = new Collection<string>();

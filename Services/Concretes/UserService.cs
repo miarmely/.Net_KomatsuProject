@@ -75,8 +75,6 @@ namespace Services.Concretes
 
         public async Task CreateUserAsync(UserDtoForCreate userDto)
         {
-            return;
-
             #region set parameters
 
             #region sort roleNames if entered
@@ -112,11 +110,12 @@ namespace Services.Concretes
 
         public async Task<IEnumerable<UserDto>> GetAllUsersWithPagingAsync(
             PaginationParameters pagingParameters,
+            string language,
             HttpResponse response)
         {
             #region get userViews
             var userViews = await _manager.UserRepository
-                .GetAllUsersWithPagingAsync(pagingParameters);
+                .GetAllUsersWithPagingAsync(pagingParameters, language);
             #endregion
 
             #region when any userView not found (throw)
@@ -210,9 +209,10 @@ namespace Services.Concretes
                 #region set claims
                 var claims = new Collection<Claim>
                 {
-                    new ("TelNo", userView.TelNo),  // add telNo
-                    new (ClaimTypes.Name, userView.FirstName),  // add firstName
-                    new (ClaimTypes.Surname, userView.LastName)  // add lastName
+                    new ("TelNo", userView.TelNo),
+                    new (ClaimTypes.Name, userView.FirstName),
+                    new (ClaimTypes.Surname, userView.LastName),
+                    new ("Language", userView.Language)
                 };
 
                 #region add roles of user to claims

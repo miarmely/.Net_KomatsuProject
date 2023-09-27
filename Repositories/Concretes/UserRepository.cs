@@ -36,14 +36,15 @@ namespace Repositories.Concretes
             }
         }
 
-        public async Task<IEnumerable<UserView>?> GetAllUsersAsync() =>
-            await BaseGetAllUsersAsync()
+        public async Task<IEnumerable<UserView>?> GetAllUsersAsync(string language) =>
+            await BaseGetAllUsersAsync(language)
                 as IEnumerable<UserView>;
 
         public async Task<PagingList<UserView>?> GetAllUsersWithPagingAsync(
-            PaginationParameters paginationQueryDto) =>
-            await BaseGetAllUsersAsync(paginationQueryDto)
-                as PagingList<UserView>;
+            PaginationParameters paginationQueryDto,
+            string language) =>
+                await BaseGetAllUsersAsync(language, paginationQueryDto)
+                    as PagingList<UserView>;
 
         public async Task<UserView?> GetUserByTelNoAsync(DynamicParameters parameters)
         {
@@ -159,23 +160,19 @@ namespace Repositories.Concretes
         #region private
 
         private async Task<object> BaseGetAllUsersAsync(
+            string language,
             PaginationParameters? paginationQueryDto = null)
         {
             #region set parameters
             var parameters = new DynamicParameters();
 
-            #region add totalCount parameter
-            parameters.Add("TotalCount",
-                0,
-                DbType.Int64,
-                ParameterDirection.Output);
+            parameters.Add("TotalCount", 0, DbType.Int64, ParameterDirection.Output);
+            parameters.Add("Language", language, DbType.String);
             #endregion
 
             #region add pagination infos to parameters
             if (paginationQueryDto != null)
                 parameters.AddDynamicParams(paginationQueryDto);
-            #endregion
-
             #endregion
 
             #region get userViews

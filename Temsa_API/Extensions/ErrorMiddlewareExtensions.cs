@@ -8,7 +8,9 @@ namespace Temsa_Api.Extensions
 {
     public static class ErrorMiddlewareExtensions
 	{
-		public static void ConfigureExceptionHandler(this IServiceCollection services, WebApplication app)
+		public static void ConfigureExceptionHandler(
+			this IServiceCollection services, 
+			WebApplication app)
 		{
 			app.UseExceptionHandler(configure =>
 				configure.Run(async context =>
@@ -25,7 +27,7 @@ namespace Temsa_Api.Extensions
 						var errorDtoForE = context.Items
 							.Single(i => i.Key.Equals("errorDetails"))
 							.Value
-							as ErrorDtoForExceptionFilter;
+							as ErrorDtoForGlobalExceptionHandling;
 						#endregion
 
 						#region set logMessage
@@ -53,7 +55,7 @@ namespace Temsa_Api.Extensions
 
 						#region convert errorDtoForE to errorDto
 						var mapper = context.RequestServices
-						.GetRequiredService<IMapper>();
+							.GetRequiredService<IMapper>();
 
 						var errorDto = mapper.Map<ErrorDto>(errorDtoForE);
 						#endregion

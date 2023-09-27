@@ -10,7 +10,7 @@ namespace Temsa_Api.Utilities
     {
         public MappingProfile()
         {
-            CreateMap<ErrorDtoForExceptionFilter, ErrorDto>();
+            CreateMap<ErrorDtoForGlobalExceptionHandling, ErrorDto>();
             CreateMap<UserView, UserDto>();
             CreateMap<MachineBodyDtoForCreate, MachineDto>();
             CreateMap<MachineBodyDtoForDisplay, MachineDto>();

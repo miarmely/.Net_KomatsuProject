@@ -1,3 +1,21 @@
 12:30:41.2550  ERROR  {"Controller":"User","Action":"User","ErrorCode":"Internal Server Error","CreatedAt":"2023-09-27T09:30:41.0327637Z"}
 13:25:45.7560  WARN  {"Controller":"User","Action":"User","ErrorCode":"VE-U-P","CreatedAt":"2023-09-27T10:25:45.6235288Z"}
 15:29:36.8480  WARN  {"Controller":"User","Action":"User","ErrorCode":"VE-U-P","CreatedAt":"2023-09-27T12:29:36.7447317Z"}
+20:57:51.2752  WARN  {"Controller":"User","Action":"User","ErrorCode":"VE-U-P","CreatedAt":"2023-09-27T17:57:51.170293Z"}
+22:07:03.4860  WARN  {"Controller":"User","Action":"User","ErrorCode":"AE-U","CreatedAt":"2023-09-27T19:06:51.2681899Z"}
+22:08:17.1222  WARN  {"Controller":"User","Action":"User","ErrorCode":"AE-F","CreatedAt":"2023-09-27T19:08:17.0600837Z"}
+22:18:47.3350  WARN  {"Controller":"User","Action":"User","ErrorCode":"AE-U","CreatedAt":"2023-09-27T19:18:38.4069947Z"}
+22:18:57.8485  WARN  {"Controller":"User","Action":"User","ErrorCode":"AE-U","CreatedAt":"2023-09-27T19:18:50.1719078Z"}
+22:19:06.4291  WARN  {"Controller":"User","Action":"User","ErrorCode":"AE-U","CreatedAt":"2023-09-27T19:19:04.5362929Z"}
+22:19:57.8436  WARN  {"Controller":"User","Action":"User","ErrorCode":"AE-U","CreatedAt":"2023-09-27T19:19:49.7739318Z"}
+22:20:02.0803  WARN  {"Controller":"User","Action":"User","ErrorCode":"AE-U","CreatedAt":"2023-09-27T19:20:00.2061294Z"}
+22:20:25.7789  WARN  {"Controller":"User","Action":"User","ErrorCode":"AE-F","CreatedAt":"2023-09-27T19:20:23.3551994Z"}
+22:21:03.9188  WARN  {"Controller":"User","Action":"User","ErrorCode":"AE-F","CreatedAt":"2023-09-27T19:20:59.9484467Z"}
+23:09:05.8142  ERROR  {"Controller":"User","Action":"User","ErrorCode":"Internal Server Error","CreatedAt":"2023-09-27T20:09:05.6813356Z"}
+23:09:56.5590  ERROR  {"Controller":"User","Action":"User","ErrorCode":"Internal Server Error","CreatedAt":"2023-09-27T20:09:56.5149395Z"}
+23:10:10.3715  WARN  {"Controller":"User","Action":"User","ErrorCode":"AE-F","CreatedAt":"2023-09-27T20:10:06.3074174Z"}
+23:13:09.5569  WARN  {"Controller":"User","Action":"User","ErrorCode":"CE-U-T","CreatedAt":"2023-09-27T20:13:09.453739Z"}
+23:13:27.7877  WARN  {"Controller":"User","Action":"User","ErrorCode":"AE-F","CreatedAt":"2023-09-27T20:13:23.9095091Z"}
+23:13:39.2617  WARN  {"Controller":"User","Action":"User","ErrorCode":"CE-U-TE","CreatedAt":"2023-09-27T20:13:39.2517884Z"}
+23:14:06.9165  ERROR  {"Controller":"User","Action":"User","ErrorCode":"Internal Server Error","CreatedAt":"2023-09-27T20:14:06.8861123Z"}
+23:21:52.0634  ERROR  {"Controller":"User","Action":"User","ErrorCode":"Internal Server Error","CreatedAt":"2023-09-27T20:21:51.9221685Z"}
