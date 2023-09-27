@@ -38,7 +38,9 @@ namespace Services.Concretes
         {
             #region set paramaters
             var parameters = new DynamicParameters();
+            
             parameters.Add("TelNo", userDto.TelNo, DbType.String);
+            parameters.Add("Language", userDto.Language, DbType.String);
             #endregion
 
             #region get userView by telNo
@@ -73,6 +75,8 @@ namespace Services.Concretes
 
         public async Task CreateUserAsync(UserDtoForCreate userDto)
         {
+            return;
+
             #region set parameters
 
             #region sort roleNames if entered
@@ -89,11 +93,7 @@ namespace Services.Concretes
                 TelNo = userDto.TelNo,
                 Email = userDto.Email,
                 Password = await ComputeMd5Async(userDto.Password),
-                #region RoleNames
-                RoleNames = userDto.RoleNames == null ?
-                    _config.UserSettings.DefaultRole  // set default role
-                    : string.Join(", ", userDto.RoleNames)  // convert list to string
-                #endregion
+                RoleNames = string.Join(", ", userDto.RoleNames) // list to string 
             };
             var parameters = new DynamicParameters(userDtoForProc);
             #endregion

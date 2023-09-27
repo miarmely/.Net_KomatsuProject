@@ -11,6 +11,7 @@ namespace Entities.ConfigModels
 		private readonly Lazy<FileServiceSettingsConfig> _fileServiceSettings;
 		private readonly Lazy<CategoryNamesConfig> _subCategoryNames;
 		private readonly Lazy<DbSettingsConfig> _dbSettings;
+		private readonly Lazy<MainRolesConfig> _mainRoles;
 
 		public UserSettingsConfig UserSettings => _userSettings.Value;
 		public JwtSettingsConfig JwtSettings => _jwtSettings.Value;
@@ -18,23 +19,25 @@ namespace Entities.ConfigModels
 		public FileServiceSettingsConfig FileServiceSettings => _fileServiceSettings.Value;
 		public CategoryNamesConfig CategoryNames => _subCategoryNames.Value;
 		public DbSettingsConfig DbSettings => _dbSettings.Value;
+		public MainRolesConfig MainRoles => _mainRoles.Value;
 
         public ConfigManager(IOptions<UserSettingsConfig> userSettings,
 			IOptions<JwtSettingsConfig> jwtSettings,
 			IOptions<MailSettingsConfig> mailSettings,
 			IOptions<FileServiceSettingsConfig> fileServiceSettings,
 			IOptions<CategoryNamesConfig> subCategoryNames,
-			IOptions<DbSettingsConfig> dbSettings)
+			IOptions<DbSettingsConfig> dbSettings,
+			IOptions<MainRolesConfig> mainRoles)
         {
 			_userSettings = new Lazy<UserSettingsConfig>(() => userSettings.Value);
 			_jwtSettings = new Lazy<JwtSettingsConfig>(() => jwtSettings.Value);
 			_mailSettings = new Lazy<MailSettingsConfig>(() => mailSettings.Value);
-			_fileServiceSettings = new Lazy<FileServiceSettingsConfig>(() =>
+            _dbSettings = new Lazy<DbSettingsConfig>(() => dbSettings.Value);
+			_mainRoles = new Lazy<MainRolesConfig>(() => mainRoles.Value);
+            _fileServiceSettings = new Lazy<FileServiceSettingsConfig>(() =>
 				fileServiceSettings.Value);
 			_subCategoryNames = new Lazy<CategoryNamesConfig>(() =>
 				subCategoryNames.Value);
-			_dbSettings = new Lazy<DbSettingsConfig>(() =>
-				dbSettings.Value);
 		}
 
 	}

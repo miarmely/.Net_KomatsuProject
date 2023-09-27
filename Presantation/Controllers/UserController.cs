@@ -1,11 +1,13 @@
-﻿using Entities.DtoModels.UserDtos;
+﻿using Entities.ConfigModels.Contracts;
+using Entities.DtoModels.UserDtos;
 using Entities.QueryModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Presantation.ActionFilters;
+using Presantation.ActionFilters.Filters;
 using Services.Contracts;
-
+using System.Diagnostics;
 
 namespace Presantation.Controllers
 {
@@ -15,10 +17,10 @@ namespace Presantation.Controllers
     public class UserController : ControllerBase
     {
         private readonly IServiceManager _manager;
-
+        
         public UserController(IServiceManager services) =>
-			_manager = services;
-
+            _manager = services;
+            
 
         [HttpPost("login")]
         [ValidationUserFormat]
@@ -32,6 +34,7 @@ namespace Presantation.Controllers
                 Token = token
             });
         }
+
 
         [HttpPost("register")]
         [ValidationUserFormat]
@@ -47,7 +50,7 @@ namespace Presantation.Controllers
 
 
         [HttpPost("create")]
-        [Authorize(Roles = "Editor,Admin")]
+        [Authorization("Editor,Admin")]
         [ValidationUserFormat]
         [ValidationNullArguments]
         public async Task<IActionResult> CreateUserAsync(
@@ -73,7 +76,7 @@ namespace Presantation.Controllers
 
 
         [HttpPut("update/{telNo}")]
-        [Authorize(Roles = "Editor,Admin")]
+        [Authorization("Editor,Admin")]
         [ValidationUserFormat]
         [ValidationNullArguments]
         public async Task<IActionResult> UpdateUserByTelNoAsync(

@@ -1,0 +1,3 @@
+12:30:41.2550  ERROR  {"Controller":"User","Action":"User","ErrorCode":"Internal Server Error","CreatedAt":"2023-09-27T09:30:41.0327637Z"}
+13:25:45.7560  WARN  {"Controller":"User","Action":"User","ErrorCode":"VE-U-P","CreatedAt":"2023-09-27T10:25:45.6235288Z"}
+15:29:36.8480  WARN  {"Controller":"User","Action":"User","ErrorCode":"VE-U-P","CreatedAt":"2023-09-27T12:29:36.7447317Z"}

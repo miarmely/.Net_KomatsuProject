@@ -34,6 +34,7 @@ namespace Temsa_Api.Extensions
 			services.AddScoped<ErrorFilter>();
 			services.AddScoped<ValidationUserFormatFilter>();
 			services.AddScoped<ValidationNullArgumentsFilter>();
+			//services.AddScoped<AuthorizationFilter>();
 		}
 
 		public static void ConfigureConfigModels(this IServiceCollection services
@@ -53,6 +54,9 @@ namespace Temsa_Api.Extensions
 
 			services.Configure<DbSettingsConfig>(configuration
 				.GetSection(nameof(DbSettingsConfig)));
+
+			services.Configure<MainRolesConfig>(configuration
+				.GetSection(nameof(MainRolesConfig)));
 		}
 				
 		public static void ConfigureJwt(this IServiceCollection services, IConfiguration configuration)

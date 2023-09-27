@@ -76,41 +76,6 @@ namespace Repositories.Concretes
             }
         }
 
-        public async Task DeleteUsersByTelNoListAsync(IEnumerable<string> telNoList)
-        {
-            using (var connection = _context.CreateSqlConnection())
-            {
-                connection.Open();
-
-                #region delete users in transaction
-                using (var transaction = connection.BeginTransaction())
-                {
-                    #region delete users
-                    foreach (var telNo in telNoList)
-                    {
-                        #region delete user
-                        var errorDto = await connection
-                            .QuerySingleOrDefaultAsync<ErrorDto>(
-                                _config.DbSettings.ProcedureNames.User_Delete,
-                                new { TelNo = telNo },
-                                transaction: transaction,
-                                commandType: CommandType.StoredProcedure);
-                        #endregion
-
-                        #region when telNo not found (throw)
-                        if (errorDto != null)
-                            throw new ErrorWithCodeException(errorDto);
-                        #endregion
-                    }
-                    #endregion
-
-                    // when any error not occured
-                    transaction.Commit();
-                }
-                #endregion
-            }
-        }
-
         public async Task<ErrorDto?> UpdateUserByTelNoAsync(DynamicParameters parameters)
         {
             using (var connection = _context.CreateSqlConnection())
@@ -123,6 +88,32 @@ namespace Repositories.Concretes
                 #endregion
 
                 return errorDto;
+            }
+        }
+
+        public async Task DeleteUsersByTelNoListAsync(IEnumerable<string> telNoList)
+        {
+            using (var connection = _context.CreateSqlConnection())
+            {
+                #region set parameters
+                var parameters = new DynamicParameters(new
+                {
+                    TelNosInString = string.Join(',', telNoList)
+                });
+                #endregion
+
+                #region delete user
+                var errorDto = await connection
+                    .QuerySingleOrDefaultAsync<ErrorDto>(
+                        _config.DbSettings.ProcedureNames.User_Delete,
+                        parameters,
+                        commandType: CommandType.StoredProcedure);
+                #endregion
+
+                #region when telNo not found (throw)
+                if (errorDto != null)
+                    throw new ErrorWithCodeException(errorDto);
+                #endregion
             }
         }
 

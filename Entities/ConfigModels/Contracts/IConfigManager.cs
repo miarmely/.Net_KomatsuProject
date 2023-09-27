@@ -8,5 +8,6 @@
 		FileServiceSettingsConfig FileServiceSettings { get; }
 		CategoryNamesConfig CategoryNames { get; }
 		DbSettingsConfig DbSettings { get; }
+		MainRolesConfig MainRoles { get; }
 	}
 }
