@@ -12,8 +12,6 @@ namespace Services.Concretes
 		private readonly Lazy<IMailService> _mailService;
 		private readonly Lazy<IMachineService> _machineService;
 		private readonly Lazy<IFileService> _fileService;
-		private readonly Lazy<IDtoConverterService> _dtoConverterService;
-		private readonly Lazy<IDataConverterService> _dataConverterService;
 		private readonly Lazy<IRoleService> _roleService;
 		
 		public IUserService UserService => _userService.Value;
@@ -21,8 +19,6 @@ namespace Services.Concretes
 		public IMailService MailService => _mailService.Value;
 		public IMachineService MachineService => _machineService.Value;
 		public IFileService FileService => _fileService.Value;
-		public IDtoConverterService DtoConverterServcice => _dtoConverterService.Value;
-		public IDataConverterService DataConverterService => _dataConverterService.Value;
 		public IRoleService RoleService => _roleService.Value;
        
 		public ServiceManager(IRepositoryManager manager,
@@ -36,14 +32,9 @@ namespace Services.Concretes
 			_mailService = new Lazy<IMailService>(() =>
 				new MailService(config));
 			_machineService = new Lazy<IMachineService>(() => 
-				new MachineService(manager, DtoConverterServcice,
-					DataConverterService, mapper));
+				new MachineService(manager, mapper));
 			_fileService = new Lazy<IFileService>(() => 
 				new FileService(config));
-			_dtoConverterService = new Lazy<IDtoConverterService>(() =>
-				new DtoConverterService(manager));
-			_dataConverterService = new Lazy<IDataConverterService>(() =>
-				new DataConverterService(manager));
 			_roleService = new Lazy<IRoleService>(() =>
 				new RoleService(manager));
         }

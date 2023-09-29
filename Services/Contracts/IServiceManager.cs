@@ -7,8 +7,6 @@
 		IMailService MailService { get; }
 		IMachineService MachineService { get; }
 		IFileService FileService { get; }
-		IDtoConverterService DtoConverterServcice { get; }
-		IDataConverterService DataConverterService { get; }
 		IRoleService RoleService { get; }
 	}
 }

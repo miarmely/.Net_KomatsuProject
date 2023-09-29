@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Entities.DtoModels.MachineDtos;
+using Entities.QueryModels;
+using Microsoft.AspNetCore.Mvc;
 using Presantation.ActionFilters;
 using Services.Contracts;
 
@@ -16,77 +18,77 @@ namespace Presantation.Controllers
             _manager = services;
 
 
-		//[HttpPost("create")]
-		//public async Task<IActionResult> CreateMachineAsync(
-		//	[FromBody] MachineBodyDtoForCreate machineBodyDto)
-		//{
-		//	await _manager.MachineService
-		//		.CreateMachineAsync(machineBodyDto);
+		[HttpPost("create")]
+		public async Task<IActionResult> CreateMachineAsync(
+			[FromBody] MachineDtoForCreate machineDto)
+		{
+			await _manager.MachineService
+				.CreateMachineAsync(machineDto);
 
-		//	return NoContent();
-		//}
-
-
-		//[HttpGet("display/all")]
-		//public async Task<IActionResult> GetAllMachinesAsync(
-  //          [FromQuery] PaginationQueryDto paginationQueryDto)
-  //      {
-  //          var machines = await _manager.MachineService
-  //              .GetAllMachinesWithPagingAsync(paginationQueryDto, Response);
-
-  //          return Ok(machines);
-  //      }
+			return NoContent();
+		}
 
 
-  //      [HttpGet("display/condition")]
-  //      [ValidationNullArguments]
-  //      public async Task<IActionResult> GetMachinesByConditionAsync(
-  //          [FromQuery] MachineBodyDtoForDisplay machineDtoD,
-  //          [FromQuery] PaginationQueryDto paginationQueryDto)
-  //      {
-  //          var machines = await _manager.MachineService
-  //              .GetMachinesByConditionWithPagingAsync(
-  //                  machineDtoD,
+		[HttpGet("display/all")]
+		public async Task<IActionResult> GetAllMachinesAsync(
+			[FromQuery] PaginationParameters pagingParameters)
+		{
+			var machines = await _manager.MachineService
+				.GetAllMachinesAsync(pagingParameters, Response);
+
+			return Ok(machines);
+		}
+
+
+		//      [HttpGet("display/condition")]
+		//      [ValidationNullArguments]
+		//      public async Task<IActionResult> GetMachinesByConditionAsync(
+		//          [FromQuery] MachineBodyDtoForDisplay machineDtoD,
+		//          [FromQuery] PaginationQueryDto paginationQueryDto)
+		//      {
+		//          var machines = await _manager.MachineService
+		//              .GetMachinesByConditionWithPagingAsync(
+		//                  machineDtoD,
 		//			paginationQueryDto, 
-  //                  Response);
+		//                  Response);
 
-  //          return Ok(machines);
-  //      }
-
-
-  //      [HttpGet("display/subCategories/{MainCategoryName}")]
-  //      public async Task<IActionResult> GetSubCategoriesOfMainCategoryAsync(
-  //          [FromRoute(Name = "MainCategoryName")] string mainCategoryName)
-  //      {
-  //          var subCategories = await _manager.MachineService
-  //              .GetSubCategoriesOfMainCategoryAsync(mainCategoryName);
-
-  //          return Ok(subCategories);
-  //      }
+		//          return Ok(machines);
+		//      }
 
 
-  //      [HttpPut("update")]
-  //      [ValidationNullArguments]
-  //      public async Task<IActionResult> UpdateMachineAsync(
-  //          [FromQuery] MachineQueryDtoForUpdate machineQueryDto,
-  //          [FromBody] MachineBodyDtoForUpdate machineBodyDto)
-  //      {
-  //          await _manager.MachineService
-  //              .UpdateMachineAsync(machineQueryDto, machineBodyDto);
+		//      [HttpGet("display/subCategories/{MainCategoryName}")]
+		//      public async Task<IActionResult> GetSubCategoriesOfMainCategoryAsync(
+		//          [FromRoute(Name = "MainCategoryName")] string mainCategoryName)
+		//      {
+		//          var subCategories = await _manager.MachineService
+		//              .GetSubCategoriesOfMainCategoryAsync(mainCategoryName);
 
-  //          return NoContent();
-  //      }
+		//          return Ok(subCategories);
+		//      }
 
 
-  //      [HttpDelete("delete")]
-  //      [ValidationNullArguments]
-  //      public async Task<IActionResult> DeleteMachinesAsync(
-  //          [FromBody] MachineBodyDtoForDelete machineBodyDto)
-  //      {
-  //          await _manager.MachineService
-  //              .DeleteMachinesAsync(machineBodyDto);
+		//      [HttpPut("update")]
+		//      [ValidationNullArguments]
+		//      public async Task<IActionResult> UpdateMachineAsync(
+		//          [FromQuery] MachineQueryDtoForUpdate machineQueryDto,
+		//          [FromBody] MachineBodyDtoForUpdate machineBodyDto)
+		//      {
+		//          await _manager.MachineService
+		//              .UpdateMachineAsync(machineQueryDto, machineBodyDto);
 
-  //          return NoContent();
-  //      }
-    }
+		//          return NoContent();
+		//      }
+
+
+		//      [HttpDelete("delete")]
+		//      [ValidationNullArguments]
+		//      public async Task<IActionResult> DeleteMachinesAsync(
+		//          [FromBody] MachineBodyDtoForDelete machineBodyDto)
+		//      {
+		//          await _manager.MachineService
+		//              .DeleteMachinesAsync(machineBodyDto);
+
+		//          return NoContent();
+		//      }
+	}
 }

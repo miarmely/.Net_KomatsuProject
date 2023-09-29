@@ -1,13 +1,16 @@
-﻿namespace Services.Contracts
+﻿using Entities.DtoModels.MachineDtos;
+using Entities.QueryModels;
+using Microsoft.AspNetCore.Http;
+
+namespace Services.Contracts
 {
     public interface IMachineService
 	{
-		//Task CreateMachineAsync(MachineBodyDtoForCreate machineDtoC);
+		Task CreateMachineAsync(MachineDtoForCreate machineDto);
 
-		//Task<IEnumerable<MachineDto>> GetAllMachinesWithPagingAsync(
-		//	PaginationQueryDto paginationParameters,
-		//	HttpResponse response,
-		//	bool trackChanges = false);
+		Task<IEnumerable<MachineDto>> GetAllMachinesAsync(
+			PaginationParameters paginationParameters,
+			HttpResponse response);
 
 		//Task<IEnumerable<MachineDto>> GetMachinesByConditionWithPagingAsync(
 		//	MachineBodyDtoForDisplay machineDtoD,
@@ -19,8 +22,8 @@
 
 		//Task UpdateMachineAsync(
 		//	MachineQueryDtoForUpdate machineQueryDtoU,
-  //          MachineBodyDtoForUpdate machineBodyDtoU);
+		//          MachineBodyDtoForUpdate machineBodyDtoU);
 
 		//Task DeleteMachinesAsync(MachineBodyDtoForDelete machineQueryDto);
-    }
+	}
 }

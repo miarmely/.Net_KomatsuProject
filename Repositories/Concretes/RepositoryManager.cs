@@ -26,10 +26,10 @@ namespace Repositories.Concretes
 
 		public RepositoryManager(
 			RepositoryContext context,
-			IConfigManager configManager)
+			IConfigManager configs)
 		{
 			_userRepository = new Lazy<IUserRepository>(() =>
-				new UserRepository(context, configManager));
+				new UserRepository(context, configs));
 			_companyRepository = new Lazy<ICompanyRepository>(() =>
 				new CompanyRepository(context));
 			_userAndRoleRepository = new Lazy<IUserAndRoleRepository>(() =>
@@ -37,7 +37,7 @@ namespace Repositories.Concretes
 			_roleRepository = new Lazy<IRoleRepository>(() => 
 				new RoleRepository(context));
 			_machineRepository = new Lazy<IMachineRepository>(() => 
-				new MachineRepository(context));
+				new MachineRepository(context, configs));
 			_mainCategoryRepository = new Lazy<IMainCategoryRepository>(() => 
 				new MainCategoryRepository(context));
 			_brandRepository = new Lazy<IBrandRepository>(() => 

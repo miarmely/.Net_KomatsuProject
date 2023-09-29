@@ -15,11 +15,11 @@ namespace Repositories.Concretes
 {
     public class UserRepository : RepositoryBase<UserView>, IUserRepository
     {
-        private readonly IConfigManager _config;
+        private readonly IConfigManager _configs;
 
-        public UserRepository(RepositoryContext context,
-            IConfigManager config) : base(context) =>
-                _config = config;
+        public UserRepository(RepositoryContext context,IConfigManager configs) 
+            : base(context) =>
+                _configs = configs;
 
         public async Task<ErrorDto?> CreateUserAsync(DynamicParameters parameters)
         {
@@ -27,7 +27,7 @@ namespace Repositories.Concretes
             {
                 #region create user
                 var errorDto = await connection.QuerySingleOrDefaultAsync<ErrorDto>(
-                    _config.DbSettings.ProcedureNames.User_Create,
+                    _configs.DbSettings.ProcedureNames.User_Create,
                     parameters,
                     commandType: CommandType.StoredProcedure);
                 #endregion
@@ -54,7 +54,7 @@ namespace Repositories.Concretes
                 UserView? userView = null;
 
                 await connection.QueryAsync<UserView, RolePartForUserView, UserView>(
-                    _config.DbSettings.ProcedureNames.User_DisplayByTelNo,
+                    _configs.DbSettings.ProcedureNames.User_DisplayByTelNo,
                     (userViewPart, rolePart) =>
                     {
                         #region populate userView
@@ -83,7 +83,7 @@ namespace Repositories.Concretes
             {
                 #region update user
                 var errorDto = await connection.QuerySingleOrDefaultAsync<ErrorDto>(
-                    _config.DbSettings.ProcedureNames.User_Update,
+                    _configs.DbSettings.ProcedureNames.User_Update,
                     parameters,
                     commandType: CommandType.StoredProcedure);
                 #endregion
@@ -97,16 +97,23 @@ namespace Repositories.Concretes
             using (var connection = _context.CreateSqlConnection())
             {
                 #region set parameters
-                var parameters = new DynamicParameters(new
-                {
-                    TelNosInString = string.Join(',', telNoList)
-                });
+                var parameters = new DynamicParameters();
+                
+                parameters.Add(
+                    "TelNosInString",
+                    string.Join(',', telNoList),
+                    DbType.String);
+
+                parameters.Add(
+                    "TotalTelNoCount",
+                    telNoList.Count(),
+                    DbType.Int32);
                 #endregion
 
                 #region delete user
                 var errorDto = await connection
                     .QuerySingleOrDefaultAsync<ErrorDto>(
-                        _config.DbSettings.ProcedureNames.User_Delete,
+                        _configs.DbSettings.ProcedureNames.User_Delete,
                         parameters,
                         commandType: CommandType.StoredProcedure);
                 #endregion
@@ -184,7 +191,7 @@ namespace Repositories.Concretes
                 #region get userViews with multi-mapping
                 userViews = await connection
                     .QueryAsync<UserView, RolePartForUserView, UserView>(
-                       _config.DbSettings.ProcedureNames.User_DisplayAll,
+                       _configs.DbSettings.ProcedureNames.User_DisplayAll,
                        (userView, rolePart) =>
                        {
                            #region add userView to dict if not exists
