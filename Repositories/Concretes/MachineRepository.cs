@@ -32,7 +32,8 @@ namespace Repositories.Concretes
             }
         }
 
-        public async Task<IEnumerable<MachineView>> GetAllMachinesAsync(DynamicParameters parameters)
+        public async Task<IEnumerable<MachineView>> GetAllMachinesAsync(
+            DynamicParameters parameters)
         {
             using (var connection = _context.CreateSqlConnection())
             {
@@ -45,7 +46,6 @@ namespace Repositories.Concretes
 
                 return machineViews;
             }
-
         }
         
 

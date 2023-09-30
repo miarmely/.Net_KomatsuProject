@@ -31,10 +31,11 @@ namespace Presantation.Controllers
 
 		[HttpGet("display/all")]
 		public async Task<IActionResult> GetAllMachinesAsync(
+			[FromQuery(Name = "Language")] string language,
 			[FromQuery] PaginationParameters pagingParameters)
 		{
 			var machines = await _manager.MachineService
-				.GetAllMachinesAsync(pagingParameters, Response);
+				.GetAllMachinesAsync(language, pagingParameters, Response);
 
 			return Ok(machines);
 		}

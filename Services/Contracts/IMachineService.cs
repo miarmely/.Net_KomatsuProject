@@ -1,6 +1,8 @@
 ﻿using Entities.DtoModels.MachineDtos;
 using Entities.QueryModels;
+using Entities.ViewModels;
 using Microsoft.AspNetCore.Http;
+using Repositories;
 
 namespace Services.Contracts
 {
@@ -8,8 +10,9 @@ namespace Services.Contracts
 	{
 		Task CreateMachineAsync(MachineDtoForCreate machineDto);
 
-		Task<IEnumerable<MachineDto>> GetAllMachinesAsync(
-			PaginationParameters paginationParameters,
+		Task<PagingList<MachineView>> GetAllMachinesAsync(
+            string language,
+            PaginationParameters paginationParameters,
 			HttpResponse response);
 
 		//Task<IEnumerable<MachineDto>> GetMachinesByConditionWithPagingAsync(

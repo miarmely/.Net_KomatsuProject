@@ -12,8 +12,6 @@ namespace Temsa_Api.Utilities
         {
             CreateMap<ErrorDtoForGlobalExceptionHandling, ErrorDto>();
             CreateMap<UserView, UserDto>();
-            CreateMap<MachineDtoForCreate, MachineDto>();
-            CreateMap<MachineBodyDtoForDisplay, MachineDto>();
 
             #region userDtoForRegister to userDtoForCreate
             CreateMap<UserDtoForRegister, UserDtoForCreate>()

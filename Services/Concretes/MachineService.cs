@@ -40,25 +40,23 @@ namespace Services.Concretes
             #endregion
         }
 
-        public async Task<IEnumerable<MachineDto>> GetAllMachinesAsync(
+        public async Task<PagingList<MachineView>> GetAllMachinesAsync(
+            string language,
             PaginationParameters pagingParameters,
             HttpResponse response)
         {
             #region set parameters
             var parameters = new DynamicParameters(pagingParameters);
 
-            // add totalCount which output parameter
-            parameters.Add("TotalCount",
-                0, 
-                DbType.Int32, 
-                ParameterDirection.Output);
+            parameters.Add("TotalCount", 0, DbType.Int32, ParameterDirection.Output);
+            parameters.Add("Language", language, DbType.String);
             #endregion
 
             #region get machine Views (throw)
             var machineViews = await _manager.MachineRepository
                 .GetAllMachinesAsync(parameters);
 
-            //when any machine not found
+            // when any machine not found
             if (machineViews.Count() == 0)
                 throw new ErrorWithCodeException(404, 
                     "NF-M", 
@@ -84,9 +82,9 @@ namespace Services.Concretes
 
             #endregion
 
-
-            return machineDtoList;
+            return machineViewPagingList;
         }
+
 
         //public async Task<IEnumerable<MachineDto>> GetMachinesByConditionWithPagingAsync(
         //	MachineBodyDtoForDisplay machineDtoD,
