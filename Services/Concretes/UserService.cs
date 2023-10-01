@@ -7,6 +7,7 @@ using Entities.QueryModels;
 using Entities.ViewModels;
 using Microsoft.AspNetCore.Http;
 using Microsoft.IdentityModel.Tokens;
+using Repositories;
 using Repositories.Contracts;
 using Services.Contracts;
 using System.Collections.ObjectModel;
@@ -113,22 +114,41 @@ namespace Services.Concretes
             string language,
             HttpResponse response)
         {
+            #region set parameters
+            var parameters = new DynamicParameters(pagingParameters);
+
+            parameters.Add("Language", language, DbType.String);
+            parameters.Add("TotalCount", 0, DbType.Int64, ParameterDirection.Output);
+            #endregion
+
             #region get userViews
             var userViews = await _manager.UserRepository
-                .GetAllUsersWithPagingAsync(pagingParameters, language);
+                .GetAllUsersWithPagingAsync(parameters);
             #endregion
 
             #region when any userView not found (throw)
-            if (userViews.Count == 0)
+            if (userViews.Count() == 0)
                 throw new ErrorWithCodeException(404,
                     "NF-U",
                     "Not Found - User");
             #endregion
 
-            #region add pagination details to headers
+            #region add pagination infos to headers
+
+            #region convert userViews to pagingList
+            var userViewsInPagingList = await PagingList<UserView>.ToPagingListAsync(
+                userViews,
+                parameters.Get<int>("TotalCount"),
+                pagingParameters.PageNumber,
+                pagingParameters.PageSize);
+            #endregion
+
+            #region add infos to headers
             response.Headers.Add(
                 "User-Pagination",
-                userViews.GetMetaDataForHeaders());
+                userViewsInPagingList.GetMetaDataForHeaders());
+            #endregion
+
             #endregion
 
             return _mapper.Map<IEnumerable<UserDto>>(userViews);
@@ -181,10 +201,34 @@ namespace Services.Concretes
             #endregion
         }
 
-        public async Task DeleteUsersByTelNoListAsync(UserDtoForDelete userDto) =>
-            await _manager.UserRepository
-                .DeleteUsersByTelNoListAsync(userDto.TelNoList);
-        
+        public async Task DeleteUsersByTelNoListAsync(UserDtoForDelete userDto)
+        {
+            #region set parameters
+            var parameters = new DynamicParameters();
+
+            parameters.Add(
+                "TelNosInString",
+                string.Join(',', userDto.TelNoList),
+                DbType.String);
+
+            parameters.Add(
+                "TotalTelNoCount",
+                userDto.TelNoList.Count(),
+                DbType.Int32);
+            #endregion
+
+            #region delete users in list
+            var errorDto = await _manager.UserRepository
+                .DeleteUsersByTelNoListAsync(parameters);
+
+            // when any error occured
+            if (errorDto != null)
+                throw new ErrorWithCodeException(errorDto);
+            #endregion
+        }
+
+
+
 
         #region private
 

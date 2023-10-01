@@ -3,6 +3,7 @@ using Dapper;
 using Entities.DtoModels.MachineDtos;
 using Entities.Exceptions;
 using Entities.QueryModels;
+using Entities.QueryParameters;
 using Entities.ViewModels;
 using Microsoft.AspNetCore.Http;
 using Repositories;
@@ -41,9 +42,9 @@ namespace Services.Concretes
         }
 
         public async Task<PagingList<MachineView>> GetAllMachinesAsync(
-            string language,
-            PaginationParameters pagingParameters,
-            HttpResponse response)
+          string language,
+          PaginationParameters pagingParameters,
+          HttpResponse response)
         {
             #region set parameters
             var parameters = new DynamicParameters(pagingParameters);
@@ -58,13 +59,13 @@ namespace Services.Concretes
 
             // when any machine not found
             if (machineViews.Count() == 0)
-                throw new ErrorWithCodeException(404, 
-                    "NF-M", 
+                throw new ErrorWithCodeException(404,
+                    "NF-M",
                     "Not Found - Machine");
             #endregion
 
             #region add pagination informations to headers
-            
+
             #region create pagination list
             var machineViewPagingList = await PagingList<MachineView>
                 .ToPagingListAsync(
@@ -84,6 +85,29 @@ namespace Services.Concretes
 
             return machineViewPagingList;
         }
+
+
+        public async Task UpdateMachineAsync(
+            MachineParametersForUpdate parameters, 
+            MachineDtoForUpdate machineDto)
+        {
+            #region set paramaters
+            var dynamicParameters = new DynamicParameters(machineDto);
+
+            dynamicParameters.AddDynamicParams(parameters);
+            #endregion
+
+            #region update machine
+            var errorDto = await _manager.MachineRepository
+                .UpdateMachineAsync(dynamicParameters);
+
+            // when any error occured (throw)
+            if (errorDto != null)
+                throw new ErrorWithCodeException(errorDto);
+            #endregion
+        }
+
+
 
 
         //public async Task<IEnumerable<MachineDto>> GetMachinesByConditionWithPagingAsync(

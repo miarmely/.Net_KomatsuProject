@@ -1,17 +1,20 @@
-﻿using Entities.DtoModels.EnumModels;
-
-namespace Entities.DtoModels.MachineDtos
+﻿namespace Entities.DtoModels.MachineDtos
 {
-    public record MachineBodyDtoForUpdate
+    public record MachineDtoForUpdate
     {
-        public string? BrandName { get; init; }
+        public string? Language { get; init; }
+        public string? MainCategoryName { get; init; }
         public string? SubCategoryName { get; init; }
         public string? Model { get; init; }
-        public HandStatus? ZerothHandOrSecondHand { get; init; }
-        public string? ImagePath { get; init; }
-        public int? Stock { get; init; }
-        public int? Rented { get; init; }
-        public int? Sold { get; init; }
-        public int? Year { get; init; }
+        public string? BrandName { get; init; }
+        public Int16? Stock { get; init; }
+        public Int16? Rented { get; init; }
+        public Int16? Sold { get; init; }
+        public Int16? Year { get; init; }
+        public string? HandStatus { get; init; }
+        public string? @DescriptionInTR { get; init; }
+        public string? @DescriptionInEN { get; init; }
+        public string? @ImagePath { get; init; }
+        public string? @PdfPath { get; init; }
     }
 }

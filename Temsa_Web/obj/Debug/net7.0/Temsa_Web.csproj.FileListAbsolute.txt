@@ -1,0 +1,9 @@
+C:\Users\Mac\Desktop\SOFTWARE\1__Software_Languages\1__C#\2__API\1__Projects\Temsa\Temsa_Web\obj\Debug\net7.0\Temsa_Web.csproj.AssemblyReference.cache
+C:\Users\Mac\Desktop\SOFTWARE\1__Software_Languages\1__C#\2__API\1__Projects\Temsa\Temsa_Web\obj\Debug\net7.0\Temsa_Web.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\Mac\Desktop\SOFTWARE\1__Software_Languages\1__C#\2__API\1__Projects\Temsa\Temsa_Web\obj\Debug\net7.0\Temsa_Web.AssemblyInfoInputs.cache
+C:\Users\Mac\Desktop\SOFTWARE\1__Software_Languages\1__C#\2__API\1__Projects\Temsa\Temsa_Web\obj\Debug\net7.0\Temsa_Web.AssemblyInfo.cs
+C:\Users\Mac\Desktop\SOFTWARE\1__Software_Languages\1__C#\2__API\1__Projects\Temsa\Temsa_Web\obj\Debug\net7.0\Temsa_Web.csproj.CoreCompileInputs.cache
+C:\Users\Mac\Desktop\SOFTWARE\1__Software_Languages\1__C#\2__API\1__Projects\Temsa\Temsa_Web\obj\Debug\net7.0\Temsa_Web.MvcApplicationPartsAssemblyInfo.cache
+C:\Users\Mac\Desktop\SOFTWARE\1__Software_Languages\1__C#\2__API\1__Projects\Temsa\Temsa_Web\obj\Debug\net7.0\Temsa_Web.RazorAssemblyInfo.cache
+C:\Users\Mac\Desktop\SOFTWARE\1__Software_Languages\1__C#\2__API\1__Projects\Temsa\Temsa_Web\obj\Debug\net7.0\Temsa_Web.RazorAssemblyInfo.cs
+C:\Users\Mac\Desktop\SOFTWARE\1__Software_Languages\1__C#\2__API\1__Projects\Temsa\Temsa_Web\obj\Debug\net7.0\Temsa_Web.MvcApplicationPartsAssemblyInfo.cs

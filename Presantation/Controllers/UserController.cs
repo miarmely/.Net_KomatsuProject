@@ -92,7 +92,7 @@ namespace Presantation.Controllers
 
 
         [HttpDelete("delete")]
-        [Authorize(Roles = "Admin,Yönetici")]
+        [Authorization("Admin,Yönetici")]
         [ValidationNullArguments]
         public async Task<IActionResult> DeleteUsersAsync(
             [FromBody] UserDtoForDelete userDto)

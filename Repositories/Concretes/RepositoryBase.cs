@@ -1,36 +1,78 @@
 ﻿using Dapper;
+using Entities.ConfigModels.Contracts;
 using Repositories.Contracts;
 using System.Data;
 
 
 namespace Repositories.Concretes
 {
-    public class RepositoryBase<T> : IRepositoryBase<T> where T : class
+    public abstract class RepositoryBase : IRepositoryBase
     {
-        public RepositoryContext _context { get; }
+        private RepositoryContext _context;
+        private readonly IConfigManager _configs;
 
-        public RepositoryBase(RepositoryContext context) =>
-            _context = context;
+        public IConfigManager Configs => _configs;
 
-        public async Task<int> Count(string tableName)
+        public RepositoryBase(RepositoryContext context, IConfigManager configs)
         {
+            _context = context;
+            _configs = configs;
+        }
+            
+        public async Task<T> QuerySingleOrDefaultAsync<T>(
+            string procedureName, 
+            DynamicParameters parameters)
+        {
+            #region send query
             using (var connection = _context.CreateSqlConnection())
             {
-                #region set parameters
-                var parameters = new DynamicParameters();
-
-                parameters.Add("TableName", tableName, DbType.String);
-                #endregion
-
-                #region get total count of table
-                var totalCount = await connection
-                    .QuerySingleOrDefaultAsync<int>(
-                        "SELECT COUNT(*) FROM @TableName",
-                        parameters);
-                #endregion
-
-                return totalCount;
+                return await connection.QuerySingleOrDefaultAsync<T>(
+                    GetCommandDefinition(procedureName, parameters));
             }
+            #endregion
         }
+
+        public async Task<IEnumerable<T>> QueryAsync<T>(
+            string procedureName, 
+            DynamicParameters parameters)
+        {
+            #region send query
+            using (var connection = _context.CreateSqlConnection())
+            {
+                return await connection.QueryAsync<T>(
+                    GetCommandDefinition(procedureName, parameters));
+            }
+            #endregion
+        }
+
+        public async Task<IEnumerable<TResult>> QueryAsync<TPart1, TPart2, TResult>(
+            string procedureName,
+            DynamicParameters parameters,
+            Func<TPart1, TPart2, TResult> map,
+            string SplitOn)
+        {
+            #region send query
+            using (var connection = _context.CreateSqlConnection())
+            {
+                return await connection.QueryAsync(
+                    GetCommandDefinition(procedureName, parameters), 
+                    map, 
+                    SplitOn);
+            }
+            #endregion
+        }
+
+
+        #region private
+
+        private CommandDefinition GetCommandDefinition(
+            string commandText, 
+            DynamicParameters parameters) =>
+                new CommandDefinition(
+                    commandText,
+                    parameters,
+                    commandType: CommandType.StoredProcedure);
+
+        #endregion
     }
 }

@@ -1,5 +1,6 @@
 ﻿using Entities.DtoModels.MachineDtos;
 using Entities.QueryModels;
+using Entities.QueryParameters;
 using Entities.ViewModels;
 using Microsoft.AspNetCore.Http;
 using Repositories;
@@ -15,18 +16,23 @@ namespace Services.Contracts
             PaginationParameters paginationParameters,
 			HttpResponse response);
 
-		//Task<IEnumerable<MachineDto>> GetMachinesByConditionWithPagingAsync(
-		//	MachineBodyDtoForDisplay machineDtoD,
-		//	PaginationQueryDto pagingParameters,
-		//	HttpResponse response);
+        Task UpdateMachineAsync(
+            MachineParametersForUpdate parameters,
+            MachineDtoForUpdate machineDto);
+        
 
-		//Task<IEnumerable<string>> GetSubCategoriesOfMainCategoryAsync(
-		//	string mainCategoryName);
+            //Task<IEnumerable<MachineDto>> GetMachinesByConditionWithPagingAsync(
+            //	MachineBodyDtoForDisplay machineDtoD,
+            //	PaginationQueryDto pagingParameters,
+            //	HttpResponse response);
 
-		//Task UpdateMachineAsync(
-		//	MachineQueryDtoForUpdate machineQueryDtoU,
-		//          MachineBodyDtoForUpdate machineBodyDtoU);
+            //Task<IEnumerable<string>> GetSubCategoriesOfMainCategoryAsync(
+            //	string mainCategoryName);
 
-		//Task DeleteMachinesAsync(MachineBodyDtoForDelete machineQueryDto);
-	}
+            //Task UpdateMachineAsync(
+            //	MachineQueryDtoForUpdate machineQueryDtoU,
+            //          MachineBodyDtoForUpdate machineBodyDtoU);
+
+            //Task DeleteMachinesAsync(MachineBodyDtoForDelete machineQueryDto);
+     }
 }

@@ -1,21 +1,18 @@
 ﻿using Dapper;
 using Entities.DtoModels;
-using Entities.QueryModels;
 using Entities.ViewModels;
 
 namespace Repositories.Contracts
 {
-    public interface IUserRepository : IRepositoryBase<UserView>
+    public interface IUserRepository : IRepositoryBase
     {
         Task<ErrorDto?> CreateUserAsync(DynamicParameters parameters);
         Task<ErrorDto?> UpdateUserByTelNoAsync(DynamicParameters parameters);
-        Task DeleteUsersByTelNoListAsync(IEnumerable<string> telNoList);
-        Task<IEnumerable<UserView>?> GetAllUsersAsync(string language);
+        Task<ErrorDto> DeleteUsersByTelNoListAsync(DynamicParameters parameters);
         Task<UserView?> GetUserByTelNoAsync(DynamicParameters parameters);
 
-        Task<PagingList<UserView>?> GetAllUsersWithPagingAsync(
-            PaginationParameters paginationQueryDto,
-            string language);
+        Task<IEnumerable<UserView>?> GetAllUsersWithPagingAsync(
+            DynamicParameters parameters);
 
 
   //      Task<List<UserView>> GetUsersByConditionAsync(

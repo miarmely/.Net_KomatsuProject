@@ -2,6 +2,7 @@
 {
     public record MachineView
     {
+        public Guid MachineId { get; init; }
         public string MainCategoryName { get; init; }
         public string SubCategoryName { get; init; }
         public string BrandName { get; init; }

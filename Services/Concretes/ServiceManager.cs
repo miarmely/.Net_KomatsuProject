@@ -8,18 +8,14 @@ namespace Services.Concretes
     public class ServiceManager : IServiceManager
     {
 		private readonly Lazy<IUserService> _userService;
-		private readonly Lazy<ICompanyService> _companyService;
 		private readonly Lazy<IMailService> _mailService;
 		private readonly Lazy<IMachineService> _machineService;
 		private readonly Lazy<IFileService> _fileService;
-		private readonly Lazy<IRoleService> _roleService;
 		
 		public IUserService UserService => _userService.Value;
-		public ICompanyService CompanyService => _companyService.Value;
 		public IMailService MailService => _mailService.Value;
 		public IMachineService MachineService => _machineService.Value;
 		public IFileService FileService => _fileService.Value;
-		public IRoleService RoleService => _roleService.Value;
        
 		public ServiceManager(IRepositoryManager manager,
 			IConfigManager config,
@@ -27,16 +23,12 @@ namespace Services.Concretes
         {
 			_userService = new Lazy<IUserService>(() => 
 				new UserService(manager, config, mapper));
-			_companyService = new Lazy<ICompanyService>(() => 
-				new CompanyService(manager));
 			_mailService = new Lazy<IMailService>(() =>
 				new MailService(config));
 			_machineService = new Lazy<IMachineService>(() => 
 				new MachineService(manager, mapper));
 			_fileService = new Lazy<IFileService>(() => 
 				new FileService(config));
-			_roleService = new Lazy<IRoleService>(() =>
-				new RoleService(manager));
         }
 	}
 }

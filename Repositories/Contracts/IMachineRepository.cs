@@ -1,14 +1,16 @@
 ﻿using Dapper;
-using Entities.DataModels;
 using Entities.DtoModels;
 using Entities.ViewModels;
 
 namespace Repositories.Contracts
 {
-    public interface IMachineRepository : IRepositoryBase<Machine>
+    public interface IMachineRepository : IRepositoryBase
 	{
 		public Task<ErrorDto> CreateMachineAsync(DynamicParameters parameters);
+        Task<ErrorDto?> UpdateMachineAsync(DynamicParameters parameters);
+        Task<ErrorDto?> DeleteMachineAsync(DynamicParameters parameters);
         Task<IEnumerable<MachineView>> GetAllMachinesAsync(DynamicParameters parameters);
+
 
 
         //Task<MachineView?> GetMachineByMachineIdAsync(Guid machineId);
