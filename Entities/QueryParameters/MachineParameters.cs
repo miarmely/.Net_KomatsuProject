@@ -2,8 +2,8 @@
 {
     public record MachineParametersForUpdate
     {
-        public string Language { get; init; }
-        public Guid MachineId { get; init; }
+        public string? Language { get; init; }
+        public Guid? Id { get; init; }
     }
 
 }

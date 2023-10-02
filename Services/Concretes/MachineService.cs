@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Dapper;
+using Entities.DtoModels;
 using Entities.DtoModels.MachineDtos;
 using Entities.Exceptions;
 using Entities.QueryModels;
@@ -16,16 +17,10 @@ namespace Services.Concretes
     public class MachineService : IMachineService
 	{
 		private readonly IRepositoryManager _manager;
-		private readonly IMapper _mapper;
 
-		public MachineService(
-			IRepositoryManager manager,
-			IMapper mapper)
-		{
+		public MachineService(IRepositoryManager manager) =>
 			_manager = manager;
-			_mapper = mapper;
-		}
-
+			
 		public async Task CreateMachineAsync(MachineDtoForCreate machineDto)
 		{
             #region create machine
@@ -86,7 +81,6 @@ namespace Services.Concretes
             return machineViewPagingList;
         }
 
-
         public async Task UpdateMachineAsync(
             MachineParametersForUpdate parameters, 
             MachineDtoForUpdate machineDto)
@@ -95,12 +89,42 @@ namespace Services.Concretes
             var dynamicParameters = new DynamicParameters(machineDto);
 
             dynamicParameters.AddDynamicParams(parameters);
-            #endregion
+            #endregion 
 
-            #region update machine
+            #region update machine (throw)
             var errorDto = await _manager.MachineRepository
                 .UpdateMachineAsync(dynamicParameters);
 
+            // when any error occured (throw)
+            if (errorDto != null)
+                throw new ErrorWithCodeException(errorDto);
+            #endregion
+        }
+
+        public async Task DeleteMachineAsync(
+            string language,
+            MachineDtoForDelete machineDto)
+        {
+            #region set parameters
+            var parameters = new DynamicParameters();
+
+            parameters.Add(
+                "MachineIdsInString",
+                string.Join(',', machineDto.MachineIdList),
+                DbType.String);
+
+            parameters.Add(
+                "TotalMachineIdCount",
+                machineDto.MachineIdList.Count(),
+                DbType.Int32);
+
+            parameters.Add("Language", language, DbType.String);
+            #endregion
+
+            #region delete machine (throw)
+            var errorDto = await _manager.MachineRepository
+                .DeleteMachineAsync(parameters);
+            
             // when any error occured (throw)
             if (errorDto != null)
                 throw new ErrorWithCodeException(errorDto);

@@ -19,6 +19,10 @@ namespace Services.Contracts
         Task UpdateMachineAsync(
             MachineParametersForUpdate parameters,
             MachineDtoForUpdate machineDto);
+
+        Task DeleteMachineAsync(
+            string language,
+            MachineDtoForDelete machineDto);
         
 
             //Task<IEnumerable<MachineDto>> GetMachinesByConditionWithPagingAsync(

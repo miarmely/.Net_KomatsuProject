@@ -2,7 +2,6 @@
 {
     public record MachineDtoForUpdate
     {
-        public string? Language { get; init; }
         public string? MainCategoryName { get; init; }
         public string? SubCategoryName { get; init; }
         public string? Model { get; init; }
@@ -12,9 +11,9 @@
         public Int16? Sold { get; init; }
         public Int16? Year { get; init; }
         public string? HandStatus { get; init; }
-        public string? @DescriptionInTR { get; init; }
-        public string? @DescriptionInEN { get; init; }
-        public string? @ImagePath { get; init; }
-        public string? @PdfPath { get; init; }
+        public string? DescriptionInTR { get; init; }
+        public string? DescriptionInEN { get; init; }
+        public string? ImagePath { get; init; }
+        public string? PdfPath { get; init; }
     }
 }

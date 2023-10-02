@@ -118,7 +118,7 @@ namespace Services.Concretes
             var parameters = new DynamicParameters(pagingParameters);
 
             parameters.Add("Language", language, DbType.String);
-            parameters.Add("TotalCount", 0, DbType.Int64, ParameterDirection.Output);
+            parameters.Add("TotalCount", 0, DbType.Int32, ParameterDirection.Output);
             #endregion
 
             #region get userViews

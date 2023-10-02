@@ -20,7 +20,9 @@ namespace Presantation.Controllers
 
 
 		[HttpPost("create")]
-		public async Task<IActionResult> CreateMachineAsync(
+        [Authorization("Admin,Yönetici,Editor,Editör")]
+        [ValidationNullArguments]
+        public async Task<IActionResult> CreateMachineAsync(
 			[FromBody] MachineDtoForCreate machineDto)
 		{
 			await _manager.MachineService
@@ -31,7 +33,8 @@ namespace Presantation.Controllers
 
 
 		[HttpGet("display/all")]
-		public async Task<IActionResult> GetAllMachinesAsync(
+        [Authorization("Admin,Yönetici,Editor,Editör,User,Kullanıcı")]
+        public async Task<IActionResult> GetAllMachinesAsync(
 			[FromQuery(Name = "Language")] string language,
 			[FromQuery] PaginationParameters pagingParameters)
 		{
@@ -43,6 +46,7 @@ namespace Presantation.Controllers
 
 
         [HttpPut("update")]
+        [Authorization("Admin,Yönetici,Editor,Editör")]
         [ValidationNullArguments]
         public async Task<IActionResult> UpdateMachineAsync(
             [FromQuery] MachineParametersForUpdate machineParameters,
@@ -54,6 +58,19 @@ namespace Presantation.Controllers
             return NoContent();
         }
 
+
+        [HttpDelete("delete")]
+        [Authorization("Admin,Yönetici")]
+        [ValidationNullArguments]
+        public async Task<IActionResult> DeleteMachinesAsync(
+            [FromQuery(Name = "Language")] string language,
+            [FromBody] MachineDtoForDelete machineDto)
+        {
+            await _manager.MachineService
+                .DeleteMachineAsync(language, machineDto);
+
+            return NoContent();
+        }
 
 
         //      [HttpGet("display/condition")]
@@ -80,17 +97,6 @@ namespace Presantation.Controllers
         //              .GetSubCategoriesOfMainCategoryAsync(mainCategoryName);
 
         //          return Ok(subCategories);
-        //      }
-
-        //      [HttpDelete("delete")]
-        //      [ValidationNullArguments]
-        //      public async Task<IActionResult> DeleteMachinesAsync(
-        //          [FromBody] MachineBodyDtoForDelete machineBodyDto)
-        //      {
-        //          await _manager.MachineService
-        //              .DeleteMachinesAsync(machineBodyDto);
-
-        //          return NoContent();
         //      }
     }
 }

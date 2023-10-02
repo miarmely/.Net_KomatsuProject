@@ -1,9 +1,7 @@
 ﻿namespace Entities.DtoModels.MachineDtos
 {
-    public record MachineBodyDtoForDelete
+    public record MachineDtoForDelete
     {
-        public IEnumerable<QueryData>? MachineInfos { get; init; }
+        public IEnumerable<Guid> MachineIdList { get; init; }
     }
-
-    public record QueryData(string? SubCategoryName, string? Model);
 }

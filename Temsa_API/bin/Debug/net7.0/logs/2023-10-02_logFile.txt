@@ -1,0 +1,70 @@
+06:24:58.8125  WARN  {"Controller":"User","Action":"User","ErrorCode":"AE-F","CreatedAt":"2023-10-02T03:24:58.7552272Z"}
+06:25:06.7977  WARN  {"Controller":"User","Action":"User","ErrorCode":"AE-F","CreatedAt":"2023-10-02T03:25:06.7934409Z"}
+06:25:09.3055  WARN  {"Controller":"User","Action":"User","ErrorCode":"AE-F","CreatedAt":"2023-10-02T03:25:09.3033928Z"}
+06:25:14.8328  ERROR  {"Controller":"User","Action":"User","ErrorCode":"Internal Server Error","CreatedAt":"2023-10-02T03:25:14.8096546Z"}
+06:26:12.6289  ERROR  {"Controller":"User","Action":"User","ErrorCode":"Internal Server Error","CreatedAt":"2023-10-02T03:26:12.5783899Z"}
+06:26:13.9174  ERROR  {"Controller":"User","Action":"User","ErrorCode":"Internal Server Error","CreatedAt":"2023-10-02T03:26:13.91323Z"}
+06:28:32.6768  ERROR  {"Controller":"User","Action":"User","ErrorCode":"Internal Server Error","CreatedAt":"2023-10-02T03:28:32.6039805Z"}
+06:28:57.2396  ERROR  {"Controller":"User","Action":"User","ErrorCode":"Internal Server Error","CreatedAt":"2023-10-02T03:28:57.2351945Z"}
+06:29:00.5538  ERROR  {"Controller":"User","Action":"User","ErrorCode":"Internal Server Error","CreatedAt":"2023-10-02T03:29:00.5491026Z"}
+06:30:01.4894  ERROR  {"Controller":"User","Action":"User","ErrorCode":"Internal Server Error","CreatedAt":"2023-10-02T03:30:01.4864829Z"}
+06:32:48.9227  WARN  {"Controller":"User","Action":"User","ErrorCode":"CE-U-E","CreatedAt":"2023-10-02T03:32:48.875974Z"}
+06:33:05.4690  WARN  {"Controller":"User","Action":"User","ErrorCode":"CE-U-TE","CreatedAt":"2023-10-02T03:33:05.4637833Z"}
+06:33:15.7264  WARN  {"Controller":"User","Action":"User","ErrorCode":"AE-F","CreatedAt":"2023-10-02T03:33:15.7241619Z"}
+06:35:11.2766  WARN  {"Controller":"User","Action":"User","ErrorCode":"VE-U-T","CreatedAt":"2023-10-02T03:35:11.2733948Z"}
+06:37:38.8262  WARN  {"Controller":"User","Action":"User","ErrorCode":"CE-U-TE","CreatedAt":"2023-10-02T03:37:38.7773394Z"}
+06:37:57.5974  WARN  {"Controller":"Machine","Action":"Machine","ErrorCode":"AE-F","CreatedAt":"2023-10-02T03:37:57.5931148Z"}
+06:38:04.1286  WARN  {"Controller":"Machine","Action":"Machine","ErrorCode":"AE-F","CreatedAt":"2023-10-02T03:38:04.123334Z"}
+06:45:47.7243  WARN  {"Controller":"Machine","Action":"Machine","ErrorCode":"CE-M-Mo","CreatedAt":"2023-10-02T03:45:47.6445822Z"}
+06:46:50.4928  WARN  {"Controller":"Machine","Action":"Machine","ErrorCode":"CE-M-Mo","CreatedAt":"2023-10-02T03:46:50.488602Z"}
+06:50:33.4074  WARN  {"Controller":"Machine","Action":"Machine","ErrorCode":"CE-M-Mo","CreatedAt":"2023-10-02T03:50:33.4042539Z"}
+06:50:38.4482  WARN  {"Controller":"Machine","Action":"Machine","ErrorCode":"CE-M-Mo","CreatedAt":"2023-10-02T03:50:38.4452799Z"}
+06:50:41.0120  WARN  {"Controller":"Machine","Action":"Machine","ErrorCode":"CE-M-Mo","CreatedAt":"2023-10-02T03:50:41.0094134Z"}
+06:50:42.0902  WARN  {"Controller":"Machine","Action":"Machine","ErrorCode":"CE-M-Mo","CreatedAt":"2023-10-02T03:50:42.080736Z"}
+06:50:43.9767  WARN  {"Controller":"Machine","Action":"Machine","ErrorCode":"CE-M-Mo","CreatedAt":"2023-10-02T03:50:43.9740698Z"}
+06:50:44.7862  WARN  {"Controller":"Machine","Action":"Machine","ErrorCode":"CE-M-Mo","CreatedAt":"2023-10-02T03:50:44.7839489Z"}
+06:50:45.5969  WARN  {"Controller":"Machine","Action":"Machine","ErrorCode":"CE-M-Mo","CreatedAt":"2023-10-02T03:50:45.5938068Z"}
+06:50:46.3483  WARN  {"Controller":"Machine","Action":"Machine","ErrorCode":"CE-M-Mo","CreatedAt":"2023-10-02T03:50:46.3463821Z"}
+06:50:47.0284  WARN  {"Controller":"Machine","Action":"Machine","ErrorCode":"CE-M-Mo","CreatedAt":"2023-10-02T03:50:47.026072Z"}
+06:50:47.8532  WARN  {"Controller":"Machine","Action":"Machine","ErrorCode":"CE-M-Mo","CreatedAt":"2023-10-02T03:50:47.8369738Z"}
+06:50:48.5579  WARN  {"Controller":"Machine","Action":"Machine","ErrorCode":"CE-M-Mo","CreatedAt":"2023-10-02T03:50:48.5549082Z"}
+06:50:49.3307  WARN  {"Controller":"Machine","Action":"Machine","ErrorCode":"CE-M-Mo","CreatedAt":"2023-10-02T03:50:49.3287438Z"}
+06:50:50.1376  WARN  {"Controller":"Machine","Action":"Machine","ErrorCode":"CE-M-Mo","CreatedAt":"2023-10-02T03:50:50.1353136Z"}
+07:05:21.9401  WARN  {"Controller":"Machine","Action":"Machine","ErrorCode":"NF-M","CreatedAt":"2023-10-02T04:05:21.8772483Z"}
+07:55:21.5108  WARN  {"Controller":"Machine","Action":"Machine","ErrorCode":"AE-U","CreatedAt":"2023-10-02T04:55:21.4691389Z"}
+07:56:03.1241  WARN  {"Controller":"Machine","Action":"Machine","ErrorCode":"CE-M-Mo","CreatedAt":"2023-10-02T04:56:03.1163092Z"}
+07:56:12.2872  WARN  {"Controller":"Machine","Action":"Machine","ErrorCode":"CE-M-Mo","CreatedAt":"2023-10-02T04:56:12.2799883Z"}
+07:56:13.3968  WARN  {"Controller":"Machine","Action":"Machine","ErrorCode":"CE-M-Mo","CreatedAt":"2023-10-02T04:56:13.3939974Z"}
+07:56:14.3619  WARN  {"Controller":"Machine","Action":"Machine","ErrorCode":"CE-M-Mo","CreatedAt":"2023-10-02T04:56:14.3593568Z"}
+07:56:15.2426  WARN  {"Controller":"Machine","Action":"Machine","ErrorCode":"CE-M-Mo","CreatedAt":"2023-10-02T04:56:15.237859Z"}
+07:56:16.3305  WARN  {"Controller":"Machine","Action":"Machine","ErrorCode":"CE-M-Mo","CreatedAt":"2023-10-02T04:56:16.3272369Z"}
+07:56:17.2942  WARN  {"Controller":"Machine","Action":"Machine","ErrorCode":"CE-M-Mo","CreatedAt":"2023-10-02T04:56:17.2866878Z"}
+07:56:18.4719  WARN  {"Controller":"Machine","Action":"Machine","ErrorCode":"CE-M-Mo","CreatedAt":"2023-10-02T04:56:18.4689723Z"}
+07:56:19.4326  WARN  {"Controller":"Machine","Action":"Machine","ErrorCode":"CE-M-Mo","CreatedAt":"2023-10-02T04:56:19.4297477Z"}
+07:56:20.7918  WARN  {"Controller":"Machine","Action":"Machine","ErrorCode":"CE-M-Mo","CreatedAt":"2023-10-02T04:56:20.7890254Z"}
+07:56:21.6872  WARN  {"Controller":"Machine","Action":"Machine","ErrorCode":"CE-M-Mo","CreatedAt":"2023-10-02T04:56:21.6805917Z"}
+07:56:22.5552  WARN  {"Controller":"Machine","Action":"Machine","ErrorCode":"CE-M-Mo","CreatedAt":"2023-10-02T04:56:22.550549Z"}
+07:56:23.4313  WARN  {"Controller":"Machine","Action":"Machine","ErrorCode":"CE-M-Mo","CreatedAt":"2023-10-02T04:56:23.4267135Z"}
+07:56:24.2513  WARN  {"Controller":"Machine","Action":"Machine","ErrorCode":"CE-M-Mo","CreatedAt":"2023-10-02T04:56:24.2485912Z"}
+07:56:25.1098  WARN  {"Controller":"Machine","Action":"Machine","ErrorCode":"CE-M-Mo","CreatedAt":"2023-10-02T04:56:25.1066963Z"}
+07:56:36.1028  WARN  {"Controller":"Machine","Action":"Machine","ErrorCode":"CE-M-Mo","CreatedAt":"2023-10-02T04:56:36.0982608Z"}
+07:56:37.2395  WARN  {"Controller":"Machine","Action":"Machine","ErrorCode":"CE-M-Mo","CreatedAt":"2023-10-02T04:56:37.2372274Z"}
+07:56:43.1946  WARN  {"Controller":"Machine","Action":"Machine","ErrorCode":"CE-M-Mo","CreatedAt":"2023-10-02T04:56:43.1927477Z"}
+07:56:44.2968  WARN  {"Controller":"Machine","Action":"Machine","ErrorCode":"CE-M-Mo","CreatedAt":"2023-10-02T04:56:44.2941457Z"}
+07:56:50.9679  WARN  {"Controller":"Machine","Action":"Machine","ErrorCode":"NA","CreatedAt":"2023-10-02T04:56:50.9595341Z"}
+07:56:53.6884  WARN  {"Controller":"Machine","Action":"Machine","ErrorCode":"NA","CreatedAt":"2023-10-02T04:56:53.6867315Z"}
+07:57:09.6604  WARN  {"Controller":"Machine","Action":"Machine","ErrorCode":"CE-M-Mo","CreatedAt":"2023-10-02T04:57:09.63141Z"}
+08:09:40.4135  ERROR  {"Controller":"Machine","Action":"Machine","ErrorCode":"Internal Server Error","CreatedAt":"2023-10-02T05:09:40.3884722Z"}
+19:51:52.6494  WARN  {"Controller":"Machine","Action":"Machine","ErrorCode":"AE-U","CreatedAt":"2023-10-02T16:51:52.5767708Z"}
+19:52:11.3043  ERROR  {"Controller":"Machine","Action":"Machine","ErrorCode":"Internal Server Error","CreatedAt":"2023-10-02T16:52:11.2623611Z"}
+19:59:14.2995  WARN  {"Controller":"Machine","Action":"Machine","ErrorCode":"CE-M-Mo","CreatedAt":"2023-10-02T16:59:14.2913463Z"}
+19:59:21.8667  WARN  {"Controller":"Machine","Action":"Machine","ErrorCode":"CE-M-Mo","CreatedAt":"2023-10-02T16:59:21.8642897Z"}
+20:23:26.8397  WARN  {"Controller":"Machine","Action":"Machine","ErrorCode":"NF-M","CreatedAt":"2023-10-02T17:23:26.6954747Z"}
+20:23:51.3315  WARN  {"Controller":"Machine","Action":"Machine","ErrorCode":"NF-M","CreatedAt":"2023-10-02T17:23:51.3211097Z"}
+20:24:03.7706  WARN  {"Controller":"Machine","Action":"Machine","ErrorCode":"NF-M","CreatedAt":"2023-10-02T17:24:03.7571048Z"}
+20:25:33.0925  WARN  {"Controller":"Machine","Action":"Machine","ErrorCode":"AE-F","CreatedAt":"2023-10-02T17:25:33.036181Z"}
+20:25:42.7623  WARN  {"Controller":"Machine","Action":"Machine","ErrorCode":"AE-F","CreatedAt":"2023-10-02T17:25:42.7571526Z"}
+20:25:46.0678  WARN  {"Controller":"Machine","Action":"Machine","ErrorCode":"AE-F","CreatedAt":"2023-10-02T17:25:46.0650493Z"}
+20:25:52.1926  WARN  {"Controller":"Machine","Action":"Machine","ErrorCode":"NF-M","CreatedAt":"2023-10-02T17:25:52.1884794Z"}
+20:55:54.0385  WARN  {"Controller":"Machine","Action":"Machine","ErrorCode":"CE-M-Mo","CreatedAt":"2023-10-02T17:55:53.9251202Z"}
+20:59:05.8321  WARN  {"Controller":"Machine","Action":"Machine","ErrorCode":"NF-M","CreatedAt":"2023-10-02T17:59:05.8200769Z"}

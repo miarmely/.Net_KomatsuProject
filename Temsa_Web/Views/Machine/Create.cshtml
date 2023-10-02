@@ -19,7 +19,7 @@
                                     <select id="slct_mainCategory" class="form-control m-bot15">
                                         @{
                                             #region get mainCategoryNames
-                                            var mainCategoryNames = Model.CategoryNamesConfig
+                                            var mainCategoryNames = Model.CategoryNames
                                                 .MainCategoryNames;
                                             #endregion
 
@@ -43,7 +43,7 @@
                                     <select id="slct_subCategory" class="form-control m-bot15">
                                         @{
                                             #region get subCategoryNames
-                                            var subCategoryNames = Model.CategoryNamesConfig
+                                            var subCategoryNames = Model.CategoryNames
                                                 .SubCategoryNames.ElementAt(0);
                                             #endregion
 
