@@ -1,4 +1,8 @@
-﻿@model IConfigManager;
+﻿@model IServiceManager;
+
+@{
+    var language = ViewBag.Language;
+};
 
 <div class="form-w3layouts">
     <div class="row">
@@ -18,15 +22,15 @@
                                 <div class="col-sm-6">
                                     <select id="slct_mainCategory" class="form-control m-bot15">
                                         @{
-                                            #region get mainCategoryNames
-                                            var mainCategoryNames = Model.CategoryNames
-                                                .MainCategoryNames;
+                                            #region get mainCategoryNames by language
+                                            var mainCategoryNames = await Model.MachineService
+                                                .GetMainCategoryNamesByLanguageAsync(language);
                                             #endregion
 
                                             #region add mainCategoryNames
                                             foreach(var mainCategoryName in mainCategoryNames)
                                             {
-                                                <option>@mainCategoryName</option>    
+                                                <option>@mainCategoryName</option>
                                             }
                                             #endregion
                                         }                                        
@@ -42,12 +46,22 @@
                                 <div class="col-sm-6">
                                     <select id="slct_subCategory" class="form-control m-bot15">
                                         @{
+
                                             #region get subCategoryNames
-                                            var subCategoryNames = Model.CategoryNames
-                                                .SubCategoryNames.ElementAt(0);
+                                            var machineParameters = new MachineParametersForDisplaySubCategoryNames
+                                            {
+                                                Language = language,
+                                                MainCategoryName = language == "TR"?
+                                                    "İş Makineleri"
+                                                    : "Work Machines"
+                                            };
+
+                                            var subCategoryNames = await Model.MachineService
+                                                .GetSubCategoryNamesOfMainCategoryByLanguageAsync(
+                                                    machineParameters);
                                             #endregion
 
-                                            #region add all <option> of subCategoryName
+                                            #region add subCategoryNames as <option>
                                             foreach(var subCategoryName in subCategoryNames)
                                             {
                                                 <option>@subCategoryName</option>    

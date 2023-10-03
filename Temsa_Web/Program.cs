@@ -4,7 +4,7 @@ using Temsa_Web.Extensions;
 
 #region setup logger
 LogManager.Setup()
-	.LoadConfigurationFromFile();
+    .LoadConfigurationFromFile();
 #endregion
 
 #region add extensions
@@ -13,15 +13,15 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.ConfigureAddControllersWithView();
 builder.Services.AddAutoMapper(Assembly.GetExecutingAssembly());
 builder.Services.ConfigureServices();
+builder.Services.ConfigureManagers();
 builder.Services.ConfigureConfigModels(builder.Configuration);
-builder.Services.ConfigureJwt(builder.Configuration);
 
 var app = builder.Build();
 #endregion
 
 #region set production or staging mode 
 if (!app.Environment.IsDevelopment())
-	app.UseHsts();
+    app.UseHsts();
 #endregion
 
 #region add pipelines
@@ -32,8 +32,8 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllerRoute(
-	name: "default",
-	pattern: "{controller=Machine}/{action=Display}/{id?}");
+    name: "default",
+    pattern: "{controller=Machine}/{action=Display}/{id?}");
 #endregion
 
 app.Run();

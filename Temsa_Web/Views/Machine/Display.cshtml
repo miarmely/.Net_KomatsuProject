@@ -85,11 +85,6 @@
 <script type="module" src="~/js/machineForDisplay.js"></script>
 
 <script>
-	//#region get model
-	var model = @Html.Raw(Json
-		.Serialize(Model.CategoryNamesConfig));
-	//#endregion
-
     function click_saveButton(rowNo) {
 		//#region set variables
 		let oldColumnValues = JSON.parse(

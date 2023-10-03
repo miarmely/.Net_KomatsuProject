@@ -16,5 +16,7 @@
         public string Machine_DisplayAll { get; init; }
         public string Machine_Update { get; init; }
         public string Machine_Delete { get; init; }
+        public string Machine_GetMainCategoryNames { get; init; }
+        public string Machine_GetSubCategoryNames { get; init; }
     }
 }

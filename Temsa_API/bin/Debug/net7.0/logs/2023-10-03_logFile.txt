@@ -1,0 +1,10 @@
+09:58:55.4799  WARN  {"Controller":"Machine","Action":"Machine","ErrorCode":"AE-U","CreatedAt":"2023-10-03T06:58:49.4917435Z"}
+10:39:52.5975  WARN  {"Controller":"Machine","Action":"Machine","ErrorCode":"AE-U","CreatedAt":"2023-10-03T07:39:40.7598143Z"}
+10:45:19.9712  WARN  {"Controller":"Machine","Action":"Machine","ErrorCode":"AE-U","CreatedAt":"2023-10-03T07:45:15.5323102Z"}
+10:53:30.3944  WARN  {"Controller":"Machine","Action":"Machine","ErrorCode":"AE-U","CreatedAt":"2023-10-03T07:53:27.4909796Z"}
+10:55:19.9504  WARN  {"Controller":"Machine","Action":"Machine","ErrorCode":"AE-U","CreatedAt":"2023-10-03T07:55:16.0630793Z"}
+10:56:26.3581  WARN  {"Controller":"Machine","Action":"Machine","ErrorCode":"AE-U","CreatedAt":"2023-10-03T07:56:23.6153527Z"}
+10:59:19.1443  WARN  {"Controller":"Machine","Action":"Machine","ErrorCode":"AE-U","CreatedAt":"2023-10-03T07:59:17.1585271Z"}
+11:08:20.2377  WARN  {"Controller":"Machine","Action":"Machine","ErrorCode":"AE-U","CreatedAt":"2023-10-03T08:08:17.2022387Z"}
+11:14:43.1475  WARN  {"Controller":"Machine","Action":"Machine","ErrorCode":"AE-U","CreatedAt":"2023-10-03T08:14:36.5321228Z"}
+11:15:54.5790  WARN  {"Controller":"User","Action":"User","ErrorCode":"AE-U","CreatedAt":"2023-10-03T08:15:51.6437014Z"}
