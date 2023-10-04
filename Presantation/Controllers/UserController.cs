@@ -1,9 +1,7 @@
 ﻿using Entities.DtoModels.UserDtos;
 using Entities.QueryModels;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Razor;
 using Presantation.ActionFilters;
 using Services.Contracts;
 
