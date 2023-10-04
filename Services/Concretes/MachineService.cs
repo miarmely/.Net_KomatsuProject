@@ -131,8 +131,47 @@ namespace Services.Concretes
             #endregion
         }
 
+        public async Task<IEnumerable<string>> GetMainCategoryNamesByLanguageAsync(
+            string language)
+        {
+            #region set parameters
+            var parameters = new DynamicParameters();
 
+            parameters.Add("Language", language, DbType.String);
+            #endregion
 
+            #region get mainCategoryNames
+            var mainCategoryNames = await _manager.MachineRepository
+                .GetMainCategoryNamesByLanguageAsync(parameters);
+            #endregion
+
+            return mainCategoryNames;
+        }
+
+        public async Task<IEnumerable<string>> GetSubCategoryNamesOfMainCategoryByLanguageAsync(
+           MachineParametersForDisplaySubCategoryNames machineParameters)
+        {
+            #region set parameters
+            var parameters = new DynamicParameters();
+            
+            parameters.Add(
+                "Language", 
+                machineParameters.Language, 
+                DbType.String);
+
+            parameters.Add(
+                "MainCategoryName", 
+                machineParameters.MainCategoryName, 
+                DbType.String);
+            #endregion
+
+            #region get SubCategoryNames
+            var subCategoryNames = await _manager.MachineRepository
+                .GetSubCategoryNamesOfMainCategoryByLanguageAsync(parameters);
+            #endregion
+
+            return subCategoryNames;
+        }
 
         //public async Task<IEnumerable<MachineDto>> GetMachinesByConditionWithPagingAsync(
         //	MachineBodyDtoForDisplay machineDtoD,

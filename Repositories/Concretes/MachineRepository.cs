@@ -33,6 +33,18 @@ namespace Repositories.Concretes
                 base.Configs.DbSettings.ProcedureNames.Machine_Delete,
                 parameters);
 
+        public async Task<IEnumerable<string>> GetMainCategoryNamesByLanguageAsync(
+            DynamicParameters parameters) =>
+                await base.QueryAsync<string>(
+                    base.Configs.DbSettings.ProcedureNames.Machine_GetMainCategoryNames,
+                    parameters);
+
+        public async Task<IEnumerable<string>> GetSubCategoryNamesOfMainCategoryByLanguageAsync
+            (DynamicParameters parameters) =>
+                await base.QueryAsync<string>(
+                    base.Configs.DbSettings.ProcedureNames.Machine_GetSubCategoryNames,
+                    parameters);
+
 
         //     #region GetMachinesByConditionAsync
         //     public async Task<List<MachineView>> GetMachinesByConditionAsync(

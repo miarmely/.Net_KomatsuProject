@@ -10,8 +10,9 @@ namespace Services.Contracts
     public interface IMachineService
 	{
 		Task CreateMachineAsync(MachineDtoForCreate machineDto);
+        Task<IEnumerable<string>> GetMainCategoryNamesByLanguageAsync(string language);
 
-		Task<PagingList<MachineView>> GetAllMachinesAsync(
+        Task<PagingList<MachineView>> GetAllMachinesAsync(
             string language,
             PaginationParameters paginationParameters,
 			HttpResponse response);
@@ -23,20 +24,23 @@ namespace Services.Contracts
         Task DeleteMachineAsync(
             string language,
             MachineDtoForDelete machineDto);
-        
 
-            //Task<IEnumerable<MachineDto>> GetMachinesByConditionWithPagingAsync(
-            //	MachineBodyDtoForDisplay machineDtoD,
-            //	PaginationQueryDto pagingParameters,
-            //	HttpResponse response);
+        Task<IEnumerable<string>> GetSubCategoryNamesOfMainCategoryByLanguageAsync(
+            MachineParametersForDisplaySubCategoryNames machineParameters);
 
-            //Task<IEnumerable<string>> GetSubCategoriesOfMainCategoryAsync(
-            //	string mainCategoryName);
 
-            //Task UpdateMachineAsync(
-            //	MachineQueryDtoForUpdate machineQueryDtoU,
-            //          MachineBodyDtoForUpdate machineBodyDtoU);
+        //Task<IEnumerable<MachineDto>> GetMachinesByConditionWithPagingAsync(
+        //	MachineBodyDtoForDisplay machineDtoD,
+        //	PaginationQueryDto pagingParameters,
+        //	HttpResponse response);
 
-            //Task DeleteMachinesAsync(MachineBodyDtoForDelete machineQueryDto);
-     }
+        //Task<IEnumerable<string>> GetSubCategoriesOfMainCategoryAsync(
+        //	string mainCategoryName);
+
+        //Task UpdateMachineAsync(
+        //	MachineQueryDtoForUpdate machineQueryDtoU,
+        //          MachineBodyDtoForUpdate machineBodyDtoU);
+
+        //Task DeleteMachinesAsync(MachineBodyDtoForDelete machineQueryDto);
+    }
 }

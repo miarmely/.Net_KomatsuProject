@@ -1,11 +1,10 @@
 ﻿using Entities.ConfigModels;
 using Entities.ConfigModels.Contracts;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.IdentityModel.Tokens;
-using Presantation;
+using Repositories;
+using Repositories.Concretes;
+using Repositories.Contracts;
 using Services.Concretes;
 using Services.Contracts;
-using System.Text;
 
 namespace Temsa_Web.Extensions
 {
@@ -13,8 +12,7 @@ namespace Temsa_Web.Extensions
 	{
 		public static void ConfigureAddControllersWithView(
 			this IServiceCollection services) =>
-				services.AddControllersWithViews()
-					.AddApplicationPart(typeof(AssemblyReference).Assembly);
+				services.AddControllersWithViews();
 
 		public static void ConfigureConfigModels(
 			this IServiceCollection services,
@@ -23,43 +21,50 @@ namespace Temsa_Web.Extensions
 			services.Configure<JwtSettingsConfig>(configuration
 				.GetSection(nameof(JwtSettingsConfig)));
 
-			services.Configure<CategoryNamesConfig>(configuration
-				.GetSection(nameof(CategoryNamesConfig)));
+			services.Configure<DbSettingsConfig>(configuration
+				.GetSection(nameof(DbSettingsConfig)));
 		}
 
+		public static void ConfigureManagers(this IServiceCollection services)
+		{
+            services.AddScoped<IServiceManager, ServiceManager>();
+			services.AddScoped<IRepositoryManager, RepositoryManager>();
+        }
+			
 		public static void ConfigureServices(this IServiceCollection services)
 		{
             services.AddSingleton<ILoggerService, LoggerService>();
 			services.AddScoped<IConfigManager, ConfigManager>();
+			services.AddScoped<RepositoryContext>();
         }
 
-		public static void ConfigureJwt(
-			this IServiceCollection services,
-			IConfiguration configuration) =>
-				services.AddAuthentication(config =>
-				{
-					config.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-					config.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-				})
-				.AddJwtBearer(config =>
-			{
-				#region set issuerSigningKey
-				var section = configuration.GetSection(nameof(JwtSettingsConfig));
+		//public static void ConfigureJwt(
+		//	this IServiceCollection services,
+		//	IConfiguration configuration) =>
+		//		services.AddAuthentication(config =>
+		//		{
+		//			config.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+		//			config.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+		//		})
+		//		.AddJwtBearer(config =>
+		//	{
+		//		#region set issuerSigningKey
+		//		var section = configuration.GetSection(nameof(JwtSettingsConfig));
 
-				var issuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8
-					.GetBytes(section["SecretKey"]));
-				#endregion
+		//		var issuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8
+		//			.GetBytes(section["SecretKey"]));
+		//		#endregion
 
-				config.TokenValidationParameters = new TokenValidationParameters
-				{
-					ValidIssuer = section["ValidIssuer"],
-					ValidateIssuer = true,
-					ValidAudience = section["ValidAudience"],
-					ValidateAudience = true,
-					IssuerSigningKey = issuerSigningKey,
-					ValidateIssuerSigningKey = true,
-					ValidateLifetime = true
-				};
-			});
+		//		config.TokenValidationParameters = new TokenValidationParameters
+		//		{
+		//			ValidIssuer = section["ValidIssuer"],
+		//			ValidateIssuer = true,
+		//			ValidAudience = section["ValidAudience"],
+		//			ValidateAudience = true,
+		//			IssuerSigningKey = issuerSigningKey,
+		//			ValidateIssuerSigningKey = true,
+		//			ValidateLifetime = true
+		//		};
+		//	});
 	}
 }
