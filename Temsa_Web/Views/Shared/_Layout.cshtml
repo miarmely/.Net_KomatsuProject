@@ -1,12 +1,248 @@
-﻿<!DOCTYPE html>
+﻿@{
+	var language = ViewBag.Language;
+
+	#region placeHolder of search by languages
+	var searchPlaceHolderData = new
+	{
+		TR = " Ara",
+		EN = " Search"
+	};
+
+	var searchPlaceHolder = language switch
+	{
+		"TR" => searchPlaceHolderData.TR,
+		"EN" => searchPlaceHolderData.EN
+	};
+	#endregion
+
+	#region user dropdown menu by languages
+	var userDropDownMenuData = new
+	{
+		TR = new
+		{
+			Profile = "Profil",
+			Settings = "Ayarlar",
+			Logout = "Çıkıp Yap"
+		},
+		EN = new
+		{
+			Profile = "Profile",
+			Settings = "Settings",
+			Logout = "Logout"
+		}
+	};
+
+	var userDropDownMenu = language switch
+	{
+		"TR" => userDropDownMenuData.TR,
+		"EN" => userDropDownMenuData.EN
+	};
+	#endregion
+
+	#region sidebar menu by languages
+	var sidebarMenuData = new
+	{
+		TR = new
+		{
+			#region homepage
+			Homepage = new
+			{
+				Label = "Ana Sayfa",
+				Href = "#"
+			},
+			#endregion
+			#region users
+			Users = new
+			{
+				Label = "Kullanıcılar",
+				SubMenus = new
+				{
+					NewUser = new
+					{
+						Label = "Yeni Kullanıcı",
+						Href = $"/user/create?language={language}"
+					},
+					RegisteredUsers = new
+					{
+						Label = "Kayıtlı Kullanıcılar",
+						Href = $"/user/display?language={language}"
+					}
+				}
+			},
+			#endregion
+			#region machines
+			Machines = new
+			{
+				Label = "Makineler",
+				SubMenus = new
+				{
+					NewMachine = new
+					{
+						Label = "Yeni Makine",
+						Href = $"/machine/create?language={language}"
+					},
+					RegisteredMachine = new
+					{
+						Label = "Kayıtlı Makineler",
+						Href = $"/machine/display?language={language}"
+					}
+				}
+			},
+			#endregion
+			#region forms
+			Forms = new
+			{
+				Label = "Formlar",
+				SubMenus = new
+				{
+					BuyingDemandForm = new
+					{
+						Label = "Satın Alma Talep Formu",
+						Href = "#"
+					},
+					RentingDemandForm = new
+					{
+						Label = "Kiralama Talep Formu",
+						Href = "#"
+					},
+					SecondHandDemandForm = new
+					{
+						Label = "İkinci el Talep Formu",
+						Href = "#"
+					},
+					InformationDemandForm = new
+					{
+						Label = "Bilgi Talep Formu",
+						Href = "#"
+					}
+				}
+			},
+			#endregion
+			#region settings
+			Settings = new
+			{
+				Label = "Ayarlar",
+				Href = "#"
+			}
+			#endregion
+		},
+		EN = new
+		{
+			#region homepage
+			Homepage = new
+			{
+				Label = "Homepage",
+				Href = "#"
+			},
+			#endregion
+			#region users
+			Users = new
+			{
+				Label = "Users",
+				SubMenus = new
+				{
+					NewUser = new
+					{
+						Label = "New User",
+						Href = $"/user/create?language={language}"
+					},
+					RegisteredUsers = new
+					{
+						Label = "Registered Users",
+						Href = $"/user/display?language={language}"
+					}
+				}
+			},
+			#endregion
+			#region machines
+			Machines = new
+			{
+				Label = "Machines",
+				SubMenus = new
+				{
+					NewMachine = new
+					{
+						Label = "New Machine",
+						Href = $"/machine/create?language={language}"
+					},
+					RegisteredMachine = new
+					{
+						Label = "Registered Machines",
+						Href = $"/machine/display?language={language}"
+					}
+				}
+			},
+			#endregion
+			#region forms
+			Forms = new
+			{
+				Label = "Forms",
+				SubMenus = new
+				{
+					BuyingDemandForm = new
+					{
+						Label = "Buying Demand Form",
+						Href = "#"
+					},
+					RentingDemandForm = new
+					{
+						Label = "Renting Demand Form",
+						Href = "#"
+					},
+					SecondHandDemandForm = new
+					{
+						Label = "Second Hand Demand Form",
+						Href = "#"
+					},
+					InformationDemandForm = new
+					{
+						Label = "Information Demand Form",
+						Href = "#"
+					}
+				}
+			},
+			#endregion
+			#region settings
+			Settings = new
+			{
+				Label = "Settings",
+				Href = "#"
+			}
+			#endregion
+		},
+	};
+
+	var sidebarMenu = language switch
+	{
+		"TR" => sidebarMenuData.TR,
+		"EN" => sidebarMenuData.EN
+	};
+	#endregion
+
+	#region footer informations by languages
+	var footerInfosData = new
+	{
+		TR = "© 2023 Tüm hakları saklıdır. | Designed by ",
+		EN = "© 2023 All rights reserved. | Designed by "
+	};
+
+	var footerInfos = language switch
+	{
+		"TR" => footerInfosData.TR,
+		"EN" => footerInfosData.EN
+	};
+	#endregion
+}
+
+<!DOCTYPE html>
 <html>
 	<head>
-		<title>Visitors an Admin Panel Category Bootstrap Responsive Website Template | Home :: w3layouts</title>
+		<title>Komatsu</title>
 		<meta name="viewport" content="width=device-width, initial-scale=1">
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-		<meta name="keywords" content="Visitors Responsive web template, Bootstrap Web Templates, Flat Web Templates, Android Compatible web template, 
-		Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, SonyEricsson, Motorola web design" />
+		<meta name="keywords" content="Komatsu Admin Panel"/>
 		<script type="application/x-javascript"> addEventListener("load", function() { setTimeout(hideURLbar, 0); }, false); function hideURLbar(){ window.scrollTo(0,1); } </script>
+
 		<!-- bootstrap-css -->
 		<link rel="stylesheet" href="~/css/bootstrap.min.css" >
 		<!-- //bootstrap-css -->
@@ -39,20 +275,38 @@
 					<ul class="nav pull-right top-menu">
 						<!-- search start -->
 						<li>
-							<input type="text" class="form-control search" placeholder=" Ara">
+							<input type="text" class="form-control search" 
+								placeholder= @searchPlaceHolder>
 						</li>
 						<!-- search end -->
 						<!-- user login dropdown start-->
 						<li class="dropdown">
 							<a data-toggle="dropdown" class="dropdown-toggle" href="#">
 								<img alt="" src="~/images/user.png">
-								<span class="username">Mert Akdemir</span>
+								<span class="username">
+									Mert Akdemir
+									</span>
 								<b class="caret"></b>
 							</a>
 							<ul class="dropdown-menu extended logout">
-								<li><a href="#"><i class="fa fa-user"></i> Profil</a></li>
-								<li><a href="#"><i class="fa fa-cog"></i>Ayarlar</a></li>
-								<li><a href="#"><i class="fa fa-close"></i>Çıkış Yap</a></li>
+								<li>
+									<a href="#">
+										<i class="fa fa-user"></i>
+										@userDropDownMenu.Profile
+									</a>
+								</li>
+								<li>
+									<a href="#">
+										<i class="fa fa-cog"></i>
+										@userDropDownMenu.Settings
+									</a>
+								</li>
+								<li>
+									<a href="#">
+										<i class="fa fa-close"></i>
+										@userDropDownMenu.Logout
+									</a>
+								</li>
 							</ul>
 						</li>
 						<!-- user login dropdown end -->
@@ -69,9 +323,11 @@
 						<ul class="sidebar-menu" id="nav-accordion">
 							@*homepage*@
 							<li>
-								<a class="active" href="#">
+								<a class="active" href= @sidebarMenu.Homepage.Href>
 									<i class="fa fa-dashboard"></i>
-									<span>Ana Sayfa</span>
+									<span>
+										@sidebarMenu.Homepage.Label
+									</span>
 								</a>
 							</li>
 							@*/homepage*@
@@ -79,11 +335,21 @@
 							<li class="sub-menu">
 								<a href="javascript:;">
 									<i class="fa fa-book"></i>
-									<span>Kullanıcılar</span>
+									<span>
+										@sidebarMenu.Users.Label
+									</span>
 								</a>
 								<ul class="sub">
-									<li><a href="/user/create">Yeni Kullanıcı</a></li>
-									<li><a href="/user/display">Kayıtlı Kullanıcılar</a></li>
+									<li>
+										<a href= @sidebarMenu.Users.SubMenus.NewUser.Href>
+											@sidebarMenu.Users.SubMenus.NewUser.Label
+										</a>
+									</li>
+									<li>
+										<a href= @sidebarMenu.Users.SubMenus.RegisteredUsers.Href>
+											@sidebarMenu.Users.SubMenus.RegisteredUsers.Label
+										</a>
+									</li>
 								</ul>
 							</li>
 							@*/users*@
@@ -91,33 +357,63 @@
 							<li class="sub-menu">
 								<a href="javascript:;">
 									<i class="fa fa-book"></i>
-									<span>Makineler</span>
+									<span>
+										@sidebarMenu.Machines.Label
+									</span>
 								</a>
 								<ul class="sub">
-									<li><a href="/machine/create?language=TR">Yeni Makine</a></li>
-									<li><a href="/machine/display">Kayıtlı Makineler</a></li>
+									<li>
+										<a href= @sidebarMenu.Machines.SubMenus.NewMachine.Href>
+											@sidebarMenu.Machines.SubMenus.NewMachine.Label
+										</a>
+									</li>
+									<li>
+										<a href= @sidebarMenu.Machines.SubMenus.RegisteredMachine.Href>
+											@sidebarMenu.Machines.SubMenus.RegisteredMachine.Label
+										</a>
+									</li>
 								</ul>
 							</li>
 							@*/machines*@
 							@*forms*@
 							<li class="sub-menu">
 								<a href="javascript:;">
-									<i class="fa fa-briefcase"></i>
-									<span>Formlar</span>
+									<i class="fa fa-book"></i>
+									<span>
+										@sidebarMenu.Forms.Label
+									</span>
 								</a>
 								<ul class="sub">
-									<li><a href="#">Satın Alma Talep Formu</a></li>
-									<li><a href="#">Kiralama Talep Formu</a></li>
-									<li><a href="#">2. El Talep Formu</a></li>
-									<li><a href="#">Bilgi Talep Formu</a></li>
+									<li>
+										<a href= @sidebarMenu.Forms.SubMenus.BuyingDemandForm.Href>
+											@sidebarMenu.Forms.SubMenus.BuyingDemandForm.Label
+										</a>
+									</li>
+									<li>
+										<a href= @sidebarMenu.Forms.SubMenus.RentingDemandForm.Href>
+											@sidebarMenu.Forms.SubMenus.RentingDemandForm.Label
+										</a>
+									</li>
+									<li>
+										<a href= @sidebarMenu.Forms.SubMenus.SecondHandDemandForm.Href>
+											@sidebarMenu.Forms.SubMenus.SecondHandDemandForm.Label
+										</a>
+									</li>
+									<li>
+										<a href= @sidebarMenu.Forms.SubMenus.InformationDemandForm.Href>
+											@sidebarMenu.Forms.SubMenus.InformationDemandForm.Label
+										</a>
+									</li>
 								</ul>
 							</li>
 							@*/forms*@
 							@*settings*@
 							<li>
-								<a href="#">
+								<a href= @sidebarMenu.Settings.Href>
 									<i class="fa fa-cog"></i>
-									<span>Ayarlar</span>
+									<span>
+										@sidebarMenu.Settings.Label
+									</span>
 								</a>
 							</li>
 							@*/settings*@
@@ -131,13 +427,14 @@
 			<!--main content start-->
 			<section id="main-content">
 				<section class="wrapper">
-					@RenderBody();
+					@RenderBody()
 				</section>
 
 				<!-- footer -->
 				<div class="footer">
 					<div class="wthree-copyright">
-						<p>© 2023 Tüm hakları saklıdır | Design by 
+						<p>
+							@footerInfos
 							<a href="https://mostidea.com.tr">MostIdea</a>
 						</p>
 					</div>
@@ -278,7 +575,8 @@
 				};
 			}
 
-			function getErrorMessage(responseText){
+			function getErrorMessage(responseText)
+			{
 				var responseTextInJson = JSON.parse(responseText);
 
 				return window.convertErrorCodeToErrorMessage(

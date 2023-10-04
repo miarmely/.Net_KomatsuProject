@@ -33,7 +33,7 @@ app.UseAuthorization();
 
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Machine}/{action=Display}/{id?}");
+    pattern: "{controller=Login}/{action=Index}/{id?}");
 #endregion
 
 app.Run();

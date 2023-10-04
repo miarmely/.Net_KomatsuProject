@@ -2,6 +2,80 @@
 
 @{
     var language = ViewBag.Language;
+
+    #region mainTitle by language
+    var mainTitleData = new
+    {
+        TR = "YENİ MAKİNE OLUŞTUR",
+        EN = "CREATE NEW MACHINE"
+    };
+
+    var mainTitle = language switch
+    {
+        "TR" => mainTitleData.TR,
+        "EN" => mainTitleData.EN,
+    };
+    #endregion
+
+    #region inputLabels by language
+    var inputLabelsData = new
+    {
+        TR = new 
+        {
+            MainCategory = "Ana Kategori",
+            SubCategory = "Alt Kategori",
+            Brand = "Marka",
+            Model = "Model",
+            Year = "Yılı",
+            HandStatus = new
+            {
+                Label = "El Durumu",
+                RadioButton1 = "Sıfır",
+                RadioButton2 = "İkinci El"
+            },
+            Stock = "Stok Adedi"    
+        },
+        EN = new 
+        {
+            MainCategory = "Maincategory",
+            SubCategory = "Subcategory",
+            Brand = "Brand",
+            Model = "Model",
+            Year = "Year",
+            HandStatus = new
+            {
+                Label = "Hand Status",
+                RadioButton1 = "Zero",
+                RadioButton2 = "Second Hand"
+            },
+            Stock = "Stock" 
+        }
+    };
+
+    var inputLabels = language switch
+    {
+        "TR" => inputLabelsData.TR,
+        "EN" => inputLabelsData.EN,
+    };
+    #endregion
+
+    #region buttonName by language
+    var buttonNameData = new
+    {
+        TR = "Kaydet",
+        EN = "Save"
+    };
+
+    var buttonName = language switch
+    {
+        "TR" => "KAYDET",
+        "EN" => "SAVE"
+    };
+    #endregion
+}
+
+@{
+    var language = ViewBag.Language;
 };
 
 <div class="form-w3layouts">
@@ -9,7 +83,7 @@
         <div class="col-lg-12">    
             <section class="panel">
                 <header class="panel-heading">
-                    Yeni Makine Oluştur
+                    @mainTitle
                 </header>
                 <div class="panel-body">
                     <form>
@@ -17,7 +91,7 @@
                             <!-- MainCategory -->
                             <div class="form-group">
                                 <label class="col-sm-3 control-label">
-                                    Ana Kategori
+                                    @inputLabels.MainCategory
                                 </label>
                                 <div class="col-sm-6">
                                     <select id="slct_mainCategory" class="form-control m-bot15">
@@ -41,7 +115,7 @@
                             <!-- SubCategory -->
                             <div class="form-group">
                                 <label class="col-sm-3 control-label">
-                                    Alt Kategori
+                                    @inputLabels.SubCategory
                                 </label>
                                 <div class="col-sm-6">
                                     <select id="slct_subCategory" class="form-control m-bot15">
@@ -75,7 +149,7 @@
                             <!-- Brand -->
                             <div class="form-group">
                                 <label class="col-sm-3 control-label">
-                                    Marka
+                                    @inputLabels.Brand
                                 </label>
                                 <div class="col-sm-6">
                                     <input id="inpt_brand" type="text" class="form-control" required>
@@ -86,7 +160,7 @@
                             <!-- Model -->
                             <div class="form-group">
                                 <label class="col-sm-3 control-label">
-                                    Model
+                                    @inputLabels.Model
                                 </label>
                                 <div class="col-sm-6">
                                     <input id="inpt_model" type="text" class="form-control" required>
@@ -97,32 +171,32 @@
                              <!-- Year -->
                             <div class="form-group">
                                 <label class="col-sm-3 control-label">
-                                    Yılı
+                                    @inputLabels.Year
                                 </label>
                                 <div class="col-sm-6">
                                     <input id="inpt_year" type="number" class="form-control" value="2023" required>
                                 </div>
                             </div>
                             <!-- /Year --> 
-                            <!-- usageStatus -->
+                            <!-- HandStatus -->
                             <div class="form-group">
                                 <label class="col-sm-3 control-label">
-                                    Kullanım Durumu
+                                    @inputLabels.HandStatus.Label
                                 </label>
                                 <div class="col-sm-6">
                                     <div class="radio">
-                                        <label style="margin-right:20px">
+                                        <label style="margin-right:10px">
                                             <input type="radio" name="usageStatus" value=0 checked="">
-                                            Sıfır
+                                             @inputLabels.HandStatus.RadioButton1
                                         </label>
                                         <label>
                                             <input type="radio" name="usageStatus" value=2>
-                                            İkinci El
+                                            @inputLabels.HandStatus.RadioButton2
                                         </label>
                                     </div>
                                 </div>
                             </div>
-                            <!-- /usageStatus-->
+                            <!-- /HandStatus-->
 
                             <!-- ImagePath -->
                             @*<div class="form-group">
@@ -140,18 +214,19 @@
                             <!-- Stock -->
                             <div class="form-group">
                                 <label class="col-sm-3 control-label">
-                                    Stok Adedi
+                                    @inputLabels.Stock
                                 </label>
                                 <div class="col-sm-6">
                                     <input id="inpt_stock" type="number" class="form-control" value="1" required>
                                 </div>
                             </div>
                             <!-- /Stock -->
-
                             <!-- registration button -->
                             <div class="form-group">
                                 <div class="col-sm-6; text-center">
-                                    <button id="btn_register" type="submit" class="btn btn-danger">Kaydet</button>
+                                    <button id="btn_register" type="submit" class="btn btn-danger">
+                                        @buttonName
+                                    </button>
                                 </div>
                                 <div style="text-align:center">
                                     <p id="p_resultLabel"></p>

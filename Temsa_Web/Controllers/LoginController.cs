@@ -6,6 +6,9 @@ namespace Presantation.Controllers.Web
 	{
 		public IActionResult Index()
 		{
+			// set login default language as TR
+			ViewBag.Language = "TR";
+
 			return View();
 		}
 	}
