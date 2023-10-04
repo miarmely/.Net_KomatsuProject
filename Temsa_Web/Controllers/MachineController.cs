@@ -1,4 +1,5 @@
 ﻿using Entities.ConfigModels.Contracts;
+using Entities.QueryParameters;
 using Microsoft.AspNetCore.Mvc;
 using Services.Contracts;
 
@@ -25,10 +26,12 @@ namespace Temsa_Web.Controllers
 		}
 
 		public IActionResult Display(
-			[FromQuery(Name = "Language")] string language)
+			[FromQuery(Name = "Language")] string language,
+			[FromQuery] PaginationParameters pagingParameters)
 		{
 			ViewBag.Language = language;
-			ViewBag.HttpResponse = Response;
+			ViewBag.Response = Response;
+			ViewBag.pagingParameters = pagingParameters;
 
 			return View("Display", _manager);
 		}
