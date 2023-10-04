@@ -1,5 +1,5 @@
 ﻿using Entities.DtoModels.UserDtos;
-using Entities.QueryModels;
+using Entities.QueryParameters;
 using Microsoft.AspNetCore.Http;
 
 namespace Services.Contracts

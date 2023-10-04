@@ -1,6 +1,11 @@
-﻿@model IConfigManager;
+﻿@using Newtonsoft.Json;
+@using Repositories;
+@model IServiceManager;
 
-
+@{
+	var language = ViewBag.Language;
+	var response = ViewBag.HttpResponse;
+}
 <div class="table-agile-info">
     <div class="panel panel-default">
         @*title*@
@@ -44,21 +49,65 @@
 								<input id="box_all" type="checkbox"><i></i>
                             </label>
                         </th>
-                        <th>Marka</th>
                         <th>Ana Kategori</th>
                         <th>Alt Kategori</th>
+						<th>Marka</th>
                         <th>Model</th>
-                        <th>Kullanım Durumu</th>
+						<th>El Durumu</th>
                         <th>Stok</th>
 						<th>Kiralık</th>
 						<th>Satılık</th>
 						<th>Yıl</th>
+						<th>Açıklama</th>
                         <th>Kayıt Tarihi</th>
                         <th>İşlemler</th>
                         <th style="width:30px;"></th>
                     </tr>
                 </thead>
                 <tbody>
+					@{
+						#region get machines
+						var machines = await Model.MachineService
+							.GetAllMachinesAsync(
+								language, 
+								new PaginationParameters(), 
+								response);
+						#endregion
+
+						#region get machine pagination informations from headers
+						var headers = response.Headers as IHeaderDictionary;	
+
+						var machinePaginationHeaders = headers
+							.FirstOrDefault(h => h.Key.Equals("Machine-Pagination"))
+							.Value;
+
+						var machinePaginationInfos = JsonConvert
+							.DeserializeObject<object>(machinePaginationHeaders);
+
+						#endregion
+
+						#region add machines to table
+						foreach(var machine in machines)
+						{
+							<tr id= @machine.Id>
+								<td></td>
+								<td>@machine.MainCategoryName</td>
+								<td>@machine.SubCategoryName</td>
+								<td>@machine.BrandName</td>
+								<td>@machine.Model</td>
+								<td>@machine.HandStatus</td>
+								<td>@machine.Stock</td>
+								<td>@machine.Rented</td>
+								<td>@machine.Sold</td>
+								<td>@machine.Year</td>
+								<td>@machine.Description</td>
+								<td>@machine.CreatedAt</td>
+								<td></td>
+								<td></td>
+							</tr>
+						}
+						#endregion
+					}
                 </tbody>
             </table>
         </div>

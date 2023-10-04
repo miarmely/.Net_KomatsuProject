@@ -3,7 +3,7 @@ using Dapper;
 using Entities.ConfigModels.Contracts;
 using Entities.DtoModels.UserDtos;
 using Entities.Exceptions;
-using Entities.QueryModels;
+using Entities.QueryParameters;
 using Entities.ViewModels;
 using Microsoft.AspNetCore.Http;
 using Microsoft.IdentityModel.Tokens;

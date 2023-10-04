@@ -1,5 +1,5 @@
 ﻿using Entities.DtoModels.UserDtos;
-using Entities.QueryModels;
+using Entities.QueryParameters;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;

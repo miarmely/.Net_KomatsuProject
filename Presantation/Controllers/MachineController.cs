@@ -1,5 +1,5 @@
 ﻿using Entities.DtoModels.MachineDtos;
-using Entities.QueryModels;
+using Entities.QueryParameters;
 using Entities.QueryParameters;
 using Microsoft.AspNetCore.Mvc;
 using Presantation.ActionFilters;
