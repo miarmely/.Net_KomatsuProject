@@ -1,9 +1,6 @@
-﻿using AutoMapper;
-using Dapper;
-using Entities.DtoModels;
+﻿using Dapper;
 using Entities.DtoModels.MachineDtos;
 using Entities.Exceptions;
-using Entities.QueryModels;
 using Entities.QueryParameters;
 using Entities.ViewModels;
 using Microsoft.AspNetCore.Http;

@@ -1,4 +1,4 @@
-﻿namespace Entities.QueryModels
+﻿namespace Entities.QueryParameters
 {
     public class PaginationParameters
     {

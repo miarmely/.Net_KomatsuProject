@@ -1,4 +1,5 @@
 ﻿using Entities.ConfigModels.Contracts;
+using Entities.QueryParameters;
 using Microsoft.AspNetCore.Mvc;
 using Services.Contracts;
 
@@ -9,24 +10,30 @@ namespace Temsa_Web.Controllers
 		private readonly IConfigManager _configManager;
 		private readonly IServiceManager _manager;
 
-        public MachineController(IConfigManager configManager,
+		public MachineController(IConfigManager configManager,
 			IServiceManager manager)
 		{
-            _configManager = configManager;
+			_configManager = configManager;
 			_manager = manager;
-        }
-            
-        public IActionResult Create([FromQuery(Name = "Language")] string language)
+		}
+
+		public IActionResult Create(
+			[FromQuery(Name = "Language")] string language)
 		{
-			// save language for view
 			ViewBag.Language = language;
 
 			return View("Create", _manager);
 		}
 
-		public IActionResult Display()
+		public IActionResult Display(
+			[FromQuery(Name = "Language")] string language,
+			[FromQuery] PaginationParameters pagingParameters)
 		{
-			return View("Display", _configManager);
+			ViewBag.Language = language;
+			ViewBag.Response = Response;
+			ViewBag.pagingParameters = pagingParameters;
+
+			return View("Display", _manager);
 		}
 	}
 }

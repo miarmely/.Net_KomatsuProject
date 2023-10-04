@@ -1,4 +1,10 @@
-﻿@model IConfigManager;
+﻿@model IServiceManager;
+
+@{
+	var paginationParameters = ViewBag.PagingParameters as PaginationParameters;
+	var pageNumber = paginationParameters.PageNumber;
+	var pageSize = paginationParameters.PageSize;
+}
 
 
 <div class="table-agile-info">
@@ -44,21 +50,74 @@
 								<input id="box_all" type="checkbox"><i></i>
                             </label>
                         </th>
-                        <th>Marka</th>
                         <th>Ana Kategori</th>
                         <th>Alt Kategori</th>
+						<th>Marka</th>
                         <th>Model</th>
-                        <th>Kullanım Durumu</th>
+						<th>El Durumu</th>
                         <th>Stok</th>
 						<th>Kiralık</th>
 						<th>Satılık</th>
 						<th>Yıl</th>
+						<th>Açıklama</th>
                         <th>Kayıt Tarihi</th>
                         <th>İşlemler</th>
                         <th style="width:30px;"></th>
                     </tr>
                 </thead>
                 <tbody>
+					@{
+						#region get machines
+						var machines = await Model.MachineService
+							.GetAllMachinesAsync(
+								ViewBag.Language, 
+								paginationParameters, 
+								ViewBag.Response)
+							as PagingList<MachineView>;
+
+						// save pagination infos to viewBag
+						ViewBag.MachineCountOnTable = machines.CurrentPageCount;
+						ViewBag.TotalPage = machines.TotalPage;
+						#endregion
+
+						#region add machines to table
+						foreach(var machine in machines)
+						{
+							<tr id= @machine.Id>
+								<td id="td_checkBox">
+									<label class="i-checks m-b-none">
+										<input type="checkbox"><i></i>
+									</label>
+								</td>
+								<td>@machine.MainCategoryName</td>
+								<td>@machine.SubCategoryName</td>
+								<td>@machine.BrandName</td>
+								<td>@machine.Model</td>
+								<td>@machine.HandStatus</td>
+								<td>@machine.Stock</td>
+								<td>@machine.Rented</td>
+								<td>@machine.Sold</td>
+								<td>@machine.Year</td>
+								<td>@machine.Description</td>
+								<td>@machine.CreatedAt</td>
+								<td id="td_processes">
+									<button onclick="window.click_updateButton(${no})" class="active" ui-toggle-class="">
+										<i class="fa fa-pencil text-info"> 
+											Güncelle
+										</i>
+									</button>
+								</td>
+								<td style="width:30px;"></td>
+							</tr>
+							<tr> 
+								<td hidden></td>
+							</tr>
+							<tr id="tr_error${no}">
+								<td colspan="13" hidden></td>
+							</tr>
+						}
+						#endregion
+					}
                 </tbody>
             </table>
         </div>
@@ -69,7 +128,9 @@
             <div class="row">
                 <div class="col-sm-5 text-left">
                     <small id="lbl_entityQuantity" class="text-muted inline m-t-sm m-b-s">
-						<b>0</b> kullanıcı görüntüleniyor
+						<b>0</b>/
+						<b>@ViewBag.PageSize</b> 
+						makine görüntüleniyor
 					</small>
                 </div>
                 <div class="col-sm-7 text-right text-center-xs">                
@@ -85,6 +146,74 @@
 <script type="module" src="~/js/machineForDisplay.js"></script>
 
 <script>
+	$(function () {
+		let paginationButtonQuantity = 5;
+		let ul_pagination = $("#ul_pagination");
+		let lbl_entityQuantity = $("#lbl_entityQuantity");
+		
+
+		function updateEntityCountLabel() {
+			lbl_entityQuantity.empty();
+			lbl_entityQuantity.append(
+				`<b>@ViewBag.MachineCountOnTable</b>/
+				<b>@pageSize</b>
+				makine görüntüleniyor`)
+		}
+
+		function addPaginationButtons() {
+			//#region set buttonQauntity for pagination
+			let buttonQuantity =
+				"@ViewBag.TotalPage" < paginationButtonQuantity ?
+					"@ViewBag.TotalPage"
+					: paginationButtonQuantity
+			//#endregion
+
+			//#region reset paginationButtons if exists
+			if (ul_pagination.children("li").length != 0)
+				ul_pagination.empty()
+			//#endregion
+
+			//#region add paginationBack button
+			if(buttonQuantity > 1
+				&& "@pageNumber" > 1)  // shouldn't be first page
+					ul_pagination.append(
+						`<li>
+							<a id="a_paginationBack" href="#" hidden>
+								<i class="fa fa-chevron-left"></i>
+							</a>
+						</li>`);
+			//#endregion
+
+			//#region add pagination buttons
+			for (let pageNo = 1; pageNo <= buttonQuantity; pageNo += 1)
+				ul_pagination.append(
+					`<li>
+						<a href="#"> 
+							${pageNo}
+						</a>
+					</li> `);
+			//#endregion
+
+			//#region add paginationNext button
+			if (buttonQuantity > 1
+				&& "@pageNumber" < "@ViewBag.TotalPage") // shouldn't be last page
+					ul_pagination.append(
+						`<li>
+						<a id="a_paginationNext" href="#">
+							<i class="fa fa-chevron-right"></i>
+						</a>
+					</li>`);
+			//#endregion
+		}
+
+
+		updateEntityCountLabel()
+		addPaginationButtons();
+	})
+</script>
+
+
+@*<script>
     function click_saveButton(rowNo) {
 		//#region set variables
 		let oldColumnValues = JSON.parse(
@@ -490,4 +619,4 @@
 		);
 		//#endregion
 	}
-</script>
+</script*@

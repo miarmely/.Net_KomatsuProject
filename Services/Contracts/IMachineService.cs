@@ -1,5 +1,4 @@
 ﻿using Entities.DtoModels.MachineDtos;
-using Entities.QueryModels;
 using Entities.QueryParameters;
 using Entities.ViewModels;
 using Microsoft.AspNetCore.Http;
