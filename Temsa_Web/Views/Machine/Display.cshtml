@@ -1,11 +1,5 @@
 ﻿@model IServiceManager;
 
-@{
-	var paginationParameters = ViewBag.PagingParameters as PaginationParameters;
-	var pageNumber = paginationParameters.PageNumber;
-	var pageSize = paginationParameters.PageSize;
-}
-
 
 <div class="table-agile-info">
     <div class="panel panel-default">
@@ -42,7 +36,7 @@
 
         @*/data*@
         <div class="table-responsive">
-            <table id="tbl_user" class="table table-striped b-t b-light">
+            <table id="tbl_machine" class="table table-striped b-t b-light">
                 <thead>
                     <tr>
                         <th style="width:20px;">
@@ -66,58 +60,6 @@
                     </tr>
                 </thead>
                 <tbody>
-					@{
-						#region get machines
-						var machines = await Model.MachineService
-							.GetAllMachinesAsync(
-								ViewBag.Language, 
-								paginationParameters, 
-								ViewBag.Response)
-							as PagingList<MachineView>;
-
-						// save pagination infos to viewBag
-						ViewBag.MachineCountOnTable = machines.CurrentPageCount;
-						ViewBag.TotalPage = machines.TotalPage;
-						#endregion
-
-						#region add machines to table
-						foreach(var machine in machines)
-						{
-							<tr id= @machine.Id>
-								<td id="td_checkBox">
-									<label class="i-checks m-b-none">
-										<input type="checkbox"><i></i>
-									</label>
-								</td>
-								<td>@machine.MainCategoryName</td>
-								<td>@machine.SubCategoryName</td>
-								<td>@machine.BrandName</td>
-								<td>@machine.Model</td>
-								<td>@machine.HandStatus</td>
-								<td>@machine.Stock</td>
-								<td>@machine.Rented</td>
-								<td>@machine.Sold</td>
-								<td>@machine.Year</td>
-								<td>@machine.Description</td>
-								<td>@machine.CreatedAt</td>
-								<td id="td_processes">
-									<button onclick="window.click_updateButton(${no})" class="active" ui-toggle-class="">
-										<i class="fa fa-pencil text-info"> 
-											Güncelle
-										</i>
-									</button>
-								</td>
-								<td style="width:30px;"></td>
-							</tr>
-							<tr> 
-								<td hidden></td>
-							</tr>
-							<tr id="tr_error${no}">
-								<td colspan="13" hidden></td>
-							</tr>
-						}
-						#endregion
-					}
                 </tbody>
             </table>
         </div>
@@ -128,9 +70,7 @@
             <div class="row">
                 <div class="col-sm-5 text-left">
                     <small id="lbl_entityQuantity" class="text-muted inline m-t-sm m-b-s">
-						<b>0</b>/
-						<b>@ViewBag.PageSize</b> 
-						makine görüntüleniyor
+						<b>0</b> makine görüntüleniyor
 					</small>
                 </div>
                 <div class="col-sm-7 text-right text-center-xs">                
@@ -146,74 +86,12 @@
 <script type="module" src="~/js/machineForDisplay.js"></script>
 
 <script>
-	$(function () {
-		let paginationButtonQuantity = 5;
-		let ul_pagination = $("#ul_pagination");
-		let lbl_entityQuantity = $("#lbl_entityQuantity");
-		
-
-		function updateEntityCountLabel() {
-			lbl_entityQuantity.empty();
-			lbl_entityQuantity.append(
-				`<b>@ViewBag.MachineCountOnTable</b>/
-				<b>@pageSize</b>
-				makine görüntüleniyor`)
-		}
-
-		function addPaginationButtons() {
-			//#region set buttonQauntity for pagination
-			let buttonQuantity =
-				"@ViewBag.TotalPage" < paginationButtonQuantity ?
-					"@ViewBag.TotalPage"
-					: paginationButtonQuantity
-			//#endregion
-
-			//#region reset paginationButtons if exists
-			if (ul_pagination.children("li").length != 0)
-				ul_pagination.empty()
-			//#endregion
-
-			//#region add paginationBack button
-			if(buttonQuantity > 1
-				&& "@pageNumber" > 1)  // shouldn't be first page
-					ul_pagination.append(
-						`<li>
-							<a id="a_paginationBack" href="#" hidden>
-								<i class="fa fa-chevron-left"></i>
-							</a>
-						</li>`);
-			//#endregion
-
-			//#region add pagination buttons
-			for (let pageNo = 1; pageNo <= buttonQuantity; pageNo += 1)
-				ul_pagination.append(
-					`<li>
-						<a href="#"> 
-							${pageNo}
-						</a>
-					</li> `);
-			//#endregion
-
-			//#region add paginationNext button
-			if (buttonQuantity > 1
-				&& "@pageNumber" < "@ViewBag.TotalPage") // shouldn't be last page
-					ul_pagination.append(
-						`<li>
-						<a id="a_paginationNext" href="#">
-							<i class="fa fa-chevron-right"></i>
-						</a>
-					</li>`);
-			//#endregion
-		}
-
-
-		updateEntityCountLabel()
-		addPaginationButtons();
-	})
+	var language = "@ViewBag.Language";
 </script>
 
 
-@*<script>
+
+<script>
     function click_saveButton(rowNo) {
 		//#region set variables
 		let oldColumnValues = JSON.parse(
@@ -446,177 +324,4 @@
 		);
 		//#endregion
 	}
-
-	function click_updateButton(rowNo) {
-		//#region set variables
-		let row = $(`#tr_row${rowNo}`);
-		let rowDataInStorage = sessionStorage.getItem(`tr_row${rowNo}`);
-		let columnsForAddInput = {
-			"brandName": row.children("#td_brandName"),
-			"model": row.children("#td_model"),
-			"stock": row.children("#td_stock"),
-			"rented": row.children("#td_rented"),
-			"sold": row.children("#td_sold"),
-			"year": row.children("#td_year"),
-		};
-		let columnsForAddSelect = {
-			"mainCategoryName": row.children("#td_mainCategoryName"),
-			"subCategoryName": row.children("#td_subCategoryName"),
-			"usageStatus": row.children("#td_usageStatus"),
-		}
-		let columnValues = {
-			"brandName": columnsForAddInput.brandName.text(),
-			"mainCategoryName": columnsForAddSelect.mainCategoryName.text(),
-			"subCategoryName": columnsForAddSelect.subCategoryName.text(),
-			"model": columnsForAddInput.model.text(),
-			"usageStatus": columnsForAddSelect.usageStatus.text(),
-			"stock": columnsForAddInput.stock.text(),
-			"rented": columnsForAddInput.rented.text(),
-			"sold": columnsForAddInput.sold.text(),
-			"year": columnsForAddInput.year.text(),
-		}
-		//#endregion
-
-		//#region add <input> to columns (dynamic)
-		let intColumns = ["stock", "rented", "sold", "year"];
-		
-		for (let columnName in columnsForAddInput) {
-			// add <input> to column
-			let column = columnsForAddInput[columnName];
-			column.empty()
-			
-			// when column type is number
-			if(intColumns.indexOf(columnName) != -1)
-				column.append(`<input type="number" id="inpt_${columnName}">`);
-			
-			// when column type is string
-			else
-				column.append(`<input id="inpt_${columnName}">`);
-
-			// add placeholder to column
-			column
-				.children(`#inpt_${columnName}`)
-				.val(columnValues[columnName]);
-		}
-		//#endregion
-
-		//#region add <select> to columns
-		//XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
-
-		//#region add <select> to columns
-		for(let columnName in columnsForAddSelect){
-			let column = columnsForAddSelect[columnName];
-			column.empty();
-			column.append("<select> </select>")
-		}
-		//#endregion
-		
-		//#region fill mainCategoryNames <select> 
-		//XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
-
-		//#region get <select> of mainCategoryName
-			var slct_mainCategoryName = columnsForAddSelect
-				.mainCategoryName
-				.children("select");
-		//#endregion
-
-		//#region add <option>
-		for(let index in model.mainCategoryNames)
-			slct_mainCategoryName.append(
-				`<option>
-					${model.mainCategoryNames[index]}
-				</option>`);
-		//#endregion
-
-		//#region set default value of <select>
-		slct_mainCategoryName.val(
-			columnValues["mainCategoryName"]);
-		//#endregion
-
-		//XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
-		//#endregion
-
-		//#region fill subcategories <select>
-		//XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
-
-		//#region set selectedIndex of mainCategoryName
-		let selectedMainCategoryIndex = columnsForAddSelect.mainCategoryName
-			.children("select")
-			.prop("selectedIndex");	
-		//#endregion
-
-		//#region get subCategoryNames
-		let subCategoryNames = model
-			.subCategoryNames[selectedMainCategoryIndex]
-		//#endregion
-		
-		//#region get <select> of subCategoryName
-		var slct_subCategoryName = columnsForAddSelect
-			.subCategoryName
-			.children("select");
-		//#endregion
-
-		//#region add <option>
-		for(let index in subCategoryNames)
-			slct_subCategoryName.append(
-				`<option>
-					${subCategoryNames[index]}
-				</option>`);
-		//#endregion
-		
-		//#region set default value of <select>
-		slct_subCategoryName.val(
-			columnValues["subCategoryName"]);
-		//#endregion
-
-		//XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
-		//#endregion
-
-		//#region fill usageStatus <select>
-		//XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
-
-		//#region add <option>
-		let slct_usageStatus = columnsForAddSelect.usageStatus
-			.children("select");
-
-		slct_usageStatus.empty();
-		slct_usageStatus.append(`
-			<option>Sıfır</option>
-			<option>İkinci El</option>`
-		);
-		//#endregion
-
-		//#region set default value
-		slct_usageStatus.val(
-			columnValues["usageStatus"]
-		);
-		//#endregion
-
-		//XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
-		//#endregion
-
-		//XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
-		//#endregion
-		
-		//#region add "save" and "cancel" buttons
-		// remove 'update' button
-		let td_processes = row.children("#td_processes");
-		td_processes.empty(); 
-
-		// add
-		td_processes.append(
-			`<button onclick="window.click_saveButton(${rowNo})"" class="active" ui-toggle-class="">
-				<i class="fa fa-check text-success"> Kaydet</i>
-			<button onclick="window.click_cancelButton(${rowNo})" class="active" ui-toggle-class="">
-				<i class="fa fa-times text-danger"> Vazgeç</i>`
-		);
-		//#endregion
-
-		//#region save column values to sessionStorage
-		sessionStorage.setItem(
-			`tr_row${rowNo}`,
-			JSON.stringify(columnValues)
-		);
-		//#endregion
-	}
-</script*@
+</script>

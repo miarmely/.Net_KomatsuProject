@@ -1,6 +1,5 @@
 ﻿using Entities.DtoModels.UserDtos;
 using Entities.QueryParameters;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Presantation.ActionFilters;

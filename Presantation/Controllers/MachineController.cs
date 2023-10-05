@@ -35,7 +35,7 @@ namespace Presantation.Controllers
 		[HttpGet("display/all")]
         //[Authorization("Admin,Yönetici,Editor,Editör,User,Kullanıcı")]
         public async Task<IActionResult> GetAllMachines(
-			[FromQuery(Name = "Language")] string language,
+			[FromQuery(Name = "language")] string language,
 			[FromQuery] PaginationParameters pagingParameters)
 		{
 			var machines = await _manager.MachineService
@@ -48,7 +48,7 @@ namespace Presantation.Controllers
         [HttpGet("display/mainCategory")]
         //[Authorization("User,Kullanıcı,Editor,Editör,Admin,Yönetici")]
         public async Task<IActionResult> GetMainCategoryNamesByLanguage(
-           [FromQuery(Name = "Language")] string language)
+           [FromQuery(Name = "language")] string language)
         {
             var mainCategoryNames = await _manager.MachineService
                 .GetMainCategoryNamesByLanguageAsync(language);
@@ -89,14 +89,14 @@ namespace Presantation.Controllers
         //[Authorization("Admin,Yönetici")]
         [ValidationNullArguments]
         public async Task<IActionResult> DeleteMachines(
-            [FromQuery(Name = "Language")] string language,
+            [FromQuery(Name = "language")] string language,
             [FromBody] MachineDtoForDelete machineDto)
         {
-            await _manager.MachineService
+			await _manager.MachineService
                 .DeleteMachineAsync(language, machineDto);
 
-            return NoContent();
-        }
+			return NoContent();
+		}
 
 
 
