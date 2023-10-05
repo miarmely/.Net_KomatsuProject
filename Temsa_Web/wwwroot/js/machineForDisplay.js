@@ -51,6 +51,7 @@ $(function () {
         }
         //#endregion 
     });
+
     $("#box_all").click(() => {
         //#region do checked/unchecked all checkbox
         let isBoxAllChecked = $("#box_all").is(":checked");
@@ -73,6 +74,7 @@ $(function () {
         }
         //#endregion
     })
+
     $("#btn_apply").click(async () => {
         let opt_selected = $("#slct_menubar option:selected");
 
@@ -84,6 +86,26 @@ $(function () {
             //#endregion 
         }
     });
+
+    $("#tbl_machine tbody").click(() => {
+        //#region when update,save or delete button clicked
+        let clickedElement = $(":focus");
+        let row = clickedElement.closest("tr");
+
+        switch (clickedElement.attr("id")) {
+            case "btn_update":
+                click_updateButton(row);
+                break;
+
+            case "btn_save":
+                break;
+
+            case "btn_delete":
+                break;
+        }
+        //#endregion
+    })
+
     //#endregion events
 
     //#region functions
@@ -164,19 +186,19 @@ $(function () {
 							<input type="checkbox"><i></i>
 						</label>
 					</td>
-					<td>${machineView.mainCategoryName}</td>
-					<td>${machineView.subCategoryName}</td>
-					<td>${machineView.brandName}</td>
-					<td>${machineView.model}</td>
-					<td>${machineView.handStatus}</td>
-					<td>${machineView.stock}</td>
-					<td>${machineView.rented}</td>
-					<td>${machineView.sold}</td>
-					<td>${machineView.year}</td>
-					<td>${machineView.description}</td>
-					<td>${getDateTimeInString(machineView.createdAt)}</td>
+					<td id="td_mainCategoryName">${machineView.mainCategoryName}</td>
+					<td id="td_subCategoryName">${machineView.subCategoryName}</td>
+					<td id="td_brandName">${machineView.brandName}</td>
+					<td id="td_model">${machineView.model}</td>
+					<td id="td_handStatus">${machineView.handStatus}</td>
+					<td id="td_stock">${machineView.stock}</td>
+					<td id="td_rented">${machineView.rented}</td>
+					<td id="td_sold">${machineView.sold}</td>
+					<td id="td_year">${machineView.year}</td>
+					<td id="td_description">${machineView.description}</td>
+					<td id="td_createdAt">${getDateTimeInString(machineView.createdAt)}</td>
 					<td id="td_processes">
-						<button onclick="window.click_updateButton(${rowNo})" class="active" ui-toggle-class="">
+						<button id="btn_update" class="active" ui-toggle-class="">
 							<i class="fa fa-pencil text-info"> 
 								Güncelle
 							</i>
@@ -348,6 +370,187 @@ $(function () {
                 //#endregion
             },
         });
+    }
+
+    function click_updateButton(row) {
+        //#region set variables
+
+        //#region set "columnsForAddInput"
+        let columnsForAddInput = {}
+        let columnsForAddInputGuide = {
+            "brandName": "text",
+            "model": "text",
+            "stock": "number",
+            "rented": "number",
+            "sold": "number",
+            "description": "text",
+        }
+
+        // populate "columnsForAddInput"
+        for (let columnName in columnsForAddInputGuide) {
+            columnsForAddInput[columnName] = row.children(`#td_${columnName}`);
+        }
+        //#endregion
+
+        let columnsForAddSelect = {
+            "mainCategoryName": row.children("#td_mainCategoryName"),
+            "subCategoryName": row.children("#td_subCategoryName"),
+            "handStatus": row.children("#td_handStatus"),
+            "year": row.children("#td_year"),
+        };
+        let columnValues = {
+            "mainCategoryName": columnsForAddSelect.mainCategoryName.text(),
+            "subCategoryName": columnsForAddSelect.subCategoryName.text(),
+            "brandName": columnsForAddInput.brandName.text(),
+            "model": columnsForAddInput.model.text(),
+            "handStatus": columnsForAddSelect.handStatus.text(),
+            "stock": columnsForAddInput.stock.text(),
+            "rented": columnsForAddInput.rented.text(),
+            "sold": columnsForAddInput.sold.text(),
+            "year": columnsForAddSelect.year.text(),
+            "description": columnsForAddInput.description.text()
+        };
+        //#endregion
+
+        //#region add <input> to columns (dynamic)
+        for (let columnName in columnsForAddInput) {
+            // reset column
+            let column = columnsForAddInput[columnName];
+            column.empty()
+
+            // when column type is number
+            if (columnsForAddInputGuide[columnName] == "number")
+                column.append(`<input type="number" id="inpt_${columnName}">`);
+
+            // when column type is string
+            else
+                column.append(`<input type="text" id="inpt_${columnName}">`);
+
+            // add placeholder to column
+            column
+                .children(`#inpt_${columnName}`)
+                .val(columnValues[columnName]);
+        }
+        //#endregion
+
+   //     //#region add <select> to columns
+   //     //XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+
+   //     //#region add <select> to columns
+   //     for (let columnName in columnsForAddSelect) {
+   //         let column = columnsForAddSelect[columnName];
+   //         column.empty();
+   //         column.append("<select> </select>")
+   //     }
+   //     //#endregion
+
+   //     //#region fill mainCategoryNames <select> 
+   //     //XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+
+   //     //#region get <select> of mainCategoryName
+   //     var slct_mainCategoryName = columnsForAddSelect
+   //         .mainCategoryName
+   //         .children("select");
+   //     //#endregion
+
+   //     //#region add <option>
+   //     for (let index in model.mainCategoryNames)
+   //         slct_mainCategoryName.append(
+   //             `<option>
+			//		${model.mainCategoryNames[index]}
+			//	</option>`);
+   //     //#endregion
+
+   //     //#region set default value of <select>
+   //     slct_mainCategoryName.val(
+   //         columnValues["mainCategoryName"]);
+   //     //#endregion
+
+   //     //XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+   //     //#endregion
+
+   //     //#region fill subcategories <select>
+   //     //XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+
+   //     //#region set selectedIndex of mainCategoryName
+   //     let selectedMainCategoryIndex = columnsForAddSelect.mainCategoryName
+   //         .children("select")
+   //         .prop("selectedIndex");
+   //     //#endregion
+
+   //     //#region get subCategoryNames
+   //     let subCategoryNames = model
+   //         .subCategoryNames[selectedMainCategoryIndex]
+   //     //#endregion
+
+   //     //#region get <select> of subCategoryName
+   //     var slct_subCategoryName = columnsForAddSelect
+   //         .subCategoryName
+   //         .children("select");
+   //     //#endregion
+
+   //     //#region add <option>
+   //     for (let index in subCategoryNames)
+   //         slct_subCategoryName.append(
+   //             `<option>
+			//		${subCategoryNames[index]}
+			//	</option>`);
+   //     //#endregion
+
+   //     //#region set default value of <select>
+   //     slct_subCategoryName.val(
+   //         columnValues["subCategoryName"]);
+   //     //#endregion
+
+   //     //XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+   //     //#endregion
+
+   //     //#region fill usageStatus <select>
+   //     //XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+
+   //     //#region add <option>
+   //     let slct_usageStatus = columnsForAddSelect.usageStatus
+   //         .children("select");
+
+   //     slct_usageStatus.empty();
+   //     slct_usageStatus.append(`
+			//<option>Sıfır</option>
+			//<option>İkinci El</option>`
+   //     );
+   //     //#endregion
+
+   //     //#region set default value
+   //     slct_usageStatus.val(
+   //         columnValues["usageStatus"]
+   //     );
+   //     //#endregion
+
+   //     //XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+   //     //#endregion
+
+   //     //XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+   //     //#endregion
+
+   //     //#region add "save" and "cancel" buttons
+   //     // remove 'update' button
+   //     let td_processes = row.children("#td_processes");
+   //     td_processes.empty();
+
+   //     // add
+   //     td_processes.append(
+   //         `<button onclick="window.click_saveButton(${rowNo})"" class="active" ui-toggle-class="">
+			//	<i class="fa fa-check text-success"> Kaydet</i>
+			//<button onclick="window.click_cancelButton(${rowNo})" class="active" ui-toggle-class="">
+			//	<i class="fa fa-times text-danger"> Vazgeç</i>`
+   //     );
+   //     //#endregion
+
+   //     //#region save column values to sessionStorage
+   //     sessionStorage.setItem(
+   //         `tr_row${rowNo}`,
+   //         JSON.stringify(columnValues)
+   //     );
+   //     //#endregion
     }
     //#endregion
 
