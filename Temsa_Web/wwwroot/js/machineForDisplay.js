@@ -1,360 +1,355 @@
-﻿//$(function () {
-//    #region variables
-//    const pageNumber = 1;
-//    const pageSize = 10;
-//    const paginationButtonQuantity = 5;
-//    const tableBody = $("#tbl_user tbody");
-//    const nameOfPaginationHeader = "Machine-Pagination";
-//    const lbl_entityQuantity = $("#lbl_entityQuantity");
-//    const ul_pagination = $("#ul_pagination");
-//    let entityCountOfPage;
-//    let machinePaginationInJson;
-//    #endregion
+﻿import { getDateTimeInString, updateResultLabel } from "./miarTools.js";
 
-//    #region events
-//    $("#ul_pagination").click(() => {
-//        #region do unchecked "box_all"
-//        if ($("#box_all").is(":checked"))
-//            $("#box_all").prop("checked", false);
-//        #endregion
 
-//        #region click control of pagination buttons
-//        var clickedButton = $(":focus");
+$(function () {
+    //#region variables
+    const language = window.language;
+    const pageNumber = 1;
+    const pageSize = 10;
+    const paginationButtonQuantity = 5;
+    const tableBody = $("#tbl_machine tbody");
+    const nameOfPaginationHeader = "Machine-Pagination";
+    const lbl_entityQuantity = $("#lbl_entityQuantity");
+    const ul_pagination = $("#ul_pagination");
+    let machineCountOnTable;
+    let paginationInfosInJson;
+    //#endregion
 
-//        switch (clickedButton.attr("id")) {
-//            #region click paginationBack
-//            case "a_paginationBack":
-//                click_paginationBack();
-//                break;
-//            #endregion
+    //#region events
+    $("#ul_pagination").click(() => {
+        //#region do unchecked "box_all"
+        if ($("#box_all").is(":checked"))
+            $("#box_all").prop("checked", false);
+        //#endregion
 
-//            #region click paginationBack
-//            case "a_paginationNext":
-//                click_paginationNext();
-//                break;
-//            #endregion
+        //#region click control of pagination buttons
+        var clickedButton = $(":focus");
 
-//            #region click pagination button with number
-//            default:
-//                let pageNo = clickedButton.prop("innerText");
-//                fillTable(pageNo);
-//                break;
-//            #endregion
-//        }
-//        #endregion 
-//    });
-//    $("#box_all").click(() => {
-//        #region do checked/unchecked all checkbox
-//        let isBoxAllChecked = $("#box_all").is(":checked");
+        switch (clickedButton.attr("id")) {
+            case "a_paginationBack":
+                //#region open previous page if previous page exists
+                if (paginationInfosInJson.HasPrevious)
+                    populateTable(paginationInfosInJson.CurrentPageNo - 1);
 
-//        for (let rowNo = 1; rowNo <= entityCountOfPage; rowNo++) {
-//            var checkBoxInRow = $(`#tr_row${rowNo} #td_checkBox input`);
+                break;
+            //#endregion
 
-//            #region do checked of checkbox
-//            if (isBoxAllChecked
-//                && !checkBoxInRow.is(":checked")) // if not checked
-//                checkBoxInRow.prop("checked", true);
-//            #endregion
+            case "a_paginationNext":
+                //#region open next page if next page exists
+                if (paginationInfosInJson.HasNext)
+                    populateTable(paginationInfosInJson.CurrentPageNo + 1);
 
-//            #region do unchecked of checkbox
-//            else if (!isBoxAllChecked
-//                && checkBoxInRow.is(":checked")) // if checked
-//                checkBoxInRow.prop("checked", false);
-//            #endregion
-//        }
-//        #endregion
-//    })
-//    $("#btn_apply").click(async () => {
-//        let opt_selected = $("#slct_menubar option:selected");
+                break;
+            //#endregion
 
-//        switch (opt_selected.val()) {
-//            #region delete selected values
-//            case "1":
-//                await deleteSelectedEntitiesAsync();
-//                break;
-//            #endregion 
-//        }
-//    });
-//    #endregion events
+            default:
+                //#region open page that matched with clicked button number
+                let pageNo = clickedButton.prop("innerText");
+                populateTable(pageNo);
+                break;
+            //#endregion
+        }
+        //#endregion 
+    });
+    $("#box_all").click(() => {
+        //#region do checked/unchecked all checkbox
+        let isBoxAllChecked = $("#box_all").is(":checked");
 
-//    #region functions
-//    function addPaginationButtons() {
-//        #region set buttonQauntity for pagination
-//        let buttonQuantity =
-//            machinePaginationInJson.TotalPage < paginationButtonQuantity ?
-//                machinePaginationInJson.TotalPage
-//                : paginationButtonQuantity
-//        #endregion
+        for (let rowNo = 1; rowNo <= machineCountOnTable; rowNo += 1) {
+            //var checkBoxInRow = $(`#tr_row${rowNo} #td_checkBox input`);
+            var checkBoxInRow = $(`#tr_row${rowNo} #td_checkBox input`);
 
-//        #region reset paginationButtons if exists
-//        if (ul_pagination.children("li").length != 0)
-//            ul_pagination.empty()
-//        #endregion
+            //#region do checked of checkbox
+            if (isBoxAllChecked
+                && !checkBoxInRow.is(":checked")) // if not checked
+                checkBoxInRow.prop("checked", true);
+            //#endregion
 
-//        #region add paginationBack button
-//        ul_pagination.append(
-//            `<li>
-//                <a id="a_paginationBack" href="#" hidden>
-//                    <i class="fa fa-chevron-left"></i>
-//                </a>
-//            </li>`);
-//        #endregion
+            //#region do unchecked of checkbox
+            else if (!isBoxAllChecked
+                && checkBoxInRow.is(":checked")) // if checked
+                checkBoxInRow.prop("checked", false);
+            //#endregion
+        }
+        //#endregion
+    })
+    $("#btn_apply").click(async () => {
+        let opt_selected = $("#slct_menubar option:selected");
 
-//        #region add pagination buttons
-//        for (let pageNo = 1; pageNo <= buttonQuantity; pageNo += 1)
-//            ul_pagination.append(
-//                `<li>
-//                    <a href="#"> 
-//                        ${pageNo}
-//                    </a>
-//                </li> `);
-//        #endregion
+        switch (opt_selected.val()) {
+            //#region delete selected values
+            case "1":
+                await deleteSelectedMachinesAsync();
+                break;
+            //#endregion 
+        }
+    });
+    //#endregion events
 
-//        #region add paginationNext button
-//        if (buttonQuantity > 1)
-//            ul_pagination.append(
-//                `<li>
-//                <a id="a_paginationNext" href="#">
-//                    <i class="fa fa-chevron-right"></i>
-//                </a>
-//            </li>`);
-//        #endregion
-//    }
+    //#region functions
+    function addPaginationButtons() {
+        //#region set buttonQauntity for pagination
+        let buttonQuantity =
+            paginationInfosInJson.TotalPage < paginationButtonQuantity ?
+                paginationInfosInJson.TotalPage
+                : paginationButtonQuantity
+        //#endregion
 
-//    function hideOrShowPaginationBackAndNextButtons() {
-//        if (machinePaginationInJson.TotalPage > 1) {
-//            #region for paginationBack button
-//             hide
-//            if (machinePaginationInJson.CurrentPageNo == 1)
-//                $("#a_paginationBack").attr("hidden", "");
+        //#region reset paginationButtons if exists
+        if (ul_pagination.children("li").length != 0)
+            ul_pagination.empty()
+        //#endregion
 
-//             show
-//            else
-//                $("#a_paginationBack").removeAttr("hidden");
-//            #endregion
+        //#region add paginationBack button
+        ul_pagination.append(
+            `<li>
+				<a id="a_paginationBack" href="#" hidden>
+					<i class="fa fa-chevron-left"></i>
+				</a>
+			</li>`);
+        //#endregion
 
-//            #region for paginationNext button
-//             hide
-//            if (machinePaginationInJson.CurrentPageNo == machinePaginationInJson.TotalPage)
-//                $("#a_paginationNext").attr("hidden", "");
+        //#region add pagination buttons
+        for (let pageNo = 1; pageNo <= buttonQuantity; pageNo += 1)
+            ul_pagination.append(
+                `<li>
+					<a href="#"> 
+						${pageNo}
+					</a>
+				</li> `);
+        //#endregion
 
-//             show
-//            else
-//                $("#a_paginationNext").removeAttr("hidden");
-//            #endregion
-//        }
-//    }
+        //#region add paginationNext button
+        ul_pagination.append(
+            `<li>
+				<a id="a_paginationNext" href="#">
+					<i class="fa fa-chevron-right"></i>
+				</a>
+			</li>`);
+        //#endregion
+    }
 
-//    function addMachinesToTable(response) {
-//        let no = 1;
+    function hideOrShowPaginationBackAndNextButtons() {
+        if (paginationInfosInJson.TotalPage > 1) {
+            //#region for paginationBack button
+            // hide
+            if (paginationInfosInJson.CurrentPageNo == 1)
+                $("#a_paginationBack").attr("hidden", "");
 
-//        response.forEach(machine => {
-//            #region set usageStatus
-//            var usageStatus = machine.zerothHandOrSecondHand == 0 ?
-//                "Sıfır"
-//                : "İkinci El";
-//            #endregion
+            // show
+            else
+                $("#a_paginationBack").removeAttr("hidden");
+            //#endregion
 
-//            tableBody.append(
-//                `<tr id="tr_row${no}">
-//                    <td id="td_checkBox">
-//                        <label class="i-checks m-b-none">
-//                            <input type="checkbox"><i></i>
-//                        </label>
-//                    </td>
-//					<td id="td_brandName">${machine.brandName}</td>
-//					<td id="td_mainCategoryName">${machine.mainCategoryName}</td>
-//					<td id="td_subCategoryName">${machine.subCategoryName}</td>
-//					<td id="td_model">${machine.model}</td>
-//					<td id="td_usageStatus">${usageStatus}</td>
-//					<td id="td_stock">${machine.stock}</td>
-//					<td id="td_rented">${machine.rented}</td>
-//					<td id="td_sold">${machine.sold}</td>
-//					<td id="td_year">${machine.year}</td>
-//					<td id="td_createdAt">${getDateTimeAsModified(machine.createdAt)}</td>
-//					<td id="td_processes">
-//						<button onclick="window.click_updateButton(${no})" class="active" ui-toggle-class="">
-//							<i class="fa fa-pencil text-info"> 
-//                                Güncelle
-//                            </i>
-//						</button>
-//					</td>
-//                    <td style="width:30px;"></td>
-//				</tr>
-//                <tr> 
-//                    <td hidden></td>
-//                </tr>
-//                <tr id="tr_error${no}">
-//                    <td colspan="13" hidden>
-//                    </td>
-//                </tr>`
-//            );
-//            no += 1;
-//        });
-//    }
+            //#region for paginationNext button
+            // hide
+            if (paginationInfosInJson.CurrentPageNo == paginationInfosInJson.TotalPage)
+                $("#a_paginationNext").attr("hidden", "");
 
-//    async function deleteSelectedEntitiesAsync() {
-//        #region set "subCategoryNameAndModelList" and "rowNoList"
-//        let subCategoryNameAndModelList = [];
-//        let rowNoList = [];
+            // show
+            else
+                $("#a_paginationNext").removeAttr("hidden");
+            //#endregion
+        }
+    }
 
-//        await new Promise(resolve => {
-//            for (let rowNo = 1; rowNo <= entityCountOfPage; rowNo += 1) {
-//                #region set variables
-//                let checkBox = $(`#tr_row${rowNo} #td_checkBox input`);
-//                let row = $(`#tr_row${rowNo}`);
-//                #endregion 
+    function addMachinesToTable(response) {
+        let rowNo = 1;
 
-//                #region add subCategoryName and model if checked
-//                if (checkBox.is(":checked")) {
-//                    #region when update process continuing
-//                    if (row.children("td").children("input").length != 0)
-//                        click_cancelButton(rowNo);  // cancel update process
-//                    #endregion
+        response.forEach(machineView => {
+            tableBody.append(
+                `<tr id= tr_row${rowNo} class= ${machineView.id}>
+                    <td id="td_checkBox">
+						<label class="i-checks m-b-none">
+							<input type="checkbox"><i></i>
+						</label>
+					</td>
+					<td>${machineView.mainCategoryName}</td>
+					<td>${machineView.subCategoryName}</td>
+					<td>${machineView.brandName}</td>
+					<td>${machineView.model}</td>
+					<td>${machineView.handStatus}</td>
+					<td>${machineView.stock}</td>
+					<td>${machineView.rented}</td>
+					<td>${machineView.sold}</td>
+					<td>${machineView.year}</td>
+					<td>${machineView.description}</td>
+					<td>${getDateTimeInString(machineView.createdAt)}</td>
+					<td id="td_processes">
+						<button onclick="window.click_updateButton(${rowNo})" class="active" ui-toggle-class="">
+							<i class="fa fa-pencil text-info"> 
+								Güncelle
+							</i>
+						</button>
+					</td>
+					<td style="width:30px;"></td>
+				</tr>
+				<tr> 
+					<td hidden></td>
+				</tr>
+				<tr id="tr_error${rowNo}">
+					<td colspan="13" hidden></td>
+				</tr>`
+            );
 
-//                    #region get subCategoryName and model
-//                    let subCategoryName = row.children("#td_subCategoryName").text();
-//                    let model = row.children("#td_model").text();
-//                    #endregion
+            rowNo += 1;
+        });
+    }
 
-//                    #region fill "rowNoList" and "subCategoryNameAndModelList"
-//                    rowNoList.push(rowNo);
-//                    subCategoryNameAndModelList.push({
-//                        "SubCategoryName": subCategoryName,
-//                        "Model": model
-//                    });
-//                    #endregion
-//                }
-//                #endregion
-//            }
+    async function deleteSelectedMachinesAsync() {
+        //#region set machineIdList
+        let machineIdList = await new Promise(resolve => {
+            let machineIdList = [];
 
-//            resolve();
-//        })
-//        #endregion
+            //#region set machineIdList
+            for (let rowNo = 1; rowNo <= machineCountOnTable; rowNo += 1) {
+                //#region set variables
+                let checkBox = $(`#tr_row${rowNo} #td_checkBox input`);
+                let row = $(`#tr_row${rowNo}`);
+                //#endregion 
 
-//        #region when any user not select
-//        if (subCategoryNameAndModelList.length == 0)
-//            return;
-//        #endregion
+                //#region add machineId to machineIdList if checked
+                if (checkBox.is(":checked")) {
+                    //#region when update process continuing
+                    if (row.children("td>input").length != 0)  // when any <input> exists
+                        click_cancelButton(rowNo);  // cancel update process
+                    //#endregion
 
-//        $.ajax({
-//            method: "DELETE",
-//            url: "https://localhost:7091/api/services/machine/delete",
-//            data: JSON.stringify({
-//                "MachineInfos": subCategoryNameAndModelList
-//            }),
-//            contentType: "application/json",
-//            dataType: "json",
-//            success: () => {
-//                #region when all machines on page deleted
-//                if (subCategoryNameAndModelList.length == pageSize) {
-//                    let currentPageNo = machinePaginationInJson.CurrentPageNo;
+                    //#region add machineId
+                    let machineId = row.attr("class");
+                    machineIdList.push(machineId);
+                    //#endregion
+                }
+                //#endregion
+            }
+            //#endregion
 
-//                    #region when next page exists
-//                    if (machinePaginationInJson.HasNext)
-//                        fillTable(currentPageNo, true);
-//                    #endregion
+            //#region when any machine not select
+            if (machineIdList.length == 0)
+                return;
+            //#endregion
 
-//                    #region when previous page exists
-//                    else if (machinePaginationInJson.HasPrevious)
-//                        fillTable(currentPageNo - 1, true);
-//                    #endregion
+            //#region save machineIdList to session
+            window.sessionStorage.setItem(
+                "DeletedMachineIdList",
+                JSON.stringify(machineIdList));
+            //#endregion
 
-//                    #region when any machines not exists
-//                    else
-//                        tableBody.empty();
-//                    #endregion
-//                }
-//                #endregion
+            resolve(machineIdList);
+        })
+        //#endregion
 
-//                #region when some machines on page deleted
-//                else
-//                    fillTable(machinePaginationInJson.CurrentPageNo);  // refresh current page
-//                #endregion
+        $.ajax({
+            method: "DELETE",
+            url: `https://localhost:7091/api/services/machine/delete?language=${language}`,
+            data: JSON.stringify({
+                "MachineIdList": machineIdList
+            }),
+            contentType: "application/json",
+            dataType: "json",
+            success: () => {
+                //#region when all machines on page deleted
+                if (machineIdList.length == paginationInfosInJson.CurrentPageCount) {
+                    let currentPageNo = paginationInfosInJson.CurrentPageNo;
 
-//                #region do unchecked 'box_all'
-//                $("#box_all").prop("checked", false);
-//                #endregion
+                    //#region when next page exists
+                    if (paginationInfosInJson.HasNext)
+                        populateTable(currentPageNo, true);  // refresh current page
+                    //#endregion
 
-//                #region reset "lbl_entityQuantity"
-//                lbl_entityQuantity.empty()
-//                lbl_entityQuantity.append(`0/${pageSize} Görüntüleniyor`);
-//                #endregion
-//            },
-//            error: (response) => {
-//                window.writeErrorMessage(response.ResponseText, lbl_entityQuantity);
-//            }
-//        });
-//    }
+                    //#region when previous page exists
+                    else if (paginationInfosInJson.HasPrevious)
+                        populateTable(currentPageNo - 1, true);
+                    //#endregion
 
-//    function click_paginationBack() {
-//        #region open previous page if previous page exists
-//        if (machinePaginationInJson.HasPrevious)
-//            fillTable(machinePaginationInJson.CurrentPageNo - 1);
-//        #endregion
-//    }
+                    //#region when any machines not exists
+                    else {
+                        tableBody.empty();
 
-//    function click_paginationNext() {
-//        #region open next page if next page exists
-//        if (machinePaginationInJson.HasNext)
-//            fillTable(machinePaginationInJson.CurrentPageNo + 1);
-//        #endregion
-//    }
+                        // update entity quantity label
+                        updateResultLabel(
+                            lbl_entityQuantity,
+                            `<b>0</b>/<b>${pageSize}</b> makine görüntüleniyor`);
+                    }
+                    //#endregion
+                }
+                //#endregion
 
-//    function fillTable(pageNumber, refreshPaginationButtons = false) {
-//        var data = {
-//            language : 
-//            pageNumber: pageNumber,
-//            pageSize: pageSize
-//        },
+                //#region when some machines on page deleted
+                else
+                    populateTable(paginationInfosInJson.CurrentPageNo, true);  // refresh current page
+                //#endregion
 
-//        $.ajax({
-//            method: "GET",
-//            url: "https://localhost:7091/api/services/machine/display/all",
-//            contentType: "application/json",
-//            data: 
-//            dataType: "json",
-//            beforeSend: () => {
-//                #region reset table if not empty
-//                if (tableBody.children("tr").length != 0)
-//                    tableBody.empty();
-//                #endregion
-//            },
-//            success: (response, status, xhr) => {
-//                #region get machinePaginationInJson
-//                machinePaginationInJson = JSON.parse(
-//                    xhr.getResponseHeader(nameOfPaginationHeader));
-//                #endregion
+                //#region do unchecked "box_all"
+                $("#box_all").prop("checked",false);
+                //#endregion
+            },
+            error: (response) => {
+                //#region write error to resultLabel
+                updateResultLabel(
+                    lbl_entityQuantity,
+                    JSON.parse(response.ResponseText),
+                    "rgb(255, 75, 75)"
+                );
+                //#endregion
+            }
+        });
+    }
 
-//                #region set "entityCountOfPage"
-//                entityCountOfPage =
-//                    machinePaginationInJson.CurrentPageNo == machinePaginationInJson.TotalPage ?
-//                        machinePaginationInJson.LastPageCount  // when current page is last page
-//                        : machinePaginationInJson.PageSize  // when not last page
-//                #endregion
+    function populateTable(pageNumber, refreshPaginationButtons) {
+        $.ajax({
+            method: "GET",
+            url: "https://localhost:7091/api/services/machine/display/all",
+            contentType: "application/json",
+            data: {
+                language: language,
+                pageNumber: pageNumber,
+                pageSize: pageSize
+            },
+            dataType: "json",
+            beforeSend: () => {
+                //#region reset table if not empty
+                if (tableBody.children("tr").length != 0)
+                    tableBody.empty();
+                //#endregion
+            },
+            success: (response, status, xhr) => {
+                addMachinesToTable(response);
 
-//                #region add entity quantity to lbl_entityQuantity
-//                lbl_entityQuantity.empty();
-//                lbl_entityQuantity.append(
-//                    `<b>${entityCountOfPage}/${pageSize}</b> görüntüleniyor`);
-//                #endregion
+                //#region get pagination infos from headers
+                paginationInfosInJson = JSON.parse(
+                    xhr.getResponseHeader(nameOfPaginationHeader));
+                //#endregion
 
-//                addMachinesToTable(response);
-//                hideOrShowPaginationBackAndNextButtons();
+                //#region update "lbl_entityQuantity"
+                if (response.length != 0) {  // if any machine exists
+                    machineCountOnTable = paginationInfosInJson.CurrentPageCount;
 
-//                #region add pagination buttons
-//                if (refreshPaginationButtons)
-//                    addPaginationButtons();
-//                #endregion
-//            },
-//            error: (response) => {
-//                #region write error
-//                window.writeErrorMessage(response.responseText, lbl_entityQuantity);
-//                #endregion
-//            },
-//        });
-//    }
-//    #endregion
+                    lbl_entityQuantity.empty();
+                    lbl_entityQuantity.append(
+                        `<b>${machineCountOnTable}/${pageSize}</b> makine görüntüleniyor`);
+                }
+                //#endregion
 
-//    fillTable(pageNumber, true);
-//});
+                //#region add pagination buttons
+                if (refreshPaginationButtons)
+                    addPaginationButtons();
+                //#endregion
+
+                hideOrShowPaginationBackAndNextButtons();
+            },
+            error: (response) => {
+                //#region write error to resultLabel
+                updateResultLabel(
+                    lbl_entityQuantity,
+                    convertErrorCodeToErrorMessage(response.responseText),
+                    "rgb(255, 75, 75)"
+                );
+                //#endregion
+            },
+        });
+    }
+    //#endregion
+
+    populateTable(pageNumber, true);
+});

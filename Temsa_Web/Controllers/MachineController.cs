@@ -26,13 +26,10 @@ namespace Temsa_Web.Controllers
 		}
 
 		public IActionResult Display(
-			[FromQuery(Name = "Language")] string language,
-			[FromQuery] PaginationParameters pagingParameters)
+			[FromQuery(Name = "Language")] string language)
 		{
 			ViewBag.Language = language;
-			ViewBag.Response = Response;
-			ViewBag.pagingParameters = pagingParameters;
-
+			
 			return View("Display", _manager);
 		}
 	}

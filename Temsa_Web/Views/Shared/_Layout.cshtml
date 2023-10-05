@@ -252,10 +252,10 @@
 		<!-- font CSS -->
 		<link href='//fonts.googleapis.com/css?family=Roboto:400,100,100italic,300,300italic,400italic,500,500italic,700,700italic,900,900italic' rel='stylesheet' type='text/css'>
 		<!-- font-awesome icons -->
-		<link rel="stylesheet" href="~/css/font.css" type="text/css"/>
 		<link href="~/css/font-awesome.css" rel="stylesheet">
 		<!-- //font-awesome icons -->
 		<script src="~/js/jquery2.0.3.min.js"></script>
+		<script type="module" src="~/js/miarTools.js"></script>
 	</head>
 	<body>
 		<section id="container">
@@ -453,9 +453,13 @@
 		<script src="~/js/jquery.scrollTo.js"></script>
 
 		<script>
-			function convertErrorCodeToErrorMessage(errorCode)
+			function convertErrorCodeToErrorMessage(responseText)
 			{
-				switch (errorCode) {
+				// responseText convert json format 
+				var responseTextInJson = JSON.parse(responseText);
+
+				// errorCode convert error message
+				switch (responseTextInJson["errorCode"]) {
 					//#region user error codes
 					//xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 					//#region format error codes
@@ -573,87 +577,6 @@
 					case "AE-F": return "Yetkiniz yok"
 					//#endregion
 				};
-			}
-
-			function getErrorMessage(responseText)
-			{
-				var responseTextInJson = JSON.parse(responseText);
-
-				return window.convertErrorCodeToErrorMessage(
-					responseTextInJson["errorCode"]
-				);
-			}
-
-			function writeErrorMessage(responseText, resultLabelId)
-			{
-				// convert error code to error message
-				var responseTextInJson = JSON.parse(responseText);
-				var errorMessage = convertErrorCodeToErrorMessage(
-					responseTextInJson["errorCode"]);
-				
-				// show resultLabel
-				$(resultLabelId).removeAttr("hidden");
-
-				// write error
-				updateResultLabel(errorMessage, "rgb(255, 75, 75)", resultLabelId);
-			}
-
-			function updateResultLabel(message, color, resultLabelId)
-			{
-				//#region reset resultLabel
-				let resultLabel = $(resultLabelId);
-				resultLabel.empty();
-				//#endregion
-
-				//#region change color
-				resultLabel.attr("style",
-					`color:${color}; 
-					margin-top:30px; 
-					margin-bottom: 30px;
-					text-align: center`);
-				//#endregion
-
-				// show resultLabel
-				$(resultLabelId).removeAttr("hidden");
-
-				// update
-				resultLabel.text(message);
-			}
-
-			function getDateTimeAsModified(dateTime) {
-				//#region set year, hours and minutes
-				let date = new Date(dateTime);
-
-				let year = date.getFullYear();
-				let hours = date.getHours() + 3;
-				let minutes = date.getMinutes();
-				//#endregion
-
-				//#region set day
-				let day = date.getDate();
-
-				// add '0' to head
-				let dayInString = day < 10 ?
-					`0${day}`  // add 0
-					: day.toString(); // don't add
-				//#endregion
-
-				//#region set month
-				let month = date.getMonth() + 1;
-
-				// add '0' to head
-				let monthInString = month < 10 ?
-					`0${month}`  // add 0
-					: month.toString();  // don't add
-				//#endregion
-
-				return `${dayInString}.${monthInString}.${year} - ${hours}:${minutes}`;
-			}
-
-			function getHeaderInJson(headerName) {
-				return JSON.parse(
-					localStorage.getItem(headerName)
-				);
 			}
 		</script>
 	</body>
