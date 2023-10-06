@@ -160,15 +160,28 @@ namespace Services.Concretes
                 "MainCategoryName", 
                 machineParameters.MainCategoryName, 
                 DbType.String);
-            #endregion
+			#endregion
 
-            #region get SubCategoryNames
-            var subCategoryNames = await _manager.MachineRepository
+			#region get SubCategoryNames
+			return await _manager.MachineRepository
                 .GetSubCategoryNamesOfMainCategoryByLanguageAsync(parameters);
             #endregion
-
-            return subCategoryNames;
         }
+
+        public async Task<IEnumerable<string>> GetAllHandStatusByLanguageAsync(
+            string language)
+        {
+            #region set parameters
+            var parameters = new DynamicParameters();
+            parameters.Add("Language", language, DbType.String);
+            #endregion
+
+            #region get handstatuses
+            return await _manager.MachineRepository
+                .GetAllHandStatusByLanguageAsync(parameters);
+            #endregion
+        }
+
 
         //public async Task<IEnumerable<MachineDto>> GetMachinesByConditionWithPagingAsync(
         //	MachineBodyDtoForDisplay machineDtoD,

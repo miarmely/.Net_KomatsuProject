@@ -18,5 +18,6 @@
         public string Machine_Delete { get; init; }
         public string Machine_GetMainCategoryNames { get; init; }
         public string Machine_GetSubCategoryNames { get; init; }
+        public string Machine_GetAllHandStatus { get; init; }
     }
 }

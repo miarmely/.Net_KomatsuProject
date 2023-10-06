@@ -14,38 +14,40 @@ namespace Repositories.Contracts
             DynamicParameters parameters);
         Task<IEnumerable<string>> GetSubCategoryNamesOfMainCategoryByLanguageAsync(
             DynamicParameters parameters);
+		Task<IEnumerable<string>> GetAllHandStatusByLanguageAsync(
+			DynamicParameters parameters);
 
 
-        //Task<MachineView?> GetMachineByMachineIdAsync(Guid machineId);
+		//Task<MachineView?> GetMachineByMachineIdAsync(Guid machineId);
 
-        //Task<MachineView?> GetMachineBySubCategoryNameAndModelAsync(
-        //          string subCategoryName, 
-        //          string model);
+		//Task<MachineView?> GetMachineBySubCategoryNameAndModelAsync(
+		//          string subCategoryName, 
+		//          string model);
 
 
-        //      #region GetAllMachines
-        //      Task<PagingList<MachineView>> GetAllMachinesAsync<TResult>(
-        //          PaginationQueryDto pagingParameters,
-        //          Expression<Func<MachineView, TResult>> orderBy,
-        //          bool asAscending = true);
+		//      #region GetAllMachines
+		//      Task<PagingList<MachineView>> GetAllMachinesAsync<TResult>(
+		//          PaginationQueryDto pagingParameters,
+		//          Expression<Func<MachineView, TResult>> orderBy,
+		//          bool asAscending = true);
 
-        //      #endregion
+		//      #endregion
 
-        //      #region GetMachinesByCndition
+		//      #region GetMachinesByCndition
 
-        //      Task<List<MachineView>> GetMachinesByConditionAsync(
-        //          Expression<Func<MachineView, bool>> condition);
+		//      Task<List<MachineView>> GetMachinesByConditionAsync(
+		//          Expression<Func<MachineView, bool>> condition);
 
-        //      Task<PagingList<MachineView>> GetMachinesByConditionAsync(
-        //          PaginationQueryDto paginationParameters,
-        //          Expression<Func<MachineView, bool>> condition);
+		//      Task<PagingList<MachineView>> GetMachinesByConditionAsync(
+		//          PaginationQueryDto paginationParameters,
+		//          Expression<Func<MachineView, bool>> condition);
 
-        //      Task<PagingList<MachineView>> GetMachinesByConditionAsync<TResult>(
-        //          PaginationQueryDto paginationParameters,
-        //          Expression<Func<MachineView, bool>> condition,
-        //          Expression<Func<MachineView, TResult>> orderBy,
-        //          bool asAscending = true);
+		//      Task<PagingList<MachineView>> GetMachinesByConditionAsync<TResult>(
+		//          PaginationQueryDto paginationParameters,
+		//          Expression<Func<MachineView, bool>> condition,
+		//          Expression<Func<MachineView, TResult>> orderBy,
+		//          bool asAscending = true);
 
-        //      #endregion
-    }
+		//      #endregion
+	}
 }

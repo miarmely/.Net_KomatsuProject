@@ -14,8 +14,9 @@ namespace Presantation.ActionFilters.Filters
 			await Task.Run(() =>
 			{
 				#region get dtoModels in KeyValuePairs
-				var keyValuePairs = context.ActionArguments
-						.Where(a => a.Key.Contains("Dto"));
+				var keyValuePairs = context
+					.ActionArguments
+					.Where(a => a.Key.Contains("Dto"));
 				#endregion
 
 				foreach (var keyValuePair in keyValuePairs)

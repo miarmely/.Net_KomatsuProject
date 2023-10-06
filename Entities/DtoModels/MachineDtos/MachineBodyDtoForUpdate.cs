@@ -11,8 +11,7 @@
         public Int16? Sold { get; init; }
         public Int16? Year { get; init; }
         public string? HandStatus { get; init; }
-        public string? DescriptionInTR { get; init; }
-        public string? DescriptionInEN { get; init; }
+        public string? Description { get; init; }
         public string? ImagePath { get; init; }
         public string? PdfPath { get; init; }
     }

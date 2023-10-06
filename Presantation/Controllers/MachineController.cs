@@ -1,6 +1,5 @@
 ﻿using Entities.DtoModels.MachineDtos;
 using Entities.QueryParameters;
-using Entities.QueryParameters;
 using Microsoft.AspNetCore.Mvc;
 using Presantation.ActionFilters;
 using Services.Contracts;
@@ -67,7 +66,18 @@ namespace Presantation.Controllers
                 .GetSubCategoryNamesOfMainCategoryByLanguageAsync(machineParameters);
 
             return Ok(mainCategoryNames);
+        }
 
+
+        [HttpGet("display/handStatus")]
+        //[Authorization("Admin/Yönetici/Editor/Editör/User/Kullanıcı")]
+        public async Task<IActionResult> GetAllHandStatusByLanguage(
+            [FromQuery(Name = "language")] string language)
+        {
+            var handStatuses = await _manager.MachineService
+                .GetAllHandStatusByLanguageAsync(language);
+
+            return Ok(handStatuses);
         }
 
 
@@ -78,11 +88,11 @@ namespace Presantation.Controllers
             [FromQuery] MachineParametersForUpdate machineParameters,
             [FromBody] MachineDtoForUpdate machineDto)
         {
-            await _manager.MachineService
+			await _manager.MachineService
                 .UpdateMachineAsync(machineParameters, machineDto);
 
-            return NoContent();
-        }
+			return NoContent();
+		}
 
 
         [HttpDelete("delete")]

@@ -11,11 +11,12 @@ $(function () {
     const nameOfPaginationHeader = "Machine-Pagination";
     const lbl_entityQuantity = $("#lbl_entityQuantity");
     const ul_pagination = $("#ul_pagination");
+    const apiUrl = "https://localhost:7091/api/services/machine";
     let machineCountOnTable;
     let paginationInfosInJson;
     //#endregion
 
-    //#region events
+    //#region event
     $("#ul_pagination").click(() => {
         //#region do unchecked "box_all"
         if ($("#box_all").is(":checked"))
@@ -51,7 +52,6 @@ $(function () {
         }
         //#endregion 
     });
-
     $("#box_all").click(() => {
         //#region do checked/unchecked all checkbox
         let isBoxAllChecked = $("#box_all").is(":checked");
@@ -74,7 +74,6 @@ $(function () {
         }
         //#endregion
     })
-
     $("#btn_apply").click(async () => {
         let opt_selected = $("#slct_menubar option:selected");
 
@@ -86,7 +85,6 @@ $(function () {
             //#endregion 
         }
     });
-
     $("#tbl_machine tbody").click(() => {
         //#region when update,save or delete button clicked
         let clickedElement = $(":focus");
@@ -98,6 +96,7 @@ $(function () {
                 break;
 
             case "btn_save":
+                click_saveButton(row);
                 break;
 
             case "btn_delete":
@@ -105,7 +104,6 @@ $(function () {
         }
         //#endregion
     })
-
     //#endregion events
 
     //#region functions
@@ -303,7 +301,7 @@ $(function () {
                 //#endregion
 
                 //#region do unchecked "box_all"
-                $("#box_all").prop("checked",false);
+                $("#box_all").prop("checked", false);
                 //#endregion
             },
             error: (response) => {
@@ -372,6 +370,199 @@ $(function () {
         });
     }
 
+    function populateMainCategoryNameSelect(columnsForAddSelect, columnValues) {
+        //#region get <select> of mainCategoryName
+        var slct_mainCategoryName = columnsForAddSelect
+            .mainCategoryName
+            .children("select");
+        //#endregion
+
+        //#region add mainCategoryNames as <option>
+
+        //#region set variables
+        var mainCategoryNameKeyOnSession = `mainCategoryNamesIn${language}`
+        var mainCategoryNamesInSession = sessionStorage
+            .getItem(mainCategoryNameKeyOnSession);
+        //#endregion
+
+        //#region when mainCategoryNames not exists in sessionStorage
+        if (mainCategoryNamesInSession == null)
+            $.ajax({
+                method: "GET",
+                url: "https://localhost:7091/api/services/machine/display/mainCategory",
+                data: {
+                    language: language
+                },
+                contentType: "application/json",
+                dataType: "json",
+                success: (response) => {
+                    //#region add mainCategories as <option>
+                    for (let index in response) {
+                        slct_mainCategoryName.append(
+                            `<option> ${response[index]} </option>`);
+                    };
+                    //#endregion
+
+                    //#region add mainCategoryNames to sessionStorage
+                    sessionStorage.setItem(
+                        mainCategoryNameKeyOnSession,
+                        JSON.stringify(response));
+                    //#endregion
+                }
+            });
+        //#endregion
+
+        //#region when mainCategoryNames exists in sessionStorage
+        else {
+            //#region add mainCategoryNames as <option>
+            var mainCategoryNames = JSON.parse(mainCategoryNamesInSession);
+
+            for (let index in mainCategoryNames) {
+                slct_mainCategoryName.append(
+                    `<option> ${mainCategoryNames[index]} </option>`);
+            }
+            //#endregion
+        }
+        //#endregion
+
+        //#region set default value of <select>
+        slct_mainCategoryName.val(
+            columnValues["mainCategoryName"]);
+        //#endregion
+
+        //#endregion
+    }
+
+    function populateSubCategoryNameSelect(columnsForAddSelect, columnValues) {
+        //#region get subCategoryName <select>
+        let slct_subCategoryName = columnsForAddSelect
+            .subCategoryName
+            .children("select");
+        //#endregion
+
+        //#region add subCategoryNames as <option>
+
+        //#region set variables
+        let subCategoryNameSessionKey = `subCategoryNamesIn${language}`;
+        let subCategoryNameSessionValue = {}
+        let mainCategoryName = columnValues.mainCategoryName;
+        let sessionValue = JSON.parse(sessionStorage
+            .getItem(subCategoryNameSessionKey));
+        //#endregion
+
+        //#region when subCategoryNames not exists in session (get from server
+        if (sessionValue == null)
+            $.ajax({
+                method: "GET",
+                url: apiUrl + "/display/subCategory",
+                data: {
+                    language: language,
+                    mainCategoryName: columnValues["mainCategoryName"]
+                },
+                contentType: "application/json",
+                dataType: "json",
+                success: (response) => {
+                    //#region add subCategoryName as <option>
+                    //add subCategoryName to <select>
+                    for (let index in response) {
+                        slct_subCategoryName.append(
+                            `<option>${response[index]}</option>`);
+                    }
+
+                    // add subCategoryNames to "subCategoryNameSessionValue"
+                    subCategoryNameSessionValue[mainCategoryName] = response;
+                    //#endregion
+
+                    //#region add subcategoryNames to session
+                    sessionStorage.setItem(
+                        subCategoryNameSessionKey,
+                        JSON.stringify(subCategoryNameSessionValue)
+                    )
+                    //#endregion
+                }
+            });
+        //#endregion
+
+        //#region when subCategoryNAmes exists in session (get from session)
+        else {
+            //#region add subCategoryName to <select>
+            let subCategoryNames = sessionValue[mainCategoryName];
+
+            for (let index in subCategoryNames) {
+                let subCategoryName = subCategoryNames[index];
+
+                slct_subCategoryName.append(
+                    `<option>${subCategoryName}</option>`);
+            }
+            //#endregion
+        }
+        //#endregion
+
+        //#region set default value of <select>
+        slct_subCategoryName.val(columnValues.subCategoryName);
+        //#endregion
+
+        //#endregion
+    }
+
+    function populateHandStatusSelect(columnsForAddSelect, columnValues) {
+        //#region get handStatus <select>
+        let slct_handStatus = columnsForAddSelect
+            .handStatus
+            .children("select");
+        //#endregion
+
+        //#region populate handStatus <select>
+
+        //#region set variables
+        let handStatusSessionKey = `handStatusIn${language}`;
+        let handStatusesOnSession = JSON.parse(sessionStorage
+            .getItem(handStatusSessionKey));
+        //#endregion
+        
+        //#region when handstatuses not exists in session (get from service)
+        if (handStatusesOnSession == null)
+            $.ajax({
+                method: "GET",
+                url: apiUrl + "/display/handstatus",
+                data: {
+                    language: language
+                },
+                contentType: "application/json",
+                dataType: "json",
+                success: (response) => {
+                    //#region add handstatus as <option> to <select>
+                    for (let index in response) {
+                        slct_handStatus.append(
+                            `<option>${response[index]}</option>`)
+                    }
+                    //#endregion
+
+                    //#region add handStatuses to session
+                    sessionStorage.setItem(
+                        handStatusSessionKey,
+                        JSON.stringify(response))
+                    //#endregion
+                }
+            })
+        //#endregion
+
+        //#region when handstatuses exists in session (get from session)
+        else {
+            for (let index in handStatusesOnSession) {
+                slct_handStatus.append(
+                    `<option>${handStatusesOnSession[index]}</option>`)
+            }
+        }
+        //#endregion
+
+        //#region set default value of handStatus <select>
+        slct_handStatus.val(columnValues.handStatus);
+        //#endregion
+
+        //#endregion
+    }
+
     function click_updateButton(row) {
         //#region set variables
 
@@ -384,11 +575,13 @@ $(function () {
             "rented": "number",
             "sold": "number",
             "description": "text",
+            "year": "number",
         }
 
         // populate "columnsForAddInput"
         for (let columnName in columnsForAddInputGuide) {
-            columnsForAddInput[columnName] = row.children(`#td_${columnName}`);
+            columnsForAddInput[columnName] = row
+                .children(`#td_${columnName}`);
         }
         //#endregion
 
@@ -396,7 +589,6 @@ $(function () {
             "mainCategoryName": row.children("#td_mainCategoryName"),
             "subCategoryName": row.children("#td_subCategoryName"),
             "handStatus": row.children("#td_handStatus"),
-            "year": row.children("#td_year"),
         };
         let columnValues = {
             "mainCategoryName": columnsForAddSelect.mainCategoryName.text(),
@@ -407,150 +599,100 @@ $(function () {
             "stock": columnsForAddInput.stock.text(),
             "rented": columnsForAddInput.rented.text(),
             "sold": columnsForAddInput.sold.text(),
-            "year": columnsForAddSelect.year.text(),
+            "year": columnsForAddInput.year.text(),
             "description": columnsForAddInput.description.text()
         };
         //#endregion
 
-        //#region add <input> to columns (dynamic)
+        //#region add <input> to columns
         for (let columnName in columnsForAddInput) {
             // reset column
             let column = columnsForAddInput[columnName];
             column.empty()
 
-            // when column type is number
-            if (columnsForAddInputGuide[columnName] == "number")
-                column.append(`<input type="number" id="inpt_${columnName}">`);
+            // add <input>
+            let inputType = columnsForAddInputGuide[columnName];
+            column.append(`<input type="${inputType}" id="inpt_${columnName}">`);
 
-            // when column type is string
-            else
-                column.append(`<input type="text" id="inpt_${columnName}">`);
-
-            // add placeholder to column
+            // add default value to <inpt>
             column
                 .children(`#inpt_${columnName}`)
                 .val(columnValues[columnName]);
         }
         //#endregion
 
-   //     //#region add <select> to columns
-   //     //XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+        //#region add <select> to columns
+        // add <select> all columns
+        for (let columnName in columnsForAddSelect) {
+            let column = columnsForAddSelect[columnName];
+            column.empty();
+            column.append("<select> </select>")
+        }
 
-   //     //#region add <select> to columns
-   //     for (let columnName in columnsForAddSelect) {
-   //         let column = columnsForAddSelect[columnName];
-   //         column.empty();
-   //         column.append("<select> </select>")
-   //     }
-   //     //#endregion
+        // populate <select>'s
+        populateMainCategoryNameSelect(columnsForAddSelect, columnValues);
+        populateSubCategoryNameSelect(columnsForAddSelect, columnValues);
+        populateHandStatusSelect(columnsForAddSelect, columnValues);
+        //#endregion
 
-   //     //#region fill mainCategoryNames <select> 
-   //     //XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+        //#region add "save" and "cancel" buttons
 
-   //     //#region get <select> of mainCategoryName
-   //     var slct_mainCategoryName = columnsForAddSelect
-   //         .mainCategoryName
-   //         .children("select");
-   //     //#endregion
+        //#region remove 'update' button
+        let td_processes = row.children("#td_processes");
+        td_processes.empty();
+        //#endregion
 
-   //     //#region add <option>
-   //     for (let index in model.mainCategoryNames)
-   //         slct_mainCategoryName.append(
-   //             `<option>
-			//		${model.mainCategoryNames[index]}
-			//	</option>`);
-   //     //#endregion
+        //#region add buttons
+        td_processes.append(
+            `<button id="btn_save" class="active" ui-toggle-class="">
+                <i class="fa fa-check text-success"> 
+                    Kaydet
+                </i>
+            <button id="btn_cancel" class="active" ui-toggle-class="">
+                <i class="fa fa-times text-danger"> 
+                    Vazgeç
+                </i>`
+        );
+        //#endregion
 
-   //     //#region set default value of <select>
-   //     slct_mainCategoryName.val(
-   //         columnValues["mainCategoryName"]);
-   //     //#endregion
+        //#endregion
 
-   //     //XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
-   //     //#endregion
+        //#region save column values to session
+        sessionStorage.setItem(
+            row.attr("id"),
+            JSON.stringify(columnValues)
+        );
+        //#endregion
+    }
 
-   //     //#region fill subcategories <select>
-   //     //XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+    function click_saveButton(row) {
+        //#region set parameters
+        var machineId = row.attr("class");
+        var machineInfosInSession = JSON.parse(
+            sessionStorage.getItem(row.attr("id")));
+        var data = {
+            "mainCategoryName": machineInfosInSession.mainCategoryName
+                == $("#td_mainCategoryName option:selected").val() ?
+                    null
+                    : $("#td_mainCategoryName option:selected").val()
+        }
+        //#endregion
 
-   //     //#region set selectedIndex of mainCategoryName
-   //     let selectedMainCategoryIndex = columnsForAddSelect.mainCategoryName
-   //         .children("select")
-   //         .prop("selectedIndex");
-   //     //#endregion
+        
+        $.ajax({
+            method: "PUT",
+            url: apiUrl + `/update?language=${language}&id=${machineId}`,
+            data: sessionStorage.getItem(row.attr("id")),
+            contentType: "application/json",
+            dataType: "json",
+            success: (response) => {
+                alert("successfull");
+            },
+            error: (response) => {
+                alert(response.responseText);
+            }
+        })
 
-   //     //#region get subCategoryNames
-   //     let subCategoryNames = model
-   //         .subCategoryNames[selectedMainCategoryIndex]
-   //     //#endregion
-
-   //     //#region get <select> of subCategoryName
-   //     var slct_subCategoryName = columnsForAddSelect
-   //         .subCategoryName
-   //         .children("select");
-   //     //#endregion
-
-   //     //#region add <option>
-   //     for (let index in subCategoryNames)
-   //         slct_subCategoryName.append(
-   //             `<option>
-			//		${subCategoryNames[index]}
-			//	</option>`);
-   //     //#endregion
-
-   //     //#region set default value of <select>
-   //     slct_subCategoryName.val(
-   //         columnValues["subCategoryName"]);
-   //     //#endregion
-
-   //     //XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
-   //     //#endregion
-
-   //     //#region fill usageStatus <select>
-   //     //XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
-
-   //     //#region add <option>
-   //     let slct_usageStatus = columnsForAddSelect.usageStatus
-   //         .children("select");
-
-   //     slct_usageStatus.empty();
-   //     slct_usageStatus.append(`
-			//<option>Sıfır</option>
-			//<option>İkinci El</option>`
-   //     );
-   //     //#endregion
-
-   //     //#region set default value
-   //     slct_usageStatus.val(
-   //         columnValues["usageStatus"]
-   //     );
-   //     //#endregion
-
-   //     //XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
-   //     //#endregion
-
-   //     //XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
-   //     //#endregion
-
-   //     //#region add "save" and "cancel" buttons
-   //     // remove 'update' button
-   //     let td_processes = row.children("#td_processes");
-   //     td_processes.empty();
-
-   //     // add
-   //     td_processes.append(
-   //         `<button onclick="window.click_saveButton(${rowNo})"" class="active" ui-toggle-class="">
-			//	<i class="fa fa-check text-success"> Kaydet</i>
-			//<button onclick="window.click_cancelButton(${rowNo})" class="active" ui-toggle-class="">
-			//	<i class="fa fa-times text-danger"> Vazgeç</i>`
-   //     );
-   //     //#endregion
-
-   //     //#region save column values to sessionStorage
-   //     sessionStorage.setItem(
-   //         `tr_row${rowNo}`,
-   //         JSON.stringify(columnValues)
-   //     );
-   //     //#endregion
     }
     //#endregion
 

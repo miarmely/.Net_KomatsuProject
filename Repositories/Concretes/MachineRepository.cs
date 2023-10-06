@@ -45,6 +45,12 @@ namespace Repositories.Concretes
                     base.Configs.DbSettings.ProcedureNames.Machine_GetSubCategoryNames,
                     parameters);
 
+        public async Task<IEnumerable<string>> GetAllHandStatusByLanguageAsync(
+            DynamicParameters parameters)
+                => await base.QueryAsync<string>(
+                    base.Configs.DbSettings.ProcedureNames.Machine_GetAllHandStatus,
+                    parameters);
+
 
         //     #region GetMachinesByConditionAsync
         //     public async Task<List<MachineView>> GetMachinesByConditionAsync(
