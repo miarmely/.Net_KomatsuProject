@@ -1,6 +1,7 @@
 ﻿using Entities.DtoModels.MachineDtos;
 using Entities.QueryParameters;
 using Microsoft.AspNetCore.Mvc;
+using Org.BouncyCastle.Asn1.Cms;
 using Presantation.ActionFilters;
 using Services.Contracts;
 
@@ -38,7 +39,7 @@ namespace Presantation.Controllers
 			[FromQuery] PaginationParameters pagingParameters)
 		{
 			var machines = await _manager.MachineService
-				.GetAllMachinesAsync(language, pagingParameters, Response);
+				.GetAllMachinesAsync(language, pagingParameters, Response);   
 
 			return Ok(machines);
 		}

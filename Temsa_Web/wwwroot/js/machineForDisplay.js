@@ -16,7 +16,7 @@ $(function () {
     let paginationInfosInJson;
     //#endregion
 
-    //#region event
+    //#region events
     $("#ul_pagination").click(() => {
         //#region do unchecked "box_all"
         if ($("#box_all").is(":checked"))
@@ -27,24 +27,24 @@ $(function () {
         var clickedButton = $(":focus");
 
         switch (clickedButton.attr("id")) {
+            //#region open previous page if previous page exists
             case "a_paginationBack":
-                //#region open previous page if previous page exists
                 if (paginationInfosInJson.HasPrevious)
                     populateTable(paginationInfosInJson.CurrentPageNo - 1);
 
                 break;
             //#endregion
 
+            //#region open next page if next page exists
             case "a_paginationNext":
-                //#region open next page if next page exists
                 if (paginationInfosInJson.HasNext)
                     populateTable(paginationInfosInJson.CurrentPageNo + 1);
 
                 break;
             //#endregion
 
+            //#region open page that matched with clicked button number
             default:
-                //#region open page that matched with clicked button number
                 let pageNo = clickedButton.prop("innerText");
                 populateTable(pageNo);
                 break;
@@ -52,26 +52,29 @@ $(function () {
         }
         //#endregion 
     });
-    $("#box_all").click(() => {
+    $("#box_all").click(async () => {
         //#region do checked/unchecked all checkbox
         let isBoxAllChecked = $("#box_all").is(":checked");
 
-        for (let rowNo = 1; rowNo <= machineCountOnTable; rowNo += 1) {
-            //var checkBoxInRow = $(`#tr_row${rowNo} #td_checkBox input`);
-            var checkBoxInRow = $(`#tr_row${rowNo} #td_checkBox input`);
+        await new Promise(resolve => {
+            for (let rowNo = 1; rowNo <= machineCountOnTable; rowNo += 1) {
+                var checkBoxInRow = $(`#tr_row${rowNo} #td_checkBox input`);
 
-            //#region do checked of checkbox
-            if (isBoxAllChecked
-                && !checkBoxInRow.is(":checked")) // if not checked
-                checkBoxInRow.prop("checked", true);
-            //#endregion
+                //#region do checked of checkbox
+                if (isBoxAllChecked
+                    && !checkBoxInRow.is(":checked")) // if not checked
+                    checkBoxInRow.prop("checked", true);
+                //#endregion
 
-            //#region do unchecked of checkbox
-            else if (!isBoxAllChecked
-                && checkBoxInRow.is(":checked")) // if checked
-                checkBoxInRow.prop("checked", false);
-            //#endregion
-        }
+                //#region do unchecked of checkbox
+                else if (!isBoxAllChecked
+                    && checkBoxInRow.is(":checked")) // if checked
+                    checkBoxInRow.prop("checked", false);
+                //#endregion
+            }
+
+            resolve();
+        })
         //#endregion
     })
     $("#btn_apply").click(async () => {
@@ -85,18 +88,18 @@ $(function () {
             //#endregion 
         }
     });
-    $("#tbl_machine tbody").click(() => {
+    $("#tbl_machine tbody").click(async () => {
         //#region when update,save or delete button clicked
         let clickedElement = $(":focus");
         let row = clickedElement.closest("tr");
 
         switch (clickedElement.attr("id")) {
             case "btn_update":
-                click_updateButton(row);
+                await click_updateButtonAsync(row);
                 break;
 
             case "btn_save":
-                click_saveButton(row);
+                await click_saveButtonAsync(row);
                 break;
 
             case "btn_delete":
@@ -107,78 +110,87 @@ $(function () {
     //#endregion events
 
     //#region functions
-    function addPaginationButtons() {
-        //#region set buttonQauntity for pagination
-        let buttonQuantity =
-            paginationInfosInJson.TotalPage < paginationButtonQuantity ?
-                paginationInfosInJson.TotalPage
-                : paginationButtonQuantity
-        //#endregion
+    async function addPaginationButtons() {
+        await new Promise(resolve => {
+            //#region set buttonQauntity for pagination
+            let buttonQuantity =
+                paginationInfosInJson.TotalPage < paginationButtonQuantity ?
+                    paginationInfosInJson.TotalPage
+                    : paginationButtonQuantity
+            //#endregion
 
-        //#region reset paginationButtons if exists
-        if (ul_pagination.children("li").length != 0)
-            ul_pagination.empty()
-        //#endregion
+            //#region reset paginationButtons if exists
+            if (ul_pagination.children("li").length != 0)
+                ul_pagination.empty()
+            //#endregion
 
-        //#region add paginationBack button
-        ul_pagination.append(
-            `<li>
-				<a id="a_paginationBack" href="#" hidden>
-					<i class="fa fa-chevron-left"></i>
-				</a>
-			</li>`);
-        //#endregion
-
-        //#region add pagination buttons
-        for (let pageNo = 1; pageNo <= buttonQuantity; pageNo += 1)
+            //#region add paginationBack button
             ul_pagination.append(
                 `<li>
-					<a href="#"> 
-						${pageNo}
-					</a>
-				</li> `);
-        //#endregion
-
-        //#region add paginationNext button
-        ul_pagination.append(
-            `<li>
-				<a id="a_paginationNext" href="#">
-					<i class="fa fa-chevron-right"></i>
-				</a>
-			</li>`);
-        //#endregion
-    }
-
-    function hideOrShowPaginationBackAndNextButtons() {
-        if (paginationInfosInJson.TotalPage > 1) {
-            //#region for paginationBack button
-            // hide
-            if (paginationInfosInJson.CurrentPageNo == 1)
-                $("#a_paginationBack").attr("hidden", "");
-
-            // show
-            else
-                $("#a_paginationBack").removeAttr("hidden");
+				    <a id="a_paginationBack" href="#" hidden>
+					    <i class="fa fa-chevron-left"></i>
+				    </a>
+			    </li>`);
             //#endregion
 
-            //#region for paginationNext button
-            // hide
-            if (paginationInfosInJson.CurrentPageNo == paginationInfosInJson.TotalPage)
-                $("#a_paginationNext").attr("hidden", "");
-
-            // show
-            else
-                $("#a_paginationNext").removeAttr("hidden");
+            //#region add pagination buttons
+            for (let pageNo = 1; pageNo <= buttonQuantity; pageNo += 1)
+                ul_pagination.append(
+                    `<li>
+					    <a href="#"> 
+						    ${pageNo}
+					    </a>
+				    </li> `);
             //#endregion
-        }
+
+            //#region add paginationNext button
+            ul_pagination.append(
+                `<li>
+				    <a id="a_paginationNext" href="#">
+					    <i class="fa fa-chevron-right"></i>
+				    </a>
+			    </li>`);
+            //#endregion
+
+            resolve();
+        });
     }
 
-    function addMachinesToTable(response) {
+    async function hideOrShowPaginationBackAndNextButtons() {
+        new Promise(resolve => {
+            if (paginationInfosInJson.TotalPage > 1) {
+                //#region for paginationBack button
+                // hide
+                if (paginationInfosInJson.CurrentPageNo == 1)
+                    $("#a_paginationBack").attr("hidden", "");
+
+                // show
+                else
+                    $("#a_paginationBack").removeAttr("hidden");
+                //#endregion
+
+                //#region for paginationNext button
+                // hide
+                if (paginationInfosInJson.CurrentPageNo == paginationInfosInJson.TotalPage)
+                    $("#a_paginationNext").attr("hidden", "");
+
+                // show
+                else
+                    $("#a_paginationNext").removeAttr("hidden");
+                //#endregion
+            }
+
+            resolve();
+        })
+    }
+
+    async function addMachinesToTable(response) {
         let rowNo = 1;
 
-        response.forEach(machineView => {
-            tableBody.append(
-                `<tr id= tr_row${rowNo} class= ${machineView.id}>
+        rowNo = await new Promise(resolve => {
+            response.forEach(machineView => {
+                tableBody.append(
+                    `<tr id= tr_row${rowNo} class= ${machineView.id}>
                     <td id="td_checkBox">
 						<label class="i-checks m-b-none">
 							<input type="checkbox"><i></i>
@@ -210,10 +222,206 @@ $(function () {
 				<tr id="tr_error${rowNo}">
 					<td colspan="13" hidden></td>
 				</tr>`
-            );
+                );
 
-            rowNo += 1;
+                rowNo += 1;
+            });
+
+            resolve(rowNo);
         });
+    }
+
+    async function populateMainCategoryNameSelectAsync(columnsForAddSelect, columnValues) {
+        //#region get <select> of mainCategoryName
+        var slct_mainCategoryName = columnsForAddSelect
+            .mainCategoryName
+            .children("select");
+        //#endregion
+
+        //#region add mainCategoryNames as <option>
+
+        //#region set variables
+        var mainCategoryNameKeyOnSession = `mainCategoryNamesIn${language}`
+        var mainCategoryNamesInSession = sessionStorage
+            .getItem(mainCategoryNameKeyOnSession);
+        //#endregion
+
+        //#region when mainCategoryNames not exists in sessionStorage
+        if (mainCategoryNamesInSession == null)
+            $.ajax({
+                method: "GET",
+                url: "https://localhost:7091/api/services/machine/display/mainCategory",
+                data: {
+                    language: language
+                },
+                contentType: "application/json",
+                dataType: "json",
+                success: (response) => {
+                    //#region add mainCategories as <option>
+                    for (let index in response) {
+                        slct_mainCategoryName.append(
+                            `<option> ${response[index]} </option>`);
+                    };
+                    //#endregion
+
+                    //#region add mainCategoryNames to sessionStorage
+                    sessionStorage.setItem(
+                        mainCategoryNameKeyOnSession,
+                        JSON.stringify(response));
+                    //#endregion
+                }
+            });
+        //#endregion
+
+        //#region when mainCategoryNames exists in sessionStorage
+        else {
+            //#region add mainCategoryNames as <option>
+            var mainCategoryNames = JSON.parse(mainCategoryNamesInSession);
+
+            for (let index in mainCategoryNames) {
+                slct_mainCategoryName.append(
+                    `<option> ${mainCategoryNames[index]} </option>`);
+            }
+            //#endregion
+        }
+        //#endregion
+
+        //#region set default value of <select>
+        slct_mainCategoryName.val(
+            columnValues["mainCategoryName"]);
+        //#endregion
+
+        //#endregion
+    }
+
+    async function populateSubCategoryNameSelectAsync(columnsForAddSelect, columnValues) {
+        //#region get subCategoryName <select>
+        let slct_subCategoryName = columnsForAddSelect
+            .subCategoryName
+            .children("select");
+        //#endregion
+
+        //#region add subCategoryNames as <option>
+
+        //#region set variables
+        let subCategoryNameSessionKey = `subCategoryNamesIn${language}`;
+        let subCategoryNameSessionValue = {}
+        let mainCategoryName = columnValues.mainCategoryName;
+        let sessionValue = JSON.parse(sessionStorage
+            .getItem(subCategoryNameSessionKey));
+        //#endregion
+
+        //#region when subCategoryNames not exists in session (get from server
+        if (sessionValue == null)
+            await $.ajax({
+                method: "GET",
+                url: apiUrl + "/display/subCategory",
+                data: {
+                    language: language,
+                    mainCategoryName: columnValues["mainCategoryName"]
+                },
+                contentType: "application/json",
+                dataType: "json",
+                success: (response) => {
+                    //#region add subCategoryName as <option>
+                    //add subCategoryName to <select>
+                    for (let index in response) {
+                        slct_subCategoryName.append(
+                            `<option>${response[index]}</option>`);
+                    }
+
+                    // add subCategoryNames to "subCategoryNameSessionValue"
+                    subCategoryNameSessionValue[mainCategoryName] = response;
+                    //#endregion
+
+                    //#region add subcategoryNames to session
+                    sessionStorage.setItem(
+                        subCategoryNameSessionKey,
+                        JSON.stringify(subCategoryNameSessionValue)
+                    )
+                    //#endregion
+                }
+            });
+        //#endregion
+
+        //#region when subCategoryNAmes exists in session (get from session)
+        else {
+            //#region add subCategoryName to <select>
+            let subCategoryNames = sessionValue[mainCategoryName];
+
+            for (let index in subCategoryNames) {
+                let subCategoryName = subCategoryNames[index];
+
+                slct_subCategoryName.append(
+                    `<option>${subCategoryName}</option>`);
+            }
+            //#endregion
+        }
+        //#endregion
+
+        //#region set default value of <select>
+        slct_subCategoryName.val(columnValues.subCategoryName);
+        //#endregion
+
+        //#endregion
+    }
+
+    async function populateHandStatusSelectAsync(columnsForAddSelect, columnValues) {
+        //#region get handStatus <select>
+        let slct_handStatus = columnsForAddSelect
+            .handStatus
+            .children("select");
+        //#endregion
+
+        //#region populate handStatus <select>
+
+        //#region set variables
+        let handStatusSessionKey = `handStatusIn${language}`;
+        let handStatusesOnSession = JSON.parse(sessionStorage
+            .getItem(handStatusSessionKey));
+        //#endregion
+
+        //#region when handstatuses not exists in session (get from service)
+        if (handStatusesOnSession == null)
+            $.ajax({
+                method: "GET",
+                url: apiUrl + "/display/handstatus",
+                data: {
+                    language: language
+                },
+                contentType: "application/json",
+                dataType: "json",
+                success: (response) => {
+                    //#region add handstatus as <option> to <select>
+                    for (let index in response) {
+                        slct_handStatus.append(
+                            `<option>${response[index]}</option>`)
+                    }
+                    //#endregion
+
+                    //#region add handStatuses to session
+                    sessionStorage.setItem(
+                        handStatusSessionKey,
+                        JSON.stringify(response))
+                    //#endregion
+                }
+            })
+        //#endregion
+
+        //#region when handstatuses exists in session (get from session)
+        else {
+            for (let index in handStatusesOnSession) {
+                slct_handStatus.append(
+                    `<option>${handStatusesOnSession[index]}</option>`)
+            }
+        }
+        //#endregion
+
+        //#region set default value of handStatus <select>
+        slct_handStatus.val(columnValues.handStatus);
+        //#endregion
+
+        //#endregion
     }
 
     async function deleteSelectedMachinesAsync() {
@@ -316,254 +524,7 @@ $(function () {
         });
     }
 
-    function populateTable(pageNumber, refreshPaginationButtons) {
-        $.ajax({
-            method: "GET",
-            url: "https://localhost:7091/api/services/machine/display/all",
-            contentType: "application/json",
-            data: {
-                language: language,
-                pageNumber: pageNumber,
-                pageSize: pageSize
-            },
-            dataType: "json",
-            beforeSend: () => {
-                //#region reset table if not empty
-                if (tableBody.children("tr").length != 0)
-                    tableBody.empty();
-                //#endregion
-            },
-            success: (response, status, xhr) => {
-                addMachinesToTable(response);
-
-                //#region get pagination infos from headers
-                paginationInfosInJson = JSON.parse(
-                    xhr.getResponseHeader(nameOfPaginationHeader));
-                //#endregion
-
-                //#region update "lbl_entityQuantity"
-                if (response.length != 0) {  // if any machine exists
-                    machineCountOnTable = paginationInfosInJson.CurrentPageCount;
-
-                    lbl_entityQuantity.empty();
-                    lbl_entityQuantity.append(
-                        `<b>${machineCountOnTable}/${pageSize}</b> makine görüntüleniyor`);
-                }
-                //#endregion
-
-                //#region add pagination buttons
-                if (refreshPaginationButtons)
-                    addPaginationButtons();
-                //#endregion
-
-                hideOrShowPaginationBackAndNextButtons();
-            },
-            error: (response) => {
-                //#region write error to resultLabel
-                updateResultLabel(
-                    lbl_entityQuantity,
-                    convertErrorCodeToErrorMessage(response.responseText),
-                    "rgb(255, 75, 75)"
-                );
-                //#endregion
-            },
-        });
-    }
-
-    function populateMainCategoryNameSelect(columnsForAddSelect, columnValues) {
-        //#region get <select> of mainCategoryName
-        var slct_mainCategoryName = columnsForAddSelect
-            .mainCategoryName
-            .children("select");
-        //#endregion
-
-        //#region add mainCategoryNames as <option>
-
-        //#region set variables
-        var mainCategoryNameKeyOnSession = `mainCategoryNamesIn${language}`
-        var mainCategoryNamesInSession = sessionStorage
-            .getItem(mainCategoryNameKeyOnSession);
-        //#endregion
-
-        //#region when mainCategoryNames not exists in sessionStorage
-        if (mainCategoryNamesInSession == null)
-            $.ajax({
-                method: "GET",
-                url: "https://localhost:7091/api/services/machine/display/mainCategory",
-                data: {
-                    language: language
-                },
-                contentType: "application/json",
-                dataType: "json",
-                success: (response) => {
-                    //#region add mainCategories as <option>
-                    for (let index in response) {
-                        slct_mainCategoryName.append(
-                            `<option> ${response[index]} </option>`);
-                    };
-                    //#endregion
-
-                    //#region add mainCategoryNames to sessionStorage
-                    sessionStorage.setItem(
-                        mainCategoryNameKeyOnSession,
-                        JSON.stringify(response));
-                    //#endregion
-                }
-            });
-        //#endregion
-
-        //#region when mainCategoryNames exists in sessionStorage
-        else {
-            //#region add mainCategoryNames as <option>
-            var mainCategoryNames = JSON.parse(mainCategoryNamesInSession);
-
-            for (let index in mainCategoryNames) {
-                slct_mainCategoryName.append(
-                    `<option> ${mainCategoryNames[index]} </option>`);
-            }
-            //#endregion
-        }
-        //#endregion
-
-        //#region set default value of <select>
-        slct_mainCategoryName.val(
-            columnValues["mainCategoryName"]);
-        //#endregion
-
-        //#endregion
-    }
-
-    function populateSubCategoryNameSelect(columnsForAddSelect, columnValues) {
-        //#region get subCategoryName <select>
-        let slct_subCategoryName = columnsForAddSelect
-            .subCategoryName
-            .children("select");
-        //#endregion
-
-        //#region add subCategoryNames as <option>
-
-        //#region set variables
-        let subCategoryNameSessionKey = `subCategoryNamesIn${language}`;
-        let subCategoryNameSessionValue = {}
-        let mainCategoryName = columnValues.mainCategoryName;
-        let sessionValue = JSON.parse(sessionStorage
-            .getItem(subCategoryNameSessionKey));
-        //#endregion
-
-        //#region when subCategoryNames not exists in session (get from server
-        if (sessionValue == null)
-            $.ajax({
-                method: "GET",
-                url: apiUrl + "/display/subCategory",
-                data: {
-                    language: language,
-                    mainCategoryName: columnValues["mainCategoryName"]
-                },
-                contentType: "application/json",
-                dataType: "json",
-                success: (response) => {
-                    //#region add subCategoryName as <option>
-                    //add subCategoryName to <select>
-                    for (let index in response) {
-                        slct_subCategoryName.append(
-                            `<option>${response[index]}</option>`);
-                    }
-
-                    // add subCategoryNames to "subCategoryNameSessionValue"
-                    subCategoryNameSessionValue[mainCategoryName] = response;
-                    //#endregion
-
-                    //#region add subcategoryNames to session
-                    sessionStorage.setItem(
-                        subCategoryNameSessionKey,
-                        JSON.stringify(subCategoryNameSessionValue)
-                    )
-                    //#endregion
-                }
-            });
-        //#endregion
-
-        //#region when subCategoryNAmes exists in session (get from session)
-        else {
-            //#region add subCategoryName to <select>
-            let subCategoryNames = sessionValue[mainCategoryName];
-
-            for (let index in subCategoryNames) {
-                let subCategoryName = subCategoryNames[index];
-
-                slct_subCategoryName.append(
-                    `<option>${subCategoryName}</option>`);
-            }
-            //#endregion
-        }
-        //#endregion
-
-        //#region set default value of <select>
-        slct_subCategoryName.val(columnValues.subCategoryName);
-        //#endregion
-
-        //#endregion
-    }
-
-    function populateHandStatusSelect(columnsForAddSelect, columnValues) {
-        //#region get handStatus <select>
-        let slct_handStatus = columnsForAddSelect
-            .handStatus
-            .children("select");
-        //#endregion
-
-        //#region populate handStatus <select>
-
-        //#region set variables
-        let handStatusSessionKey = `handStatusIn${language}`;
-        let handStatusesOnSession = JSON.parse(sessionStorage
-            .getItem(handStatusSessionKey));
-        //#endregion
-        
-        //#region when handstatuses not exists in session (get from service)
-        if (handStatusesOnSession == null)
-            $.ajax({
-                method: "GET",
-                url: apiUrl + "/display/handstatus",
-                data: {
-                    language: language
-                },
-                contentType: "application/json",
-                dataType: "json",
-                success: (response) => {
-                    //#region add handstatus as <option> to <select>
-                    for (let index in response) {
-                        slct_handStatus.append(
-                            `<option>${response[index]}</option>`)
-                    }
-                    //#endregion
-
-                    //#region add handStatuses to session
-                    sessionStorage.setItem(
-                        handStatusSessionKey,
-                        JSON.stringify(response))
-                    //#endregion
-                }
-            })
-        //#endregion
-
-        //#region when handstatuses exists in session (get from session)
-        else {
-            for (let index in handStatusesOnSession) {
-                slct_handStatus.append(
-                    `<option>${handStatusesOnSession[index]}</option>`)
-            }
-        }
-        //#endregion
-
-        //#region set default value of handStatus <select>
-        slct_handStatus.val(columnValues.handStatus);
-        //#endregion
-
-        //#endregion
-    }
-
-    function click_updateButton(row) {
+    async function click_updateButtonAsync(row) {
         //#region set variables
 
         //#region set "columnsForAddInput"
@@ -630,9 +591,9 @@ $(function () {
         }
 
         // populate <select>'s
-        populateMainCategoryNameSelect(columnsForAddSelect, columnValues);
-        populateSubCategoryNameSelect(columnsForAddSelect, columnValues);
-        populateHandStatusSelect(columnsForAddSelect, columnValues);
+        await populateMainCategoryNameSelectAsync(columnsForAddSelect, columnValues);
+        await populateSubCategoryNameSelectAsync(columnsForAddSelect, columnValues);
+        await populateHandStatusSelectAsync(columnsForAddSelect, columnValues);
         //#endregion
 
         //#region add "save" and "cancel" buttons
@@ -665,24 +626,47 @@ $(function () {
         //#endregion
     }
 
-    function click_saveButton(row) {
-        //#region set parameters
+    async function click_saveButtonAsync(row) {
+        //#region set variables
         var machineId = row.attr("class");
-        var machineInfosInSession = JSON.parse(
-            sessionStorage.getItem(row.attr("id")));
-        var data = {
-            "mainCategoryName": machineInfosInSession.mainCategoryName
-                == $("#td_mainCategoryName option:selected").val() ?
-                    null
-                    : $("#td_mainCategoryName option:selected").val()
+        var oldColumnValues = JSON.parse(sessionStorage
+            .getItem(row.attr("id")));
+        var newColumnValues = {
+            "mainCategoryName": $("#td_mainCategoryName option:selected").val(),
+            "subCategoryName": $("#td_subCategoryName option:selected").val(),
+            "model": $("#td_model input").val(),
+            "brandName": $("#td_brandName input").val(),
+            "handStatus": $("#td_handStatus option:selected").val(),
+            "stock": $("#td_stock input").val(),
+            "rented": $("#td_rented input").val(),
+            "sold": $("#td_sold input").val(),
+            "description": $("#td_description input").val(),
+            "year": $("#td_year input").val(),
         }
         //#endregion
 
-        
+        //#region set data
+        var data = {};
+        for (let columnName in newColumnValues) {
+            data[columnName] = oldColumnValues[columnName]
+                == newColumnValues[columnName] ?
+                null
+                : newColumnValues[columnName]
+        }
+        //#endregion
+
+        //#region set url
+        let url = apiUrl + "/update?" +
+            `language=${language}` +
+            `&id=${machineId}` +
+            `&oldMainCategoryName=${oldColumnValues.mainCategoryName}` +
+            `&oldSubCategoryName=${oldColumnValues.subCategoryName}`
+        //#endregion
+
         $.ajax({
             method: "PUT",
-            url: apiUrl + `/update?language=${language}&id=${machineId}`,
-            data: sessionStorage.getItem(row.attr("id")),
+            url: url,
+            data: JSON.stringify(data),
             contentType: "application/json",
             dataType: "json",
             success: (response) => {
@@ -693,6 +677,60 @@ $(function () {
             }
         })
 
+    }
+
+    async function populateTable(pageNumber, refreshPaginationButtons) {
+        await $.ajax({
+            method: "GET",
+            url: "https://localhost:7091/api/services/machine/display/all",
+            contentType: "application/json",
+            data: {
+                language: language,
+                pageNumber: pageNumber,
+                pageSize: pageSize
+            },
+            dataType: "json",
+            beforeSend: () => {
+                //#region reset table if not empty
+                if (tableBody.children("tr").length != 0)
+                    tableBody.empty();
+                //#endregion
+            },
+            success: (response, status, xhr) => {
+                addMachinesToTable(response);
+
+                //#region get pagination infos from headers
+                paginationInfosInJson = JSON.parse(
+                    xhr.getResponseHeader(nameOfPaginationHeader));
+                //#endregion
+
+                //#region update "lbl_entityQuantity"
+                if (response.length != 0) {  // if any machine exists
+                    machineCountOnTable = paginationInfosInJson.CurrentPageCount;
+
+                    lbl_entityQuantity.empty();
+                    lbl_entityQuantity.append(
+                        `<b>${machineCountOnTable}/${pageSize}</b> makine görüntüleniyor`);
+                }
+                //#endregion
+
+                //#region add pagination buttons
+                if (refreshPaginationButtons)
+                    addPaginationButtons();
+                //#endregion
+
+                hideOrShowPaginationBackAndNextButtons();
+            },
+            error: (response) => {
+                //#region write error to resultLabel
+                updateResultLabel(
+                    lbl_entityQuantity,
+                    convertErrorCodeToErrorMessage(response.responseText),
+                    "rgb(255, 75, 75)"
+                );
+                //#endregion
+            },
+        });
     }
     //#endregion
 
