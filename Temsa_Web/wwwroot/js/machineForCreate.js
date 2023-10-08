@@ -1,4 +1,6 @@
-﻿$(function () {
+﻿import { updateResultLabel } from "./miarTools.js"
+
+$(function () {
     $("form").submit(event => {
         event.preventDefault();
 
@@ -30,7 +32,13 @@
                 window.updateResultLabel("Başarıyla Kaydedildi", "green", "#p_resultLabel");
             },
             error: (response) => {
-                window.writeErrorMessage(response.responseText, resultLabelId);
+                //#region write error message to resultLabel
+                updateResultLabel(
+                    resultLabelId,
+                    window.convertErrorCodeToErrorMessage(response.responseText),
+                    "rgb(255, 75, 75)",
+                    "30px");
+                //#endregion
             }
         });
     });

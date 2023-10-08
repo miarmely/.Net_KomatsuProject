@@ -2,7 +2,7 @@
 	var language = ViewBag.Language;
 
 	#region placeHolder of search by languages
-	var searchPlaceHolderData = new
+	var searchPlaceHolderByLanguages = new
 	{
 		TR = " Ara",
 		EN = " Search"
@@ -10,13 +10,13 @@
 
 	var searchPlaceHolder = language switch
 	{
-		"TR" => searchPlaceHolderData.TR,
-		"EN" => searchPlaceHolderData.EN
+		"TR" => searchPlaceHolderByLanguages.TR,
+		"EN" => searchPlaceHolderByLanguages.EN
 	};
 	#endregion
 
 	#region user dropdown menu by languages
-	var userDropDownMenuData = new
+	var userDropDownMenuByLanguages = new
 	{
 		TR = new
 		{
@@ -34,13 +34,13 @@
 
 	var userDropDownMenu = language switch
 	{
-		"TR" => userDropDownMenuData.TR,
-		"EN" => userDropDownMenuData.EN
+		"TR" => userDropDownMenuByLanguages.TR,
+		"EN" => userDropDownMenuByLanguages.EN
 	};
 	#endregion
 
 	#region sidebar menu by languages
-	var sidebarMenuData = new
+	var sidebarMenuByLanguages = new
 	{
 		TR = new
 		{
@@ -214,13 +214,13 @@
 
 	var sidebarMenu = language switch
 	{
-		"TR" => sidebarMenuData.TR,
-		"EN" => sidebarMenuData.EN
+		"TR" => sidebarMenuByLanguages.TR,
+		"EN" => sidebarMenuByLanguages.EN
 	};
 	#endregion
 
 	#region footer informations by languages
-	var footerInfosData = new
+	var footerInfosByLanguages = new
 	{
 		TR = "© 2023 Tüm hakları saklıdır. | Designed by ",
 		EN = "© 2023 All rights reserved. | Designed by "
@@ -228,8 +228,8 @@
 
 	var footerInfos = language switch
 	{
-		"TR" => footerInfosData.TR,
-		"EN" => footerInfosData.EN
+		"TR" => footerInfosByLanguages.TR,
+		"EN" => footerInfosByLanguages.EN
 	};
 	#endregion
 }

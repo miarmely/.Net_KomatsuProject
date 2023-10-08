@@ -3,7 +3,6 @@
 
 $(function () {
     //#region variables
-    const language = window.language;
     const pageNumber = 1;
     const pageSize = 10;
     const paginationButtonQuantity = 5;
@@ -82,7 +81,7 @@ $(function () {
 
         switch (opt_selected.val()) {
             //#region delete selected values
-            case "1":
+            case 0:
                 await deleteSelectedMachinesAsync();
                 break;
             //#endregion 
@@ -102,7 +101,8 @@ $(function () {
                 await click_saveButtonAsync(row);
                 break;
 
-            case "btn_delete":
+            case "btn_cancel":
+                await click_cancelButtonAsync(row);
                 break;
         }
         //#endregion
@@ -110,50 +110,112 @@ $(function () {
     //#endregion events
 
     //#region functions
-    async function addPaginationButtons() {
-        await new Promise(resolve => {
-            //#region set buttonQauntity for pagination
-            let buttonQuantity =
-                paginationInfosInJson.TotalPage < paginationButtonQuantity ?
-                    paginationInfosInJson.TotalPage
-                    : paginationButtonQuantity
-            //#endregion
+    function removeInputsAndSelects(row, columnNamesAndValues) {
+        //#region remove <input>'s and <select>'s
+        for (let columnName in columnNamesAndValues) {
+            var td = row.children(`#td_${columnName}`);
 
-            //#region reset paginationButtons if exists
-            if (ul_pagination.children("li").length != 0)
-                ul_pagination.empty()
-            //#endregion
+            td.empty();
+            td.append(columnNamesAndValues[columnName]);
+        }
+        //#endregion
 
-            //#region add paginationBack button
-            ul_pagination.append(
-                `<li>
-				    <a id="a_paginationBack" href="#" hidden>
-					    <i class="fa fa-chevron-left"></i>
-				    </a>
-			    </li>`);
-            //#endregion
+        //#region add update button
+        let td_processes = row.children("#td_processes")
 
-            //#region add pagination buttons
-            for (let pageNo = 1; pageNo <= buttonQuantity; pageNo += 1)
-                ul_pagination.append(
-                    `<li>
-					    <a href="#"> 
-						    ${pageNo}
-					    </a>
-				    </li> `);
-            //#endregion
+        td_processes.empty()
+        td_processes.append(
+            `<button id="btn_update" class="active" ui-toggle-class="">
+			    <i class="fa fa-pencil text-info">
+                    ${updateButtonName}
+			    </i>
+		    </button>`);
+        //#endregion
+    }
 
-            //#region add paginationNext button
-            ul_pagination.append(
-                `<li>
-				    <a id="a_paginationNext" href="#">
-					    <i class="fa fa-chevron-right"></i>
-				    </a>
-			    </li>`);
-            //#endregion
+    function addMachinesToTable(response) {
+        let rowNo = 1;
 
-            resolve();
+        response.forEach(machineView => {
+            tableBody.append(
+                `<tr id= tr_row${rowNo} class= ${machineView.id}>
+                <td id="td_checkBox">
+					<label class="i-checks m-b-none">
+						<input type="checkbox"><i></i>
+					</label>
+				</td>
+				<td id="td_mainCategoryName">${machineView.mainCategoryName}</td>
+				<td id="td_subCategoryName">${machineView.subCategoryName}</td>
+				<td id="td_brandName">${machineView.brandName}</td>
+				<td id="td_model">${machineView.model}</td>
+				<td id="td_handStatus">${machineView.handStatus}</td>
+				<td id="td_stock">${machineView.stock}</td>
+				<td id="td_rented">${machineView.rented}</td>
+				<td id="td_sold">${machineView.sold}</td>
+				<td id="td_year">${machineView.year}</td>
+				<td id="td_description">${machineView.description}</td>
+				<td id="td_createdAt">${getDateTimeInString(machineView.createdAt)}</td>
+				<td id="td_processes">
+					<button id="btn_update" class="active" ui-toggle-class="">
+						<i class="fa fa-pencil text-info">
+							${updateButtonName}
+						</i>
+					</button>
+				</td>
+				<td style="width:30px;"></td>
+			</tr>
+			<tr hidden>
+                <td id="td_rowNo">${rowNo}</td>
+            </tr>
+			<tr id="tr_error${rowNo}">
+				<td colspan="13" hidden></td>
+			</tr>`
+            );
+
+            rowNo += 1;
         });
+    }
+
+    async function addPaginationButtons() {
+        //#region set buttonQauntity for pagination
+        let buttonQuantity =
+            paginationInfosInJson.TotalPage < paginationButtonQuantity ?
+                paginationInfosInJson.TotalPage
+                : paginationButtonQuantity
+        //#endregion
+
+        //#region reset paginationButtons if exists
+        if (ul_pagination.children("li").length != 0)
+            ul_pagination.empty()
+        //#endregion
+
+        //#region add paginationBack button
+        ul_pagination.append(
+            `<li>
+				<a id="a_paginationBack" href="#" hidden>
+					<i class="fa fa-chevron-left"></i>
+				</a>
+			</li>`);
+        //#endregion
+
+        //#region add pagination buttons
+        for (let pageNo = 1; pageNo <= buttonQuantity; pageNo += 1)
+            ul_pagination.append(
+                `<li>
+					<a href="#"> 
+						${pageNo}
+					</a>
+				</li> `);
+        //#endregion
+
+        //#region add paginationNext button
+        ul_pagination.append(
+            `<li>
+				<a id="a_paginationNext" href="#" hidden>
+					<i class="fa fa-chevron-right"></i>
+				</a>
+			</li>`);
+        //#endregion
     }
 
     async function hideOrShowPaginationBackAndNextButtons() {
@@ -182,54 +244,7 @@ $(function () {
 
             resolve();
         })
-    }
-
-    async function addMachinesToTable(response) {
-        let rowNo = 1;
-
-        rowNo = await new Promise(resolve => {
-            response.forEach(machineView => {
-                tableBody.append(
-                    `<tr id= tr_row${rowNo} class= ${machineView.id}>
-                    <td id="td_checkBox">
-						<label class="i-checks m-b-none">
-							<input type="checkbox"><i></i>
-						</label>
-					</td>
-					<td id="td_mainCategoryName">${machineView.mainCategoryName}</td>
-					<td id="td_subCategoryName">${machineView.subCategoryName}</td>
-					<td id="td_brandName">${machineView.brandName}</td>
-					<td id="td_model">${machineView.model}</td>
-					<td id="td_handStatus">${machineView.handStatus}</td>
-					<td id="td_stock">${machineView.stock}</td>
-					<td id="td_rented">${machineView.rented}</td>
-					<td id="td_sold">${machineView.sold}</td>
-					<td id="td_year">${machineView.year}</td>
-					<td id="td_description">${machineView.description}</td>
-					<td id="td_createdAt">${getDateTimeInString(machineView.createdAt)}</td>
-					<td id="td_processes">
-						<button id="btn_update" class="active" ui-toggle-class="">
-							<i class="fa fa-pencil text-info"> 
-								Güncelle
-							</i>
-						</button>
-					</td>
-					<td style="width:30px;"></td>
-				</tr>
-				<tr> 
-					<td hidden></td>
-				</tr>
-				<tr id="tr_error${rowNo}">
-					<td colspan="13" hidden></td>
-				</tr>`
-                );
-
-                rowNo += 1;
-            });
-
-            resolve(rowNo);
-        });
-    }
+    }    
 
     async function populateMainCategoryNameSelectAsync(columnsForAddSelect, columnValues) {
         //#region get <select> of mainCategoryName
@@ -497,7 +512,7 @@ $(function () {
                         // update entity quantity label
                         updateResultLabel(
                             lbl_entityQuantity,
-                            `<b>0</b>/<b>${pageSize}</b> makine görüntüleniyor`);
+                            `<b>0</b>/<b>${pageSize}</b> ${entityCountMessage}`);
                     }
                     //#endregion
                 }
@@ -606,12 +621,11 @@ $(function () {
         //#region add buttons
         td_processes.append(
             `<button id="btn_save" class="active" ui-toggle-class="">
-                <i class="fa fa-check text-success"> 
-                    Kaydet
+                <i class="fa fa-check text-success" style="width:15px">
+                    
                 </i>
             <button id="btn_cancel" class="active" ui-toggle-class="">
-                <i class="fa fa-times text-danger"> 
-                    Vazgeç
+                <i class="fa fa-times text-danger" style="width:15px">
                 </i>`
         );
         //#endregion
@@ -632,16 +646,46 @@ $(function () {
         var oldColumnValues = JSON.parse(sessionStorage
             .getItem(row.attr("id")));
         var newColumnValues = {
-            "mainCategoryName": $("#td_mainCategoryName option:selected").val(),
-            "subCategoryName": $("#td_subCategoryName option:selected").val(),
-            "model": $("#td_model input").val(),
-            "brandName": $("#td_brandName input").val(),
-            "handStatus": $("#td_handStatus option:selected").val(),
-            "stock": $("#td_stock input").val(),
-            "rented": $("#td_rented input").val(),
-            "sold": $("#td_sold input").val(),
-            "description": $("#td_description input").val(),
-            "year": $("#td_year input").val(),
+            "mainCategoryName": row
+                .children("#td_mainCategoryName")
+                .children("select")
+                .val(),
+            "subCategoryName": row
+                .children("#td_subCategoryName")
+                .children("select")
+                .val(),
+            "model": row
+                .children("#td_model")
+                .children("input")
+                .val(),
+            "brandName": row
+                .children("#td_brandName")
+                .children("input")
+                .val(),
+            "handStatus": row
+                .children("#td_handStatus")
+                .children("select")
+                .val(),
+            "stock": row
+                .children("#td_stock")
+                .children("input")
+                .val(),
+            "rented": row
+                .children("#td_rented")
+                .children("input")
+                .val(),
+            "sold": row
+                .children("#td_sold")
+                .children("input")
+                .val(),
+            "description": row
+                .children("#td_description")
+                .children("input")
+                .val(),
+            "year": row
+                .children("#td_year")
+                .children("input")
+                .val()
         }
         //#endregion
 
@@ -669,14 +713,24 @@ $(function () {
             data: JSON.stringify(data),
             contentType: "application/json",
             dataType: "json",
-            success: (response) => {
-                alert("successfull");
+            success: () => {
+                removeInputsAndSelects(row, newColumnValues);
             },
             error: (response) => {
+                let rowNo = row.find("#td_rowNo");
+
                 alert(response.responseText);
             }
         })
+    }
 
+    async function click_cancelButtonAsync(row) {
+        //#region get machine infos in session
+        var machineInfosInSession = JSON.parse(sessionStorage
+            .getItem(row.attr("id")));
+        //#endregion
+
+        removeInputsAndSelects(row, machineInfosInSession);
     }
 
     async function populateTable(pageNumber, refreshPaginationButtons) {
@@ -704,13 +758,13 @@ $(function () {
                     xhr.getResponseHeader(nameOfPaginationHeader));
                 //#endregion
 
-                //#region update "lbl_entityQuantity"
+                //#region update entity count label
                 if (response.length != 0) {  // if any machine exists
                     machineCountOnTable = paginationInfosInJson.CurrentPageCount;
 
                     lbl_entityQuantity.empty();
                     lbl_entityQuantity.append(
-                        `<b>${machineCountOnTable}/${pageSize}</b> makine görüntüleniyor`);
+                        `<b>${machineCountOnTable}/${pageSize}</b> ${entityCountMessage}`);
                 }
                 //#endregion
 

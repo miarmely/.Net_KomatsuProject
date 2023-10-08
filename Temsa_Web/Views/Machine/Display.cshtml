@@ -1,23 +1,162 @@
 ﻿@model IServiceManager;
 
+@{
+    var language = ViewBag.Language;
+
+    #region set table title by languages
+    var TableTitleByLanguages = new
+    {
+        TR = "KAYITLI MAKİNELER",
+        EN = "REGISTERED MACHINES"
+    };
+
+    var TableTitle = language switch
+    {
+        "TR" => TableTitleByLanguages.TR,
+        "EN" => TableTitleByLanguages.EN
+    };
+    #endregion
+
+    #region set menubar options by languages
+    var menubarOptionsByLanguages = new
+    {
+        TR = new string[]
+        {
+            "Seçilenleri Sil"
+        },
+        EN = new string[]
+        {
+            "Delete Selected"
+        }
+    };
+
+    var menubarOptions = language switch
+    {
+        "TR" => menubarOptionsByLanguages.TR,
+        "EN" => menubarOptionsByLanguages.EN
+    };
+    #endregion
+
+    #region set column names by languages
+    var columnNamesByLanguages = new
+    {
+        TR = new string[]
+        {
+            "Ana Kategori",
+            "Alt Kategori",
+            "Marka",
+            "Model",
+            "El Durumu",
+            "Stok",
+            "Kiralık",
+            "Satılık",
+            "Yıl",
+            "Açıklama",
+            "Kayıt Tarihi",
+            "İşlemler"
+        },
+        EN = new string[]
+        {
+            "Main Category",
+            "Sub Category",
+            "Brand",
+            "Model",
+            "Hand Status",
+            "Stock",
+            "Rented",
+            "Sold",
+            "Year",
+            "Description",
+            "Registration Date",
+            "Processes"
+        }
+    };
+
+    var columnNames = language switch
+    {
+        "TR" => columnNamesByLanguages.TR,
+        "EN" => columnNamesByLanguages.EN
+    };
+    #endregion
+
+    #region set entity count message by languages
+    var entityCountMessageByLanguages = new
+    {
+        TR = "makine gösteriliyor",
+        EN = "machine displaying"
+    };
+
+    var entityCountMessage = language switch
+    {
+        "TR" => entityCountMessageByLanguages.TR,
+        "EN" => entityCountMessageByLanguages.EN
+    };
+    #endregion
+
+    #region set button names by languages
+    
+    #region set button of menubar options
+    var menubarOptionsButtonByLanguages = new
+    {
+        TR = "Uygula",
+        EN = "Apply"
+    };
+
+    var menubarOptionsButton = language switch
+    {
+        "TR" => menubarOptionsButtonByLanguages.TR,
+        "EN" => menubarOptionsButtonByLanguages.EN
+    };
+    #endregion
+
+    #region set update button
+    var updateButtonNameByLanguages = new
+    {
+        TR = "Güncelle",
+        EN = "Update",
+    };
+
+    var updateButtonName = language switch
+    {
+        "TR" => updateButtonNameByLanguages.TR,
+        "EN" => updateButtonNameByLanguages.EN,
+    };
+    #endregion
+
+    #endregion
+}
+
 
 <div class="table-agile-info">
     <div class="panel panel-default">
-        @*title*@
+        @*table title*@
         <div class="panel-heading">
-            Kayıtlı Makineler
+            @TableTitle
         </div>
-        @*/title*@
+        @*/table title*@
 
         @*menubar*@
         <div class="row w3-res-tb">
+            @*menubar options*@
             <div class="col-sm-5 m-b-xs">
 				<select id="slct_menubar" class="input-sm form-control w-sm inline v-middle">
-					<option value="1">Seçilenleri Sil</option>
+                    @{
+                        #region add <options> to menubar
+                        for(var index=0; index < menubarOptions.Length; index++)
+                        {
+                            <option value=index>
+                                @menubarOptions[index]
+                            </option>    
+                        }
+                        #endregion
+                    }
 				</select>
-				<button id="btn_apply" class="btn btn-sm btn-default">Uygula</button>                
+				<button id="btn_apply" class="btn btn-sm btn-default">
+                    @menubarOptionsButton
+                </button>                
             </div>
             <div class="col-sm-4">
+            @*/menubar options*@
             </div>
 			@*search bar*@
 			@*<div class="col-sm-3">
@@ -44,18 +183,14 @@
 								<input id="box_all" type="checkbox"><i></i>
                             </label>
                         </th>
-                        <th>Ana Kategori</th>
-                        <th>Alt Kategori</th>
-						<th>Marka</th>
-                        <th>Model</th>
-						<th>El Durumu</th>
-                        <th>Stok</th>
-						<th>Kiralık</th>
-						<th>Satılık</th>
-						<th>Yıl</th>
-						<th>Açıklama</th>
-                        <th>Kayıt Tarihi</th>
-                        <th>İşlemler</th>
+                        @{  
+                            #region add column names
+                            foreach(var columnName in columnNames)
+                            {
+                                <td><b>@columnName</b></td>    
+                            }
+                            #endregion
+                        }
                         <th style="width:30px;"></th>
                     </tr>
                 </thead>
@@ -70,7 +205,7 @@
             <div class="row">
                 <div class="col-sm-5 text-left">
                     <small id="lbl_entityQuantity" class="text-muted inline m-t-sm m-b-s">
-						<b>0</b> makine görüntüleniyor
+						<b>0</b> @entityCountMessage
 					</small>
                 </div>
                 <div class="col-sm-7 text-right text-center-xs">                
@@ -87,241 +222,6 @@
 
 <script>
 	var language = "@ViewBag.Language";
-</script>
-
-
-
-<script>
-    function click_saveButton(rowNo) {
-		//#region set variables
-		let oldColumnValues = JSON.parse(
-			sessionStorage.getItem(`tr_row${rowNo}`)
-		);
-		let columnsWithInput = {
-			"brandName": $(`#tr_row${rowNo} #td_brandName`),
-			"model": $(`#tr_row${rowNo} #td_model`),
-			"stock": $(`#tr_row${rowNo} #td_stock`),
-			"rented": $(`#tr_row${rowNo} #td_rented`),
-			"sold": $(`#tr_row${rowNo} #td_sold`),
-			"year": $(`#tr_row${rowNo} #td_year`)
-		};
-		let columnsWithSelect = {
-			"mainCategoryName": $(`#tr_row${rowNo} #td_mainCategoryName`),
-			"subCategoryName": $(`#tr_row${rowNo} #td_subCategoryName`),
-			"usageStatus": $(`#tr_row${rowNo} #td_usageStatus`),
-		}
-		let data = {
-			"brandName": columnsWithInput["brandName"].children("#inpt_brandName").val().trim() 
-				== oldColumnValues["brandName"] ?
-					null 
-					: columnsWithInput["brandName"].children("#inpt_brandName").val().trim(),
-
-			"subCategoryName": columnsWithSelect["subCategoryName"].children("select")
-				.val() == oldColumnValues["subCategoryName"] ?
-					null 
-					: columnsWithSelect["subCategoryName"].children("select").val(),
-			
-			"model": columnsWithInput["model"].children("#inpt_model").val().trim() 
-				== oldColumnValues["model"] ?
-					null 
-					: columnsWithInput["model"].children("#inpt_model").val().trim(),
-
-			"zerothHandOrSecondHand": columnsWithSelect["usageStatus"]
-				.children("select").val() == oldColumnValues["usageStatus"] ?
-					null 
-					: (columnsWithSelect["usageStatus"].children("select").val() 
-						== "Sıfır" ? 0 : 2),
-
-			"stock": columnsWithInput["stock"].children("#inpt_stock").val().trim() 
-				== oldColumnValues["stock"] ?
-					null 
-					: columnsWithInput["stock"].children("#inpt_stock").val().trim(),
-
-			"rented": columnsWithInput["rented"].children("#inpt_rented").val().trim() 
-				== oldColumnValues["rented"] ?
-					null 
-					: columnsWithInput["rented"].children("#inpt_rented").val().trim(),
-
-			"sold": columnsWithInput["sold"].children("#inpt_sold").val().trim() 
-				== oldColumnValues["sold"] ?
-					null 
-					: columnsWithInput["sold"].children("#inpt_sold").val().trim(),
-
-			"year": columnsWithInput["year"].children("#inpt_year").val().trim() 
-				== oldColumnValues["year"] ?
-					null 
-					: columnsWithInput["year"].children("#inpt_year").val().trim()
-		};
-		//#endregion
-
-		//#region when any <input> is blank (error)
-		for(var columnName in columnsWithInput)
-			if(columnsWithInput[columnName]
-				.children(`#inpt_${columnName}`)  // get <input>
-				.val()
-				.trim() == "")
-			{
-				window.updateResultLabel(
-					"lütfen boş bıraktığınız yerleri doldurunuz.", 
-					"red", 
-					`#tr_error${rowNo} td`)
-				return;
-			}
-		//#endregion
-		
-		//#region when any column rowNot changed
-		//xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-
-		//#region count null column quantity
-		let nullColumnQuantity = 0;
-
-		for(var columnName in data){
-			if(data[columnName] != null)
-				break;
-
-			nullColumnQuantity+=1;
-		}
-		//#endregion
-		
-		//#region write errorMessage
-		let dataLength = Object.keys(data).length;
-
-		if(nullColumnQuantity == dataLength){
-			window.updateResultLabel(
-				"herhangi Bir Değişiklik Yapılmadı", 
-				"red", 
-				`#tr_error${rowNo} td`)
-			return;
-		}
-		//#endregion
-
-		//xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-		//#endregion
-
-		$.ajax({
-			method: "PUT",
-			url: `https://localhost:7091/api/services/machine/update?
-				SubCategoryName=${oldColumnValues["subCategoryName"]}
-				&Model=${oldColumnValues["model"]}`,
-			data: JSON.stringify(data),
-			contentType: "application/json",
-			dataType: "json",
-			success: () => {
-				//#region convert all <input> to text
-				for (var columnName in columnsWithInput) {
-					// remove <input>
-					let column = columnsWithInput[columnName];
-					column.empty();
-
-					// add default <input> value as text
-					column.append(
-						data[columnName] ?? oldColumnValues[columnName]
-					);
-				}
-				//#endregion
-
-				//#region convert all <select> to text
-				for(var columnName in columnsWithSelect){
-					//#region remove <select>
-					let column = columnsWithSelect[columnName];
-					column.empty();
-					//#endregion
-
-					//#region set default mainCategoryName and subCategoryName as text
-					if(columnName != "usageStatus")
-						column.append(
-							data[columnName] ?? oldColumnValues[columnName]
-						);
-					//#endregion
-					
-					//#region set default usageStatus as text
-					else
-						column.append(
-							data.zerothHandOrSecondHand == null? 
-								oldColumnValues[columnName]
-								: (data.zerothHandOrSecondHand == 0 ?
-									"Sıfır"
-									: "İkinci El")
-						);
-					//#endregion
-				}
-				//#endregion
-
-				//#region add "update" button
-				// remove "save" and "cancel" buttons
-				let td_processes = $(`#tr_row${rowNo} #td_processes`);
-				td_processes.empty();
-
-				// add
-				td_processes.append(
-					`<button onclick="window.click_updateButton(${rowNo})" class="active" ui-toggle-class="">
-						<i class="fa fa-pencil text-info"> 
-							Güncelle
-						</i>
-					</button>`
-				);
-				//#endregion
-
-				//#region hide error message row
-				$(`#tr_error${rowNo} td`).attr("hidden", "");
-				//#endregion
-			},
-			error: (response) => {
-				window.writeErrorMessage(
-					response.responseText, 
-					`#tr_error${rowNo} td`);
-			}
-		});
-	}
-
-	function click_cancelButton(rowNo) {
-		//#region set variables
-		let row = $(`#tr_row${rowNo}`);
-		let columns = {
-			"brandName": row.children("#td_brandName"),
-			"mainCategoryName": row.children("#td_mainCategoryName"),
-			"subCategoryName": row.children("#td_subCategoryName"),
-			"model": row.children("#td_model"),
-			"usageStatus": row.children("#td_usageStatus"),
-			"stock": row.children("#td_stock"),
-			"rented": row.children("#td_rented"),
-			"sold": row.children("#td_sold"),
-			"year": row.children("#td_year"),
-		};
-		let columnValuesInStorage = JSON.parse(
-			sessionStorage.getItem(`tr_row${rowNo}`)
-		);
-		//#endregion
-
-		//#region convert <input> and <select> to text
-		for (var columnName in columns) {
-			// remove <input>
-			let column = columns[columnName];
-			column.empty();
-
-			// add previous value as text
-			column.append(
-				columnValuesInStorage[columnName]
-			);
-		}
-		//#endregion
-
-		//#region add "update" button
-		// remove "save" and "cancel" buttons
-		let td_processes = $(`#tr_row${rowNo} #td_processes`);
-		td_processes.empty();
-
-		// hide error message label
-		$(`#tr_error${rowNo} td`).attr("hidden", "")
-
-		// add
-		td_processes.append(
-			`<button onclick="window.click_updateButton(${rowNo});" class="active" ui-toggle-class="">
-				<i class="fa fa-pencil text-info"> 
-					Güncelle
-				</i>
-			</button>`
-		);
-		//#endregion
-	}
+    var entityCountMessage = "@entityCountMessage";
+    var updateButtonName = "@updateButtonName";
 </script>

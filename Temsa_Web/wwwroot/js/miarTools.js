@@ -66,8 +66,8 @@ export function updateResultLabel(resultLabelId, message, color,
 		    text-align: center`);
     //#endregion
 
-    //#region show resultLabel and update
-    $(resultLabelId).removeAttr("hidden");
+    //#region write error to resultLabel
+    $(resultLabelId).removeAttr("hidden");  // show resultLabel
     resultLabel.text(message);
     //#endregion
 }
