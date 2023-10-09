@@ -59,17 +59,15 @@ export function updateResultLabel(resultLabelId, message, color,
     //#region change style
     resultLabel.attr("style",
         `color:	${color}; 
-		    margin-top: ${marginT}; 
-		    margin-right: ${marginR};
-		    margin-bottom: ${marginB};
-		    margin-left: ${marginL};
-		    text-align: center`);
+		margin-top: ${marginT}; 
+		margin-right: ${marginR};
+		margin-bottom: ${marginB};
+		margin-left: ${marginL};
+		text-align: center`);
     //#endregion
 
     //#region write error to resultLabel
-    $(resultLabelId).removeAttr("hidden");  // show resultLabel
-    resultLabel.text(message);
+    resultLabel.removeAttr("hidden");  // show resultLabel
+    resultLabel.append(message);
     //#endregion
 }
-
-// errorMessage color: "rgb(255, 75, 75)"

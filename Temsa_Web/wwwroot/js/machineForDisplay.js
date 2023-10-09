@@ -11,6 +11,7 @@ $(function () {
     const lbl_entityQuantity = $("#lbl_entityQuantity");
     const ul_pagination = $("#ul_pagination");
     const apiUrl = "https://localhost:7091/api/services/machine";
+    const errorMessageColor = "rgb(255, 75, 75)";
     let machineCountOnTable;
     let paginationInfosInJson;
     //#endregion
@@ -78,10 +79,10 @@ $(function () {
     })
     $("#btn_apply").click(async () => {
         let opt_selected = $("#slct_menubar option:selected");
-
+        
         switch (opt_selected.val()) {
             //#region delete selected values
-            case 0:
+            case "0":
                 await deleteSelectedMachinesAsync();
                 break;
             //#endregion 
@@ -164,16 +165,35 @@ $(function () {
 				</td>
 				<td style="width:30px;"></td>
 			</tr>
-			<tr hidden>
-                <td id="td_rowNo">${rowNo}</td>
-            </tr>
-			<tr id="tr_error${rowNo}">
-				<td colspan="13" hidden></td>
+			<tr hidden></tr>
+			<tr id="tr_row${rowNo}_error">
+				<td id="td_error" colspan="13" hidden></td>
 			</tr>`
             );
 
             rowNo += 1;
         });
+    }
+
+    function getIdOfErrorRow(row) {
+        let rowId = row.attr("id");
+
+        return `#${rowId}_error #td_error`;
+    }
+
+    function resetErrorRow(row) {
+        var tr_row_error = $(getIdOfErrorRow(row));
+
+        tr_row_error.empty();  // reset
+        tr_row_error.attr("hidden", "");  // hide
+    }
+
+    function updateErrorRow(row, response) {
+        // write error to error row
+        updateResultLabel(
+            getIdOfErrorRow(row),
+            convertErrorCodeToErrorMessage(response.responseText),
+            errorMessageColor);
     }
 
     async function addPaginationButtons() {
@@ -244,7 +264,7 @@ $(function () {
 
             resolve();
         })
-    }    
+    }
 
     async function populateMainCategoryNameSelectAsync(columnsForAddSelect, columnValues) {
         //#region get <select> of mainCategoryName
@@ -512,7 +532,8 @@ $(function () {
                         // update entity quantity label
                         updateResultLabel(
                             lbl_entityQuantity,
-                            `<b>0</b>/<b>${pageSize}</b> ${entityCountMessage}`);
+                            `<b>0</b>/<b>${pageSize}</b> ${entityCountMessage}`,
+                            errorMessageColor);
                     }
                     //#endregion
                 }
@@ -528,11 +549,11 @@ $(function () {
                 //#endregion
             },
             error: (response) => {
-                //#region write error to resultLabel
+                //#region write error to entity quantity label
                 updateResultLabel(
                     lbl_entityQuantity,
-                    JSON.parse(response.ResponseText),
-                    "rgb(255, 75, 75)"
+                    convertErrorCodeToErrorMessage(responseText),
+                    errorMessageColor
                 );
                 //#endregion
             }
@@ -715,11 +736,10 @@ $(function () {
             dataType: "json",
             success: () => {
                 removeInputsAndSelects(row, newColumnValues);
+                resetErrorRow(row);
             },
             error: (response) => {
-                let rowNo = row.find("#td_rowNo");
-
-                alert(response.responseText);
+                updateErrorRow(row, response);
             }
         })
     }
@@ -731,6 +751,7 @@ $(function () {
         //#endregion
 
         removeInputsAndSelects(row, machineInfosInSession);
+        resetErrorRow(row);
     }
 
     async function populateTable(pageNumber, refreshPaginationButtons) {
@@ -780,7 +801,7 @@ $(function () {
                 updateResultLabel(
                     lbl_entityQuantity,
                     convertErrorCodeToErrorMessage(response.responseText),
-                    "rgb(255, 75, 75)"
+                    errorMessageColor
                 );
                 //#endregion
             },
