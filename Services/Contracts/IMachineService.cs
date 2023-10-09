@@ -11,32 +11,39 @@ namespace Services.Contracts
 		Task CreateMachineAsync(MachineDtoForCreate machineDto);
         Task<IEnumerable<string>> GetMainCategoryNamesByLanguageAsync(string language);
 		Task<IEnumerable<string>> GetAllHandStatusByLanguageAsync(string language);
-		Task<PagingList<MachineView>> GetAllMachinesAsync(
+        Task<IEnumerable<string>> GetAllLanguagesAsync();
+
+        Task<PagingList<MachineView>> GetAllMachinesAsync(
             string language,
             PaginationParameters paginationParameters,
 			HttpResponse response);
+
         Task UpdateMachineAsync(
             MachineParametersForUpdate parameters,
             MachineDtoForUpdate machineDto);
+
         Task DeleteMachineAsync(
             string language,
             MachineDtoForDelete machineDto);
+
         Task<IEnumerable<string>> GetSubCategoryNamesOfMainCategoryByLanguageAsync(
             MachineParametersForDisplaySubCategoryNames machineParameters);
 
+        
 
-		//Task<IEnumerable<MachineDto>> GetMachinesByConditionWithPagingAsync(
-		//	MachineBodyDtoForDisplay machineDtoD,
-		//	PaginationQueryDto pagingParameters,
-		//	HttpResponse response);
 
-		//Task<IEnumerable<string>> GetSubCategoriesOfMainCategoryAsync(
-		//	string mainCategoryName);
+        //Task<IEnumerable<MachineDto>> GetMachinesByConditionWithPagingAsync(
+        //	MachineBodyDtoForDisplay machineDtoD,
+        //	PaginationQueryDto pagingParameters,
+        //	HttpResponse response);
 
-		//Task UpdateMachineAsync(
-		//	MachineQueryDtoForUpdate machineQueryDtoU,
-		//          MachineBodyDtoForUpdate machineBodyDtoU);
+        //Task<IEnumerable<string>> GetSubCategoriesOfMainCategoryAsync(
+        //	string mainCategoryName);
 
-		//Task DeleteMachinesAsync(MachineBodyDtoForDelete machineQueryDto);
-	}
+        //Task UpdateMachineAsync(
+        //	MachineQueryDtoForUpdate machineQueryDtoU,
+        //          MachineBodyDtoForUpdate machineBodyDtoU);
+
+        //Task DeleteMachinesAsync(MachineBodyDtoForDelete machineQueryDto);
+    }
 }

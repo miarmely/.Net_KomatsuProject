@@ -8,10 +8,12 @@ namespace Repositories.Concretes
 {
     public class MachineRepository : RepositoryBase, IMachineRepository
     {
-        public MachineRepository(RepositoryContext context, IConfigManager configs) 
-            : base(context, configs)
-        { }
+        private readonly IConfigManager _configs;
 
+        public MachineRepository(RepositoryContext context, IConfigManager configs)
+            : base(context, configs)
+                => _configs = configs;
+       
         public async Task<ErrorDto> CreateMachineAsync(DynamicParameters parameters) =>
             await base.QuerySingleOrDefaultAsync<ErrorDto>(
                 base.Configs.DbSettings.ProcedureNames.Machine_Create,
@@ -51,6 +53,12 @@ namespace Repositories.Concretes
                     base.Configs.DbSettings.ProcedureNames.Machine_GetAllHandStatus,
                     parameters);
 
+        public async Task<IEnumerable<string>> GetAllLanguagesAsync() =>
+            await base.QueryAsync<string>($@"
+                SELECT  Name 
+                FROM    {_configs.DbSettings.TableNames.Language}");
+
+       
 
         //     #region GetMachinesByConditionAsync
         //     public async Task<List<MachineView>> GetMachinesByConditionAsync(

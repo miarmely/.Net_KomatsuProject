@@ -182,6 +182,10 @@ namespace Services.Concretes
             #endregion
         }
 
+        public async Task<IEnumerable<string>> GetAllLanguagesAsync() =>
+            await _manager.MachineRepository
+                .GetAllLanguagesAsync();
+
 
         //public async Task<IEnumerable<MachineDto>> GetMachinesByConditionWithPagingAsync(
         //	MachineBodyDtoForDisplay machineDtoD,

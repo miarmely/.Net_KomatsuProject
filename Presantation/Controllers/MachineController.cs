@@ -81,6 +81,17 @@ namespace Presantation.Controllers
         }
 
 
+        [HttpGet("display/language")]
+        //[Authorization("User,Kullanıcı,Editor,Editör,Admin,Yönetici")]
+        public async Task<IActionResult> GetAllLanguages()
+        {
+            var languages = await _manager.MachineService
+                .GetAllLanguagesAsync();
+
+            return Ok(languages);
+        }
+
+
         [HttpPut("update")]
         //[Authorization("Admin,Yönetici,Editor,Editör")]
         [ValidationNullArguments]

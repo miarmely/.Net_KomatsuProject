@@ -3,8 +3,8 @@
     public record DbSettingsConfig
     {
         public ProcedureNames ProcedureNames { get; init; }
+        public TableNames TableNames { get; init; }
     }
-
     public record ProcedureNames
     {
         public string User_Create { get; init; }
@@ -19,5 +19,10 @@
         public string Machine_GetMainCategoryNames { get; init; }
         public string Machine_GetSubCategoryNames { get; init; }
         public string Machine_GetAllHandStatus { get; init; }
+    }
+
+    public record TableNames
+    {
+        public string Language { get; init; }
     }
 }

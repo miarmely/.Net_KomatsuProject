@@ -78,9 +78,11 @@
     <div class="row">
         <div class="col-lg-12">    
             <section class="panel">
+                @*table main title*@
                 <header class="panel-heading">
                     @mainTitle
                 </header>
+                @*/table main title*@
                 <div class="panel-body">
                     <form>
                         <div class="form-horizontal bucket-form">
@@ -116,7 +118,6 @@
                                 <div class="col-sm-6">
                                     <select id="slct_subCategory" class="form-control m-bot15">
                                         @{
-
                                             #region get subCategoryNames
                                             var machineParameters = new MachineParametersForDisplaySubCategoryNames
                                             {
@@ -142,17 +143,6 @@
                                 </div>
                             </div>
                             <!-- /SubCategory -->
-                            <!-- Brand -->
-                            <div class="form-group">
-                                <label class="col-sm-3 control-label">
-                                    @inputLabels.Brand
-                                </label>
-                                <div class="col-sm-6">
-                                    <input id="inpt_brand" type="text" class="form-control" required>
-                                    <span class="help-block"></span>
-                                </div>
-                            </div>
-                            <!-- /Brand -->
                             <!-- Model -->
                             <div class="form-group">
                                 <label class="col-sm-3 control-label">
@@ -164,6 +154,27 @@
                                 </div>
                             </div>
                             <!-- /Model -->
+                            <!-- BrandName -->
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label">
+                                    @inputLabels.Brand
+                                </label>
+                                <div class="col-sm-6">
+                                    <input id="inpt_brand" type="text" class="form-control" required>
+                                    <span class="help-block"></span>
+                                </div>
+                            </div>
+                            <!-- /BrandName -->
+                            <!-- Stock -->
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label">
+                                    @inputLabels.Stock
+                                </label>
+                                <div class="col-sm-6">
+                                    <input id="inpt_stock" type="number" class="form-control" value="1" required>
+                                </div>
+                            </div>
+                            <!-- /Stock -->
                              <!-- Year -->
                             <div class="form-group">
                                 <label class="col-sm-3 control-label">
@@ -193,7 +204,40 @@
                                 </div>
                             </div>
                             <!-- /HandStatus-->
+                            @*Description*@
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label">
+                                    Description
+                                </label>
+                                <div class="col-sm-6">
+                                    <div class="input-group m-bot15">
+                                        <input type="text" class="form-control">
+                                        <div class="input-group-btn">
+                                            <button tabindex="-1" class="btn btn-info" type="button">
+                                                @language
+                                            </button>
+                                            <button tabindex="-1" data-toggle="dropdown" class="btn btn-info dropdown-toggle" type="button">
+                                                <span class="caret"></span>
+                                            </button>
+                                            <ul role="menu" class="dropdown-menu pull-right">
+                                                @{
+                                                    #region populate languages
+                                                    var languagesInDb = await Model.MachineService
+                                                        .GetAllLanguagesAsync();
 
+                                                    foreach(var languageInDb in languagesInDb){
+                                                        <li>
+                                                            <a href="#">@languageInDb</a>
+                                                       </li>
+                                                    }
+                                                    #endregion
+                                                }
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            @*/Description*@
                             <!-- ImagePath -->
                             @*<div class="form-group">
                                 <label class="col-sm-3 control-label">Rol</label>
@@ -206,17 +250,6 @@
                                 </div>
                             </div>   *@
                             <!-- /ImagePath -->
-
-                            <!-- Stock -->
-                            <div class="form-group">
-                                <label class="col-sm-3 control-label">
-                                    @inputLabels.Stock
-                                </label>
-                                <div class="col-sm-6">
-                                    <input id="inpt_stock" type="number" class="form-control" value="1" required>
-                                </div>
-                            </div>
-                            <!-- /Stock -->
                             <!-- registration button -->
                             <div class="form-group">
                                 <div class="col-sm-6; text-center">
@@ -238,3 +271,7 @@
 </div>
 
 <script type="module"  src="~/js/machineForCreate.js"></script>
+
+<script> 
+    let language = "@ViewBag.Language";
+</script>

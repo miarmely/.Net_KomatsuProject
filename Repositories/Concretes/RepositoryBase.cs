@@ -27,7 +27,7 @@ namespace Repositories.Concretes
             using (var connection = _context.CreateSqlConnection())
             {
                 return await connection.QuerySingleOrDefaultAsync<T>(
-                    GetCommandDefinition(procedureName, parameters));
+                    GetCommandDefinitionForProcedures(procedureName, parameters));
             }
             #endregion
         }
@@ -40,7 +40,18 @@ namespace Repositories.Concretes
             using (var connection = _context.CreateSqlConnection())
             {
                 return await connection.QueryAsync<T>(
-                    GetCommandDefinition(procedureName, parameters));
+                    GetCommandDefinitionForProcedures(procedureName, parameters));
+            }
+            #endregion
+        }
+
+        public async Task<IEnumerable<T>> QueryAsync<T>(
+            string query)
+        {
+            #region send query
+            using (var connection = _context.CreateSqlConnection())
+            {
+                return await connection.QueryAsync<T>(query);    
             }
             #endregion
         }
@@ -55,7 +66,7 @@ namespace Repositories.Concretes
             using (var connection = _context.CreateSqlConnection())
             {
                 return await connection.QueryAsync(
-                    GetCommandDefinition(procedureName, parameters), 
+                    GetCommandDefinitionForProcedures(procedureName, parameters), 
                     map, 
                     SplitOn);
             }
@@ -65,7 +76,7 @@ namespace Repositories.Concretes
 
         #region private
 
-        private CommandDefinition GetCommandDefinition(
+        private CommandDefinition GetCommandDefinitionForProcedures(
             string commandText, 
             DynamicParameters parameters) =>
                 new CommandDefinition(
