@@ -59,17 +59,17 @@
     };
     #endregion
 
-    #region buttonName by language
-    var buttonNameData = new
-    {
-        TR = "Kaydet",
-        EN = "Save"
-    };
-
-    var buttonName = language switch
+    #region button names by language
+    var updateButtonName = language switch
     {
         "TR" => "KAYDET",
         "EN" => "SAVE"
+    };
+
+    var descriptionButtonName = language switch
+    {
+        "TR" => "Açıklama",
+        "EN" => "Description"
     };
     #endregion
 }
@@ -207,19 +207,15 @@
                             @*Description*@
                             <div class="form-group">
                                 <label class="col-sm-3 control-label">
-                                    Description
-                                </label>
-                                <div class="col-sm-6">
                                     <div class="input-group m-bot15">
-                                        <input type="text" class="form-control">
                                         <div class="input-group-btn">
-                                            <button tabindex="-1" class="btn btn-info" type="button">
-                                                @language
+                                            <button id="btn_description" style="background-color:darkblue;" tabindex="-1" class="btn btn-info" type="button">
+                                                @descriptionButtonName (@language)
                                             </button>
-                                            <button tabindex="-1" data-toggle="dropdown" class="btn btn-info dropdown-toggle" type="button">
+                                            <button tabindex="-1" style="background-color: darkblue;" data-toggle="dropdown" class="btn btn-info dropdown-toggle" type="button">
                                                 <span class="caret"></span>
                                             </button>
-                                            <ul role="menu" class="dropdown-menu pull-right">
+                                            <ul id="ul_description"  role="menu" class="dropdown-menu pull-right">
                                                 @{
                                                     #region populate languages
                                                     var languagesInDb = await Model.MachineService
@@ -235,6 +231,9 @@
                                             </ul>
                                         </div>
                                     </div>
+                                </label>
+                                <div class="col-sm-6">
+                                    <textarea id="inpt_description" style="resize:none" type="text" class="form-control" rows="10"></textarea>
                                 </div>
                             </div>
                             @*/Description*@
@@ -253,8 +252,8 @@
                             <!-- registration button -->
                             <div class="form-group">
                                 <div class="col-sm-6; text-center">
-                                    <button id="btn_register" type="submit" class="btn btn-danger">
-                                        @buttonName
+                                    <button id="btn_register" style="background-color:darkblue" type="submit" class="btn btn-danger">
+                                        @updateButtonName
                                     </button>
                                 </div>
                                 <div style="text-align:center">
@@ -273,5 +272,6 @@
 <script type="module"  src="~/js/machineForCreate.js"></script>
 
 <script> 
-    let language = "@ViewBag.Language";
+    let language = "@language";
+    let descriptionButtonName = "@descriptionButtonName";
 </script>

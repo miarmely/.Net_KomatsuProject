@@ -1,6 +1,11 @@
 ﻿import { updateResultLabel } from "./miarTools.js"
 
 $(function () {
+    //#region variables
+    let btn_description = $("#btn_description");
+    //#endregion
+
+    //#region events
     $("form").submit(event => {
         event.preventDefault();
 
@@ -42,4 +47,28 @@ $(function () {
             }
         });
     });
+    $("#ul_description").click(() => {
+        //#region reset description input
+        $("#inpt_description").val("");
+        //#endregion
+        
+        //#region change description button name
+        var a = $(":focus");
+        var selectedLanguage = a.prop("innerText");
+
+        btn_description.empty();
+        btn_description.append(
+            `${descriptionButtonName} (${selectedLanguage})`);
+        //#endregion
+    });
+    btn_description.click(() => {
+        //#region add description informations to session
+        var descriptionLanguage = btn_description.prop("innerText");
+
+        sessionStorage.setItem(
+            `User-Create-Description-${descriptionLanguage}`,
+            $("#inpt_description").val());
+        //#endregion
+    })
+    //#endregion
 })
