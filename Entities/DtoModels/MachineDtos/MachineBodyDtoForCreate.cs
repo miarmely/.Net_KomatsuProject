@@ -2,7 +2,6 @@
 {
     public class MachineDtoForCreate
     {
-        public string? Language { get; init; }
         public string? MainCategoryName { get; init; }
         public string? SubCategoryName { get; init; }
         public string? Model { get; init; }

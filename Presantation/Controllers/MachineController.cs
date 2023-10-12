@@ -22,10 +22,11 @@ namespace Presantation.Controllers
         //[Authorization("Admin,Yönetici,Editor,Editör")]
         [ValidationNullArguments]
         public async Task<IActionResult> CreateMachine(
-			[FromBody] MachineDtoForCreate machineDto)
+            [FromQuery(Name = "language")] string language,
+            [FromBody] MachineDtoForCreate machineDto)
 		{
 			await _manager.MachineService
-				.CreateMachineAsync(machineDto);
+				.CreateMachineAsync(language, machineDto);
 
 			return NoContent();
 		}

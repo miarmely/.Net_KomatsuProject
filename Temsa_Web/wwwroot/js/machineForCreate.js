@@ -2,73 +2,141 @@
 
 $(function () {
     //#region variables
+    const descriptionSavedColor = "lightgreen";
+    const descriptionUnsavedColor = "red";
+    const resultLabelId = "#p_resultLabel";
+    const resultLabelErrorColor = "rgb(255, 75, 75)";
+    const resultLabelSuccessColor = "green";
+    const allLanguagesInDb = JSON.parse(allLanguagesInDbAsString);
+    let inpt_description = $("#inpt_description");
     let btn_description = $("#btn_description");
+    let descriptionBaseKeyInSession = "User-Create-Description";
+    let descriptionLanguage = language;
+    let descriptionCurrentColor = descriptionUnsavedColor;
     //#endregion
 
     //#region events
     $("form").submit(event => {
         event.preventDefault();
-
-        //#region reset resultLabel
-        let resultLabelId = "#p_resultLabel";
-        $(resultLabelId).empty();
-        //#endregion
-
-        //#region set data
-        let data = {
-            "mainCategoryName": $("#slct_mainCategory option:selected").text(),
-            "subCategoryName": $("#slct_subCategory option:selected").text(),
-            "brandName": $("#inpt_brand").val().trim(),
-            "model": $("#inpt_model").val().trim(),
-            "year": $("#inpt_year").val().trim(),
-            "zerothHandOrSecondHand": $("input[Name = usageStatus]:checked").val(),
-            "stock": $("#inpt_stock").val().trim()
-        }
-        //#endregion
+        $(resultLabelId).empty(); // reset resultLabel
 
         $.ajax({
             method: "POST",
-            url: "https://localhost:7091/api/services/machine/create",
-            data: JSON.stringify(data),
+            url: baseApiUrl + `/machine/create?language=${language}`,
+            data: JSON.stringify({
+                "MainCategoryName": $("#slct_mainCategory").val(),
+                "SubCategoryName": $("#slct_subCategory").val(),
+                "Model": $("#inpt_model").val(),
+                "BrandName": $("#inpt_brand").val(),
+                "Stock": $("#inpt_stock").val(),
+                "Year": $("#inpt_year").val(),
+                "HandStatus": $("input[name = handStatus]:checked").val(),
+                "DescriptionInTR": sessionStorage.getItem(getDescriptionKeyInSessionByLanguage("TR")),
+                "DescriptionInEN": sessionStorage.getItem(getDescriptionKeyInSessionByLanguage("EN")),
+                "ImagePath": "",
+                "PdfPath": "",
+            }),
             contentType: "application/json",
             dataType: "json",
+            beforeSend: () => {
+                //#region when any description of langauges missing (throw)
+                for (let index in allLanguagesInDb) {
+                    // get description by language in session
+                    let languageInDb = allLanguagesInDb[index];
+                    let descriptionByLanguageInSession = sessionStorage
+                        .getItem(getDescriptionKeyInSessionByLanguage(languageInDb));
+
+                    // write error
+                    if (descriptionByLanguageInSession == null) {
+                        updateResultLabel(
+                            resultLabelId,
+                            `açıklama ${languageInDb} olarak girilmedi.`,
+                            resultLabelErrorColor,
+                            "30px");
+
+                        return false;
+                    }
+                }
+                //#endregion
+            },
             success: () => {
-                $("form")[0].reset();
-                window.updateResultLabel("Başarıyla Kaydedildi", "green", "#p_resultLabel");
+                //#region write successfull message to resultLabel
+                updateResultLabel(
+                    resultLabelId,
+                    "başarıyla kaydedildi",
+                    resultLabelSuccessColor,
+                    "30px");
+                //#endregion
+
+                $("form")[0].reset();  // reset form
             },
             error: (response) => {
                 //#region write error message to resultLabel
                 updateResultLabel(
                     resultLabelId,
-                    window.convertErrorCodeToErrorMessage(response.responseText),
-                    "rgb(255, 75, 75)",
+                    convertErrorCodeToErrorMessage(response.responseText),
+                    resultLabelErrorColor,
                     "30px");
                 //#endregion
             }
         });
     });
     $("#ul_description").click(() => {
-        //#region reset description input
-        $("#inpt_description").val("");
+        //#region reset
+        // <input>
+        inpt_description.val("");
+
+        // button color
+        btn_description.css("color", descriptionUnsavedColor);
+        descriptionCurrentColor = descriptionUnsavedColor;
         //#endregion
-        
+
         //#region change description button name
         var a = $(":focus");
-        var selectedLanguage = a.prop("innerText");
+        descriptionLanguage = a.prop("innerText");
 
         btn_description.empty();
         btn_description.append(
-            `${descriptionButtonName} (${selectedLanguage})`);
+            `${descriptionButtonName} (${descriptionLanguage})`);
         //#endregion
-    });
+
+        //#region populate description <input> with in session value
+        var descriptionInfosInSession = sessionStorage.getItem(
+            getDescriptionKeyInSession());
+
+        if (descriptionInfosInSession != null)
+            inpt_description.val(descriptionInfosInSession);
+        //#endregion    
+    })
     btn_description.click(() => {
         //#region add description informations to session
-        var descriptionLanguage = btn_description.prop("innerText");
-
         sessionStorage.setItem(
-            `User-Create-Description-${descriptionLanguage}`,
-            $("#inpt_description").val());
+            getDescriptionKeyInSession(),
+            inpt_description.val());
+        //#endregion
+
+        //#region change button color to "saved color"
+        btn_description.css("color", descriptionSavedColor);
+        descriptionCurrentColor = descriptionSavedColor;
         //#endregion
     })
+    inpt_description.on("input", () => {
+        //#region change description color to "unsaved color" when input changed
+        if (descriptionCurrentColor == descriptionSavedColor) {
+            btn_description.css("color", descriptionUnsavedColor);
+            descriptionCurrentColor = descriptionUnsavedColor;
+        }
+        //#endregion
+    })
+    //#endregion
+
+    //#region functions
+    function getDescriptionKeyInSession() {
+        return descriptionBaseKeyInSession + '-' + descriptionLanguage;
+    }
+
+    function getDescriptionKeyInSessionByLanguage(language) {
+        return descriptionBaseKeyInSession + '-' + language;
+    }
     //#endregion
 })

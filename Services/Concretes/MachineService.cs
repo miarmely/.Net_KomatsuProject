@@ -18,11 +18,16 @@ namespace Services.Concretes
 		public MachineService(IRepositoryManager manager) =>
 			_manager = manager;
 			
-		public async Task CreateMachineAsync(MachineDtoForCreate machineDto)
+		public async Task CreateMachineAsync(
+            string language, 
+            MachineDtoForCreate machineDto)
 		{
-            #region create machine
+            #region set parameters
             var parameters = new DynamicParameters(machineDto);
+            parameters.Add("Language", language, DbType.String);
+            #endregion
 
+            #region create machine
             var errorDto = await _manager.MachineRepository
 				.CreateMachineAsync(parameters);
             #endregion

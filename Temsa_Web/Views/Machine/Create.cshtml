@@ -4,23 +4,17 @@
     var language = ViewBag.Language;
 
     #region mainTitle by language
-    var mainTitleData = new
-    {
-        TR = "YENİ MAKİNE OLUŞTUR",
-        EN = "CREATE NEW MACHINE"
-    };
-
     var mainTitle = language switch
     {
-        "TR" => mainTitleData.TR,
-        "EN" => mainTitleData.EN,
+        "TR" => "YENİ MAKİNE OLUŞTUR",
+        "EN" => "CREATE NEW MACHINE"
     };
     #endregion
 
     #region inputLabels by language
-    var inputLabelsData = new
+    var inputLabels = language switch
     {
-        TR = new 
+        "TR" => new 
         {
             MainCategory = "Ana Kategori",
             SubCategory = "Alt Kategori",
@@ -35,7 +29,7 @@
             },
             Stock = "Stok Adedi"    
         },
-        EN = new 
+        "EN" => new 
         {
             MainCategory = "Maincategory",
             SubCategory = "Subcategory",
@@ -51,12 +45,6 @@
             Stock = "Stock" 
         }
     };
-
-    var inputLabels = language switch
-    {
-        "TR" => inputLabelsData.TR,
-        "EN" => inputLabelsData.EN,
-    };
     #endregion
 
     #region button names by language
@@ -71,6 +59,11 @@
         "TR" => "Açıklama",
         "EN" => "Description"
     };
+    #endregion
+
+    #region get all languages in database
+    var allLanguagesInDb = await Model.MachineService
+        .GetAllLanguagesAsync();
     #endregion
 }
 
@@ -193,11 +186,11 @@
                                 <div class="col-sm-6">
                                     <div class="radio">
                                         <label style="margin-right:10px">
-                                            <input type="radio" name="usageStatus" value=0 checked="">
+                                            <input type="radio" name="handStatus" value="@inputLabels.HandStatus.RadioButton1"  checked="">
                                              @inputLabels.HandStatus.RadioButton1
                                         </label>
                                         <label>
-                                            <input type="radio" name="usageStatus" value=2>
+                                            <input type="radio" name="handStatus" value="@inputLabels.HandStatus.RadioButton2">
                                             @inputLabels.HandStatus.RadioButton2
                                         </label>
                                     </div>
@@ -209,7 +202,7 @@
                                 <label class="col-sm-3 control-label">
                                     <div class="input-group m-bot15">
                                         <div class="input-group-btn">
-                                            <button id="btn_description" style="background-color:darkblue;" tabindex="-1" class="btn btn-info" type="button">
+                                            <button id="btn_description" style="background-color:darkblue; color:red" tabindex="-1" class="btn btn-info" type="button">
                                                 @descriptionButtonName (@language)
                                             </button>
                                             <button tabindex="-1" style="background-color: darkblue;" data-toggle="dropdown" class="btn btn-info dropdown-toggle" type="button">
@@ -218,10 +211,7 @@
                                             <ul id="ul_description"  role="menu" class="dropdown-menu pull-right">
                                                 @{
                                                     #region populate languages
-                                                    var languagesInDb = await Model.MachineService
-                                                        .GetAllLanguagesAsync();
-
-                                                    foreach(var languageInDb in languagesInDb){
+                                                    foreach(var languageInDb in allLanguagesInDb){
                                                         <li>
                                                             <a href="#">@languageInDb</a>
                                                        </li>
@@ -273,5 +263,6 @@
 
 <script> 
     let language = "@language";
+    let allLanguagesInDbAsString = JSON.stringify("@allLanguagesInDb");
     let descriptionButtonName = "@descriptionButtonName";
 </script>

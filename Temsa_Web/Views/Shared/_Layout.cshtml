@@ -453,6 +453,11 @@
 		<script src="~/js/jquery.scrollTo.js"></script>
 
 		<script>
+			//#region variables
+			let baseApiUrl = "https://localhost:7091/api/services";
+			//#endregion
+
+			//#region functions
 			function convertErrorCodeToErrorMessage(responseText)
 			{
 				// responseText convert json format 
@@ -578,6 +583,7 @@
 					//#endregion
 				};
 			}
+			//#endregion
 		</script>
 	</body>
 </html>

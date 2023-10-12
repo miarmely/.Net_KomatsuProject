@@ -8,7 +8,7 @@ namespace Services.Contracts
 {
     public interface IMachineService
 	{
-		Task CreateMachineAsync(MachineDtoForCreate machineDto);
+		Task CreateMachineAsync(string language, MachineDtoForCreate machineDto);
         Task<IEnumerable<string>> GetMainCategoryNamesByLanguageAsync(string language);
 		Task<IEnumerable<string>> GetAllHandStatusByLanguageAsync(string language);
         Task<IEnumerable<string>> GetAllLanguagesAsync();
