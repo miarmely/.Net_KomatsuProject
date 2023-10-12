@@ -263,6 +263,7 @@
 
 <script> 
     let language = "@language";
-    let allLanguagesInDbAsString = JSON.stringify("@allLanguagesInDb");
     let descriptionButtonName = "@descriptionButtonName";
+    let serializedAllLanguagesInDb = @Html.Raw(Json
+        .Serialize(allLanguagesInDb));
 </script>

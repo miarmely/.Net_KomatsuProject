@@ -26,3 +26,6 @@
 12:10:10.2788  ERROR  {"Controller":"Machine","Action":"Machine","ErrorCode":"Internal Server Error","CreatedAt":"2023-10-12T09:10:10.1532676Z"}
 12:12:02.6343  WARN  {"Controller":"Machine","Action":"Machine","ErrorCode":"CE-M-Mo","CreatedAt":"2023-10-12T09:12:02.6243078Z"}
 12:12:10.8983  ERROR  {"Controller":"Machine","Action":"Machine","ErrorCode":"Internal Server Error","CreatedAt":"2023-10-12T09:12:10.883449Z"}
+18:35:39.2163  ERROR  {"Controller":"Machine","Action":"Machine","ErrorCode":"Internal Server Error","CreatedAt":"2023-10-12T15:35:39.0623127Z"}
+18:37:57.0908  WARN  {"Controller":"Machine","Action":"Machine","ErrorCode":"CE-M-Mo","CreatedAt":"2023-10-12T15:37:57.0807809Z"}
+18:41:25.2323  WARN  {"Controller":"Machine","Action":"Machine","ErrorCode":"CE-M-Mo","CreatedAt":"2023-10-12T15:41:25.2254047Z"}

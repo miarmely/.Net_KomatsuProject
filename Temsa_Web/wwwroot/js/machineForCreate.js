@@ -7,7 +7,7 @@ $(function () {
     const resultLabelId = "#p_resultLabel";
     const resultLabelErrorColor = "rgb(255, 75, 75)";
     const resultLabelSuccessColor = "green";
-    const allLanguagesInDb = JSON.parse(allLanguagesInDbAsString);
+    const allLanguagesInDb = serializedAllLanguagesInDb;
     let inpt_description = $("#inpt_description");
     let btn_description = $("#btn_description");
     let descriptionBaseKeyInSession = "User-Create-Description";
@@ -39,23 +39,28 @@ $(function () {
             contentType: "application/json",
             dataType: "json",
             beforeSend: () => {
+                // reset resultLabel
+                $(resultLabelId).empty();
+
                 //#region when any description of langauges missing (throw)
                 for (let index in allLanguagesInDb) {
-                    // get description by language in session
+                    //#region get description by language in session
                     let languageInDb = allLanguagesInDb[index];
                     let descriptionByLanguageInSession = sessionStorage
                         .getItem(getDescriptionKeyInSessionByLanguage(languageInDb));
+                    //#endregion
 
-                    // write error
+                    //#region write error
                     if (descriptionByLanguageInSession == null) {
                         updateResultLabel(
                             resultLabelId,
-                            `açıklama ${languageInDb} olarak girilmedi.`,
+                            `"${languageInDb}" dilinde açıklama girilmedi.`,
                             resultLabelErrorColor,
                             "30px");
 
                         return false;
                     }
+                    //#endregion
                 }
                 //#endregion
             },
@@ -68,7 +73,8 @@ $(function () {
                     "30px");
                 //#endregion
 
-                $("form")[0].reset();  // reset form
+                // reset form
+                $("form")[0].reset();
             },
             error: (response) => {
                 //#region write error message to resultLabel
