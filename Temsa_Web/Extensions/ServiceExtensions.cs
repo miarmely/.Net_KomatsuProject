@@ -33,7 +33,6 @@ namespace Temsa_Web.Extensions
 			
 		public static void ConfigureServices(this IServiceCollection services)
 		{
-            services.AddSingleton<ILoggerService, LoggerService>();
 			services.AddScoped<IConfigManager, ConfigManager>();
 			services.AddScoped<RepositoryContext>();
         }

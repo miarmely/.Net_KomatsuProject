@@ -9,7 +9,6 @@ namespace Presantation.Controllers
 {
     [ApiController]
     [Route("api/services/[Controller]")]
-    [ModifyError]
     public class MachineController : ControllerBase
     {
         private readonly IServiceManager _manager;

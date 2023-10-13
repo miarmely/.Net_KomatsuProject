@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "BvX9UpVbCyGsOxbCsJ88tukOeisQfap8VDkQg6zvfxpVB4h3bK6jqHfwpHnO+aF02izCLf649dv8gB0QnD4Hog==",
+  "dgSpecHash": "9ks1QfnC9GgOBHT2ohnw5CqHG8XiaqpFPR41Fdjkn/EAMBvnskd6pOPyeASe/GexL6Imwb0j1EBH42CHwspiWg==",
   "success": true,
   "projectFilePath": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\Temsa\\Temsa_API\\Temsa_Api.csproj",
   "expectedPackageFiles": [
@@ -51,8 +51,6 @@
     "C:\\Users\\Mac\\.nuget\\packages\\microsoft.win32.systemevents\\6.0.0\\microsoft.win32.systemevents.6.0.0.nupkg.sha512",
     "C:\\Users\\Mac\\.nuget\\packages\\mimekit\\4.1.0\\mimekit.4.1.0.nupkg.sha512",
     "C:\\Users\\Mac\\.nuget\\packages\\mono.texttemplating\\2.2.1\\mono.texttemplating.2.2.1.nupkg.sha512",
-    "C:\\Users\\Mac\\.nuget\\packages\\nlog\\5.2.3\\nlog.5.2.3.nupkg.sha512",
-    "C:\\Users\\Mac\\.nuget\\packages\\nlog.extensions.logging\\5.3.3\\nlog.extensions.logging.5.3.3.nupkg.sha512",
     "C:\\Users\\Mac\\.nuget\\packages\\swashbuckle.aspnetcore\\6.5.0\\swashbuckle.aspnetcore.6.5.0.nupkg.sha512",
     "C:\\Users\\Mac\\.nuget\\packages\\swashbuckle.aspnetcore.swagger\\6.5.0\\swashbuckle.aspnetcore.swagger.6.5.0.nupkg.sha512",
     "C:\\Users\\Mac\\.nuget\\packages\\swashbuckle.aspnetcore.swaggergen\\6.5.0\\swashbuckle.aspnetcore.swaggergen.6.5.0.nupkg.sha512",

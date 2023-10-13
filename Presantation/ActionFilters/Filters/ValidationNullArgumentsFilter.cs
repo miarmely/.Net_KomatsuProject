@@ -1,7 +1,6 @@
 ﻿using Entities.Exceptions;
 using Microsoft.AspNetCore.Mvc.Filters;
 
-
 namespace Presantation.ActionFilters.Filters
 {
 	public class ValidationNullArgumentsFilter : IAsyncActionFilter
@@ -13,13 +12,20 @@ namespace Presantation.ActionFilters.Filters
 			#region control properties of dtoModels
 			await Task.Run(() =>
 			{
-				#region get dtoModels in KeyValuePairs
+				#region get dtoModels in KeyValuePairs on parameter
 				var keyValuePairs = context
 					.ActionArguments
 					.Where(a => a.Key.Contains("Dto"));
 				#endregion
 
-				foreach (var keyValuePair in keyValuePairs)
+				#region get language on parameter
+				var language = context.ActionArguments
+					.FirstOrDefault(a => a.Key.Equals("language"))
+					.Value
+					as string;
+                #endregion
+
+                foreach (var keyValuePair in keyValuePairs)
 				{
 					#region get properties of dtoModel
 					var dtoModel = keyValuePair.Value;
@@ -48,13 +54,23 @@ namespace Presantation.ActionFilters.Filters
 					if (isAllPropertiesNull)
 						throw new ErrorWithCodeException(400,
 							"NA",
-							"Null Arguments");
+							"Null Arguments",
+                            GetErrorMessageOfNullArgumentByLanguage(language));
 					#endregion
 				}
 			});
 			#endregion
 
 			await next();
+		}
+
+		private string GetErrorMessageOfNullArgumentByLanguage(string language)
+		{
+			return language switch
+			{
+				"TR" => "herhangi bir değer doldurulmadı",
+				"EN" => "any input not filled"
+			};
 		}
 	}
 }

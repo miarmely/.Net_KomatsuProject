@@ -196,23 +196,7 @@
           "Microsoft.Extensions.Primitives": "7.0.0"
         }
       },
-      "Microsoft.Extensions.DependencyInjection/6.0.0": {
-        "dependencies": {
-          "Microsoft.Extensions.DependencyInjection.Abstractions": "7.0.0",
-          "System.Runtime.CompilerServices.Unsafe": "6.0.0"
-        }
-      },
       "Microsoft.Extensions.DependencyInjection.Abstractions/7.0.0": {},
-      "Microsoft.Extensions.Logging/6.0.0": {
-        "dependencies": {
-          "Microsoft.Extensions.DependencyInjection": "6.0.0",
-          "Microsoft.Extensions.DependencyInjection.Abstractions": "7.0.0",
-          "Microsoft.Extensions.Logging.Abstractions": "6.0.0",
-          "Microsoft.Extensions.Options": "7.0.1",
-          "System.Diagnostics.DiagnosticSource": "6.0.0"
-        }
-      },
-      "Microsoft.Extensions.Logging.Abstractions/6.0.0": {},
       "Microsoft.Extensions.Options/7.0.1": {
         "dependencies": {
           "Microsoft.Extensions.DependencyInjection.Abstractions": "7.0.0",
@@ -356,27 +340,6 @@
           "lib/net6.0/MimeKit.dll": {
             "assemblyVersion": "4.1.0.0",
             "fileVersion": "4.1.0.0"
-          }
-        }
-      },
-      "NLog/5.2.3": {
-        "runtime": {
-          "lib/netstandard2.0/NLog.dll": {
-            "assemblyVersion": "5.0.0.0",
-            "fileVersion": "5.2.3.1999"
-          }
-        }
-      },
-      "NLog.Extensions.Logging/5.3.3": {
-        "dependencies": {
-          "Microsoft.Extensions.Configuration.Abstractions": "7.0.0",
-          "Microsoft.Extensions.Logging": "6.0.0",
-          "NLog": "5.2.3"
-        },
-        "runtime": {
-          "lib/net6.0/NLog.Extensions.Logging.dll": {
-            "assemblyVersion": "5.0.0.0",
-            "fileVersion": "5.3.3.381"
           }
         }
       },
@@ -587,7 +550,6 @@
           "AutoMapper.Extensions.Microsoft.DependencyInjection": "12.0.1",
           "MailKit": "4.1.0",
           "Microsoft.AspNetCore.Http.Abstractions": "2.2.0",
-          "NLog.Extensions.Logging": "5.3.3",
           "Repositories": "1.0.0",
           "System.IdentityModel.Tokens.Jwt": "6.32.2"
         },
@@ -708,33 +670,12 @@
       "path": "microsoft.extensions.configuration.abstractions/7.0.0",
       "hashPath": "microsoft.extensions.configuration.abstractions.7.0.0.nupkg.sha512"
     },
-    "Microsoft.Extensions.DependencyInjection/6.0.0": {
-      "type": "package",
-      "serviceable": true,
-      "sha512": "sha512-k6PWQMuoBDGGHOQTtyois2u4AwyVcIwL2LaSLlTZQm2CYcJ1pxbt6jfAnpWmzENA/wfrYRI/X9DTLoUkE4AsLw==",
-      "path": "microsoft.extensions.dependencyinjection/6.0.0",
-      "hashPath": "microsoft.extensions.dependencyinjection.6.0.0.nupkg.sha512"
-    },
     "Microsoft.Extensions.DependencyInjection.Abstractions/7.0.0": {
       "type": "package",
       "serviceable": true,
       "sha512": "sha512-h3j/QfmFN4S0w4C2A6X7arXij/M/OVw3uQHSOFxnND4DyAzO1F9eMX7Eti7lU/OkSthEE0WzRsfT/Dmx86jzCw==",
       "path": "microsoft.extensions.dependencyinjection.abstractions/7.0.0",
       "hashPath": "microsoft.extensions.dependencyinjection.abstractions.7.0.0.nupkg.sha512"
-    },
-    "Microsoft.Extensions.Logging/6.0.0": {
-      "type": "package",
-      "serviceable": true,
-      "sha512": "sha512-eIbyj40QDg1NDz0HBW0S5f3wrLVnKWnDJ/JtZ+yJDFnDj90VoPuoPmFkeaXrtu+0cKm5GRAwoDf+dBWXK0TUdg==",
-      "path": "microsoft.extensions.logging/6.0.0",
-      "hashPath": "microsoft.extensions.logging.6.0.0.nupkg.sha512"
-    },
-    "Microsoft.Extensions.Logging.Abstractions/6.0.0": {
-      "type": "package",
-      "serviceable": true,
-      "sha512": "sha512-/HggWBbTwy8TgebGSX5DBZ24ndhzi93sHUBDvP1IxbZD7FDokYzdAr6+vbWGjw2XAfR2EJ1sfKUotpjHnFWPxA==",
-      "path": "microsoft.extensions.logging.abstractions/6.0.0",
-      "hashPath": "microsoft.extensions.logging.abstractions.6.0.0.nupkg.sha512"
     },
     "Microsoft.Extensions.Options/7.0.1": {
       "type": "package",
@@ -840,20 +781,6 @@
       "sha512": "sha512-JUIaZfYybdRcyt1wgPo1e2j4aI3Rp8USKpxka1WImUs17+2X3Xl0sDJYfbzFchJ46qZeSvIwL+/aAjxPtFsm4A==",
       "path": "mimekit/4.1.0",
       "hashPath": "mimekit.4.1.0.nupkg.sha512"
-    },
-    "NLog/5.2.3": {
-      "type": "package",
-      "serviceable": true,
-      "sha512": "sha512-rHTNRtQF5qYqLutSR9ldUWXglKym/KA1R6GKw4JtDvza8i5+kgfmeKH75Ccn1noeJIOjHLXorphMxKk3EiN2tg==",
-      "path": "nlog/5.2.3",
-      "hashPath": "nlog.5.2.3.nupkg.sha512"
-    },
-    "NLog.Extensions.Logging/5.3.3": {
-      "type": "package",
-      "serviceable": true,
-      "sha512": "sha512-o3V1oUr0izjhU1djuVqN5JdmNUGmunTs3Amjhumt/nxva8kG9QWjOdba+ciwkP//QOjv+KkGklZtI9o4qz50hQ==",
-      "path": "nlog.extensions.logging/5.3.3",
-      "hashPath": "nlog.extensions.logging.5.3.3.nupkg.sha512"
     },
     "System.Configuration.ConfigurationManager/6.0.1": {
       "type": "package",

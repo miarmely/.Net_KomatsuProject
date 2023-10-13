@@ -10,8 +10,6 @@ namespace Presantation.Controllers
 {
     [ApiController]
     [Route("api/services/[Controller]")]
-    [ModifyError]
-
     public class UserController : ControllerBase
     {
         private readonly IServiceManager _manager;
@@ -22,7 +20,9 @@ namespace Presantation.Controllers
 
         [HttpPost("login")]
         [ValidationUserFormat]
-        public async Task<IActionResult> LoginAsync(UserDtoForLogin userDto)
+        public async Task<IActionResult> LoginAsync(
+            [FromQuery(Name = "language")] string language,
+            [FromBody] UserDtoForLogin userDto)
         {
             var token = await _manager.UserService
                 .LoginAsync(userDto);
@@ -38,6 +38,7 @@ namespace Presantation.Controllers
         [ValidationUserFormat]
         [ValidationNullArguments]
         public async Task<IActionResult> RegisterAsync(
+            [FromQuery(Name = "language")] string language,
             [FromBody] UserDtoForRegister userDto)
         {
             await _manager.UserService
@@ -52,6 +53,7 @@ namespace Presantation.Controllers
         [ValidationUserFormat]
         [ValidationNullArguments]
         public async Task<IActionResult> CreateUserAsync(
+            [FromQuery(Name = "language")] string language,
             [FromBody] UserDtoForCreate userDto)
 		{
             await _manager.UserService
@@ -64,7 +66,7 @@ namespace Presantation.Controllers
         [HttpGet("display")]
         //[Authorization("Admin,Editor,User,Yönetici,Editör,Kullanıcı")]
         public async Task<IActionResult> GetAllUsersWithPaginationAsync(
-            [FromQuery] string language,
+            [FromQuery(Name = "language")] string language,
             [FromQuery] PaginationParameters pagingParameters)
         {
             var entity = await _manager.UserService
@@ -79,6 +81,7 @@ namespace Presantation.Controllers
         [ValidationUserFormat]
         [ValidationNullArguments]
         public async Task<IActionResult> UpdateUserByTelNoAsync(
+            [FromQuery(Name = "language")] string language,
             [FromRoute(Name = "telNo")] string telNo,
             [FromBody] UserDtoForUpdate userDto)
         {
@@ -93,6 +96,7 @@ namespace Presantation.Controllers
         //[Authorization("Admin,Yönetici")]
         [ValidationNullArguments]
         public async Task<IActionResult> DeleteUsersAsync(
+            [FromQuery(Name = "language")] string language,
             [FromBody] UserDtoForDelete userDto)
         {
             await _manager.UserService

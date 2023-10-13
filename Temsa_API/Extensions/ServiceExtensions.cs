@@ -25,13 +25,11 @@ namespace Temsa_Api.Extensions
 	
 		public static void ConfigureServices(this IServiceCollection services)
 		{
-            services.AddSingleton<ILoggerService, LoggerService>();
 			services.AddSingleton<RepositoryContext>();
         }
 
 		public static void ConfigureActionFilters(this IServiceCollection services)
 		{
-			services.AddScoped<ErrorFilter>();
 			services.AddScoped<ValidationUserFormatFilter>();
 			services.AddScoped<ValidationNullArgumentsFilter>();
 		}

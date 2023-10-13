@@ -15,60 +15,44 @@ namespace Temsa_Api.Extensions
 			app.UseExceptionHandler(configure =>
 				configure.Run(async context =>
 				{
-					#region get context feature
-					var contextFeature = context.Features
+                    #region get context feature
+                    var contextFeature = context.Features
 						.Get<IExceptionHandlerFeature>();
 					#endregion
 
 					#region when any error occured
 					if (contextFeature != null)
 					{
-						#region get error model from HttpContext
-						var errorDtoForE = context.Items
-							.Single(i => i.Key.Equals("errorDetails"))
-							.Value
-							as ErrorDtoForGlobalExceptionHandling;
-						#endregion
+						#region get errorDto
+						var errorMessage = contextFeature.Error.Message;
+                        var errorDto = JsonSerializer.Deserialize<ErrorDto>(errorMessage);
+                        #endregion
 
-						#region set logMessage
-						var logMessage = JsonSerializer.Serialize(new
+                        #region when unexpected error occured
+                        if (errorDto.ErrorCode == null)
 						{
-							errorDtoForE.Controller,
-							errorDtoForE.Action,
-							errorDtoForE.ErrorCode,
-							errorDtoForE.CreatedAt,
-						});
-						#endregion
+							context.Response.StatusCode = 500;
 
-						#region save log
-						var loggerService = context.RequestServices
-							.GetRequiredService<ILoggerService>();
-						
-						// for expected errors
-						if (errorDtoForE.StatusCode != 500)
-							loggerService.LogWarning(logMessage);
+                            await context.Response.WriteAsJsonAsync(new
+                            {
+                                StatusCode = 500,
+								ErrorCode = "Internal Server Error",
+                                ErrorDescription = errorMessage
+                            });
 
-						// for unexpected errors
-						else
-							loggerService.LogError(logMessage);
-						#endregion
+							return;
+                        }
+                        #endregion
 
-						#region convert errorDtoForE to errorDto
-						var mapper = context.RequestServices
-							.GetRequiredService<IMapper>();
+                        #region when expected error occured
+                        context.Response.ContentType = "application/json";
+                        context.Response.StatusCode = errorDto.StatusCode;
 
-						var errorDto = mapper.Map<ErrorDto>(errorDtoForE);
-						#endregion
-
-						#region set response settings
-						context.Response.ContentType = "application/json";
-						context.Response.StatusCode = errorDtoForE.StatusCode;
-						#endregion
-
-						await context.Response.WriteAsJsonAsync(errorDto);
-					}
-					#endregion
-				})
+                        await context.Response.WriteAsJsonAsync(errorDto);
+                        #endregion
+                    }
+                    #endregion
+                })
 			);
 		}
 	}

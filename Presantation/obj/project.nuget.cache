@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "EOpOtolvOov0mt5i2nZXZoqF077o7TN98q4QgrJUnDcyJrhRmfO/GCJOMUf/6zBDOCfwiNBbaG1be8su/EZGwg==",
+  "dgSpecHash": "rdGP6t+q2lpdUfrjreB85w7NM0ssaJHTMEoHKCp1dckM2RUUeS/HJKtd+zmNilWMl0X7ED12xO9PLmGSU3HddQ==",
   "success": true,
   "projectFilePath": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\Temsa\\Presantation\\Presantation.csproj",
   "expectedPackageFiles": [
@@ -19,10 +19,7 @@
     "C:\\Users\\Mac\\.nuget\\packages\\microsoft.data.sqlclient\\5.1.1\\microsoft.data.sqlclient.5.1.1.nupkg.sha512",
     "C:\\Users\\Mac\\.nuget\\packages\\microsoft.data.sqlclient.sni.runtime\\5.1.0\\microsoft.data.sqlclient.sni.runtime.5.1.0.nupkg.sha512",
     "C:\\Users\\Mac\\.nuget\\packages\\microsoft.extensions.configuration.abstractions\\7.0.0\\microsoft.extensions.configuration.abstractions.7.0.0.nupkg.sha512",
-    "C:\\Users\\Mac\\.nuget\\packages\\microsoft.extensions.dependencyinjection\\6.0.0\\microsoft.extensions.dependencyinjection.6.0.0.nupkg.sha512",
     "C:\\Users\\Mac\\.nuget\\packages\\microsoft.extensions.dependencyinjection.abstractions\\7.0.0\\microsoft.extensions.dependencyinjection.abstractions.7.0.0.nupkg.sha512",
-    "C:\\Users\\Mac\\.nuget\\packages\\microsoft.extensions.logging\\6.0.0\\microsoft.extensions.logging.6.0.0.nupkg.sha512",
-    "C:\\Users\\Mac\\.nuget\\packages\\microsoft.extensions.logging.abstractions\\6.0.0\\microsoft.extensions.logging.abstractions.6.0.0.nupkg.sha512",
     "C:\\Users\\Mac\\.nuget\\packages\\microsoft.extensions.options\\7.0.1\\microsoft.extensions.options.7.0.1.nupkg.sha512",
     "C:\\Users\\Mac\\.nuget\\packages\\microsoft.extensions.primitives\\7.0.0\\microsoft.extensions.primitives.7.0.0.nupkg.sha512",
     "C:\\Users\\Mac\\.nuget\\packages\\microsoft.identity.client\\4.47.2\\microsoft.identity.client.4.47.2.nupkg.sha512",
@@ -38,8 +35,6 @@
     "C:\\Users\\Mac\\.nuget\\packages\\microsoft.sqlserver.server\\1.0.0\\microsoft.sqlserver.server.1.0.0.nupkg.sha512",
     "C:\\Users\\Mac\\.nuget\\packages\\microsoft.win32.systemevents\\6.0.0\\microsoft.win32.systemevents.6.0.0.nupkg.sha512",
     "C:\\Users\\Mac\\.nuget\\packages\\mimekit\\4.1.0\\mimekit.4.1.0.nupkg.sha512",
-    "C:\\Users\\Mac\\.nuget\\packages\\nlog\\5.2.3\\nlog.5.2.3.nupkg.sha512",
-    "C:\\Users\\Mac\\.nuget\\packages\\nlog.extensions.logging\\5.3.3\\nlog.extensions.logging.5.3.3.nupkg.sha512",
     "C:\\Users\\Mac\\.nuget\\packages\\system.configuration.configurationmanager\\6.0.1\\system.configuration.configurationmanager.6.0.1.nupkg.sha512",
     "C:\\Users\\Mac\\.nuget\\packages\\system.diagnostics.diagnosticsource\\6.0.0\\system.diagnostics.diagnosticsource.6.0.0.nupkg.sha512",
     "C:\\Users\\Mac\\.nuget\\packages\\system.drawing.common\\6.0.0\\system.drawing.common.6.0.0.nupkg.sha512",

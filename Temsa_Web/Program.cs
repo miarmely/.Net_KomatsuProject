@@ -1,11 +1,5 @@
-using NLog;
 using System.Reflection;
 using Temsa_Web.Extensions;
-
-#region setup logger
-LogManager.Setup()
-    .LoadConfigurationFromFile();
-#endregion
 
 #region add extensions
 var builder = WebApplication.CreateBuilder(args);
