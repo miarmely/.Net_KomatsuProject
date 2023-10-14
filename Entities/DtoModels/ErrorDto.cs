@@ -1,10 +1,10 @@
 ﻿namespace Entities.DtoModels
 {
-    public class ErrorDto
+    public record class ErrorDto
     {
-        public int StatusCode { get; set; }
-        public string ErrorCode { get; set; }
-        public string ErrorDescription { get; set; }
-        public string ErrorMessage { get; set; }
+        public int StatusCode { get; init; }
+        public string ErrorCode { get; init; }
+        public string ErrorDescription { get; init; }
+        public string ErrorMessage { get; init; }
     }
 }

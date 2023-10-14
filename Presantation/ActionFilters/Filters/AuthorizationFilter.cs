@@ -34,13 +34,13 @@ namespace Presantation.ActionFilters.Filters
                 #region when any roleNames not exists in token (throw)
                 if (roleClaims.Count() == 0)
                 {
-                    SaveErrorDetailsToHttpContext(context, new ErrorDto
+                    context.HttpContext.Items.Add("errorDetails", new ErrorDto
                     {
                         StatusCode = 401,
                         ErrorCode = "AE-U",
                         ErrorDescription = "Authorization Error - Unauthorized",
                         ErrorMessage = ConvertErrorCodeToErrorMessageByLanguage(
-                            language, 
+                            language,
                             "AE-U")
                     });
 
@@ -70,46 +70,29 @@ namespace Presantation.ActionFilters.Filters
                 #endregion
 
                 #region when authority not enough (throw)
-                SaveErrorDetailsToHttpContext(context, new ErrorDto
+
+                #region save error details to HttpContext
+                context.HttpContext.Items.Add("errorDetails", new ErrorDto
                 {
                     StatusCode = 403,
                     ErrorCode = "AE-F",
                     ErrorDescription = "Authorization Error - Forbidden",
-                    ErrorMessage = ConvertErrorCodeToErrorMessageByLanguage(language, "AE-F")
+                    ErrorMessage = ConvertErrorCodeToErrorMessageByLanguage(
+                        language,
+                        "AE-F")
                 });
 
                 throw new Exception();
                 #endregion
+
+                #endregion
             });
 
-        private void SaveErrorDetailsToHttpContext(
-            AuthorizationFilterContext context,
-            ErrorDto errorDto)
-        {
-            #region set errorDtoG
-            var errorDtoG = new ErrorDtoForGlobalExceptionHandling
-            {
-                StatusCode = errorDto.StatusCode,
-                ErrorCode = errorDto.ErrorCode,
-                ErrorDescription = errorDto.ErrorDescription,
-            };
-            #endregion
 
-            #region set controller and action of errorDtos
-            errorDtoG.Controller = context.RouteData
-                .Values["controller"]
-                as string;
-
-            errorDtoG.Action = context.RouteData
-                .Values["controller"]
-                as string;
-            #endregion
-
-            context.HttpContext.Items.Add("errorDetails", errorDtoG);
-        }
+        #region private
 
         private string ConvertErrorCodeToErrorMessageByLanguage(
-            string language, 
+            string language,
             string errorCode)
         {
             return language switch
@@ -126,5 +109,7 @@ namespace Presantation.ActionFilters.Filters
                 }
             };
         }
+
+        #endregion
     }
 }

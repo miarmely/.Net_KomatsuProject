@@ -14,7 +14,7 @@ namespace Repositories.Concretes
             : base(context, configs)
                 => _configs = configs;
        
-        public async Task<ErrorDto> CreateMachineAsync(DynamicParameters parameters) =>
+        public async Task<ErrorDto?> CreateMachineAsync(DynamicParameters parameters) =>
             await base.QuerySingleOrDefaultAsync<ErrorDto>(
                 base.Configs.DbSettings.ProcedureNames.Machine_Create,
                 parameters);

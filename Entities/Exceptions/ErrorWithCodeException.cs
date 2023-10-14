@@ -9,14 +9,14 @@ namespace Entities.Exceptions
 			int statusCode,
 			string errorCode,
 			string? errorDescription = null,
-			string? message = null) 
+			string? errorMessage = null) 
 			: base(JsonSerializer.Serialize(new
 			{
 				StatusCode = statusCode,
 				ErrorCode = errorCode,
 				ErrorDescription = errorDescription,
-				Message = message
-			}))
+                ErrorMessage = errorMessage
+            }))
 		{ }
 
         public ErrorWithCodeException(ErrorDto errorDto)

@@ -6,7 +6,7 @@ namespace Repositories.Contracts
 {
     public interface IMachineRepository : IRepositoryBase
 	{
-		public Task<ErrorDto> CreateMachineAsync(DynamicParameters parameters);
+		public Task<ErrorDto?> CreateMachineAsync(DynamicParameters parameters);
         Task<ErrorDto?> UpdateMachineAsync(DynamicParameters parameters);
         Task<ErrorDto?> DeleteMachineAsync(DynamicParameters parameters);
         Task<IEnumerable<MachineView>> GetAllMachinesAsync(DynamicParameters parameters);

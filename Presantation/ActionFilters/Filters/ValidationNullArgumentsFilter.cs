@@ -19,10 +19,10 @@ namespace Presantation.ActionFilters.Filters
 				#endregion
 
 				#region get language on parameter
-				var language = context.ActionArguments
-					.FirstOrDefault(a => a.Key.Equals("language"))
+				var language = context.HttpContext.Request.Query
+					.FirstOrDefault(q => q.Key.Equals("language"))
 					.Value
-					as string;
+					.ToString();
                 #endregion
 
                 foreach (var keyValuePair in keyValuePairs)

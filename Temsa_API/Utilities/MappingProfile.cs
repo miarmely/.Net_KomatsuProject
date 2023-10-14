@@ -1,6 +1,4 @@
 ﻿using AutoMapper;
-using Entities.DtoModels;
-using Entities.DtoModels.MachineDtos;
 using Entities.DtoModels.UserDtos;
 using Entities.ViewModels;
 
@@ -10,7 +8,6 @@ namespace Temsa_Api.Utilities
     {
         public MappingProfile()
         {
-            CreateMap<ErrorDtoForGlobalExceptionHandling, ErrorDto>();
             CreateMap<UserView, UserDto>();
 
             #region userDtoForRegister to userDtoForCreate

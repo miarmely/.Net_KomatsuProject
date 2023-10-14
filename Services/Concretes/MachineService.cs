@@ -46,19 +46,30 @@ namespace Services.Concretes
             #region set parameters
             var parameters = new DynamicParameters(pagingParameters);
 
-            parameters.Add("TotalCount", 0, DbType.Int32, ParameterDirection.Output);
             parameters.Add("Language", language, DbType.String);
+            parameters.Add("TotalCount", 0, DbType.Int32, ParameterDirection.Output);
+            parameters.Add("StatusCode", "", DbType.Int16, ParameterDirection.Output);
+            parameters.Add("ErrorCode", "", DbType.String, ParameterDirection.Output);
+            parameters.Add("ErrorDescription", "", DbType.String,
+                ParameterDirection.Output);
+            parameters.Add("ErrorMessage", "", DbType.String, ParameterDirection.Output);
             #endregion
 
-            #region get machine Views (throw)
+            #region get machineViews (throw)
             var machineViews = await _manager.MachineRepository
                 .GetAllMachinesAsync(parameters);
 
-            // when any machine not found
-            if (machineViews.Count() == 0)
-                throw new ErrorWithCodeException(404,
-                    "NF-M",
-                    "Not Found - Machine");
+            #region when any machine not found (throw)
+            var totalCount = parameters.Get<int>("TotalCount");
+
+            if (totalCount == 0)
+                throw new ErrorWithCodeException(
+                    parameters.Get<Int16>("StatusCode"),
+                    parameters.Get<string>("ErrorCode"),
+                    parameters.Get<string>("ErrorDescription"),
+                    parameters.Get<string>("ErrorMessage"));
+            #endregion
+
             #endregion
 
             #region add pagination informations to headers
@@ -67,7 +78,7 @@ namespace Services.Concretes
             var machineViewPagingList = await PagingList<MachineView>
                 .ToPagingListAsync(
                     machineViews,
-                    parameters.Get<int>("TotalCount"),
+                    totalCount,
                     pagingParameters.PageNumber,
                     pagingParameters.PageSize);
             #endregion

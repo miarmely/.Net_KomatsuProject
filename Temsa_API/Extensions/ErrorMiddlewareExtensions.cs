@@ -23,33 +23,36 @@ namespace Temsa_Api.Extensions
 					#region when any error occured
 					if (contextFeature != null)
 					{
-						#region get errorDto
 						var errorMessage = contextFeature.Error.Message;
-                        var errorDto = JsonSerializer.Deserialize<ErrorDto>(errorMessage);
-                        #endregion
 
-                        #region when unexpected error occured
-                        if (errorDto.ErrorCode == null)
-						{
-							context.Response.StatusCode = 500;
+                        try
+                        {
+                            #region get errorDto (catch)
+                            var errorDto = JsonSerializer
+                                .Deserialize<ErrorDto>(errorMessage);
+                            #endregion
+
+                            #region when expected error occured
+                            context.Response.ContentType = "application/json";
+                            context.Response.StatusCode = errorDto.StatusCode;
+
+                            await context.Response.WriteAsJsonAsync(errorDto);
+                            #endregion
+                        }
+                        catch(Exception ex)
+                        {
+                            #region when unexpected error occured
+                            context.Response.StatusCode = 500;
 
                             await context.Response.WriteAsJsonAsync(new
                             {
                                 StatusCode = 500,
-								ErrorCode = "Internal Server Error",
-                                ErrorDescription = errorMessage
+                                ErrorCode = "ISE",
+                                ErrorDescription = "Internal Server Error",
+                                ErrorMessage = ex.Message
                             });
-
-							return;
-                        }
-                        #endregion
-
-                        #region when expected error occured
-                        context.Response.ContentType = "application/json";
-                        context.Response.StatusCode = errorDto.StatusCode;
-
-                        await context.Response.WriteAsJsonAsync(errorDto);
-                        #endregion
+                            #endregion
+                        }                        
                     }
                     #endregion
                 })

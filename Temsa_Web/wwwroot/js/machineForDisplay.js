@@ -188,12 +188,8 @@ $(function () {
         tr_row_error.attr("hidden", "");  // hide
     }
 
-    function updateErrorRow(row, response) {
-        // write error to error row
-        updateResultLabel(
-            getIdOfErrorRow(row),
-            convertErrorCodeToErrorMessage(response.responseText),
-            errorMessageColor);
+    function getErrorMessageFromResponse(response) {
+        return JSON.parse(response.responseText).errorMessage;
     }
 
     async function addPaginationButtons() {
@@ -525,11 +521,10 @@ $(function () {
                         populateTable(currentPageNo - 1, true);
                     //#endregion
 
-                    //#region when any machines not exists
+                    //#region when any machines not found
                     else {
                         tableBody.empty();
 
-                        // update entity quantity label
                         updateResultLabel(
                             lbl_entityQuantity,
                             `<b>0</b>/<b>${pageSize}</b> ${entityCountMessage}`,
@@ -552,7 +547,7 @@ $(function () {
                 //#region write error to entity quantity label
                 updateResultLabel(
                     lbl_entityQuantity,
-                    convertErrorCodeToErrorMessage(responseText),
+                    getErrorMessageFromResponse(response),
                     errorMessageColor
                 );
                 //#endregion
@@ -739,7 +734,12 @@ $(function () {
                 resetErrorRow(row);
             },
             error: (response) => {
-                updateErrorRow(row, response);
+                //#region write error to error row
+                updateResultLabel(
+                    getIdOfErrorRow(row),
+                    getErrorMessageFromResponse(response),
+                    errorMessageColor);
+                //#endregion
             }
         })
     }
@@ -755,7 +755,7 @@ $(function () {
     }
 
     async function populateTable(pageNumber, refreshPaginationButtons) {
-        await $.ajax({
+        $.ajax({
             method: "GET",
             url: "https://localhost:7091/api/services/machine/display/all",
             contentType: "application/json",
@@ -800,9 +800,8 @@ $(function () {
                 //#region write error to resultLabel
                 updateResultLabel(
                     lbl_entityQuantity,
-                    convertErrorCodeToErrorMessage(response.responseText),
-                    errorMessageColor
-                );
+                    getErrorMessageFromResponse(response),
+                    errorMessageColor);
                 //#endregion
             },
         });

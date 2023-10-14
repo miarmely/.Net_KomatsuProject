@@ -1,9 +1,0 @@
-19:03:48.5902  ERROR  {"Controller":"User","Action":"User","ErrorCode":"Internal Server Error","CreatedAt":"2023-09-23T16:03:48.2172989Z"}
-20:45:12.4668  ERROR  {"Controller":"User","Action":"User","ErrorCode":"Internal Server Error","CreatedAt":"2023-09-23T17:45:12.3430867Z"}
-20:49:26.3405  ERROR  {"Controller":"User","Action":"User","ErrorCode":"Internal Server Error","CreatedAt":"2023-09-23T17:49:26.3289572Z"}
-22:25:56.0797  ERROR  {"Controller":"User","Action":"User","ErrorCode":"Internal Server Error","CreatedAt":"2023-09-23T19:25:55.9455504Z"}
-22:27:16.2108  ERROR  {"Controller":"User","Action":"User","ErrorCode":"Internal Server Error","CreatedAt":"2023-09-23T19:27:16.1939433Z"}
-22:27:19.0301  ERROR  {"Controller":"User","Action":"User","ErrorCode":"Internal Server Error","CreatedAt":"2023-09-23T19:27:19.0146682Z"}
-22:30:29.0126  ERROR  {"Controller":"User","Action":"User","ErrorCode":"Internal Server Error","CreatedAt":"2023-09-23T19:30:28.9986754Z"}
-22:31:26.0324  ERROR  {"Controller":"User","Action":"User","ErrorCode":"Internal Server Error","CreatedAt":"2023-09-23T19:31:25.9339263Z"}
-22:32:12.1134  ERROR  {"Controller":"User","Action":"User","ErrorCode":"Internal Server Error","CreatedAt":"2023-09-23T19:32:12.0979548Z"}
