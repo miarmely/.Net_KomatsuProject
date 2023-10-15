@@ -18,6 +18,12 @@ namespace Services.Contracts
             PaginationParameters paginationParameters,
 			HttpResponse response);
 
+        Task<PagingList<MachineView>> GetMachinesByConditionAsync(
+            string language,
+            PaginationParameters paginationParameters,
+            MachineDtoForDisplay machineDto,
+            HttpResponse response);
+
         Task UpdateMachineAsync(
             MachineParametersForUpdate parameters,
             MachineDtoForUpdate machineDto);

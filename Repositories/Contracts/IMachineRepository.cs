@@ -10,6 +10,8 @@ namespace Repositories.Contracts
         Task<ErrorDto?> UpdateMachineAsync(DynamicParameters parameters);
         Task<ErrorDto?> DeleteMachineAsync(DynamicParameters parameters);
         Task<IEnumerable<MachineView>> GetAllMachinesAsync(DynamicParameters parameters);
+        Task<IEnumerable<MachineView>> GetMachinesByConditionAsync(
+            DynamicParameters parameters);
         Task<IEnumerable<string>> GetMainCategoryNamesByLanguageAsync(
             DynamicParameters parameters);
         Task<IEnumerable<string>> GetSubCategoryNamesOfMainCategoryByLanguageAsync(

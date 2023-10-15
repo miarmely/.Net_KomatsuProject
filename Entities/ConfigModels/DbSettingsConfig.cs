@@ -14,6 +14,7 @@
         public string User_Delete { get; init; }
         public string Machine_Create { get; init; }
         public string Machine_DisplayAll { get; init; }
+        public string Machine_DisplayByCondition { get; init; }
         public string Machine_Update { get; init; }
         public string Machine_Delete { get; init; }
         public string Machine_GetMainCategoryNames { get; init; }

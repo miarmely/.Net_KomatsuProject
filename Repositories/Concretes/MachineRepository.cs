@@ -25,15 +25,11 @@ namespace Repositories.Concretes
                     base.Configs.DbSettings.ProcedureNames.Machine_DisplayAll,
                     parameters);
 
-        public async Task<ErrorDto?> UpdateMachineAsync(DynamicParameters parameters) =>
-            await base.QuerySingleOrDefaultAsync<ErrorDto>(
-                base.Configs.DbSettings.ProcedureNames.Machine_Update,
-                parameters);
-        
-        public async Task<ErrorDto?> DeleteMachineAsync(DynamicParameters parameters) =>
-            await base.QuerySingleOrDefaultAsync<ErrorDto>(
-                base.Configs.DbSettings.ProcedureNames.Machine_Delete,
-                parameters);
+        public async Task<IEnumerable<MachineView>> GetMachinesByConditionAsync(
+            DynamicParameters parameters) =>
+                await base.QueryAsync<MachineView>(
+                    base.Configs.DbSettings.ProcedureNames.Machine_DisplayByCondition,
+                    parameters);
 
         public async Task<IEnumerable<string>> GetMainCategoryNamesByLanguageAsync(
             DynamicParameters parameters) =>
@@ -58,7 +54,17 @@ namespace Repositories.Concretes
                 SELECT  Name 
                 FROM    {_configs.DbSettings.TableNames.Language}");
 
-       
+        public async Task<ErrorDto?> UpdateMachineAsync(DynamicParameters parameters) =>
+            await base.QuerySingleOrDefaultAsync<ErrorDto>(
+                base.Configs.DbSettings.ProcedureNames.Machine_Update,
+                parameters);
+
+        public async Task<ErrorDto?> DeleteMachineAsync(DynamicParameters parameters) =>
+            await base.QuerySingleOrDefaultAsync<ErrorDto>(
+                base.Configs.DbSettings.ProcedureNames.Machine_Delete,
+                parameters);
+
+
 
         //     #region GetMachinesByConditionAsync
         //     public async Task<List<MachineView>> GetMachinesByConditionAsync(

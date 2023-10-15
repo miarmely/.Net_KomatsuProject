@@ -94,6 +94,40 @@ namespace Services.Concretes
             return machineViewPagingList;
         }
 
+        public async Task<PagingList<MachineView>> GetMachinesByConditionAsync(
+            string language,
+            PaginationParameters paginationParameters,
+            MachineDtoForDisplay machineDto,
+            HttpResponse response)
+        {
+            #region set parameters
+            var parameters = new DynamicParameters(paginationParameters);
+
+            parameters.Add("Language", language, DbType.String);
+            parameters.Add("TotalCount", 0, DbType.Int32, ParameterDirection.Output);
+            parameters.AddDynamicParams(machineDto);
+            #endregion
+
+            #region get machineViews and convert pagingList
+            var machineViews = await _manager.MachineRepository
+                .GetMachinesByConditionAsync(parameters);
+            
+            var machineViewPagingList = await PagingList<MachineView>.ToPagingListAsync(
+                   machineViews,
+                   parameters.Get<int>("TotalCount"),
+                   paginationParameters.PageNumber,
+                   paginationParameters.PageSize);
+            #endregion
+
+            #region add pagination infos to headers
+            response.Headers.Add(
+                "Machine-Pagination",
+                machineViewPagingList.GetMetaDataForHeaders());
+            #endregion
+
+            return machineViewPagingList;
+        }
+
         public async Task UpdateMachineAsync(
             MachineParametersForUpdate parameters, 
             MachineDtoForUpdate machineDto)

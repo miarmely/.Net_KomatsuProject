@@ -44,6 +44,23 @@ namespace Presantation.Controllers
 		}
 
 
+        [HttpGet("display/condition")]
+        public async Task<IActionResult> GetMachinesByCondition(
+            [FromQuery(Name = "language")] string language,
+            [FromQuery] PaginationParameters pagingParameters,
+            [FromQuery] MachineDtoForDisplay machineDto)
+        {
+            var machines = await _manager.MachineService
+                .GetMachinesByConditionAsync(
+                    language, 
+                    pagingParameters, 
+                    machineDto, 
+                    Response);
+
+            return Ok(machines);
+        }
+
+
         [HttpGet("display/mainCategory")]
         //[Authorization("User,Kullanıcı,Editor,Editör,Admin,Yönetici")]
         public async Task<IActionResult> GetMainCategoryNamesByLanguage(
