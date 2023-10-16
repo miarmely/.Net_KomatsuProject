@@ -1,7 +1,10 @@
 ﻿@model IServiceManager;
 
 @{
+    #region get languages
     var language = ViewBag.Language;
+    var allLanguagesInDb = await Model.MachineService.GetAllLanguagesAsync();
+    #endregion
 
     #region set table title by languages
     var TableTitleByLanguages = new
@@ -37,45 +40,39 @@
     };
     #endregion
 
-    #region set column names by languages
-    var columnNamesByLanguages = new
+    #region set column ids and names by languages
+    var columnIdsAndNamesDict = language switch
     {
-        TR = new string[]
+        "TR" => new Dictionary<string, string>
         {
-            "Ana Kategori",
-            "Alt Kategori",
-            "Marka",
-            "Model",
-            "El Durumu",
-            "Stok",
-            "Kiralık",
-            "Satılık",
-            "Yıl",
-            "Açıklama",
-            "Kayıt Tarihi",
-            "İşlemler"
+            { "th_mainCategory", "Ana Kategori" },
+            { "th_subCategory", "Alt Kategori" },
+            { "th_brand", "Marka" },
+            { "th_model", "Model" },
+            { "th_handStatus", "El Durumu" },
+            { "th_stock", "Stok" },
+            { "th_rented", "Kiralık" },
+            { "th_sold", "Satılık" },
+            { "th_year", "Yıl" },
+            { "th_description", "Açıklama" },
+            { "th_registrationDate", "Kayıt Tarihi" },
+            { "th_processes", "İşlemler" },
         },
-        EN = new string[]
+        "EN" => new Dictionary<string, string>
         {
-            "Main Category",
-            "Sub Category",
-            "Brand",
-            "Model",
-            "Hand Status",
-            "Stock",
-            "Rented",
-            "Sold",
-            "Year",
-            "Description",
-            "Registration Date",
-            "Processes"
-        }
-    };
-
-    var columnNames = language switch
-    {
-        "TR" => columnNamesByLanguages.TR,
-        "EN" => columnNamesByLanguages.EN
+            { "th_mainCategory", "Main Category" },
+            { "th_subCategory", "Sub Category" },
+            { "th_brand", "Brand" },
+            { "th_model", "Model" },
+            { "th_handStatus", "Hand Status" },
+            { "th_stock", "Stock" },
+            { "th_rented", "Rented" },
+            { "th_sold", "Sold" },
+            { "th_year", "Year" },
+            { "th_description", "Description" },
+            { "th_registrationDate", "Registration Date" },
+            { "th_processes", "Processes" }
+        },
     };
     #endregion
 
@@ -123,7 +120,7 @@
     };
     #endregion
 
-    #endregion
+    #endregion    
 }
 
 
@@ -183,11 +180,13 @@
 								<input id="box_all" type="checkbox"><i></i>
                             </label>
                         </th>
-                        @{  
+                        @{
                             #region add column names
-                            foreach(var columnName in columnNames)
+                            foreach(var columnId in columnIdsAndNamesDict.Keys)
                             {
-                                <td><b>@columnName</b></td>    
+                                <th id="@columnId">
+                                    <b>@columnIdsAndNamesDict[columnId]</b>
+                                </th> 
                             }
                             #endregion
                         }
@@ -223,4 +222,6 @@
 	var language = "@ViewBag.Language";
     var entityCountMessage = "@entityCountMessage";
     var updateButtonName = "@updateButtonName";
+    var allLanguagesInDb = @Html.Raw(Json
+        .Serialize(allLanguagesInDb));
 </script>

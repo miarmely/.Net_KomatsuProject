@@ -3,6 +3,7 @@ using Entities.ConfigModels.Contracts;
 using Entities.DtoModels;
 using Entities.ViewModels;
 using Repositories.Contracts;
+using System.Linq.Expressions;
 
 namespace Repositories.Concretes
 {
@@ -12,6 +13,41 @@ namespace Repositories.Concretes
             : base(context, configs)
         {}
 
+        public async Task<UserView?> LoginAsync(
+            DynamicParameters parameters)
+        {
+            #region login and get userInfos if login successfull
+            UserView userView = null;
+
+            try
+            {
+                await base.QueryAsync<UserView, RolePartForUserView, UserView>(
+                    base.Configs.DbSettings.ProcedureNames.User_Login,
+                    parameters,
+                    (userViewPart, RolePart) =>
+                    {
+                        #region populate roleNames of User 
+                        // when userView not initialized
+                        if (userView == null)
+                            userView = userViewPart;
+
+                        userView.RoleNames.Add(RolePart.RoleName);
+                        #endregion
+
+                        return userViewPart;
+                    },
+                    "RoleId");
+            }
+                
+            catch(Exception ex)
+            {
+                // if expected error occured in database, multi-mapping method not mapping the error details from db and throw different error. So i put try-catch block and i passed this block
+            }
+            #endregion
+
+            return userView;
+        }
+            
         public async Task<ErrorDto?> CreateUserAsync(DynamicParameters parameters) =>
             await base.QuerySingleOrDefaultAsync<ErrorDto>(
                 base.Configs.DbSettings.ProcedureNames.User_Create,

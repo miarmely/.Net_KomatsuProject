@@ -4,6 +4,5 @@
     {
         public string TelNo { get; init; }
         public string Password { get; init; }
-        public string Language { get; init; }
     }
 }

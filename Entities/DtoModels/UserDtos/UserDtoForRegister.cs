@@ -1,6 +1,6 @@
 ﻿namespace Entities.DtoModels.UserDtos
 {
-    public class UserDtoForRegister
+    public record UserDtoForRegister
     {
         public string FirstName { get; init; }
         public string LastName { get; init; }

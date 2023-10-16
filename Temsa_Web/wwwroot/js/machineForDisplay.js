@@ -566,8 +566,8 @@ $(function () {
             "stock": "number",
             "rented": "number",
             "sold": "number",
-            "description": "text",
             "year": "number",
+            "description": "text"
         }
 
         // populate "columnsForAddInput"
@@ -613,6 +613,48 @@ $(function () {
         }
         //#endregion
 
+        //#region add dropdown to description column
+
+        //#region create dropdown at description column
+        let th_description = $("#th_description");
+        let descriptionColumnName = th_description.text();
+
+        th_description.empty();
+        th_description.append(
+            `<div class="btn-group">
+                <button type="button" style="background-color: darkblue" class="btn btn-danger">
+                    ${descriptionColumnName} (${language})
+                </button>
+                <button type="button" style="background-color: darkblue" class="btn btn-danger dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <span class="caret"></span>
+                </button>
+                <div class="dropdown-menu ">
+                    <div class="col-xs-1">
+                        <ul id="div_dropdownMenu">
+
+                        </ul>
+                    </div>
+                </div>
+            </div>`);
+        //#endregion
+
+        //#region populate languages to "th_description" dropdown
+        let div_drowdownMenu = $("#div_dropdownMenu");
+        div_drowdownMenu.empty();
+
+        for (var index in allLanguagesInDb) {
+            let languageInDb = allLanguagesInDb[index];
+
+            div_drowdownMenu.append(
+                `<li class="dropdown-item" href="#">
+                    ${languageInDb}
+                </li>`
+            )
+        }
+        //#endregion
+
+        //#endregion
+        
         //#region add <select> to columns
         // add <select> all columns
         for (let columnName in columnsForAddSelect) {

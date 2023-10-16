@@ -35,46 +35,45 @@ namespace Services.Concretes
             _mapper = mapper;
         }
 
-        public async Task<string> LoginAsync(UserDtoForLogin userDto)
+        public async Task<string> LoginAsync(string language, UserDtoForLogin userDto)
         {
             #region set paramaters
             var parameters = new DynamicParameters();
-            
-            parameters.Add("TelNo", userDto.TelNo, DbType.String);
-            parameters.Add("Language", userDto.Language, DbType.String);
-            #endregion
-
-            #region get userView by telNo
-            var userView = await _manager.UserRepository
-                .GetUserByTelNoAsync(parameters);
-            #endregion
-
-            #region when telNo not found (throw)
-            _ = userView ?? throw new ErrorWithCodeException(404,
-                "VE-U-T",
-                "Verification Error - User - Telephone");
-            #endregion
-
-            #region when password is wrong (throw)
             var hashedPassword = await ComputeMd5Async(userDto.Password);
 
-            if (!userView.Password.Equals(hashedPassword))
-                throw new ErrorWithCodeException(404,
-                    "VE-U-P",
-                    "Verification Error - User - Password");
+            parameters.Add("Language", language, DbType.String);
+            parameters.Add("TelNo", userDto.TelNo, DbType.String);
+            parameters.Add("Password", hashedPassword, DbType.String);
+            parameters.Add("StatusCode", 0, DbType.Int16, ParameterDirection.Output);
+            parameters.Add("ErrorCode", "", DbType.String, ParameterDirection.Output);
+            parameters.Add("ErrorMessage", "", DbType.String, ParameterDirection.Output);
+            parameters.Add("ErrorDescription", "", DbType.String, ParameterDirection.Output);
+            #endregion
+
+            #region login (throw)
+            var userView = await _manager.UserRepository
+                .LoginAsync(parameters);
+
+            // when telNo or password is wrong (throw)
+            if (userView == null)
+                throw new ErrorWithCodeException(
+                    parameters.Get<Int16>("StatusCode"),
+                    parameters.Get<string>("ErrorCode"),
+                    parameters.Get<string>("ErrorDescription"),
+                    parameters.Get<string>("ErrorMessage"));
             #endregion
 
             return await GenerateTokenForUserAsync(userView);
         }
 
-        public async Task RegisterAsync(UserDtoForRegister userDto)
+        public async Task RegisterAsync(string language, UserDtoForRegister userDto)
         {
             var userDtoForCreate = _mapper.Map<UserDtoForCreate>(userDto);
 
-            await CreateUserAsync(userDtoForCreate);
+            await CreateUserAsync(language, userDtoForCreate);
         }
 
-        public async Task CreateUserAsync(UserDtoForCreate userDto)
+        public async Task CreateUserAsync(string language, UserDtoForCreate userDto)
         {
             #region set parameters
 
@@ -95,6 +94,8 @@ namespace Services.Concretes
                 RoleNames = string.Join(", ", userDto.RoleNames) // list to string 
             };
             var parameters = new DynamicParameters(userDtoForProc);
+
+            parameters.Add("Language", language, DbType.String);
             #endregion
 
             #endregion
@@ -228,8 +229,6 @@ namespace Services.Concretes
         }
 
 
-
-
         #region private
 
         private async Task<string> ComputeMd5Async(string input) =>
@@ -253,10 +252,10 @@ namespace Services.Concretes
                 #region set claims
                 var claims = new Collection<Claim>
                 {
-                    new ("TelNo", userView.TelNo),
+                    new (ClaimTypes.MobilePhone, userView.TelNo),
+                    new (ClaimTypes.Email, userView.Email),
                     new (ClaimTypes.Name, userView.FirstName),
                     new (ClaimTypes.Surname, userView.LastName),
-                    new ("Language", userView.Language)
                 };
 
                 #region add roles of user to claims

@@ -7,6 +7,7 @@
     }
     public record ProcedureNames
     {
+        public string User_Login { get; init; }
         public string User_Create { get; init; }
         public string User_DisplayAll { get; init; }
         public string User_DisplayByTelNo { get; init; }

@@ -25,7 +25,7 @@ namespace Presantation.Controllers
             [FromBody] UserDtoForLogin userDto)
         {
             var token = await _manager.UserService
-                .LoginAsync(userDto);
+                .LoginAsync(language, userDto);
 
             return Ok(new
             {
@@ -42,7 +42,7 @@ namespace Presantation.Controllers
             [FromBody] UserDtoForRegister userDto)
         {
             await _manager.UserService
-                .RegisterAsync(userDto);
+                .RegisterAsync(language, userDto);
 
             return StatusCode(StatusCodes.Status201Created);
         }
@@ -57,7 +57,7 @@ namespace Presantation.Controllers
             [FromBody] UserDtoForCreate userDto)
 		{
             await _manager.UserService
-                .CreateUserAsync(userDto);
+                .CreateUserAsync(language, userDto);
 
 			return StatusCode(StatusCodes.Status201Created);
 		}

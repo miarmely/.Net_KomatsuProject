@@ -6,6 +6,7 @@ namespace Repositories.Contracts
 {
     public interface IUserRepository : IRepositoryBase
     {
+        Task<UserView?> LoginAsync(DynamicParameters parameters); 
         Task<ErrorDto?> CreateUserAsync(DynamicParameters parameters);
         Task<ErrorDto?> UpdateUserByTelNoAsync(DynamicParameters parameters);
         Task<ErrorDto> DeleteUsersByTelNoListAsync(DynamicParameters parameters);
