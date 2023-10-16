@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Http;
 using Repositories;
 using Repositories.Contracts;
 using Services.Contracts;
+using System;
 using System.Data;
 
 namespace Services.Concretes
@@ -105,16 +106,35 @@ namespace Services.Concretes
 
             parameters.Add("Language", language, DbType.String);
             parameters.Add("TotalCount", 0, DbType.Int32, ParameterDirection.Output);
+            parameters.Add("StatusCode", 0, DbType.Int16, ParameterDirection.Output);
+            parameters.Add("ErrorCode", "", DbType.String, ParameterDirection.Output);
+            parameters.Add("ErrorMessage", "", DbType.String, ParameterDirection.Output);
+            parameters.Add("ErrorDescription", "", DbType.String, ParameterDirection.Output);
+
             parameters.AddDynamicParams(machineDto);
             #endregion
 
-            #region get machineViews and convert pagingList
+            #region get machineViews (throw)
             var machineViews = await _manager.MachineRepository
                 .GetMachinesByConditionAsync(parameters);
-            
+
+            #region when any machine not found (throw)
+            var totalCount = parameters.Get<int>("TotalCount");
+
+            if (totalCount == 0)
+                throw new ErrorWithCodeException(
+                    parameters.Get<Int16>("StatusCode"),
+                    parameters.Get<string>("ErrorCode"),
+                    parameters.Get<string>("ErrorDescription"),
+                    parameters.Get<string>("ErrorMessage"));
+            #endregion
+
+            #endregion
+
+            #region convert machineViews to pagingList
             var machineViewPagingList = await PagingList<MachineView>.ToPagingListAsync(
                    machineViews,
-                   parameters.Get<int>("TotalCount"),
+                   totalCount,
                    paginationParameters.PageNumber,
                    paginationParameters.PageSize);
             #endregion
