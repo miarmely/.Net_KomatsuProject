@@ -14,6 +14,7 @@ $(function () {
     const errorMessageColor = "rgb(255, 75, 75)";
     let machineCountOnTable;
     let paginationInfosInJson;
+    let languageOnDescriptionButton = language;
     //#endregion
 
     //#region events
@@ -108,6 +109,21 @@ $(function () {
         }
         //#endregion
     })
+    $("th").click(() => {
+        let selectedElement = $(":focus");
+
+        switch (selectedElement.attr("id")) {
+            //#region when click to description dropdown items
+            case "a_descriptionDropdownItem":
+                click_descriptionDropdownItems(selectedElement);
+                break;
+            //#endregion
+
+            case "btn_description":
+                click_descriptionButton();
+                break;
+        }
+    });
     //#endregion events
 
     //#region functions
@@ -582,6 +598,8 @@ $(function () {
             "subCategoryName": row.children("#td_subCategoryName"),
             "handStatus": row.children("#td_handStatus"),
         };
+
+        //#region set "columnValues""
         let columnValues = {
             "mainCategoryName": columnsForAddSelect.mainCategoryName.text(),
             "subCategoryName": columnsForAddSelect.subCategoryName.text(),
@@ -592,8 +610,15 @@ $(function () {
             "rented": columnsForAddInput.rented.text(),
             "sold": columnsForAddInput.sold.text(),
             "year": columnsForAddInput.year.text(),
-            "description": columnsForAddInput.description.text()
         };
+
+        //#region add description info to columnValues
+        let descriptionKeyInSession = "descriptionIn" + languageOnDescriptionButton;
+        columnValues[descriptionKeyInSession] = columnsForAddInput.description.text()
+        //#endregion
+
+        //#endregion
+
         //#endregion
 
         //#region add <input> to columns
@@ -617,21 +642,21 @@ $(function () {
 
         //#region create dropdown at description column
         let th_description = $("#th_description");
-        let descriptionColumnName = th_description.text();
-
+        
         th_description.empty();
         th_description.append(
             `<div class="btn-group">
-                <button type="button" style="background-color: darkblue" class="btn btn-danger">
-                    ${descriptionColumnName} (${language})
+                <button id="btn_description"  type="button"  style="background-color: darkblue;  color: red" class="btn btn-danger">
+                    <b>${baseDescriptionButtonName} (${language})</b>
                 </button>
-                <button type="button" style="background-color: darkblue" class="btn btn-danger dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+
+                <button id="btn_descriptionDropdown"  type="button"  style="background-color: darkblue" class="btn btn-danger dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                     <span class="caret"></span>
                 </button>
-                <div class="dropdown-menu ">
-                    <div class="col-xs-1">
-                        <ul id="div_dropdownMenu">
 
+                <div class="dropdown-menu">
+                    <div class="col-xs-1" style="padding:0px">
+                        <ul id="ul_dropdownMenu" style="list-style-type:none">
                         </ul>
                     </div>
                 </div>
@@ -639,15 +664,20 @@ $(function () {
         //#endregion
 
         //#region populate languages to "th_description" dropdown
-        let div_drowdownMenu = $("#div_dropdownMenu");
-        div_drowdownMenu.empty();
+        let ul_dropdownMenu = $("#ul_dropdownMenu");
+        ul_dropdownMenu.empty();
 
         for (var index in allLanguagesInDb) {
             let languageInDb = allLanguagesInDb[index];
 
-            div_drowdownMenu.append(
-                `<li class="dropdown-item" href="#">
-                    ${languageInDb}
+            ul_dropdownMenu.append(
+                `<li class="dropdown-item">
+                    <a  id="a_descriptionDropdownItem"
+                        href="#"  
+                        style="padding: 3px 75px;  color:black"
+                        OnMouseOver: "this.style.color:red;">
+                        ${languageInDb}
+                    </a>
                 </li>`
             )
         }
@@ -794,6 +824,23 @@ $(function () {
 
         removeInputsAndSelects(row, machineInfosInSession);
         resetErrorRow(row);
+    }
+
+    async function click_descriptionDropdownItems(a_descriptionDropdownItem)
+    {
+        //#region change description button name
+        let selectedLanguage = a_descriptionDropdownItem.prop("innerText");
+        let btn_description = $("#btn_description");
+
+        btn_description.empty();
+        btn_description.append(
+            `<b>${baseDescriptionButtonName} (${selectedLanguage})<b>`);
+        //#endregion
+    }
+
+    async function click_descriptionButton() {
+
+
     }
 
     async function populateTable(pageNumber, refreshPaginationButtons) {

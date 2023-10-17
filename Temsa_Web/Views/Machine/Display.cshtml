@@ -6,41 +6,31 @@
     var allLanguagesInDb = await Model.MachineService.GetAllLanguagesAsync();
     #endregion
 
-    #region set table title by languages
-    var TableTitleByLanguages = new
-    {
-        TR = "KAYITLI MAKİNELER",
-        EN = "REGISTERED MACHINES"
-    };
+    #region set element names by languages
 
+    #region set table title
     var TableTitle = language switch
     {
-        "TR" => TableTitleByLanguages.TR,
-        "EN" => TableTitleByLanguages.EN
+        "TR" => "KAYITLI MAKİNELER",
+        "EN" => "REGISTERED MACHINES"
     };
     #endregion
 
-    #region set menubar options by languages
-    var menubarOptionsByLanguages = new
+    #region set menubar options
+    var menubarOptions = language switch
     {
-        TR = new string[]
+        "TR" => new string[]
         {
             "Seçilenleri Sil"
         },
-        EN = new string[]
+        "EN" => new string[]
         {
             "Delete Selected"
         }
     };
-
-    var menubarOptions = language switch
-    {
-        "TR" => menubarOptionsByLanguages.TR,
-        "EN" => menubarOptionsByLanguages.EN
-    };
     #endregion
 
-    #region set column ids and names by languages
+    #region set column ids and names
     var columnIdsAndNamesDict = language switch
     {
         "TR" => new Dictionary<string, string>
@@ -76,51 +66,43 @@
     };
     #endregion
 
-    #region set entity count message by languages
-    var entityCountMessageByLanguages = new
-    {
-        TR = "makine gösteriliyor",
-        EN = "machine displaying"
-    };
-
+    #region set entity count message
     var entityCountMessage = language switch
     {
-        "TR" => entityCountMessageByLanguages.TR,
-        "EN" => entityCountMessageByLanguages.EN
+        "TR" => "makine gösteriliyor",
+        "EN" => "machine displaying"
     };
     #endregion
 
-    #region set button names by languages
-    
-    #region set button of menubar options
-    var menubarOptionsButtonByLanguages = new
-    {
-        TR = "Uygula",
-        EN = "Apply"
-    };
+    #region set button names
 
+    #region set menubar options button name
     var menubarOptionsButton = language switch
     {
-        "TR" => menubarOptionsButtonByLanguages.TR,
-        "EN" => menubarOptionsButtonByLanguages.EN
+        "TR" => "Uygula",
+        "EN" => "Apply"
     };
     #endregion
 
-    #region set update button
-    var updateButtonNameByLanguages = new
-    {
-        TR = "Güncelle",
-        EN = "Update",
-    };
-
+    #region set update button name
     var updateButtonName = language switch
     {
-        "TR" => updateButtonNameByLanguages.TR,
-        "EN" => updateButtonNameByLanguages.EN,
+        "TR" => "Güncelle",
+        "EN" => "Update",
+    };
+    #endregion
+
+    #region set base description button name
+    var baseDescriptionButtonName = language switch
+    {
+        "TR" => "Açıklama",
+        "EN" => "Description"
     };
     #endregion
 
     #endregion    
+
+    #endregion
 }
 
 
@@ -222,6 +204,7 @@
 	var language = "@ViewBag.Language";
     var entityCountMessage = "@entityCountMessage";
     var updateButtonName = "@updateButtonName";
+    var baseDescriptionButtonName = "@baseDescriptionButtonName";
     var allLanguagesInDb = @Html.Raw(Json
         .Serialize(allLanguagesInDb));
 </script>
