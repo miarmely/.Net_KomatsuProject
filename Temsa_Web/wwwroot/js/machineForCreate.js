@@ -1,4 +1,4 @@
-﻿import { changed_descriptionInput, clicked_descriptionDropdownButton, clicked_descriptionDropdownMenu, getDescriptionKeyForSession, updateResultLabel } from "./miarTools.js"
+﻿import { changed_descriptionInput, clicked_descriptionDropdownButton, clicked_descriptionDropdownItem, getDescriptionKeyForSession, updateResultLabel } from "./miarTools.js"
 
 $(function () {
     //#region variables
@@ -88,7 +88,7 @@ $(function () {
         });
     });
     $("#ul_description").click(() =>
-        clicked_descriptionDropdownMenu(
+        clicked_descriptionDropdownItem(
             $(":focus"),
             description_inputId,
             description_buttonId,

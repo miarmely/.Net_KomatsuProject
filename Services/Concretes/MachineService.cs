@@ -56,9 +56,34 @@ namespace Services.Concretes
             parameters.Add("ErrorMessage", "", DbType.String, ParameterDirection.Output);
             #endregion
 
-            #region get machineViews (throw)
+            #region get machineViews
+            var machineViewDict = new Dictionary<Guid, MachineView>();
+
             var machineViews = await _manager.MachineRepository
-                .GetAllMachinesAsync(parameters);
+                .GetAllMachinesAsync(
+                    parameters,
+                    (machineViewPart, descriptionPart) =>
+                    {
+                        #region when machine id not exists in dict
+                        if (!machineViewDict.TryGetValue(
+                            machineViewPart.Id,
+                            out var currentMachine))
+                        {
+                            currentMachine = machineViewPart;
+                            machineViewDict.Add(currentMachine.Id, currentMachine);
+                        }
+                        #endregion
+
+                        #region add description to machineView
+                        currentMachine.Descriptions.Add(
+                            descriptionPart.Language,
+                            descriptionPart.Description);
+                        #endregion
+
+                        return machineViewPart;
+                    },
+                    "Language");
+            #endregion
 
             #region when any machine not found (throw)
             var totalCount = parameters.Get<int>("TotalCount");
@@ -71,14 +96,12 @@ namespace Services.Concretes
                     parameters.Get<string>("ErrorMessage"));
             #endregion
 
-            #endregion
-
             #region add pagination informations to headers
 
             #region create pagination list
             var machineViewPagingList = await PagingList<MachineView>
                 .ToPagingListAsync(
-                    machineViews,
+                    machineViewDict.Values,
                     totalCount,
                     pagingParameters.PageNumber,
                     pagingParameters.PageSize);

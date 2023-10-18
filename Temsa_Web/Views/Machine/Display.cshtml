@@ -204,7 +204,8 @@
 	var language = "@ViewBag.Language";
     var entityCountMessage = "@entityCountMessage";
     var updateButtonName = "@updateButtonName";
-    var baseDescriptionButtonName = "@baseDescriptionButtonName";
+    var description_baseButtonName = @Html.Raw(Json
+        .Serialize(baseDescriptionButtonName));
     var allLanguagesInDb = @Html.Raw(Json
         .Serialize(allLanguagesInDb));
 </script>

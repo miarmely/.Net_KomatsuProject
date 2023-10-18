@@ -1,10 +1,10 @@
-﻿import { getDateTimeInString, updateResultLabel } from "./miarTools.js";
+﻿import { clicked_descriptionDropdownButton, clicked_descriptionDropdownItem, getDateTimeInString, updateResultLabel } from "./miarTools.js";
 
 
 $(function () {
     //#region variables
     const pageNumber = 1;
-    const pageSize = 10;
+    const pageSize = 7;
     const paginationButtonQuantity = 5;
     const tableBody = $("#tbl_machine tbody");
     const nameOfPaginationHeader = "Machine-Pagination";
@@ -12,9 +12,14 @@ $(function () {
     const ul_pagination = $("#ul_pagination");
     const apiUrl = "https://localhost:7091/api/services/machine";
     const errorMessageColor = "rgb(255, 75, 75)";
+    const description_inputId = "#inpt_description";
+    const description_buttonId = "#btn_description";
+    const description_unsavedColor = "red";
+    const description_savedColor = "lightgreen";
+    const description_baseKeyForSession = "Machine-Create-Description";
     let machineCountOnTable;
     let paginationInfosInJson;
-    let languageOnDescriptionButton = language;
+    let totalCurrentUpdateQuantity = 0;
     //#endregion
 
     //#region events
@@ -80,7 +85,7 @@ $(function () {
     })
     $("#btn_apply").click(async () => {
         let opt_selected = $("#slct_menubar option:selected");
-        
+
         switch (opt_selected.val()) {
             //#region delete selected values
             case "0":
@@ -96,32 +101,48 @@ $(function () {
 
         switch (clickedElement.attr("id")) {
             case "btn_update":
+                totalCurrentUpdateQuantity += 1;
                 await click_updateButtonAsync(row);
                 break;
-
             case "btn_save":
+                totalCurrentUpdateQuantity -= 1;
                 await click_saveButtonAsync(row);
                 break;
-
             case "btn_cancel":
+                totalCurrentUpdateQuantity -= 1;
                 await click_cancelButtonAsync(row);
                 break;
         }
         //#endregion
     })
-    $("th").click(() => {
+    $("th").click(() => {  // control description column
         let selectedElement = $(":focus");
 
         switch (selectedElement.attr("id")) {
             //#region when click to description dropdown items
             case "a_descriptionDropdownItem":
-                click_descriptionDropdownItems(selectedElement);
+                clicked_descriptionDropdownItem(
+                    selectedElement,
+                    description_inputId,
+                    description_buttonId,
+                    description_baseButtonName,
+                    description_unsavedColor,
+                    description_baseKeyForSession);
+
                 break;
             //#endregion
 
+            //#region when click to description button on <th>
             case "btn_description":
-                click_descriptionButton();
+                clicked_descriptionDropdownButton(
+                    language,
+                    description_inputId,
+                    description_buttonId,
+                    description_baseKeyForSession,
+                    description_savedColor);
+
                 break;
+            //#endregion
         }
     });
     //#endregion events
@@ -131,9 +152,18 @@ $(function () {
         //#region remove <input>'s and <select>'s
         for (let columnName in columnNamesAndValues) {
             var td = row.children(`#td_${columnName}`);
-
             td.empty();
-            td.append(columnNamesAndValues[columnName]);
+
+            //#region add default value to <td>
+            switch (columnName) {
+                case "descriptions":
+                    td.append(columnNamesAndValues[columnName][language]);
+                    break;
+                default:
+                    td.append(columnNamesAndValues[columnName]);
+                    break;
+            }
+            //#endregion
         }
         //#endregion
 
@@ -154,38 +184,47 @@ $(function () {
         let rowNo = 1;
 
         response.forEach(machineView => {
+            let rowId = `tr_row${rowNo}`;
+
+            // add machines to table
             tableBody.append(
-                `<tr id= tr_row${rowNo} class= ${machineView.id}>
-                <td id="td_checkBox">
-					<label class="i-checks m-b-none">
-						<input type="checkbox"><i></i>
-					</label>
-				</td>
-				<td id="td_mainCategoryName">${machineView.mainCategoryName}</td>
-				<td id="td_subCategoryName">${machineView.subCategoryName}</td>
-				<td id="td_brandName">${machineView.brandName}</td>
-				<td id="td_model">${machineView.model}</td>
-				<td id="td_handStatus">${machineView.handStatus}</td>
-				<td id="td_stock">${machineView.stock}</td>
-				<td id="td_rented">${machineView.rented}</td>
-				<td id="td_sold">${machineView.sold}</td>
-				<td id="td_year">${machineView.year}</td>
-				<td id="td_description">${machineView.description}</td>
-				<td id="td_createdAt">${getDateTimeInString(machineView.createdAt)}</td>
-				<td id="td_processes">
-					<button id="btn_update" class="active" ui-toggle-class="">
-						<i class="fa fa-pencil text-info">
-							${updateButtonName}
-						</i>
-					</button>
-				</td>
-				<td style="width:30px;"></td>
-			</tr>
-			<tr hidden></tr>
-			<tr id="tr_row${rowNo}_error">
-				<td id="td_error" colspan="13" hidden></td>
-			</tr>`
-            );
+                `<tr id= "${rowId}" class= ${machineView.id}>
+                    <td id="td_checkBox">
+					    <label class="i-checks m-b-none">
+						    <input type="checkbox"><i></i>
+					    </label>
+				    </td>
+				    <td id="td_mainCategoryName">${machineView.mainCategoryName}</td>
+				    <td id="td_subCategoryName">${machineView.subCategoryName}</td>
+				    <td id="td_brandName">${machineView.brandName}</td>
+				    <td id="td_model">${machineView.model}</td>
+				    <td id="td_handStatus">${machineView.handStatus}</td>
+				    <td id="td_stock">${machineView.stock}</td>
+				    <td id="td_rented">${machineView.rented}</td>
+				    <td id="td_sold">${machineView.sold}</td>
+				    <td id="td_year">${machineView.year}</td>
+				    <td id="td_descriptions">${machineView.descriptions[language]}</td>
+				    <td id="td_createdAt">${getDateTimeInString(machineView.createdAt)}</td>
+				    <td id="td_processes">
+					    <button id="btn_update" class="active" ui-toggle-class="">
+						    <i class="fa fa-pencil text-info">
+							    ${updateButtonName}
+						    </i>
+					    </button>
+				    </td>
+				    <td style="width:30px;"></td>
+			    </tr>
+			    <tr hidden></tr>
+			    <tr id="tr_row${rowNo}_error">
+				    <td id="td_error" colspan="13" hidden></td>
+			    </tr>`);
+
+            // add descriptions of machine to session
+            sessionStorage.setItem(
+                rowId,
+                JSON.stringify({
+                    "descriptions": machineView.descriptions
+                }));
 
             rowNo += 1;
         });
@@ -573,7 +612,6 @@ $(function () {
 
     async function click_updateButtonAsync(row) {
         //#region set variables
-
         //#region set "columnsForAddInput"
         let columnsForAddInput = {}
         let columnsForAddInputGuide = {
@@ -583,7 +621,7 @@ $(function () {
             "rented": "number",
             "sold": "number",
             "year": "number",
-            "description": "text"
+            "descriptions": "text"
         }
 
         // populate "columnsForAddInput"
@@ -593,13 +631,14 @@ $(function () {
         }
         //#endregion
 
+        let rowId = row.attr("id");
         let columnsForAddSelect = {
             "mainCategoryName": row.children("#td_mainCategoryName"),
             "subCategoryName": row.children("#td_subCategoryName"),
             "handStatus": row.children("#td_handStatus"),
         };
 
-        //#region set "columnValues""
+        //#region set "columnValues"
         let columnValues = {
             "mainCategoryName": columnsForAddSelect.mainCategoryName.text(),
             "subCategoryName": columnsForAddSelect.subCategoryName.text(),
@@ -612,9 +651,11 @@ $(function () {
             "year": columnsForAddInput.year.text(),
         };
 
-        //#region add description info to columnValues
-        let descriptionKeyInSession = "descriptionIn" + languageOnDescriptionButton;
-        columnValues[descriptionKeyInSession] = columnsForAddInput.description.text()
+        //#region add descriptions in session to columnValues
+        let rowInfosInSession = JSON.parse(
+            sessionStorage.getItem(rowId));
+
+        columnValues["descriptions"] = rowInfosInSession["descriptions"];
         //#endregion
 
         //#endregion
@@ -623,31 +664,42 @@ $(function () {
 
         //#region add <input> to columns
         for (let columnName in columnsForAddInput) {
-            // reset column
+            //#region reset column
             let column = columnsForAddInput[columnName];
             column.empty()
+            //#endregion
 
-            // add <input>
+            //#region add <input>
             let inputType = columnsForAddInputGuide[columnName];
             column.append(`<input type="${inputType}" id="inpt_${columnName}">`);
+            //#endregion
 
-            // add default value to <inpt>
-            column
-                .children(`#inpt_${columnName}`)
-                .val(columnValues[columnName]);
+            //#region add default value to <inpt>'s
+            let inputOnColumn = column.children(`#inpt_${columnName}`)
+
+            switch (columnName) {
+                case "descriptions":
+                    inputOnColumn.val(columnValues[columnName][language])
+                    break;
+                default:
+                    inputOnColumn.val(columnValues[columnName]);
+                    break;
+            }
+            //#endregion
         }
         //#endregion
 
         //#region add dropdown to description column
 
-        //#region create dropdown at description column
+        //#region create dropdown
         let th_description = $("#th_description");
-        
+        let descriptionButtonIdWithoutDash = description_buttonId.substring(1); // #btn_description ~~> btn_description 
+
         th_description.empty();
         th_description.append(
             `<div class="btn-group">
-                <button id="btn_description"  type="button"  style="background-color: darkblue;  color: red" class="btn btn-danger">
-                    <b>${baseDescriptionButtonName} (${language})</b>
+                <button id="${descriptionButtonIdWithoutDash}"  type="button"  style="background-color: darkblue;  color: red" class="btn btn-danger">
+                    <b>${description_baseButtonName} (${language})</b>
                 </button>
 
                 <button id="btn_descriptionDropdown"  type="button"  style="background-color: darkblue" class="btn btn-danger dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -684,7 +736,7 @@ $(function () {
         //#endregion
 
         //#endregion
-        
+
         //#region add <select> to columns
         // add <select> all columns
         for (let columnName in columnsForAddSelect) {
@@ -720,9 +772,9 @@ $(function () {
 
         //#endregion
 
-        //#region save column values to session
+        //#region add columnValues to session
         sessionStorage.setItem(
-            row.attr("id"),
+            rowId,
             JSON.stringify(columnValues)
         );
         //#endregion
@@ -817,30 +869,21 @@ $(function () {
     }
 
     async function click_cancelButtonAsync(row) {
-        //#region get machine infos in session
+        //#region get machine infos in 
         var machineInfosInSession = JSON.parse(sessionStorage
             .getItem(row.attr("id")));
         //#endregion
 
+        //#region remove description button from <th>
+        if (totalCurrentUpdateQuantity == 0) {
+            let th_description = $("#th_description");
+            th_description.empty();
+            th_description.text(description_baseButtonName);
+        }
+        //#endregion
+
         removeInputsAndSelects(row, machineInfosInSession);
         resetErrorRow(row);
-    }
-
-    async function click_descriptionDropdownItems(a_descriptionDropdownItem)
-    {
-        //#region change description button name
-        let selectedLanguage = a_descriptionDropdownItem.prop("innerText");
-        let btn_description = $("#btn_description");
-
-        btn_description.empty();
-        btn_description.append(
-            `<b>${baseDescriptionButtonName} (${selectedLanguage})<b>`);
-        //#endregion
-    }
-
-    async function click_descriptionButton() {
-
-
     }
 
     async function populateTable(pageNumber, refreshPaginationButtons) {

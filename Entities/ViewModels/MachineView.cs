@@ -1,4 +1,6 @@
-﻿namespace Entities.ViewModels
+﻿using System.Diagnostics.SymbolStore;
+
+namespace Entities.ViewModels
 {
     public record MachineView
     {
@@ -14,7 +16,12 @@
         public Int16 Year { get; init; }
         public string ImagePath { get; init; }
         public string PdfPath { get; init; }
-        public string Description { get; init; }
+        public IDictionary<string, string> Descriptions { get; } 
         public DateTime CreatedAt { get; init; }
+
+        public MachineView() 
+            => Descriptions = new Dictionary<string, string>();
     }
+
+    public record DescriptionPartForMachineView(string Language, string Description);        
 }

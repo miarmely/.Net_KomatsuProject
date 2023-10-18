@@ -78,11 +78,11 @@ export function updateResultLabel(resultLabelId, message, color,
     //#endregion
 }
 
-export function clicked_descriptionDropdownMenu(
+export function clicked_descriptionDropdownItem(
     clickedElement,
     decriptionInputId,
     descriptionButtonId,
-    descriptionButtonName,
+    baseDescriptionButtonName,
     descriptionUnsavedColor,
     descriptionBaseKeyForSession) {
     //#region set variables
@@ -104,7 +104,7 @@ export function clicked_descriptionDropdownMenu(
     btn_description.empty();
     btn_description.append(
         `<b>
-            ${descriptionButtonName} (${description_language})
+            ${baseDescriptionButtonName} (${description_language})
         </b>`);
     //#endregion
 

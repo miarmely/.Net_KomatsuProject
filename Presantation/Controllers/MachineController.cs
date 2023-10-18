@@ -135,33 +135,5 @@ namespace Presantation.Controllers
 
 			return NoContent();
 		}
-
-
-
-        //      [HttpGet("display/condition")]
-        //      [ValidationNullArguments]
-        //      public async Task<IActionResult> GetMachinesByConditionAsync(
-        //          [FromQuery] MachineBodyDtoForDisplay machineDtoD,
-        //          [FromQuery] PaginationQueryDto paginationQueryDto)
-        //      {
-        //          var machines = await _manager.MachineService
-        //              .GetMachinesByConditionWithPagingAsync(
-        //                  machineDtoD,
-        //			paginationQueryDto, 
-        //                  Response);
-
-        //          return Ok(machines);
-        //      }
-
-
-        //      [HttpGet("display/subCategories/{MainCategoryName}")]
-        //      public async Task<IActionResult> GetSubCategoriesOfMainCategoryAsync(
-        //          [FromRoute(Name = "MainCategoryName")] string mainCategoryName)
-        //      {
-        //          var subCategories = await _manager.MachineService
-        //              .GetSubCategoriesOfMainCategoryAsync(mainCategoryName);
-
-        //          return Ok(subCategories);
-        //      }
     }
 }
