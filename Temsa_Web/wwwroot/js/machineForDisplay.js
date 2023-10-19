@@ -1,4 +1,4 @@
-﻿import { clicked_descriptionDropdownButton, clicked_descriptionDropdownItem, description_currentColor, getDateTimeInString, updateResultLabel } from "./miarTools.js";
+﻿import { changeDescriptionButtonColor, clicked_descriptionDropdownButton, clicked_descriptionDropdownItem, description_currentColor, getDateTimeInString, getDescriptionKeyForSession, setDescriptionLanguage, updateResultLabel } from "./miarTools.js";
 
 
 $(function () {
@@ -14,12 +14,11 @@ $(function () {
     const errorMessageColor = "rgb(255, 75, 75)";
     const description_inputId = "#inpt_descriptions";
     const description_buttonId = "#btn_description";
+    const description_baseKeyForSession = "Machine-Display-Description";
     const description_unsavedColor = "red";
     const description_savedColor = "lightgreen";
-    const description_baseKeyForSession = "Machine-Create-Description";
     let machineCountOnTable;
     let paginationInfosInJson;
-    let totalCurrentUpdateQuantity = 0;
     //#endregion
 
     //#region events
@@ -101,15 +100,12 @@ $(function () {
 
         switch (clickedElement.attr("id")) {
             case "btn_update":
-                totalCurrentUpdateQuantity += 1;
                 await clicked_updateButtonAsync(row);
                 break;
             case "btn_save":
-                totalCurrentUpdateQuantity -= 1;
                 await clicked_saveButtonAsync(row);
                 break;
             case "btn_cancel":
-                totalCurrentUpdateQuantity -= 1;
                 await clicked_cancelButtonAsync(row);
                 break;
         }
@@ -151,10 +147,8 @@ $(function () {
 
         //#region when description input changed
         if (inputtedElement.attr("id") == descriptionInputIdWithoutDash
-            && description_currentColor == description_savedColor) {
-            $(description_buttonId).css("color", description_unsavedColor);
-            description_currentColor = description_unsavedColor;
-        }
+            && description_currentColor == description_savedColor)
+            changeDescriptionButtonColor(description_buttonId, description_unsavedColor);
         //#endregion
     })
     //#endregion events
@@ -166,16 +160,16 @@ $(function () {
             var td = row.children(`#td_${columnName}`);
             td.empty();
 
-            //#region add default value to <td>
             switch (columnName) {
                 case "descriptions":
                     td.append(columnNamesAndValues[columnName][language]);
                     break;
-                default:
+               default:
                     td.append(columnNamesAndValues[columnName]);
                     break;
+                        
             }
-            //#endregion
+            
         }
         //#endregion
 
@@ -190,6 +184,12 @@ $(function () {
 			    </i>
 		    </button>`);
         //#endregion
+    }
+
+    function removeDescriptionButtonOnColumn() {
+        let th_description = $("#th_description");
+        th_description.empty();
+        th_description.text(description_baseButtonName);
     }
 
     function addMachinesToTable(response) {
@@ -624,6 +624,7 @@ $(function () {
 
     async function clicked_updateButtonAsync(row) {
         //#region set variables
+
         //#region set "columnsForAddInput"
         let columnsForAddInput = {}
         let columnsForAddInputGuide = {
@@ -644,6 +645,8 @@ $(function () {
         //#endregion
 
         let rowId = row.attr("id");
+        let rowInfosInSession = JSON.parse(
+            sessionStorage.getItem(rowId));
         let columnsForAddSelect = {
             "mainCategoryName": row.children("#td_mainCategoryName"),
             "subCategoryName": row.children("#td_subCategoryName"),
@@ -663,13 +666,8 @@ $(function () {
             "year": columnsForAddInput.year.text(),
         };
 
-        //#region add descriptions in session to columnValues
-        let rowInfosInSession = JSON.parse(
-            sessionStorage.getItem(rowId));
-
+        // add descriptions in session
         columnValues["descriptions"] = rowInfosInSession["descriptions"];
-        //#endregion
-
         //#endregion
 
         //#endregion
@@ -736,16 +734,25 @@ $(function () {
         for (var index in allLanguagesInDb) {
             let languageInDb = allLanguagesInDb[index];
 
+            //#region populate dropdown with languages
             ul_dropdownMenu.append(
                 `<li class="dropdown-item">
                     <a  id="a_descriptionDropdownItem"
                         href="#"  
-                        style="padding: 3px 75px;  color:black"
-                        OnMouseOver: "this.style.color:red;">
+                        style="padding: 3px 75px;  color:black">
                         ${languageInDb}
                     </a>
                 </li>`
             )
+            //#endregion
+
+            //#region update descriptions in session
+            let descriptionByLanguage = columnValues["descriptions"][languageInDb];
+
+            sessionStorage.setItem(
+                getDescriptionKeyForSession(description_baseKeyForSession, languageInDb),
+                descriptionByLanguage);
+            //#endregion
         }
         //#endregion
 
@@ -798,8 +805,8 @@ $(function () {
         //#region set variables
         let machineId = row.attr("class");
         let rowId = row.attr("id");
-        let oldColumnValues = JSON.parse(sessionStorage
-            .getItem(rowId));
+        let oldColumnValues = JSON.parse(
+            sessionStorage.getItem(rowId));
         let newColumnValues = {
             "mainCategoryName": row
                 .children("#td_mainCategoryName")
@@ -833,10 +840,6 @@ $(function () {
                 .children("#td_sold")
                 .children("input")
                 .val(),
-            "description": row
-                .children("#td_description")
-                .children("input")
-                .val(),
             "year": row
                 .children("#td_year")
                 .children("input")
@@ -845,13 +848,37 @@ $(function () {
         //#endregion
 
         //#region set data
+
         var data = {};
+
+        //#region add columns value to data except description 
         for (let columnName in newColumnValues) {
             data[columnName] = oldColumnValues[columnName]
-                == newColumnValues[columnName] ?
-                null
-                : newColumnValues[columnName]
+                == newColumnValues[columnName] ? // is same old value with new value?
+                null  // that means not changed
+                : newColumnValues[columnName]  // that means changed
         }
+        //#endregion
+
+        //#region add descriptions to data
+        for (var descriptionLanguage in oldColumnValues["descriptions"]) {
+            //#region set variables
+            let oldDescriptionByLanguage = oldColumnValues["descriptions"][descriptionLanguage];
+            let newDescriptionByLanguage = sessionStorage.getItem(
+                getDescriptionKeyForSession(
+                    description_baseKeyForSession,
+                    descriptionLanguage));
+            //#endregion
+
+            //#region add description to data
+            data[`DescriptionIn${descriptionLanguage}`] = oldDescriptionByLanguage
+                == newDescriptionByLanguage ?  // is description changed ?
+                null
+                : newDescriptionByLanguage;
+            //#endregion
+        }
+        //#endregion
+
         //#endregion
 
         //#region set url
@@ -869,7 +896,32 @@ $(function () {
             contentType: "application/json",
             dataType: "json",
             success: () => {
+                //#region update row infos in session 
+
+                //#region add descriptions to newColumnValues
+                newColumnValues["descriptions"] = {};
+
+                for (var index in allLanguagesInDb) {
+                    let languageInDb = allLanguagesInDb[index];
+                    let newDescriptionByLanguage = sessionStorage.getItem(
+                        getDescriptionKeyForSession(
+                            description_baseKeyForSession,
+                            languageInDb));
+
+                    newColumnValues["descriptions"][languageInDb] = newDescriptionByLanguage;
+                }
+                //#endregion
+
+                //#region update session
+                sessionStorage.setItem(
+                    rowId,
+                    JSON.stringify(newColumnValues));
+                //#endregion
+
+                //#endregion
+
                 removeInputsAndSelects(row, newColumnValues);
+                removeDescriptionButtonOnColumn();
                 resetErrorRow(row);
             },
             error: (response) => {
@@ -893,15 +945,8 @@ $(function () {
             .getItem(rowId));
         //#endregion
 
-        //#region remove description button from <th>
-        if (totalCurrentUpdateQuantity == 0) {
-            let th_description = $("#th_description");
-            th_description.empty();
-            th_description.text(description_baseButtonName);
-        }
-        //#endregion
-
         removeInputsAndSelects(row, machineInfosInSession);
+        removeDescriptionButtonOnColumn();
         resetErrorRow(row);
         await setDisabledOfOtherUpdateButtonsAsync(rowId, false);
     }
@@ -986,4 +1031,5 @@ $(function () {
     //#endregion
 
     populateTable(pageNumber, true);
+    setDescriptionLanguage(language);
 });

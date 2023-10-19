@@ -116,6 +116,8 @@ namespace Presantation.Controllers
             [FromQuery] MachineParametersForUpdate machineParameters,
             [FromBody] MachineDtoForUpdate machineDto)
         {
+            return NoContent();
+
 			await _manager.MachineService
                 .UpdateMachineAsync(machineParameters, machineDto);
 

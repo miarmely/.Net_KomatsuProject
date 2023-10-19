@@ -5,6 +5,15 @@ export let description_language;
 //#endregion
 
 //#region function
+export function setDescriptionLanguage(language) {
+    description_language = language;
+}
+
+export function changeDescriptionButtonColor(descriptionButtonId, color) {
+    $(descriptionButtonId).css("color", color);
+    description_currentColor = color;
+}
+
 export function getDateTimeInString(dateTime) {
     //#region set year
     let date = new Date(dateTime);
@@ -124,11 +133,6 @@ export function clicked_descriptionDropdownButton(
     descriptionButtonId,
     descriptionBaseKeyForSession,
     descriptionSavedColor) {
-    //#region set description language if undefined
-    if (description_language == undefined)
-        description_language = pageLanguage;
-    //#endregion
-
     //#region add description informations to session
     sessionStorage.setItem(
         getDescriptionKeyForSession(descriptionBaseKeyForSession),
@@ -136,8 +140,7 @@ export function clicked_descriptionDropdownButton(
     //#endregion
 
     //#region change description button color to "saved color"
-    $(descriptionButtonId).css("color", descriptionSavedColor);
-    description_currentColor = descriptionSavedColor;
+    changeDescriptionButtonColor(descriptionButtonId, descriptionSavedColor);
     //#endregion
 }
 
@@ -151,14 +154,15 @@ export function changed_descriptionInput(
     //#endregion
 
     //#region change description color to "unsaved color"
-    if (description_currentColor == descriptionSavedColor) {
-        $(descriptionButtonId).css("color", descriptionUnsavedColor);
-        description_currentColor = descriptionUnsavedColor;
-    }
+    if (description_currentColor == descriptionSavedColor)
+        changeDescriptionButtonColor(descriptionButtonId, descriptionUnsavedColor);
     //#endregion
 }
 
-export function getDescriptionKeyForSession(descriptionBaseKeyForSession) {
-    return descriptionBaseKeyForSession + '-' + description_language;
+export function getDescriptionKeyForSession(descriptionBaseKeyForSession, descriptionLanguage=null) {
+
+    return descriptionLanguage == null?
+        descriptionBaseKeyForSession + '-' + description_language  // set language as auto
+        : descriptionBaseKeyForSession + '-' + descriptionLanguage  // set language as manuel
 }
 //#endregion
