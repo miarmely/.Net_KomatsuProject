@@ -86,14 +86,14 @@ export function clicked_descriptionDropdownItem(
     descriptionUnsavedColor,
     descriptionBaseKeyForSession) {
     //#region set variables
-    let inpt_description = $(decriptionInputId);
+    let inpt_descriptions = $(decriptionInputId);
     let btn_description = $(descriptionButtonId)
     description_language = clickedElement.prop("innerText");
     //#endregion
 
     //#region reset
     // <input>
-    inpt_description.val("");
+    inpt_descriptions.val("");
 
     // button color
     btn_description.css("color", descriptionUnsavedColor);
@@ -114,7 +114,7 @@ export function clicked_descriptionDropdownItem(
 
     // when any info is exists on session
     if (description_infoInSession != null)
-        inpt_description.val(description_infoInSession);
+        inpt_descriptions.val(description_infoInSession);
     //#endregion
 }
 

@@ -1,4 +1,4 @@
-﻿import { clicked_descriptionDropdownButton, clicked_descriptionDropdownItem, getDateTimeInString, updateResultLabel } from "./miarTools.js";
+﻿import { clicked_descriptionDropdownButton, clicked_descriptionDropdownItem, description_currentColor, getDateTimeInString, updateResultLabel } from "./miarTools.js";
 
 
 $(function () {
@@ -12,7 +12,7 @@ $(function () {
     const ul_pagination = $("#ul_pagination");
     const apiUrl = "https://localhost:7091/api/services/machine";
     const errorMessageColor = "rgb(255, 75, 75)";
-    const description_inputId = "#inpt_description";
+    const description_inputId = "#inpt_descriptions";
     const description_buttonId = "#btn_description";
     const description_unsavedColor = "red";
     const description_savedColor = "lightgreen";
@@ -102,15 +102,15 @@ $(function () {
         switch (clickedElement.attr("id")) {
             case "btn_update":
                 totalCurrentUpdateQuantity += 1;
-                await click_updateButtonAsync(row);
+                await clicked_updateButtonAsync(row);
                 break;
             case "btn_save":
                 totalCurrentUpdateQuantity -= 1;
-                await click_saveButtonAsync(row);
+                await clicked_saveButtonAsync(row);
                 break;
             case "btn_cancel":
                 totalCurrentUpdateQuantity -= 1;
-                await click_cancelButtonAsync(row);
+                await clicked_cancelButtonAsync(row);
                 break;
         }
         //#endregion
@@ -145,6 +145,18 @@ $(function () {
             //#endregion
         }
     });
+    $("tbody").on("input", () => {  // control input changing states
+        let inputtedElement = $(":focus");
+        let descriptionInputIdWithoutDash = description_inputId.substring(1);
+
+        //#region when description input changed
+        if (inputtedElement.attr("id") == descriptionInputIdWithoutDash
+            && description_currentColor == description_savedColor) {
+            $(description_buttonId).css("color", description_unsavedColor);
+            description_currentColor = description_unsavedColor;
+        }
+        //#endregion
+    })
     //#endregion events
 
     //#region functions
@@ -206,7 +218,7 @@ $(function () {
 				    <td id="td_descriptions">${machineView.descriptions[language]}</td>
 				    <td id="td_createdAt">${getDateTimeInString(machineView.createdAt)}</td>
 				    <td id="td_processes">
-					    <button id="btn_update" class="active" ui-toggle-class="">
+					    <button id="btn_update" ui-toggle-class="">
 						    <i class="fa fa-pencil text-info">
 							    ${updateButtonName}
 						    </i>
@@ -610,7 +622,7 @@ $(function () {
         });
     }
 
-    async function click_updateButtonAsync(row) {
+    async function clicked_updateButtonAsync(row) {
         //#region set variables
         //#region set "columnsForAddInput"
         let columnsForAddInput = {}
@@ -661,6 +673,8 @@ $(function () {
         //#endregion
 
         //#endregion
+
+        await setDisabledOfOtherUpdateButtonsAsync(rowId, true);
 
         //#region add <input> to columns
         for (let columnName in columnsForAddInput) {
@@ -780,12 +794,13 @@ $(function () {
         //#endregion
     }
 
-    async function click_saveButtonAsync(row) {
+    async function clicked_saveButtonAsync(row) {
         //#region set variables
-        var machineId = row.attr("class");
-        var oldColumnValues = JSON.parse(sessionStorage
-            .getItem(row.attr("id")));
-        var newColumnValues = {
+        let machineId = row.attr("class");
+        let rowId = row.attr("id");
+        let oldColumnValues = JSON.parse(sessionStorage
+            .getItem(rowId));
+        let newColumnValues = {
             "mainCategoryName": row
                 .children("#td_mainCategoryName")
                 .children("select")
@@ -866,12 +881,16 @@ $(function () {
                 //#endregion
             }
         })
+
+        await setDisabledOfOtherUpdateButtonsAsync(rowId, false);
     }
 
-    async function click_cancelButtonAsync(row) {
-        //#region get machine infos in 
-        var machineInfosInSession = JSON.parse(sessionStorage
-            .getItem(row.attr("id")));
+    async function clicked_cancelButtonAsync(row) {
+        //#region get machine infos in session
+        let rowId = row.attr("id");
+
+        let machineInfosInSession = JSON.parse(sessionStorage
+            .getItem(rowId));
         //#endregion
 
         //#region remove description button from <th>
@@ -884,6 +903,32 @@ $(function () {
 
         removeInputsAndSelects(row, machineInfosInSession);
         resetErrorRow(row);
+        await setDisabledOfOtherUpdateButtonsAsync(rowId, false);
+    }
+
+    async function setDisabledOfOtherUpdateButtonsAsync(rowId, doDisabled) {
+        //#region disable/enable other update buttons
+        for (var rowNo = 1; rowNo <= pageSize; rowNo += 1) {
+            let rowIdInLoop = `#tr_row${rowNo}`;
+
+            //#region disable/enable update button
+            if (rowIdInLoop != rowId) {
+                // get update button
+                let btn_update = $(rowIdInLoop)
+                    .children("#td_processes")
+                    .children("button")  //#update button
+
+                // when disabled wanted
+                if (doDisabled)
+                    btn_update.attr("disabled", "");
+
+                // when enabled wanted
+                else
+                    btn_update.removeAttr("disabled");
+            }
+            //#endregion
+        }
+        //#endregion
     }
 
     async function populateTable(pageNumber, refreshPaginationButtons) {
