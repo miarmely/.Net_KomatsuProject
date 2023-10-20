@@ -11,7 +11,7 @@ namespace Services.Contracts
         Task CreateUserAsync(string language, UserDtoForCreate userDto);
 		Task UpdateUserByTelNoAsync(string telNo, UserDtoForUpdate userDto);
         Task DeleteUsersByTelNoListAsync(UserDtoForDelete userDto);
-
+        Task<IEnumerable<string>> GetAllRolesByLanguageAsync(string language);
         Task<IEnumerable<UserDto>> GetAllUsersWithPagingAsync(
             PaginationParameters pagingParameters,
             string language,

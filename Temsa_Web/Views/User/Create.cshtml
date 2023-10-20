@@ -1,4 +1,23 @@
-﻿<div class="form-w3layouts">
+﻿@model IServiceManager;
+
+@{
+    var language = ViewBag.Language;
+
+    #region set success message by language
+    var successMessage = language switch
+    {
+        "TR" => "kullanıcı başarıyla kaydedildi",
+        "EN" => "user saved with successsfull"
+    };
+    #endregion
+
+    #region get all roles by language
+    var rolesByLanguage = await Model.UserService
+        .GetAllRolesByLanguageAsync(language);
+    #endregion
+}
+
+<div class="form-w3layouts">
     <div class="row">
         <div class="col-lg-12">    
             <section class="panel">
@@ -58,9 +77,14 @@
                                 <label class="col-sm-3 control-label">Rol</label>
                                 <div class="col-sm-6">
                                     <select id="slct_role" class="form-control m-bot15">
-                                        <option>User</option>
-                                        <option>Editor</option>
-                                        <option>Admin</option>
+                                        @{
+                                            #region add roles to role <select>
+                                            foreach(var roleByLanguage in rolesByLanguage)
+                                            {
+                                                <option>@roleByLanguage</option>    
+                                            }
+                                            #endregion
+                                        }
                                     </select>
                                 </div>
                             </div>   
@@ -82,7 +106,7 @@
                                 <div style="text-align:center">
                                     <p id="p_resultLabel"></p>
                                 </div>
-                            </div>
+                            </div>json serialize vs stringify
                             <!-- /register button-->
                         </div>
                         </form>
@@ -93,3 +117,9 @@
 </div>
 
 <script type="module" src="~/js/userForCreate.js"></script>
+
+<script>
+    let language = "@language";
+    let rolesByLanguage = @Json.Serialize(rolesByLanguage)
+    let resultLabel_successMessage = "@successMessage";
+</script>

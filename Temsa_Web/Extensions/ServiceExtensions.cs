@@ -29,13 +29,12 @@ namespace Temsa_Web.Extensions
 		{
             services.AddScoped<IServiceManager, ServiceManager>();
 			services.AddScoped<IRepositoryManager, RepositoryManager>();
+            services.AddScoped<IConfigManager, ConfigManager>();
         }
 			
-		public static void ConfigureServices(this IServiceCollection services)
-		{
-			services.AddScoped<IConfigManager, ConfigManager>();
+		public static void ConfigureServices(this IServiceCollection services) =>
 			services.AddScoped<RepositoryContext>();
-        }
+       
 
 		//public static void ConfigureJwt(
 		//	this IServiceCollection services,

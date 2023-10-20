@@ -11,6 +11,7 @@
         public string User_Create { get; init; }
         public string User_DisplayAll { get; init; }
         public string User_DisplayByTelNo { get; init; }
+        public string User_DisplayAllRoles { get; init; }
         public string User_Update { get; init; }
         public string User_Delete { get; init; }
         public string Machine_Create { get; init; }

@@ -8,9 +8,11 @@ namespace Repositories.Contracts
     {
         Task<UserView?> LoginAsync(DynamicParameters parameters); 
         Task<ErrorDto?> CreateUserAsync(DynamicParameters parameters);
+        Task<UserView?> GetUserByTelNoAsync(DynamicParameters parameters);
+        Task<IEnumerable<string>> GetAllRolesByLanguageAsync(DynamicParameters parameters);
         Task<ErrorDto?> UpdateUserByTelNoAsync(DynamicParameters parameters);
         Task<ErrorDto> DeleteUsersByTelNoListAsync(DynamicParameters parameters);
-        Task<UserView?> GetUserByTelNoAsync(DynamicParameters parameters);
+        
 
         Task<IEnumerable<UserView>?> GetAllUsersWithPagingAsync(
             DynamicParameters parameters);

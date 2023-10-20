@@ -160,7 +160,6 @@ export function changed_descriptionInput(
 }
 
 export function getDescriptionKeyForSession(descriptionBaseKeyForSession, descriptionLanguage=null) {
-
     return descriptionLanguage == null?
         descriptionBaseKeyForSession + '-' + description_language  // set language as auto
         : descriptionBaseKeyForSession + '-' + descriptionLanguage  // set language as manuel

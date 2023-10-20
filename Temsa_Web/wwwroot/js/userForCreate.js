@@ -1,33 +1,65 @@
-﻿$(function () {
+﻿import { updateResultLabel } from "./miarTools.js";
+
+
+$(function () {
+    //#region variables
+    const resultLabel_id = "#p_resultLabel";
+    const resultLabel_errorColor = "red";
+    const resultLabel_successColor = "rgb(16, 155, 16)";
+    //#endregion
+
+    //#region events
     $("form").submit((event) => {
         event.preventDefault();
 
-        //#region set data
-        var data = {
-            firstName: $("#inpt_firstName").val().trim(),
-            lastName: $("#inpt_lastName").val().trim(),
-            telNo: $("#inpt_telNo").val().trim(),
-            email: $("#inpt_email").val().trim(),
-            companyName: $("#inpt_companyName").val().trim(),
-            password: $("#inpt_password").val().trim(),
-            roleName: $("#slct_role option:selected").val()
-        };
-        //#endregion
-
         $.ajax({
             method: "POST",
-            url: "https://localhost:7091/api/services/user/create",
-            data: JSON.stringify(data),
+            url: baseApiUrl + `/user/create?language=${language}`,
+            data: JSON.stringify({
+                FirstName: $("#inpt_firstName").val().trim(),
+                LastName: $("#inpt_lastName").val().trim(),
+                companyName: $("#inpt_companyName").val().trim(),
+                TelNo: $("#inpt_telNo").val().trim(),
+                Email: $("#inpt_email").val().trim(),
+                Password: $("#inpt_password").val().trim(),
+                RoleNames: [
+                    $("#slct_role").val()
+                ]
+            }),
             contentType: "application/json",
+            beforeSend: () => {
+                // reset result label
+                $(resultLabel_id).empty();
+            },
             success: () => {
                 // reset inputs
                 $("form")[0].reset();
 
-                updateResultLabel("Başarıyla Kaydedildi", "rgb(16, 155, 16)" , "#p_resultLabel");
+                // write success message
+                updateResultLabel(
+                    resultLabel_id,
+                    resultLabel_successMessage,
+                    resultLabel_successColor,
+                    "30px"
+                )
             },
             error: (response) => {
-                writeErrorMessage(response.responseText, "#p_resultLabel");
+                //#region get errorMessage
+                let errorMessage= JSON
+                    .parse(response.responseText)
+                    .errorMessage
+                //#endregion
+
+                //#region write error message to resultLabel
+                updateResultLabel(
+                    resultLabel_id,
+                    errorMessage,
+                    resultLabel_errorColor,
+                    "30px"
+                )
+                //#endregion
             }
         });
     });
+    //#endregion
 });

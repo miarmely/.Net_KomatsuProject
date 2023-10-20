@@ -1,17 +1,29 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Services.Contracts;
 
 namespace Temsa_Web.Controllers
 {
 	public class UserController : Controller
 	{
-		public IActionResult Create()
+		private readonly IServiceManager _manager;
+
+		public UserController(IServiceManager manager) =>
+			_manager = manager;
+       
+        public IActionResult Create(
+			[FromQuery(Name = "language")] string language)
 		{
-			return View("Create");
+			ViewBag.Language = language;
+
+			return View("Create", _manager);
 		}
 
-		public IActionResult Display()
+		public IActionResult Display(
+            [FromQuery(Name = "language")] string language)
 		{
-			return View("Display");
+            ViewBag.Language = language;
+
+            return View("Display");
 		}
     }
 }

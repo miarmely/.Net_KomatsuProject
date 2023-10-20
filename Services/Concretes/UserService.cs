@@ -78,7 +78,8 @@ namespace Services.Concretes
             #region set parameters
 
             #region sort roleNames if entered
-            if (userDto.RoleNames != null)
+            if (userDto.RoleNames != null
+                && userDto.RoleNames.Count() > 1)
                 userDto.RoleNames.Sort();
             #endregion
 
@@ -91,7 +92,7 @@ namespace Services.Concretes
                 TelNo = userDto.TelNo,
                 Email = userDto.Email,
                 Password = await ComputeMd5Async(userDto.Password),
-                RoleNames = string.Join(", ", userDto.RoleNames) // list to string 
+                RoleNames = string.Join(",", userDto.RoleNames) // list to string 
             };
             var parameters = new DynamicParameters(userDtoForProc);
 
@@ -153,6 +154,17 @@ namespace Services.Concretes
             #endregion
 
             return _mapper.Map<IEnumerable<UserDto>>(userViews);
+        }
+
+        public async Task<IEnumerable<string>> GetAllRolesByLanguageAsync(string language)
+        {
+            #region get roles
+            var parameters = new DynamicParameters();
+            parameters.Add("Language", language, DbType.String);
+
+            return await _manager.UserRepository
+                .GetAllRolesByLanguageAsync(parameters);
+            #endregion
         }
 
         public async Task UpdateUserByTelNoAsync(

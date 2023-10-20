@@ -76,6 +76,17 @@ namespace Presantation.Controllers
         }
 
 
+        [HttpGet("display/role")]
+        public async Task<IActionResult> GetAllRolesByLanguage(
+            [FromQuery(Name = "language")] string language)
+        {
+            var roles = await _manager.UserService
+                .GetAllRolesByLanguageAsync(language);
+
+            return Ok(roles);
+        }
+
+
         [HttpPut("update/{telNo}")]
         //[Authorization("Admin,Editor,Yönetici,Editör")]
         [ValidationUserFormat]
