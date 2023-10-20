@@ -24,7 +24,7 @@ namespace Repositories.Concretes
             Func<MachineView, DescriptionPartForMachineView, MachineView> map,
             string splitOn) =>
                 await base
-                    .QueryAsync<MachineView, DescriptionPartForMachineView, MachineView>(   
+                    .QueryAsync<MachineView, DescriptionPartForMachineView, MachineView>(
                         base.Configs.DbSettings.ProcedureNames.Machine_DisplayAll,
                         parameters,
                         map,

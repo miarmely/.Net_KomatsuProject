@@ -259,6 +259,35 @@ $(function () {
         return JSON.parse(response.responseText).errorMessage;
     }
 
+    async function setDisabledOfOtherUpdateButtonsAsync(rowId, doDisabled) {
+        await new Promise(resolve => {
+            //#region disable/enable other update buttons
+            for (var rowNo = 1; rowNo <= pageSize; rowNo += 1) {
+                let rowIdInLoop = `#tr_row${rowNo}`;
+
+                //#region disable/enable update button
+                if (rowIdInLoop != rowId) {
+                    // get update button
+                    let btn_update = $(rowIdInLoop)
+                        .children("#td_processes")
+                        .children("button")  //#update button
+
+                    // when disabled wanted
+                    if (doDisabled)
+                        btn_update.attr("disabled", "");
+
+                    // when enabled wanted
+                    else
+                        btn_update.removeAttr("disabled");
+                }
+                //#endregion
+            }
+            //#endregion
+
+            resolve();
+        })
+    }
+
     async function addPaginationButtons() {
         //#region set buttonQauntity for pagination
         let buttonQuantity =
@@ -672,7 +701,7 @@ $(function () {
 
         //#endregion
 
-        await setDisabledOfOtherUpdateButtonsAsync(rowId, true);
+        setDisabledOfOtherUpdateButtonsAsync(rowId, true);
 
         //#region add <input> to columns
         for (let columnName in columnsForAddInput) {
@@ -923,6 +952,7 @@ $(function () {
                 removeInputsAndSelects(row, newColumnValues);
                 removeDescriptionButtonOnColumn();
                 resetErrorRow(row);
+                setDisabledOfOtherUpdateButtonsAsync(rowId, false);
             },
             error: (response) => {
                 //#region write error to error row
@@ -933,8 +963,6 @@ $(function () {
                 //#endregion
             }
         })
-
-        await setDisabledOfOtherUpdateButtonsAsync(rowId, false);
     }
 
     async function clicked_cancelButtonAsync(row) {
@@ -948,32 +976,7 @@ $(function () {
         removeInputsAndSelects(row, machineInfosInSession);
         removeDescriptionButtonOnColumn();
         resetErrorRow(row);
-        await setDisabledOfOtherUpdateButtonsAsync(rowId, false);
-    }
-
-    async function setDisabledOfOtherUpdateButtonsAsync(rowId, doDisabled) {
-        //#region disable/enable other update buttons
-        for (var rowNo = 1; rowNo <= pageSize; rowNo += 1) {
-            let rowIdInLoop = `#tr_row${rowNo}`;
-
-            //#region disable/enable update button
-            if (rowIdInLoop != rowId) {
-                // get update button
-                let btn_update = $(rowIdInLoop)
-                    .children("#td_processes")
-                    .children("button")  //#update button
-
-                // when disabled wanted
-                if (doDisabled)
-                    btn_update.attr("disabled", "");
-
-                // when enabled wanted
-                else
-                    btn_update.removeAttr("disabled");
-            }
-            //#endregion
-        }
-        //#endregion
+        setDisabledOfOtherUpdateButtonsAsync(rowId, false);
     }
 
     async function populateTable(pageNumber, refreshPaginationButtons) {
