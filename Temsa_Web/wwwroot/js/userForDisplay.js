@@ -1,12 +1,15 @@
 ﻿$(function () {
     //#region variables
     const pageNumber = 1;
-    const pageSize =3;
+    const pageSize = 3;
     const paginationButtonQuantity = 5;
     const tableBody = $("#tbl_user tbody");
     const nameOfPaginationHeader = "User-Pagination";
     const lbl_entityQuantity = $("#lbl_entityQuantity");
     const ul_pagination = $("#ul_pagination");
+    const propertyNamesOfUserView = [
+        // !!!!!!!!!!!!!!!!
+    ]
     let entityCountOfPage;
     let userPaginationInJson;
     //#endregion
@@ -37,7 +40,7 @@
             //#region click pagination button with number
             default:
                 let pageNo = clickedButton.prop("innerText");
-                fillTable(pageNo);
+                addUsersToTable(pageNo);
                 break;
             //#endregion
         }
@@ -78,57 +81,6 @@
     //#endregion events
 
     //#region functions
-    function fillTable(pageNumber, refreshPaginationButtons = false) {
-        $.ajax({
-            method: "GET",
-            url: "https://localhost:7091/api/services/user/display",
-            contentType: "application/json",
-            data: {  // for [FromQuery]
-                pageNumber: pageNumber,
-                pageSize: pageSize
-            },
-            dataType: "json",
-            beforeSend: () => {
-                //#region reset table if not empty
-                if (tableBody.children("tr").length != 0)
-                    tableBody.empty();
-                //#endregion
-            },
-            success: (response, status, xhr) => {
-                //#region get userPaginationInJson
-                userPaginationInJson = JSON.parse(
-                    xhr.getResponseHeader(nameOfPaginationHeader));
-                //#endregion
-
-                //#region set "entityCountOfPage"
-                entityCountOfPage =
-                    userPaginationInJson.CurrentPageNo == userPaginationInJson.TotalPage ?
-                        userPaginationInJson.LastPageCount  // when current page is last page
-                        : userPaginationInJson.PageSize  // when not last page
-                //#endregion
-
-                //#region add entity quantity to lbl_entityQuantity
-                lbl_entityQuantity.empty();
-                lbl_entityQuantity.append(
-                    `<b>${entityCountOfPage}/${pageSize}</b> görüntüleniyor`);
-                //#endregion
-
-                addUsersToTable(response);
-                hideOrShowPaginationBackAndNextButtons();
-
-                //#region add pagination buttons
-                if (refreshPaginationButtons)
-                    addPaginationButtons();
-                //#endregion
-            },
-            error: (response) => {
-                //#region write error
-                window.writeErrorMessage(response.responseText, lbl_entityQuantity);
-                //#endregion
-            },
-        });
-    }
-
     function addPaginationButtons() {
         //#region set buttonQauntity for pagination
         let buttonQuantity =
@@ -284,12 +236,12 @@
 
                     //#region when next page exists
                     if (userPaginationInJson.HasNext)
-                        fillTable(currentPageNo, true);
+                        addUsersToTable(currentPageNo, true);
                     //#endregion
 
                     //#region when previous page exists
                     else if (userPaginationInJson.HasPrevious)
-                        fillTable(currentPageNo - 1, true);
+                        addUsersToTable(currentPageNo - 1, true);
                     //#endregion
 
                     //#region when any user not exists
@@ -301,7 +253,7 @@
 
                 //#region when some users on page deleted
                 else
-                    fillTable(userPaginationInJson.CurrentPageNo);  // refresh current page
+                    addUsersToTable(userPaginationInJson.CurrentPageNo);  // refresh current page
                 //#endregion
 
                 //#region do unchecked 'box_all'
@@ -322,17 +274,79 @@
     function click_paginationBack() {
         //#region open previous page if previous page exists
         if (userPaginationInJson.HasPrevious)
-            fillTable(userPaginationInJson.CurrentPageNo - 1);
+            addUsersToTable(userPaginationInJson.CurrentPageNo - 1);
         //#endregion
     }
 
     function click_paginationNext() {
         //#region open next page if next page exists
         if (userPaginationInJson.HasNext)
-            fillTable(userPaginationInJson.CurrentPageNo + 1);
+            addUsersToTable(userPaginationInJson.CurrentPageNo + 1);
         //#endregion
+    }
+
+    function populateTable(pageNumber, refreshPaginationButtons = false) {
+
+
+
+        $.ajax({
+            method: "GET",
+            url: baseApiUrl + `/user/display?language=${language}
+                &pageNumber=${pageNumber}
+                &pageSize=${pageSize}`,
+            contentType: "application/json",
+            dataType: "json",
+            beforeSend: () => {
+                //#region reset table if not empty
+                if (tableBody.children("tr").length != 0)
+                    tableBody.empty();
+                //#endregion
+            },
+            success: (response, status, xhr) => {
+                //#region get user pagination infos in headers
+                userPaginationInJson = JSON.parse(
+                    xhr.getResponseHeader(nameOfPaginationHeader));
+                //#endregion
+
+                //#region add entity quantity to lbl_entityQuantity
+                // set "entityCountOfPage"
+                entityCountOfPage = userPaginationInJson.currentPageCount;
+
+                lbl_entityQuantity.empty();
+                lbl_entityQuantity.append(
+                    `<b>${entityCountOfPage}/${pageSize}</b> görüntüleniyor`);
+                //#endregion
+
+                addUsersToTable(response);
+                hideOrShowPaginationBackAndNextButtons();
+
+                //#region add pagination buttons
+                if (refreshPaginationButtons)
+                    addPaginationButtons();
+                //#endregion
+            },
+            error: (response) => {
+                //#region write error
+                window.writeErrorMessage(response.responseText, lbl_entityQuantity);
+                //#endregion
+            },
+        });
     }
     //#endregion
 
-    fillTable(pageNumber, true);
+    populateTable(
+        "user",
+        "user/display/all",
+        language,
+        pageNumber,
+        pageSize,
+        tableBody,
+        propertyNamesOfUserView,
+        updateButtonName,
+        nameOfPaginationHeader,
+        lbl_entityQuantity,
+        ul_pagination,
+        errorMessageColor,
+        paginationButtonQuantity,
+        true)
 });

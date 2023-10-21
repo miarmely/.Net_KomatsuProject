@@ -1,4 +1,8 @@
-﻿<div class="table-agile-info">
+﻿@{
+	var language = ViewBag.Language;
+}
+
+<div class="table-agile-info">
     <div class="panel panel-default">
         @*title*@
         <div class="panel-heading">
@@ -79,6 +83,8 @@
 <script type="module" src="~/js/userForDisplay.js"></script>
 
 <script>
+	let language = language;
+
     function click_saveButton(no) {
 		//#region set variables
 		let oldColumnValues = JSON.parse(

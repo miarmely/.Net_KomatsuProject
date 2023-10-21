@@ -63,7 +63,7 @@ namespace Presantation.Controllers
 		}
 
 
-        [HttpGet("display")]
+        [HttpGet("display/all")]
         //[Authorization("Admin,Editor,User,Yönetici,Editör,Kullanıcı")]
         public async Task<IActionResult> GetAllUsersWithPaginationAsync(
             [FromQuery(Name = "language")] string language,

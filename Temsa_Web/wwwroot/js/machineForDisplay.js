@@ -1,4 +1,4 @@
-﻿import { changeDescriptionButtonColor, clicked_descriptionDropdownButton, clicked_descriptionDropdownItem, description_currentColor, getDateTimeInString, getDescriptionKeyForSession, setDescriptionLanguage, updateResultLabel } from "./miarTools.js";
+﻿import { entityCountOnTable, changeDescriptionButtonColor, clicked_descriptionDropdownButton, clicked_descriptionDropdownItem, description_currentColor, getDescriptionKeyForSession, paginationInfosInJson, populateTable, setDescriptionLanguage, updateResultLabel } from "./miarTools.js";
 
 
 $(function () {
@@ -10,6 +10,7 @@ $(function () {
     const nameOfPaginationHeader = "Machine-Pagination";
     const lbl_entityQuantity = $("#lbl_entityQuantity");
     const ul_pagination = $("#ul_pagination");
+    const th_descriptions = $("#th_descriptions");
     const apiUrl = "https://localhost:7091/api/services/machine";
     const errorMessageColor = "rgb(255, 75, 75)";
     const description_inputId = "#inpt_descriptions";
@@ -17,12 +18,23 @@ $(function () {
     const description_baseKeyForSession = "Machine-Display-Description";
     const description_unsavedColor = "red";
     const description_savedColor = "lightgreen";
-    let machineCountOnTable;
-    let paginationInfosInJson;
+    const propertyNamesOfMachineView = [
+        "mainCategoryName",
+        "subCategoryName",
+        "model",
+        "brandName",
+        "handStatus",
+        "stock",
+        "rented",
+        "sold",
+        "year",
+        "descriptions",
+        "createdAt"
+    ]
     //#endregion
 
     //#region events
-    $("#ul_pagination").click(() => {
+    ul_pagination.click(() => {
         //#region do unchecked "box_all"
         if ($("#box_all").is(":checked"))
             $("#box_all").prop("checked", false);
@@ -35,7 +47,21 @@ $(function () {
             //#region open previous page if previous page exists
             case "a_paginationBack":
                 if (paginationInfosInJson.HasPrevious)
-                    populateTable(paginationInfosInJson.CurrentPageNo - 1);
+                    populateTable(
+                        "machine",
+                        "machine/display/all",
+                        language,
+                        paginationInfosInJson.CurrentPageNo - 1,
+                        pageSize,
+                        tableBody,
+                        propertyNamesOfMachineView,
+                        updateButtonName,
+                        nameOfPaginationHeader,
+                        lbl_entityQuantity,
+                        ul_pagination,
+                        errorMessageColor,
+                        paginationButtonQuantity,
+                        true)
 
                 break;
             //#endregion
@@ -43,7 +69,21 @@ $(function () {
             //#region open next page if next page exists
             case "a_paginationNext":
                 if (paginationInfosInJson.HasNext)
-                    populateTable(paginationInfosInJson.CurrentPageNo + 1);
+                    populateTable(
+                        "machine",
+                        "machine/display/all",
+                        language,
+                        paginationInfosInJson.CurrentPageNo + 1,
+                        pageSize,
+                        tableBody,
+                        propertyNamesOfMachineView,
+                        updateButtonName,
+                        nameOfPaginationHeader,
+                        lbl_entityQuantity,
+                        ul_pagination,
+                        errorMessageColor,
+                        paginationButtonQuantity,
+                        true)
 
                 break;
             //#endregion
@@ -51,7 +91,22 @@ $(function () {
             //#region open page that matched with clicked button number
             default:
                 let pageNo = clickedButton.prop("innerText");
-                populateTable(pageNo);
+
+                populateTable(
+                    "machine",
+                    "machine/display/all",
+                    language,
+                    pageNo,
+                    pageSize,
+                    tableBody,
+                    propertyNamesOfMachineView,
+                    updateButtonName,
+                    nameOfPaginationHeader,
+                    lbl_entityQuantity,
+                    ul_pagination,
+                    errorMessageColor,
+                    paginationButtonQuantity,
+                    true)
                 break;
             //#endregion
         }
@@ -62,7 +117,7 @@ $(function () {
         let isBoxAllChecked = $("#box_all").is(":checked");
 
         await new Promise(resolve => {
-            for (let rowNo = 1; rowNo <= machineCountOnTable; rowNo += 1) {
+            for (let rowNo = 1; rowNo <= entityCountOnTable; rowNo += 1) {
                 var checkBoxInRow = $(`#tr_row${rowNo} #td_checkBox input`);
 
                 //#region do checked of checkbox
@@ -187,59 +242,8 @@ $(function () {
     }
 
     function removeDescriptionButtonOnColumn() {
-        let th_description = $("#th_description");
-        th_description.empty();
-        th_description.text(description_baseButtonName);
-    }
-
-    function addMachinesToTable(response) {
-        let rowNo = 1;
-
-        response.forEach(machineView => {
-            let rowId = `tr_row${rowNo}`;
-
-            // add machines to table
-            tableBody.append(
-                `<tr id= "${rowId}" class= ${machineView.id}>
-                    <td id="td_checkBox">
-					    <label class="i-checks m-b-none">
-						    <input type="checkbox"><i></i>
-					    </label>
-				    </td>
-				    <td id="td_mainCategoryName">${machineView.mainCategoryName}</td>
-				    <td id="td_subCategoryName">${machineView.subCategoryName}</td>
-				    <td id="td_brandName">${machineView.brandName}</td>
-				    <td id="td_model">${machineView.model}</td>
-				    <td id="td_handStatus">${machineView.handStatus}</td>
-				    <td id="td_stock">${machineView.stock}</td>
-				    <td id="td_rented">${machineView.rented}</td>
-				    <td id="td_sold">${machineView.sold}</td>
-				    <td id="td_year">${machineView.year}</td>
-				    <td id="td_descriptions">${machineView.descriptions[language]}</td>
-				    <td id="td_createdAt">${getDateTimeInString(machineView.createdAt)}</td>
-				    <td id="td_processes">
-					    <button id="btn_update" ui-toggle-class="">
-						    <i class="fa fa-pencil text-info">
-							    ${updateButtonName}
-						    </i>
-					    </button>
-				    </td>
-				    <td style="width:30px;"></td>
-			    </tr>
-			    <tr hidden></tr>
-			    <tr id="tr_row${rowNo}_error">
-				    <td id="td_error" colspan="13" hidden></td>
-			    </tr>`);
-
-            // add descriptions of machine to session
-            sessionStorage.setItem(
-                rowId,
-                JSON.stringify({
-                    "descriptions": machineView.descriptions
-                }));
-
-            rowNo += 1;
-        });
+        th_descriptions.empty();
+        th_descriptions.text(description_baseButtonName);
     }
 
     function getIdOfErrorRow(row) {
@@ -253,10 +257,6 @@ $(function () {
 
         tr_row_error.empty();  // reset
         tr_row_error.attr("hidden", "");  // hide
-    }
-
-    function getErrorMessageFromResponse(response) {
-        return JSON.parse(response.responseText).errorMessage;
     }
 
     async function setDisabledOfOtherUpdateButtonsAsync(rowId, doDisabled) {
@@ -283,76 +283,6 @@ $(function () {
                 //#endregion
             }
             //#endregion
-
-            resolve();
-        })
-    }
-
-    async function addPaginationButtons() {
-        //#region set buttonQauntity for pagination
-        let buttonQuantity =
-            paginationInfosInJson.TotalPage < paginationButtonQuantity ?
-                paginationInfosInJson.TotalPage
-                : paginationButtonQuantity
-        //#endregion
-
-        //#region reset paginationButtons if exists
-        if (ul_pagination.children("li").length != 0)
-            ul_pagination.empty()
-        //#endregion
-
-        //#region add paginationBack button
-        ul_pagination.append(
-            `<li>
-				<a id="a_paginationBack" href="#" hidden>
-					<i class="fa fa-chevron-left"></i>
-				</a>
-			</li>`);
-        //#endregion
-
-        //#region add pagination buttons
-        for (let pageNo = 1; pageNo <= buttonQuantity; pageNo += 1)
-            ul_pagination.append(
-                `<li>
-					<a href="#"> 
-						${pageNo}
-					</a>
-				</li> `);
-        //#endregion
-
-        //#region add paginationNext button
-        ul_pagination.append(
-            `<li>
-				<a id="a_paginationNext" href="#" hidden>
-					<i class="fa fa-chevron-right"></i>
-				</a>
-			</li>`);
-        //#endregion
-    }
-
-    async function hideOrShowPaginationBackAndNextButtons() {
-        new Promise(resolve => {
-            if (paginationInfosInJson.TotalPage > 1) {
-                //#region for paginationBack button
-                // hide
-                if (paginationInfosInJson.CurrentPageNo == 1)
-                    $("#a_paginationBack").attr("hidden", "");
-
-                // show
-                else
-                    $("#a_paginationBack").removeAttr("hidden");
-                //#endregion
-
-                //#region for paginationNext button
-                // hide
-                if (paginationInfosInJson.CurrentPageNo == paginationInfosInJson.TotalPage)
-                    $("#a_paginationNext").attr("hidden", "");
-
-                // show
-                else
-                    $("#a_paginationNext").removeAttr("hidden");
-                //#endregion
-            }
 
             resolve();
         })
@@ -450,18 +380,15 @@ $(function () {
                 contentType: "application/json",
                 dataType: "json",
                 success: (response) => {
-                    //#region add subCategoryName as <option>
-                    //add subCategoryName to <select>
-                    for (let index in response) {
+                    //#region add subCategoryNames to <select>
+                    for (let index in response)
                         slct_subCategoryName.append(
                             `<option>${response[index]}</option>`);
-                    }
-
-                    // add subCategoryNames to "subCategoryNameSessionValue"
-                    subCategoryNameSessionValue[mainCategoryName] = response;
                     //#endregion
-
+                   
                     //#region add subcategoryNames to session
+                    subCategoryNameSessionValue[mainCategoryName] = response;
+                    
                     sessionStorage.setItem(
                         subCategoryNameSessionKey,
                         JSON.stringify(subCategoryNameSessionValue)
@@ -557,7 +484,7 @@ $(function () {
             let machineIdList = [];
 
             //#region set machineIdList
-            for (let rowNo = 1; rowNo <= machineCountOnTable; rowNo += 1) {
+            for (let rowNo = 1; rowNo <= entityCountOnTable; rowNo += 1) {
                 //#region set variables
                 let checkBox = $(`#tr_row${rowNo} #td_checkBox input`);
                 let row = $(`#tr_row${rowNo}`);
@@ -603,18 +530,46 @@ $(function () {
             contentType: "application/json",
             dataType: "json",
             success: () => {
+                let currentPageNo = paginationInfosInJson.CurrentPageNo;
+
                 //#region when all machines on page deleted
                 if (machineIdList.length == paginationInfosInJson.CurrentPageCount) {
-                    let currentPageNo = paginationInfosInJson.CurrentPageNo;
-
                     //#region when next page exists
                     if (paginationInfosInJson.HasNext)
-                        populateTable(currentPageNo, true);  // refresh current page
+                        populateTable(
+                            "machine",
+                            "machine/display/all",
+                            language,
+                            currentPageNo,
+                            pageSize,
+                            tableBody,
+                            propertyNamesOfMachineView,
+                            updateButtonName,
+                            nameOfPaginationHeader,
+                            lbl_entityQuantity,
+                            ul_pagination,
+                            errorMessageColor,
+                            paginationButtonQuantity,
+                            true);  // refresh current page
                     //#endregion
 
                     //#region when previous page exists
                     else if (paginationInfosInJson.HasPrevious)
-                        populateTable(currentPageNo - 1, true);
+                        populateTable(
+                            "machine",
+                            "machine/display/all",
+                            language,
+                            currentPageNo - 1,
+                            pageSize,
+                            tableBody,
+                            propertyNamesOfMachineView,
+                            updateButtonName,
+                            nameOfPaginationHeader,
+                            lbl_entityQuantity,
+                            ul_pagination,
+                            errorMessageColor,
+                            paginationButtonQuantity,
+                            true);
                     //#endregion
 
                     //#region when any machines not found
@@ -632,12 +587,28 @@ $(function () {
 
                 //#region when some machines on page deleted
                 else
-                    populateTable(paginationInfosInJson.CurrentPageNo, true);  // refresh current page
+                    populateTable(
+                        "machine",
+                        "machine/display/all",
+                        language,
+                        currentPageNo,
+                        pageSize,
+                        tableBody,
+                        propertyNamesOfMachineView,
+                        updateButtonName,
+                        nameOfPaginationHeader,
+                        lbl_entityQuantity,
+                        ul_pagination,
+                        errorMessageColor,
+                        paginationButtonQuantity,
+                        true);  // refresh current page
                 //#endregion
 
                 //#region do unchecked "box_all"
                 $("#box_all").prop("checked", false);
                 //#endregion
+
+                removeDescriptionButtonOnColumn();
             },
             error: (response) => {
                 //#region write error to entity quantity label
@@ -733,11 +704,10 @@ $(function () {
         //#region add dropdown to description column
 
         //#region create dropdown
-        let th_description = $("#th_description");
         let descriptionButtonIdWithoutDash = description_buttonId.substring(1); // #btn_description ~~> btn_description 
 
-        th_description.empty();
-        th_description.append(
+        th_descriptions.empty();
+        th_descriptions.append(
             `<div class="btn-group">
                 <button id="${descriptionButtonIdWithoutDash}"  type="button"  style="background-color: darkblue;  color: red" class="btn btn-danger">
                     <b>${description_baseButtonName} (${language})</b>
@@ -756,7 +726,7 @@ $(function () {
             </div>`);
         //#endregion
 
-        //#region populate languages to "th_description" dropdown
+        //#region populate languages to "th_descriptions" dropdown
         let ul_dropdownMenu = $("#ul_dropdownMenu");
         ul_dropdownMenu.empty();
 
@@ -978,61 +948,22 @@ $(function () {
         resetErrorRow(row);
         setDisabledOfOtherUpdateButtonsAsync(rowId, false);
     }
-
-    async function populateTable(pageNumber, refreshPaginationButtons) {
-        $.ajax({
-            method: "GET",
-            url: "https://localhost:7091/api/services/machine/display/all",
-            contentType: "application/json",
-            data: {
-                language: language,
-                pageNumber: pageNumber,
-                pageSize: pageSize
-            },
-            dataType: "json",
-            beforeSend: () => {
-                //#region reset table if not empty
-                if (tableBody.children("tr").length != 0)
-                    tableBody.empty();
-                //#endregion
-            },
-            success: (response, status, xhr) => {
-                addMachinesToTable(response);
-
-                //#region get pagination infos from headers
-                paginationInfosInJson = JSON.parse(
-                    xhr.getResponseHeader(nameOfPaginationHeader));
-                //#endregion
-
-                //#region update entity count label
-                if (response.length != 0) {  // if any machine exists
-                    machineCountOnTable = paginationInfosInJson.CurrentPageCount;
-
-                    lbl_entityQuantity.empty();
-                    lbl_entityQuantity.append(
-                        `<b>${machineCountOnTable}/${pageSize}</b> ${entityCountMessage}`);
-                }
-                //#endregion
-
-                //#region add pagination buttons
-                if (refreshPaginationButtons)
-                    addPaginationButtons();
-                //#endregion
-
-                hideOrShowPaginationBackAndNextButtons();
-            },
-            error: (response) => {
-                //#region write error to resultLabel
-                updateResultLabel(
-                    lbl_entityQuantity,
-                    getErrorMessageFromResponse(response),
-                    errorMessageColor);
-                //#endregion
-            },
-        });
-    }
     //#endregion
 
-    populateTable(pageNumber, true);
+    populateTable(
+        "machine",
+        "machine/display/all",
+        language,
+        pageNumber,
+        pageSize,
+        tableBody,
+        propertyNamesOfMachineView,
+        updateButtonName,
+        nameOfPaginationHeader,
+        lbl_entityQuantity,
+        ul_pagination,
+        errorMessageColor,
+        paginationButtonQuantity,
+        true)
     setDescriptionLanguage(language);
 });

@@ -2,6 +2,8 @@
 export let description_currentColor;
 export let description_infoInSession;
 export let description_language;
+export let paginationInfosInJson;
+export let entityCountOnTable;
 //#endregion
 
 //#region function
@@ -146,7 +148,7 @@ export function clicked_descriptionDropdownButton(
 
 export function changed_descriptionInput(
     descriptionButtonId,
-    descriptionUnsavedColor, 
+    descriptionUnsavedColor,
     descriptionSavedColor) {
     //#region set description current color if empty 
     if (description_currentColor == undefined)
@@ -159,9 +161,256 @@ export function changed_descriptionInput(
     //#endregion
 }
 
-export function getDescriptionKeyForSession(descriptionBaseKeyForSession, descriptionLanguage=null) {
-    return descriptionLanguage == null?
+export function getDescriptionKeyForSession(descriptionBaseKeyForSession, descriptionLanguage = null) {
+    return descriptionLanguage == null ?
         descriptionBaseKeyForSession + '-' + description_language  // set language as auto
         : descriptionBaseKeyForSession + '-' + descriptionLanguage  // set language as manuel
 }
-//#endregion
+
+export async function populateTable(
+    entityType,
+    specialUrl,
+    language,
+    pageNumber,
+    pageSize,
+    tableBody,
+    propertyNamesOfView,
+    updateButtonName,
+    nameOfPaginationHeader,
+    lbl_entityQuantity,
+    ul_pagination,
+    errorMessageColor,
+    paginationButtonQuantity,
+    refreshPaginationButtons) {
+
+    //#region set url
+    let url = `${baseApiUrl}/${specialUrl}` +
+        `?language=${language}` +
+        `&pageNumber=${pageNumber}` +
+        `&pageSize=${pageSize}`
+    //#endregion
+
+    $.ajax({
+        method: "GET",
+        url: url,
+        contentType: "application/json",
+        dataType: "json",
+        beforeSend: () => {
+            //#region reset table if not empty
+            if (tableBody.children("tr").length != 0)
+                tableBody.empty();
+            //#endregion
+        },
+        success: (response, status, xhr) => {
+            addEntitiesToTableAsync(response, language, tableBody, entityType, propertyNamesOfView, updateButtonName);
+
+            //#region get pagination infos from headers
+            paginationInfosInJson = JSON.parse(
+                xhr.getResponseHeader(nameOfPaginationHeader));
+            //#endregion
+
+            //#region update entity count label
+            if (response.length != 0) {  // if any machine exists
+                entityCountOnTable = paginationInfosInJson.CurrentPageCount;
+
+                lbl_entityQuantity.empty();
+                lbl_entityQuantity.append(
+                    `<b>${entityCountOnTable}/${pageSize}</b> ${entityCountMessage}`);
+            }
+            //#endregion
+
+            //#region add pagination buttons
+            if (refreshPaginationButtons)
+                addPaginationButtonsAsync(
+                    paginationInfosInJson,
+                    paginationButtonQuantity,
+                    ul_pagination);
+            //#endregion
+
+            hideOrShowPaginationBackAndNextButtonsAsync(paginationInfosInJson);
+        },
+        error: (response) => {
+            //#region write error to resultLabel
+            updateResultLabel(
+                lbl_entityQuantity,
+                JSON.parse(response.responseText).errorMessage,
+                errorMessageColor);
+            //#endregion
+        },
+    });
+}
+
+async function addEntitiesToTableAsync(
+    response,
+    language,
+    tableBody,
+    entityType,
+    propertyNamesOfView,
+    updateButtonName) {
+    await new Promise(resolve => {
+        //#region set variables
+        let rowNo = 1;
+        let rowId;
+        let row;
+        //#endregion
+
+        //#region add entities to table
+        response.forEach(entityView => {
+            //#region add checkbox to row
+            rowId = `tr_row${rowNo}`
+
+            tableBody.append(
+                `<tr id= "${rowId}" class= ${entityView.id}>
+                    <td id="td_checkBox">
+					    <label class="i-checks m-b-none">
+						    <input type="checkbox"><i></i>
+					    </label>
+				    </td>
+                </tr>`);
+
+            row = $("#" + rowId);
+            //#endregion
+
+            //#region add column values of entity as dynamic
+            for (let index in propertyNamesOfView) {
+                let columnName = propertyNamesOfView[index];
+
+                //#region set columnValue
+                let columnValue = columnName != "descriptions" ?
+                    entityView[columnName]
+                    : entityView[columnName][language]
+                //#endregion
+
+                //#region when column name is not "createdAt"
+                if (columnName != "createdAt")
+                    row.append(
+                        `<td id="td_${columnName}">${columnValue}</td>`
+                    );
+                //#endregion
+
+                //#region when column name is "createdAt"
+                else
+                    row.append(
+                        `<td id="td_${columnName}">${getDateTimeInString(columnValue)}</td>`
+                    );
+                //#endregion
+            }
+            //#endregion
+
+            //#region add update button to row
+            row.append(
+                `<td id="td_processes">
+				<button id="btn_update" ui-toggle-class="">
+					<i class="fa fa-pencil text-info">
+						${updateButtonName}
+					</i>
+				</button>
+			</td>
+            <td style="width:30px;"></td>`
+            );
+            //#endregion
+
+            //#region add error row to row
+            row.append(
+                `<tr hidden></tr>
+			<tr id="tr_row${rowNo}_error">
+		        <td id="td_error" colspan="13" hidden></td>
+			</tr>`
+            );
+            //#endregion
+
+            //#region add descriptions of machines to session if entity is machine
+            if (entityType == "machine")
+                sessionStorage.setItem(
+                    rowId,
+                    JSON.stringify({
+                        "descriptions": entityView.descriptions
+                    }));
+            //#endregion
+
+            rowNo += 1;
+        });
+        //#endregion
+
+        resolve();
+    })
+}
+
+async function addPaginationButtonsAsync(
+    paginationInfosInJson,
+    paginationButtonQuantity,
+    ul_pagination) {
+    await new Promise(resolve => {
+        //#region set buttonQauntity for pagination
+        let buttonQuantity =
+            paginationInfosInJson.TotalPage < paginationButtonQuantity ?
+                paginationInfosInJson.TotalPage
+                : paginationButtonQuantity
+        //#endregion
+
+        //#region reset paginationButtons if exists
+        if (ul_pagination.children("li").length != 0)
+            ul_pagination.empty()
+        //#endregion
+
+        //#region add paginationBack button
+        ul_pagination.append(
+            `<li>
+			<a id="a_paginationBack" href="#" hidden>
+				<i class="fa fa-chevron-left"></i>
+			</a>
+		</li>`);
+        //#endregion
+
+        //#region add pagination buttons
+        for (let pageNo = 1; pageNo <= buttonQuantity; pageNo += 1)
+            ul_pagination.append(
+                `<li>
+				<a href="#"> 
+					${pageNo}
+				</a>
+			</li> `
+            );
+        //#endregion
+
+        //#region add paginationNext button
+        ul_pagination.append(
+            `<li>
+			<a id="a_paginationNext" href="#" hidden>
+				<i class="fa fa-chevron-right"></i>
+			</a>
+		</li>`);
+        //#endregion
+
+        resolve();
+    })
+}
+
+async function hideOrShowPaginationBackAndNextButtonsAsync(paginationInfosInJson) {
+    await new Promise(resolve => {
+        if (paginationInfosInJson.TotalPage > 1) {
+            //#region for paginationBack button
+            // hide
+            if (paginationInfosInJson.CurrentPageNo == 1)
+                $("#a_paginationBack").attr("hidden", "");
+
+            // show
+            else
+                $("#a_paginationBack").removeAttr("hidden");
+            //#endregion
+
+            //#region for paginationNext button
+            // hide
+            if (paginationInfosInJson.CurrentPageNo == paginationInfosInJson.TotalPage)
+                $("#a_paginationNext").attr("hidden", "");
+
+            // show
+            else
+                $("#a_paginationNext").removeAttr("hidden");
+            //#endregion
+        }
+
+        resolve();
+    })
+}
+//#endregio
