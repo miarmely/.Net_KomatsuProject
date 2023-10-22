@@ -66,25 +66,50 @@ export function getHeaderFromLocalInJson(headerName) {
         localStorage.getItem(headerName));
 }
 
-export function updateResultLabel(resultLabelId, message, color,
-    marginT = "0px", marginR = "0px", marginB = "0px", marginL = "0px") {
+export function updateResultLabel(
+    resultLabelId,
+    message,
+    color,
+    marginT = "30px") {
     //#region reset resultLabel
-    let td_error = $(resultLabelId).children("td");
-    td_error.empty();
+    let resultLabel = $(resultLabelId);
+    resultLabel.empty();
+    //#endregion
+
+    //#region change style
+    resultLabel.attr("style",
+        `color:	${color}; 
+		margin-top: ${marginT};
+		text-align: center`);
+    //#endregion
+
+    //#region write error to resultLabel
+    resultLabel.removeAttr("hidden");  // show resultLabel
+    resultLabel.append(message);
+    //#endregion
+}
+
+export function updateErrorRow(
+    errorRowId,
+    message,
+    color,
+    marginT = "30px") {
+    //#region show <td> of <tr> of error
+    let tr_row_error = $(errorRowId);
+    let td_error = tr_row_error.children("td");
+
+    td_error.removeAttr("hidden");
     //#endregion
 
     //#region change style
     td_error.attr("style",
         `color:	${color}; 
-		margin-top: ${marginT}; 
-		margin-right: ${marginR};
-		margin-bottom: ${marginB};
-		margin-left: ${marginL};
+		margin-top: ${marginT};
 		text-align: center`);
     //#endregion
 
-    //#region write error to resultLabel
-    td_error.removeAttr("hidden");  // show resultLabel
+    //#region write error to <td> of error row
+    td_error.empty();
     td_error.append(message);
     //#endregion
 }
@@ -191,6 +216,7 @@ export async function populateTable(
     ul_pagination,
     errorMessageColor,
     paginationButtonQuantity,
+    entityQuantity_message,
     refreshPaginationButtons) {
 
     //#region set variables
@@ -225,10 +251,11 @@ export async function populateTable(
             if (response.length != 0) {  // if any machine exists
                 entityCountOnTable = paginationInfosInJson.CurrentPageCount;
 
-                let b_entityQuantityLabel = lbl_entityQuantity.children("b");
-                b_entityQuantityLabel.empty();
-                b_entityQuantityLabel.append(
-                    `${entityCountOnTable}/${pageSize}`);
+                updateResultLabel(
+                    "#" + lbl_entityQuantity.attr("id"),
+                    `<b>${entityCountOnTable}/${pageSize}</b> ${entityQuantity_message}`,
+                    "#7A7A7A"
+                )
             }
             //#endregion
 
@@ -241,6 +268,8 @@ export async function populateTable(
             //#endregion
 
             hideOrShowPaginationBackAndNextButtonsAsync(paginationInfosInJson);
+
+
         },
         error: (response) => {
             //#region write error to resultLabel
@@ -476,4 +505,4 @@ async function hideOrShowPaginationBackAndNextButtonsAsync(paginationInfosInJson
         resolve();
     })
 }
-//#endregio
+//#endregion

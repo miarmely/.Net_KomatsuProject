@@ -203,10 +203,13 @@ namespace Services.Concretes
             #endregion
         }
 
-        public async Task DeleteUsersByTelNoListAsync(UserDtoForDelete userDto)
+        public async Task DeleteUsersByTelNoListAsync(
+            string language,
+            UserDtoForDelete userDto)
         {
             #region set parameters
             var parameters = new DynamicParameters();
+            parameters.Add("Language", language, DbType.String);
 
             parameters.Add(
                 "TelNosInString",

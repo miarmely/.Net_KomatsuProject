@@ -1,4 +1,4 @@
-﻿import { populateTable, paginationInfosInJson, setDisabledOfOtherUpdateButtonsAsync, resetErrorRow, updateResultLabel } from "./miarTools.js"
+﻿import { populateTable, paginationInfosInJson, setDisabledOfOtherUpdateButtonsAsync, resetErrorRow, updateResultLabel, entityCountOnTable, updateErrorRow } from "./miarTools.js"
 
 $(function () {
     //#region variables
@@ -7,6 +7,7 @@ $(function () {
     const paginationButtonQuantity = 5;
     const routeForDisplay = "user/display/all";
     const routeForUpdate = "user/update";
+    const routeForDelete = "user/delete";
     const entityType = "user"
     const nameOfPaginationHeader = "User-Pagination";
     const propertyNamesToBeShowOnTable = [
@@ -20,9 +21,11 @@ $(function () {
     ]
     const errorMessageColor = "red";
     const tableBody = $("#tbl_user tbody");
-    const lbl_entityQuantity = $("#lbl_entityQuantity");
+    const entityQuantity_id = "#lbl_entityQuantity";
+    const lbl_entityQuantity = $(entityQuantity_id);
     const ul_pagination = $("#ul_pagination");
     const updateButtonId = "#btn_update";
+    const box_all = $("#box_all");
     //#endregion
 
     //#region events
@@ -31,7 +34,7 @@ $(function () {
         if ($("#box_all").is(":checked"))
             $("#box_all").prop("checked", false);
         //#endregion
-        "1"
+       
         //#region click control of pagination buttons
         let clickedButton = $(":focus");
 
@@ -53,6 +56,7 @@ $(function () {
                         ul_pagination,
                         errorMessageColor,
                         paginationButtonQuantity,
+                        entityQuantity_message,
                         true)
                 break;
             //#endregion
@@ -74,6 +78,7 @@ $(function () {
                         ul_pagination,
                         errorMessageColor,
                         paginationButtonQuantity,
+                        entityQuantity_message,
                         true)
                 break;
             //#endregion
@@ -96,17 +101,18 @@ $(function () {
                     ul_pagination,
                     errorMessageColor,
                     paginationButtonQuantity,
+                    entityQuantity_message,
                     true)
                 break;
             //#endregion
         }
         //#endregion 
     });
-    $("#box_all").click(() => {
+    box_all.click(() => {
         //#region do checked/unchecked all checkbox
         let isBoxAllChecked = $("#box_all").is(":checked");
 
-        for (let rowNo = 1; rowNo <= entityCountOfPage; rowNo++) {
+        for (let rowNo = 1; rowNo <= entityCountOnTable; rowNo++) {
             var checkBoxInRow = $(`#tr_row${rowNo} #td_checkBox input`);
 
             //#region do checked of checkbox
@@ -129,7 +135,7 @@ $(function () {
         switch (opt_selected.val()) {
             //#region delete selected values
             case "1":
-                await deleteSelectedEntitiesAsync();
+                await deleteSelectedUsersAsync();
                 break;
             //#endregion 
         }
@@ -152,6 +158,7 @@ $(function () {
         }
         //#endregion
     })
+    //#endregion
 
     //#region functions
     async function populateRoleNameSelectAsync(tableDatasForAddSelect, columnValues) {
@@ -179,26 +186,32 @@ $(function () {
         })
     }
 
-    async function deleteSelectedEntitiesAsync() {
-        //#region set telNoList and rowNoList
+    async function deleteSelectedUsersAsync() {
+        //#region set variables
         let telNoList = [];
         let rowNoList = [];
+        //#endregion
 
+        //#region set telNoList and rowNoList
         await new Promise(resolve => {
-            for (let rowNo = 1; rowNo <= entityCountOfPage; rowNo += 1) {
+            let checkBox;
+            let row;
+            let telNo;
+
+            for (let rowNo = 1; rowNo <= entityCountOnTable; rowNo += 1) {
                 //#region set variables
-                let checkBox = $(`#tr_row${rowNo} #td_checkBox input`);
-                let row = $(`#tr_row${rowNo}`);
+                checkBox = $(`#tr_row${rowNo} #td_checkBox input`);
+                row = $(`#tr_row${rowNo}`);
                 //#endregion 
 
-                //#region add "telNo" to "telNoList" if user checked
+                //#region populate telNoList and rowNoList if user checked
                 if (checkBox.is(":checked")) {
                     //#region when update process continuing
-                    if (row.children("td").children("input").length != 0)
-                        click_cancelButton(rowNo);  // cancel update process
+                    if (row.children("td").children("input").length != 0)  // when any <input> exists
+                        clicked_cancelButtonAsync(rowNo);  // cancel update process
                     //#endregion
 
-                    let telNo = row.children("#td_telNo").text();
+                    telNo = row.children("#td_telNo").text();
 
                     telNoList.push(telNo);
                     rowNoList.push(rowNo);
@@ -217,48 +230,102 @@ $(function () {
 
         $.ajax({
             method: "DELETE",
-            url: "https://localhost:7091/api/services/user/delete",
-            data: JSON.stringify({ "TelNos": telNoList }),
+            url: `${baseApiUrl}/${routeForDelete}?language=${language}`,
+            data: JSON.stringify({
+                "TelNoList": telNoList
+            }),
             contentType: "application/json",
             dataType: "json",
             success: () => {
-                //#region when all users on page deleted
-                if (telNoList.length == pageSize) {
-                    let currentPageNo = userPaginationInJson.CurrentPageNo;
+                let currentPageNo = paginationInfosInJson.CurrentPageNo;
 
+                //#region when all users on page deleted
+                if (telNoList.length == entityCountOnTable) {
                     //#region when next page exists
-                    if (userPaginationInJson.HasNext)
-                        addUsersToTable(currentPageNo, true);
+                    if (paginationInfosInJson.HasNext)
+                        populateTable(
+                            entityType,
+                            routeForDisplay,
+                            language,
+                            currentPageNo,
+                            pageSize,
+                            tableBody,
+                            propertyNamesToBeShowOnTable,
+                            updateButtonName,
+                            nameOfPaginationHeader,
+                            lbl_entityQuantity,
+                            ul_pagination,
+                            errorMessageColor,
+                            paginationButtonQuantity,
+                            entityQuantity_message,
+                            true);  // refresh current page
                     //#endregion
 
                     //#region when previous page exists
-                    else if (userPaginationInJson.HasPrevious)
-                        addUsersToTable(currentPageNo - 1, true);
+                    else if (paginationInfosInJson.HasPrevious)
+                        populateTable(
+                            entityType,
+                            routeForDisplay,
+                            language,
+                            currentPageNo - 1,
+                            pageSize,
+                            tableBody,
+                            propertyNamesToBeShowOnTable,
+                            updateButtonName,
+                            nameOfPaginationHeader,
+                            lbl_entityQuantity,
+                            ul_pagination,
+                            errorMessageColor,
+                            paginationButtonQuantity,
+                            entityQuantity_message,
+                            true);
                     //#endregion
 
-                    //#region when any user not exists
-                    else
+                    //#region when any machines not found
+                    else {
                         tableBody.empty();
+
+                        updateResultLabel(
+                            entityQuantity_id,
+                            `<b>0/${pageSize}<b> ${entityQuantity_message}`,
+                            errorMessageColor);
+                    }
                     //#endregion
                 }
                 //#endregion
 
                 //#region when some users on page deleted
                 else
-                    addUsersToTable(userPaginationInJson.CurrentPageNo);  // refresh current page
+                    populateTable(
+                        entityType,
+                        routeForDisplay,
+                        language,
+                        currentPageNo,
+                        pageSize,
+                        tableBody,
+                        propertyNamesToBeShowOnTable,
+                        updateButtonName,
+                        nameOfPaginationHeader,
+                        lbl_entityQuantity,
+                        ul_pagination,
+                        errorMessageColor,
+                        paginationButtonQuantity,
+                        entityQuantity_message,
+                        true);  // refresh current page
                 //#endregion
 
                 //#region do unchecked 'box_all'
-                $("#box_all").prop("checked", false);
-                //#endregion
-
-                //#region reset "lbl_entityQuantity"
-                lbl_entityQuantity.empty()
-                lbl_entityQuantity.append(`0/${pageSize} Kullanıcı Görüntüleniyor`);
+                box_all.prop("checked", false);
                 //#endregion
             },
             error: (response) => {
-                window.writeErrorMessage(responseText, lbl_entityQuantity);
+                //#region write error to entity quantity label
+                updateResultLabel(
+                    entityQuantity_id,
+                    JSON.parse(response.responseText).errorMessage,
+                    errorMessageColor
+                );
+                //#endregion
             }
         });
     }
@@ -439,7 +506,7 @@ $(function () {
             },
             error: (response) => {
                 //#region write error to error row
-                updateResultLabel(
+                updateErrorRow(
                     `#${rowId}_error`,
                     JSON.parse(response.responseText).errorMessage,
                     errorMessageColor);
@@ -508,5 +575,6 @@ $(function () {
         ul_pagination,
         errorMessageColor,
         paginationButtonQuantity,
+        entityQuantity_message,
         true)
 });

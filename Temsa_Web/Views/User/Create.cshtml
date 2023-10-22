@@ -3,7 +3,49 @@
 @{
     var language = ViewBag.Language;
 
-    #region set success message by language
+    #region set variables by languages
+
+    #region set form title
+    var formTitle = language switch
+    {
+        "TR" => "YENİ KULLANICI OLUŞTUR",
+        "EN" => "CREATE NEW USER"
+    };
+    #endregion
+
+    #region set label ids and names
+    var labelIdsAndNames = language switch
+    {
+        "TR" => new Dictionary<string, string[]>{
+            { "inpt_firstName", new string[] {"Ad","text", null} },
+            { "inpt_lastName", new string[] {"Soyad","text", null} },
+            { "inpt_telNo", new string[] {"Telefon","phone", "* Başında sıfır olmadan 10 haneli olarak giriniz."} },
+            { "inpt_email", new string[] {"Email","email", null} },
+            { "inpt_companyName", new string[] {"Şirket","text", null} },
+            { "inpt_roles", new string[] {"Rol",null, null} },
+            { "inpt_password", new string[] {"Şifre","text" , "* 6 ile 16 karakter arasında giriniz."} }
+        },
+        "EN" => new Dictionary<string, string[]>{
+            { "inpt_firstName", new string[] {"Firstname","text", null} },
+            { "inpt_lastName", new string[] {"Lastname","text", null} },
+            { "inpt_telNo", new string[] {"Phone","phone", "* enter as 10 digits without zero at head"} },
+            { "inpt_email", new string[] {"Email","email", null} },
+            { "inpt_companyName", new string[] {"Company","text", null} },
+            { "inpt_roles", new string[] {"Role",null, null} },
+            { "inpt_password", new string[] {"Password","text", "* enter between 6 and 16 char"} }
+        },
+    };
+    #endregion
+
+    #region set save button name
+    var saveButtonName = language switch
+    {
+        "TR" => "Kaydet",
+        "EN" => "Save"
+    };
+    #endregion
+
+    #region set success message
     var successMessage = language switch
     {
         "TR" => "kullanıcı başarıyla kaydedildi",
@@ -11,6 +53,9 @@
     };
     #endregion
 
+    #endregion
+
+    
     #region get all roles by language
     var rolesByLanguage = await Model.UserService
         .GetAllRolesByLanguageAsync(language);
@@ -22,14 +67,77 @@
         <div class="col-lg-12">    
             <section class="panel">
                 <header class="panel-heading">
-                    Yeni Kullanıcı Oluştur
+                    @formTitle
                 </header>
                 <div class="panel-body">
                     <form>
                         <div class="form-horizontal bucket-form">
-                            <!-- firstName -->
+                            @{
+                                #region add labels and label inputs or selects
+                                foreach(var columnId in labelIdsAndNames.Keys)
+                                {
+                                    #region set variables
+                                    var labelName = labelIdsAndNames[columnId][0];
+                                    var inputType = labelIdsAndNames[columnId][1];
+                                    var labelMessage = labelIdsAndNames[columnId][2];
+                                    #endregion
+
+                                    #region add labels and inputs without role
+                                    if(columnId != "inpt_roles"){
+                                        <div class="form-group">
+                                            <label class="col-sm-3 control-label">
+                                                @labelName
+                                            </label>
+                                            <div class="col-sm-6">
+                                                <input id="@columnId" type="@inputType" class="form-control" required>
+                                                <span class="help-block">@labelMessage</span>
+                                            </div>
+                                        </div>
+                                    }
+                                    #endregion
+
+                                    #region add role label and select
+                                    else
+                                    {
+                                        <div class="form-group">
+                                            <label class="col-sm-3 control-label">Rol</label>
+                                            <div class="col-sm-6">
+                                                <select id="slct_role" class="form-control m-bot15">
+                                                    @{
+                                                        #region add roles to role <select>
+                                                        foreach(var roleByLanguage in rolesByLanguage)
+                                                        {
+                                                            <option>@roleByLanguage</option>    
+                                                        }
+                                                        #endregion
+                                                    }
+                                                </select>
+                                            </div>
+                                        </div>  
+                                    }
+                                    #endregion
+                                }
+                                #endregion
+                            }
+
+                             <!-- register button -->
                             <div class="form-group">
-                                <label class="col-sm-3 control-label">Ad</label>
+                                <div class="col-sm-6; text-center">
+                                    <button id="btn_register" type="submit" class="btn btn-danger">
+                                        @saveButtonName
+                                    </button>
+                                </div>
+                                <div style="text-align:center">
+                                    <p id="p_resultLabel"></p>
+                                </div>
+                            </div>
+                            <!-- /register button-->
+                        
+                            @*<!-- firstName -->
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label">
+                                    labelIdsAndNames.
+                                </label>
                                 <div class="col-sm-6">
                                     <input id="inpt_firstName" type="text" class="form-control" required>
                                     <span class="help-block"></span>
@@ -38,7 +146,9 @@
                             <!-- /firstName -->
                             <!-- lastName -->
                             <div class="form-group">
-                                <label class="col-sm-3 control-label">Soyad</label>
+                                <label class="col-sm-3 control-label">
+                                    Soyad
+                                </label>
                                 <div class="col-sm-6">
                                     <input id="inpt_lastName" type="text" class="form-control" required>
                                     <span class="help-block"></span>
@@ -73,21 +183,7 @@
                             </div>
                             <!-- /Company Name -->
                             <!-- Role -->
-                            <div class="form-group">
-                                <label class="col-sm-3 control-label">Rol</label>
-                                <div class="col-sm-6">
-                                    <select id="slct_role" class="form-control m-bot15">
-                                        @{
-                                            #region add roles to role <select>
-                                            foreach(var roleByLanguage in rolesByLanguage)
-                                            {
-                                                <option>@roleByLanguage</option>    
-                                            }
-                                            #endregion
-                                        }
-                                    </select>
-                                </div>
-                            </div>   
+                            < 
                             <!-- /Role -->
                             <!-- Password -->
                             <div class="form-group">
@@ -96,18 +192,8 @@
                                     <input id="inpt_password" type="text" class="form-control" required>
                                     <span class="help-block">* 6 ile 16 karakter arasında giriniz.</span>
                                 </div>
-                            </div>
+                            </div>*@
                             <!-- /Password -->
-                            <!-- register button -->
-                            <div class="form-group">
-                                <div class="col-sm-6; text-center">
-                                    <button id="btn_register" type="submit" class="btn btn-danger">Kaydet</button>
-                                </div>
-                                <div style="text-align:center">
-                                    <p id="p_resultLabel"></p>
-                                </div>
-                            </div>
-                            <!-- /register button-->
                         </div>
                         </form>
                 </div>

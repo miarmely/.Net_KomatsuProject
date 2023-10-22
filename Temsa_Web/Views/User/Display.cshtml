@@ -5,21 +5,83 @@
 
     #region set elements by languages
     
-    #region set update button name
-    var updateButtonName = language switch
+    #region set table title
+    var tableTitle = language switch
     {
-        "TR" => "Güncelle",
-        "EN" => "Update"
+        "TR" => "KAYITLI KULLANICILAR",
+        "EN" => "REGISTERED USERS"
     };
     #endregion
 
-    #region set entity count message
-    var entityCountMessage = language switch
+    #region set menubar options
+    var menubarOptions = language switch
+    {
+        "TR" => new string[]
+        {
+            "Seçilenleri Sil"
+        },
+        "EN" => new string[]
+        {
+            "Delete Selected"
+        }
+    };
+    #endregion
+
+    #region set column ids and names
+    var columnIdsAndNamesDict = language switch
+    {
+        "TR" => new Dictionary<string, string>
+        {
+            { "th_firstName", "Ad" },
+            { "th_lastName", "Soyad" },
+            { "th_companyName", "Şirket" },
+            { "th_telNo", "Telefon" },
+            { "th_email", "Email" },
+            { "th_roleNames", "Rol" },
+            { "th_createdAt", "Kayıt Tarihi" },
+            { "th_processes", "İşlemler" },
+        },
+        "EN" => new Dictionary<string, string>
+        {
+            { "th_firstName", "First Name" },
+            { "th_lastName", "Last Name" },
+            { "th_companyName", "Company" },
+            { "th_telNo", "Phone" },
+            { "th_email", "Email" },
+            { "th_roleNames", "Role" },
+            { "th_createdAt", "Registered Date" },
+            { "th_processes", "Processes" },
+        },
+    };
+    #endregion
+
+    #region set entity quantity message
+    var entityQuantityMessage = language switch
     {
         "TR" => "kullanıcı gösteriliyor",
         "EN" => "user displaying"
     };
     #endregion
+
+    #region set button names
+
+    #region set menubar options button name
+    var menubarOptionsButton = language switch
+    {
+        "TR" => "Uygula",
+        "EN" => "Apply"
+    };
+    #endregion
+
+    #region set update button name
+    var updateButtonName = language switch
+    {
+        "TR" => "Güncelle",
+        "EN" => "Update",
+    };
+    #endregion
+
+    #endregion    
 
     #endregion
 }
@@ -28,7 +90,7 @@
     <div class="panel panel-default">
         @*title*@
         <div class="panel-heading">
-            Kayıtlı Kullanıcılar
+            @tableTitle
         </div>
         @*/title*@
 
@@ -36,9 +98,20 @@
         <div class="row w3-res-tb">
             <div class="col-sm-5 m-b-xs">
 				<select id="slct_menubar" class="input-sm form-control w-sm inline v-middle">
-					<option value="1">Seçilenleri Sil</option>
+					@{
+                        #region add <options> to menubar
+                        for(var index=0; index < menubarOptions.Length; index++)
+                        {
+                            <option value=@index>
+                                @menubarOptions[index]
+                            </option>    
+                        }
+                        #endregion
+                    }
 				</select>
-				<button id="btn_apply" class="btn btn-sm btn-default">Uygula</button>                
+				<button id="btn_apply" class="btn btn-sm btn-default">
+                    @updateButtonName
+                </button>                
             </div>
             <div class="col-sm-4">
             </div>
@@ -67,14 +140,16 @@
 								<input id="box_all" type="checkbox"><i></i>
                             </label>
                         </th>
-                        <th>Ad</th>
-                        <th>Soyad</th>
-                        <th>Şirket Adı</th>
-                        <th>Telefon Numarası</th>
-                        <th>Email</th>
-                        <th>Roller</th>
-                        <th>Kayıt Tarihi</th>
-                        <th>İşlemler</th>
+                        @{
+                            #region add column names
+                            foreach(var columnId in columnIdsAndNamesDict.Keys)
+                            {
+                                <th id="@columnId">
+                                    <b>@columnIdsAndNamesDict[columnId]</b>
+                                </th> 
+                            }
+                            #endregion
+                        }
                         <th style="width:30px;"></th>
                     </tr>
                 </thead>
@@ -89,7 +164,7 @@
             <div class="row">
                 <div class="col-sm-5 text-left">
                     <small id="lbl_entityQuantity" class="text-muted inline m-t-sm m-b-s">
-						<b>0</b> @entityCountMessage
+						<b>0</b> @entityQuantityMessage
 					</small>
                 </div>
                 <div class="col-sm-7 text-right text-center-xs">                
@@ -107,6 +182,8 @@
 <script>
 	let language = "@language";
 	let updateButtonName = "@updateButtonName";
+    let entityQuantity_message = "@entityQuantityMessage"
+    
     let rolesByLanguage = @Json.Serialize(await Model
         .UserService
         .GetAllRolesByLanguageAsync(language))  

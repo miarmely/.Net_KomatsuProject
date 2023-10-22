@@ -9,7 +9,7 @@ namespace Services.Contracts
         Task<string> LoginAsync(string language, UserDtoForLogin userDto);
         Task RegisterAsync(string language, UserDtoForRegister userDto);
         Task CreateUserAsync(string language, UserDtoForCreate userDto);
-        Task DeleteUsersByTelNoListAsync(UserDtoForDelete userDto);
+        Task DeleteUsersByTelNoListAsync(string language, UserDtoForDelete userDto);
         Task<IEnumerable<string>> GetAllRolesByLanguageAsync(string language);
         Task<IEnumerable<UserDto>> GetAllUsersWithPagingAsync(
             PaginationParameters pagingParameters,

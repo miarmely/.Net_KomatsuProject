@@ -2,7 +2,7 @@
     entityCountOnTable, changeDescriptionButtonColor, clicked_descriptionDropdownButton,
     clicked_descriptionDropdownItem, description_currentColor,
     getDescriptionKeyForSession, paginationInfosInJson, populateTable,
-    updateResultLabel, setDisabledOfOtherUpdateButtonsAsync
+    updateResultLabel, setDisabledOfOtherUpdateButtonsAsync, updateErrorRow
 } from "./miarTools.js";
 
 
@@ -34,10 +34,11 @@ $(function () {
         "createdAt"
     ]
     const tableBody = $("#tbl_machine tbody");
-    const lbl_entityQuantity = $("#lbl_entityQuantity");
     const ul_pagination = $("#ul_pagination");
     const th_descriptions = $("#th_descriptions");
     const updateButtonId = "#btn_update";
+    const entityQuantity_id = "#lbl_entityQuantity"
+    const lbl_entityQuantity = $(entityQuantity_id);
     //#endregion
 
     //#region events
@@ -68,6 +69,7 @@ $(function () {
                         ul_pagination,
                         errorMessageColor,
                         paginationButtonQuantity,
+                        entityQuantity_message,
                         true)
                 break;
             //#endregion
@@ -89,6 +91,7 @@ $(function () {
                         ul_pagination,
                         errorMessageColor,
                         paginationButtonQuantity,
+                        entityQuantity_message,
                         true)
                 break;
             //#endregion
@@ -111,6 +114,7 @@ $(function () {
                     ul_pagination,
                     errorMessageColor,
                     paginationButtonQuantity,
+                    entityQuantity_message,
                     true)
                 break;
             //#endregion
@@ -249,12 +253,6 @@ $(function () {
     function removeDescriptionButtonOnColumn() {
         th_descriptions.empty();
         th_descriptions.text(description_baseButtonName);
-    }
-
-    function getIdOfErrorRow(row) {
-        let rowId = row.attr("id");
-
-        return `#${rowId}_error #td_error`;
     }
 
     function resetErrorRow(rowId) {
@@ -526,6 +524,7 @@ $(function () {
                             ul_pagination,
                             errorMessageColor,
                             paginationButtonQuantity,
+                            entityQuantity_message,
                             true);  // refresh current page
                     //#endregion
 
@@ -545,6 +544,7 @@ $(function () {
                             ul_pagination,
                             errorMessageColor,
                             paginationButtonQuantity,
+                            entityQuantity_message,
                             true);
                     //#endregion
 
@@ -553,8 +553,8 @@ $(function () {
                         tableBody.empty();
 
                         updateResultLabel(
-                            lbl_entityQuantity,
-                            `<b>0</b>/<b>${pageSize}</b> ${entityCountMessage}`,
+                            entityQuantity_id,
+                            `<b>0/${pageSize}<b> ${entityQuantity_message}`,
                             errorMessageColor);
                     }
                     //#endregion
@@ -577,6 +577,7 @@ $(function () {
                         ul_pagination,
                         errorMessageColor,
                         paginationButtonQuantity,
+                        entityQuantity_message,
                         true);  // refresh current page
                 //#endregion
 
@@ -585,11 +586,12 @@ $(function () {
                 //#endregion
 
                 removeDescriptionButtonOnColumn();
+
             },
             error: (response) => {
                 //#region write error to entity quantity label
                 updateResultLabel(
-                    lbl_entityQuantity,
+                    entityQuantity_id,
                     JSON.parse(response.responseText).errorMessage,
                     errorMessageColor
                 );
@@ -894,7 +896,7 @@ $(function () {
             },
             error: (response) => {
                 //#region write error to error row
-                updateResultLabel(
+                updateErrorRow(
                     `#${rowId}_error`,
                     JSON.parse(response.responseText).errorMessage,
                     errorMessageColor);
@@ -932,5 +934,6 @@ $(function () {
         ul_pagination,
         errorMessageColor,
         paginationButtonQuantity,
+        entityQuantity_message,
         true)
 })

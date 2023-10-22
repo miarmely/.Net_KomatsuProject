@@ -80,7 +80,7 @@ $(function () {
                 //#region write error message to resultLabel
                 updateResultLabel(
                     resultLabelId,
-                    convertErrorCodeToErrorMessage(response.responseText),
+                    JSON.parse(response.responseText).errorMessage,
                     resultLabelErrorColor,
                     "30px");
                 //#endregion

@@ -111,7 +111,7 @@ namespace Presantation.Controllers
             [FromBody] UserDtoForDelete userDto)
         {
             await _manager.UserService
-                .DeleteUsersByTelNoListAsync(userDto);
+                .DeleteUsersByTelNoListAsync(language, userDto);
 
             return NoContent();
         }
