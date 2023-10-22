@@ -4,10 +4,10 @@ namespace Presantation.Controllers.Web
 {
 	public class LoginController : Controller
 	{
-		public IActionResult Index()
+		public IActionResult Index(
+			[FromQuery(Name = "language")] string language="TR")
 		{
-			// set login default language as TR
-			ViewBag.Language = "TR";
+			ViewBag.Language = language;
 
 			return View();
 		}

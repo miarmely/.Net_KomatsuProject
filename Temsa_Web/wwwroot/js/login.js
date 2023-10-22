@@ -1,27 +1,26 @@
-﻿import { writeErrorMessage } from "./tools.js";
+﻿import { updateResultLabel } from "./miarTools.js";
 
 $(function () {
-    $("form").submit(async (event) => {
+    const resultLabelId = "#p_resultLabel";
+    const errorMessageColor = "red";
+
+    $("form").submit((event) => {
         event.preventDefault();
 
         //#region reset resultLabel
-        var resultLabel = $("#p_resultLabel");
+        var resultLabel = $(resultLabelId);
         resultLabel.empty();
-        //#endregion
-
-        //#region set login data
-        let data = {
-            telNo: $("#inpt_telNo").val().trim(),
-            password: $("#inpt_password").val().trim()
-        };
         //#endregion
 
         //#region control login (ajax)
         $.ajax({
             method: "POST",
-            url: "https://localhost:7091/api/services/user/login",
+            url: `https://localhost:7091/api/services/user/login?language=${language}`,
             contentType: "application/json",
-            data: JSON.stringify(data),
+            data: JSON.stringify({
+                "TelNo": $("#inpt_telNo").val().trim(),
+                "Password": $("#inpt_password").val().trim()
+            }),
             dataType: "json",
             success: (response) => {
                 // reset inputs
@@ -35,7 +34,13 @@ $(function () {
                 window.location = "Home";
             },
             error: (response) => {
-                writeErrorMessage(response.responseText, "#p_resultLabel");
+                //#region write error to resultLabel
+                updateResultLabel(
+                    resultLabelId,
+                    JSON.parse(response.responseText).errorMessage,
+                    errorMessageColor,
+                    "50px")
+                //#endregion
             }
         })
         //#endregion
