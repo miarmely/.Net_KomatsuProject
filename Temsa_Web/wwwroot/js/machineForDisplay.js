@@ -1,4 +1,9 @@
-﻿import { entityCountOnTable, changeDescriptionButtonColor, clicked_descriptionDropdownButton, clicked_descriptionDropdownItem, description_currentColor, getDescriptionKeyForSession, paginationInfosInJson, populateTable, setDescriptionLanguage, updateResultLabel } from "./miarTools.js";
+﻿import {
+    entityCountOnTable, changeDescriptionButtonColor, clicked_descriptionDropdownButton,
+    clicked_descriptionDropdownItem, description_currentColor,
+    getDescriptionKeyForSession, paginationInfosInJson, populateTable,
+    updateResultLabel, setDisabledOfOtherUpdateButtonsAsync
+} from "./miarTools.js";
 
 
 $(function () {
@@ -6,19 +11,16 @@ $(function () {
     const pageNumber = 1;
     const pageSize = 7;
     const paginationButtonQuantity = 5;
-    const tableBody = $("#tbl_machine tbody");
+    const routeForDisplay = "machine/display/all"
+    const entityType = "machine"
     const nameOfPaginationHeader = "Machine-Pagination";
-    const lbl_entityQuantity = $("#lbl_entityQuantity");
-    const ul_pagination = $("#ul_pagination");
-    const th_descriptions = $("#th_descriptions");
-    const apiUrl = "https://localhost:7091/api/services/machine";
     const errorMessageColor = "rgb(255, 75, 75)";
-    const description_inputId = "#inpt_descriptions";
-    const description_buttonId = "#btn_description";
     const description_baseKeyForSession = "Machine-Display-Description";
     const description_unsavedColor = "red";
     const description_savedColor = "lightgreen";
-    const propertyNamesOfMachineView = [
+    const description_inputId = "#inpt_descriptions";
+    const description_buttonId = "#btn_description";
+    const propertyNamesToBeShowOnTable = [
         "mainCategoryName",
         "subCategoryName",
         "model",
@@ -31,6 +33,11 @@ $(function () {
         "descriptions",
         "createdAt"
     ]
+    const tableBody = $("#tbl_machine tbody");
+    const lbl_entityQuantity = $("#lbl_entityQuantity");
+    const ul_pagination = $("#ul_pagination");
+    const th_descriptions = $("#th_descriptions");
+    const updateButtonId = "#btn_update";
     //#endregion
 
     //#region events
@@ -41,20 +48,20 @@ $(function () {
         //#endregion
 
         //#region click control of pagination buttons
-        var clickedButton = $(":focus");
+        let clickedButton = $(":focus");
 
         switch (clickedButton.attr("id")) {
             //#region open previous page if previous page exists
             case "a_paginationBack":
                 if (paginationInfosInJson.HasPrevious)
                     populateTable(
-                        "machine",
-                        "machine/display/all",
+                        entityType,
+                        routeForDisplay,
                         language,
                         paginationInfosInJson.CurrentPageNo - 1,
                         pageSize,
                         tableBody,
-                        propertyNamesOfMachineView,
+                        propertyNamesToBeShowOnTable,
                         updateButtonName,
                         nameOfPaginationHeader,
                         lbl_entityQuantity,
@@ -62,7 +69,6 @@ $(function () {
                         errorMessageColor,
                         paginationButtonQuantity,
                         true)
-
                 break;
             //#endregion
 
@@ -70,13 +76,13 @@ $(function () {
             case "a_paginationNext":
                 if (paginationInfosInJson.HasNext)
                     populateTable(
-                        "machine",
-                        "machine/display/all",
+                        entityType,
+                        routeForDisplay,
                         language,
                         paginationInfosInJson.CurrentPageNo + 1,
                         pageSize,
                         tableBody,
-                        propertyNamesOfMachineView,
+                        propertyNamesToBeShowOnTable,
                         updateButtonName,
                         nameOfPaginationHeader,
                         lbl_entityQuantity,
@@ -84,7 +90,6 @@ $(function () {
                         errorMessageColor,
                         paginationButtonQuantity,
                         true)
-
                 break;
             //#endregion
 
@@ -93,13 +98,13 @@ $(function () {
                 let pageNo = clickedButton.prop("innerText");
 
                 populateTable(
-                    "machine",
-                    "machine/display/all",
+                    entityType,
+                    routeForDisplay,
                     language,
                     pageNo,
                     pageSize,
                     tableBody,
-                    propertyNamesOfMachineView,
+                    propertyNamesToBeShowOnTable,
                     updateButtonName,
                     nameOfPaginationHeader,
                     lbl_entityQuantity,
@@ -148,24 +153,6 @@ $(function () {
             //#endregion 
         }
     });
-    $("#tbl_machine tbody").click(async () => {
-        //#region when update,save or delete button clicked
-        let clickedElement = $(":focus");
-        let row = clickedElement.closest("tr");
-
-        switch (clickedElement.attr("id")) {
-            case "btn_update":
-                await clicked_updateButtonAsync(row);
-                break;
-            case "btn_save":
-                await clicked_saveButtonAsync(row);
-                break;
-            case "btn_cancel":
-                await clicked_cancelButtonAsync(row);
-                break;
-        }
-        //#endregion
-    })
     $("th").click(() => {  // control description column
         let selectedElement = $(":focus");
 
@@ -196,6 +183,24 @@ $(function () {
             //#endregion
         }
     });
+    $("tbody").click(async () => {
+        //#region when update,save or delete button clicked
+        let clickedElement = $(":focus");
+        let row = clickedElement.closest("tr");
+
+        switch (clickedElement.attr("id")) {
+            case "btn_update":
+                await clicked_updateButtonAsync(row);
+                break;
+            case "btn_save":
+                await clicked_saveButtonAsync(row);
+                break;
+            case "btn_cancel":
+                await clicked_cancelButtonAsync(row);
+                break;
+        }
+        //#endregion
+    })
     $("tbody").on("input", () => {  // control input changing states
         let inputtedElement = $(":focus");
         let descriptionInputIdWithoutDash = description_inputId.substring(1);
@@ -219,12 +224,12 @@ $(function () {
                 case "descriptions":
                     td.append(columnNamesAndValues[columnName][language]);
                     break;
-               default:
+                default:
                     td.append(columnNamesAndValues[columnName]);
                     break;
-                        
+
             }
-            
+
         }
         //#endregion
 
@@ -252,45 +257,16 @@ $(function () {
         return `#${rowId}_error #td_error`;
     }
 
-    function resetErrorRow(row) {
-        var tr_row_error = $(getIdOfErrorRow(row));
+    function resetErrorRow(rowId) {
+        var tr_row_error = $(rowId + "_error");
 
         tr_row_error.empty();  // reset
         tr_row_error.attr("hidden", "");  // hide
     }
 
-    async function setDisabledOfOtherUpdateButtonsAsync(rowId, doDisabled) {
-        await new Promise(resolve => {
-            //#region disable/enable other update buttons
-            for (var rowNo = 1; rowNo <= pageSize; rowNo += 1) {
-                let rowIdInLoop = `#tr_row${rowNo}`;
-
-                //#region disable/enable update button
-                if (rowIdInLoop != rowId) {
-                    // get update button
-                    let btn_update = $(rowIdInLoop)
-                        .children("#td_processes")
-                        .children("button")  //#update button
-
-                    // when disabled wanted
-                    if (doDisabled)
-                        btn_update.attr("disabled", "");
-
-                    // when enabled wanted
-                    else
-                        btn_update.removeAttr("disabled");
-                }
-                //#endregion
-            }
-            //#endregion
-
-            resolve();
-        })
-    }
-
-    async function populateMainCategoryNameSelectAsync(columnsForAddSelect, columnValues) {
+    async function populateMainCategoryNameSelectAsync(tableDatasForAddSelect, columnValues) {
         //#region get <select> of mainCategoryName
-        var slct_mainCategoryName = columnsForAddSelect
+        var slct_mainCategoryName = tableDatasForAddSelect
             .mainCategoryName
             .children("select");
         //#endregion
@@ -351,9 +327,9 @@ $(function () {
         //#endregion
     }
 
-    async function populateSubCategoryNameSelectAsync(columnsForAddSelect, columnValues) {
+    async function populateSubCategoryNameSelectAsync(tableDatasForAddSelect, columnValues) {
         //#region get subCategoryName <select>
-        let slct_subCategoryName = columnsForAddSelect
+        let slct_subCategoryName = tableDatasForAddSelect
             .subCategoryName
             .children("select");
         //#endregion
@@ -372,7 +348,7 @@ $(function () {
         if (sessionValue == null)
             await $.ajax({
                 method: "GET",
-                url: apiUrl + "/display/subCategory",
+                url: baseApiUrl + "/machine/display/subCategory",
                 data: {
                     language: language,
                     mainCategoryName: columnValues["mainCategoryName"]
@@ -385,10 +361,10 @@ $(function () {
                         slct_subCategoryName.append(
                             `<option>${response[index]}</option>`);
                     //#endregion
-                   
+
                     //#region add subcategoryNames to session
                     subCategoryNameSessionValue[mainCategoryName] = response;
-                    
+
                     sessionStorage.setItem(
                         subCategoryNameSessionKey,
                         JSON.stringify(subCategoryNameSessionValue)
@@ -420,9 +396,9 @@ $(function () {
         //#endregion
     }
 
-    async function populateHandStatusSelectAsync(columnsForAddSelect, columnValues) {
+    async function populateHandStatusSelectAsync(tableDatasForAddSelect, columnValues) {
         //#region get handStatus <select>
-        let slct_handStatus = columnsForAddSelect
+        let slct_handStatus = tableDatasForAddSelect
             .handStatus
             .children("select");
         //#endregion
@@ -439,7 +415,7 @@ $(function () {
         if (handStatusesOnSession == null)
             $.ajax({
                 method: "GET",
-                url: apiUrl + "/display/handstatus",
+                url: baseApiUrl + "/machine/display/handstatus",
                 data: {
                     language: language
                 },
@@ -537,13 +513,13 @@ $(function () {
                     //#region when next page exists
                     if (paginationInfosInJson.HasNext)
                         populateTable(
-                            "machine",
-                            "machine/display/all",
+                            entityType,
+                            routeForDisplay,
                             language,
                             currentPageNo,
                             pageSize,
                             tableBody,
-                            propertyNamesOfMachineView,
+                            propertyNamesToBeShowOnTable,
                             updateButtonName,
                             nameOfPaginationHeader,
                             lbl_entityQuantity,
@@ -556,13 +532,13 @@ $(function () {
                     //#region when previous page exists
                     else if (paginationInfosInJson.HasPrevious)
                         populateTable(
-                            "machine",
-                            "machine/display/all",
+                            entityType,
+                            routeForDisplay,
                             language,
                             currentPageNo - 1,
                             pageSize,
                             tableBody,
-                            propertyNamesOfMachineView,
+                            propertyNamesToBeShowOnTable,
                             updateButtonName,
                             nameOfPaginationHeader,
                             lbl_entityQuantity,
@@ -588,13 +564,13 @@ $(function () {
                 //#region when some machines on page deleted
                 else
                     populateTable(
-                        "machine",
-                        "machine/display/all",
+                        entityType,
+                        routeForDisplay,
                         language,
                         currentPageNo,
                         pageSize,
                         tableBody,
-                        propertyNamesOfMachineView,
+                        propertyNamesToBeShowOnTable,
                         updateButtonName,
                         nameOfPaginationHeader,
                         lbl_entityQuantity,
@@ -614,7 +590,7 @@ $(function () {
                 //#region write error to entity quantity label
                 updateResultLabel(
                     lbl_entityQuantity,
-                    getErrorMessageFromResponse(response),
+                    JSON.parse(response.responseText).errorMessage,
                     errorMessageColor
                 );
                 //#endregion
@@ -625,9 +601,9 @@ $(function () {
     async function clicked_updateButtonAsync(row) {
         //#region set variables
 
-        //#region set "columnsForAddInput"
-        let columnsForAddInput = {}
-        let columnsForAddInputGuide = {
+        //#region set "tableDatasForAddInput"
+        let tableDatasForAddInput = {}
+        let tableDatasForAddInputGuide = {
             "brandName": "text",
             "model": "text",
             "stock": "number",
@@ -637,9 +613,9 @@ $(function () {
             "descriptions": "text"
         }
 
-        // populate "columnsForAddInput"
-        for (let columnName in columnsForAddInputGuide) {
-            columnsForAddInput[columnName] = row
+        // populate "tableDatasForAddInput"
+        for (let columnName in tableDatasForAddInputGuide) {
+            tableDatasForAddInput[columnName] = row
                 .children(`#td_${columnName}`);
         }
         //#endregion
@@ -647,42 +623,43 @@ $(function () {
         let rowId = row.attr("id");
         let rowInfosInSession = JSON.parse(
             sessionStorage.getItem(rowId));
-        let columnsForAddSelect = {
+        let tableDatasForAddSelect = {
             "mainCategoryName": row.children("#td_mainCategoryName"),
             "subCategoryName": row.children("#td_subCategoryName"),
             "handStatus": row.children("#td_handStatus"),
         };
 
         //#region set "columnValues"
-        let columnValues = {
-            "mainCategoryName": columnsForAddSelect.mainCategoryName.text(),
-            "subCategoryName": columnsForAddSelect.subCategoryName.text(),
-            "brandName": columnsForAddInput.brandName.text(),
-            "model": columnsForAddInput.model.text(),
-            "handStatus": columnsForAddSelect.handStatus.text(),
-            "stock": columnsForAddInput.stock.text(),
-            "rented": columnsForAddInput.rented.text(),
-            "sold": columnsForAddInput.sold.text(),
-            "year": columnsForAddInput.year.text(),
-        };
+        let columnValues = {}
+        let tableDataTypes = [tableDatasForAddInput, tableDatasForAddSelect]
 
-        // add descriptions in session
-        columnValues["descriptions"] = rowInfosInSession["descriptions"];
+        for (let index in tableDataTypes) {
+            let tableDatas = tableDataTypes[index];
+
+            // add column values to columnValues
+            for (let columnName in tableDatas) {
+                let columnValue = tableDatas[columnName].text();
+                columnValues[columnName] = columnValue;
+            }
+
+            // add descriptions in session
+            columnValues["descriptions"] = rowInfosInSession["descriptions"];
+        }
         //#endregion
 
         //#endregion
 
-        setDisabledOfOtherUpdateButtonsAsync(rowId, true);
+        setDisabledOfOtherUpdateButtonsAsync(rowId, pageSize, updateButtonId, true);
 
         //#region add <input> to columns
-        for (let columnName in columnsForAddInput) {
+        for (let columnName in tableDatasForAddInput) {
             //#region reset column
-            let column = columnsForAddInput[columnName];
+            let column = tableDatasForAddInput[columnName];
             column.empty()
             //#endregion
 
             //#region add <input>
-            let inputType = columnsForAddInputGuide[columnName];
+            let inputType = tableDatasForAddInputGuide[columnName];
             column.append(`<input type="${inputType}" id="inpt_${columnName}">`);
             //#endregion
 
@@ -709,39 +686,39 @@ $(function () {
         th_descriptions.empty();
         th_descriptions.append(
             `<div class="btn-group">
-                <button id="${descriptionButtonIdWithoutDash}"  type="button"  style="background-color: darkblue;  color: red" class="btn btn-danger">
-                    <b>${description_baseButtonName} (${language})</b>
-                </button>
+            <button id="${descriptionButtonIdWithoutDash}"  type="button"  style="background-color: darkblue;  color: red" class="btn btn-danger">
+                <b>${description_baseButtonName} (${language})</b>
+            </button>
 
-                <button id="btn_descriptionDropdown"  type="button"  style="background-color: darkblue" class="btn btn-danger dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    <span class="caret"></span>
-                </button>
+            <button id="btn_descriptionDropdown"  type="button"  style="background-color: darkblue" class="btn btn-danger dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <span class="caret"></span>
+            </button>
 
-                <div class="dropdown-menu">
-                    <div class="col-xs-1" style="padding:0px">
-                        <ul id="ul_dropdownMenu" style="list-style-type:none">
-                        </ul>
-                    </div>
+            <div class="dropdown-menu">
+                <div class="col-xs-1" style="padding:0px">
+                    <ul id="ul_dropdownMenu" style="list-style-type:none">
+                    </ul>
                 </div>
-            </div>`);
+            </div>
+        </div>`);
         //#endregion
 
         //#region populate languages to "th_descriptions" dropdown
         let ul_dropdownMenu = $("#ul_dropdownMenu");
         ul_dropdownMenu.empty();
 
-        for (var index in allLanguagesInDb) {
+        for (let index in allLanguagesInDb) {
             let languageInDb = allLanguagesInDb[index];
 
             //#region populate dropdown with languages
             ul_dropdownMenu.append(
                 `<li class="dropdown-item">
-                    <a  id="a_descriptionDropdownItem"
-                        href="#"  
-                        style="padding: 3px 75px;  color:black">
-                        ${languageInDb}
-                    </a>
-                </li>`
+                <a  id="a_descriptionDropdownItem"
+                    href="#"  
+                    style="padding: 3px 75px;  color:black">
+                    ${languageInDb}
+                </a>
+            </li>`
             )
             //#endregion
 
@@ -759,16 +736,16 @@ $(function () {
 
         //#region add <select> to columns
         // add <select> all columns
-        for (let columnName in columnsForAddSelect) {
-            let column = columnsForAddSelect[columnName];
+        for (let columnName in tableDatasForAddSelect) {
+            let column = tableDatasForAddSelect[columnName];
             column.empty();
             column.append("<select> </select>")
         }
 
         // populate <select>'s
-        await populateMainCategoryNameSelectAsync(columnsForAddSelect, columnValues);
-        await populateSubCategoryNameSelectAsync(columnsForAddSelect, columnValues);
-        await populateHandStatusSelectAsync(columnsForAddSelect, columnValues);
+        await populateMainCategoryNameSelectAsync(tableDatasForAddSelect, columnValues);
+        await populateSubCategoryNameSelectAsync(tableDatasForAddSelect, columnValues);
+        await populateHandStatusSelectAsync(tableDatasForAddSelect, columnValues);
         //#endregion
 
         //#region add "save" and "cancel" buttons
@@ -781,12 +758,12 @@ $(function () {
         //#region add buttons
         td_processes.append(
             `<button id="btn_save" class="active" ui-toggle-class="">
-                <i class="fa fa-check text-success" style="width:15px">
+            <i class="fa fa-check text-success" style="width:15px">
                     
-                </i>
-            <button id="btn_cancel" class="active" ui-toggle-class="">
-                <i class="fa fa-times text-danger" style="width:15px">
-                </i>`
+            </i>
+        <button id="btn_cancel" class="active" ui-toggle-class="">
+            <i class="fa fa-times text-danger" style="width:15px">
+            </i>`
         );
         //#endregion
 
@@ -804,53 +781,44 @@ $(function () {
         //#region set variables
         let machineId = row.attr("class");
         let rowId = row.attr("id");
+        let columnNamesByElementTypes = {
+            "input": [
+                "model",
+                "brandName",
+                "stock",
+                "rented",
+                "sold",
+                "year",
+            ],
+            "select": [
+                "mainCategoryName",
+                "subCategoryName",
+                "handStatus"
+            ]
+        }
         let oldColumnValues = JSON.parse(
             sessionStorage.getItem(rowId));
-        let newColumnValues = {
-            "mainCategoryName": row
-                .children("#td_mainCategoryName")
-                .children("select")
-                .val(),
-            "subCategoryName": row
-                .children("#td_subCategoryName")
-                .children("select")
-                .val(),
-            "model": row
-                .children("#td_model")
-                .children("input")
-                .val(),
-            "brandName": row
-                .children("#td_brandName")
-                .children("input")
-                .val(),
-            "handStatus": row
-                .children("#td_handStatus")
-                .children("select")
-                .val(),
-            "stock": row
-                .children("#td_stock")
-                .children("input")
-                .val(),
-            "rented": row
-                .children("#td_rented")
-                .children("input")
-                .val(),
-            "sold": row
-                .children("#td_sold")
-                .children("input")
-                .val(),
-            "year": row
-                .children("#td_year")
-                .children("input")
-                .val()
-        }
+        let newColumnValues = {};
+
+        //#region populate newColumnValues
+        for (let elementType in columnNamesByElementTypes)
+            for (let index in columnNamesByElementTypes[elementType]) {
+                let columnName = columnNamesByElementTypes[elementType][index];
+                let inputOrSelect = row
+                    .children(`#td_${columnName}`)
+                    .children(elementType);
+
+                newColumnValues[columnName] = inputOrSelect.val();
+            }
+        //#endregion
+
         //#endregion
 
         //#region set data
 
         var data = {};
 
-        //#region add columns value to data except description 
+        //#region add columns new value to data except description 
         for (let columnName in newColumnValues) {
             data[columnName] = oldColumnValues[columnName]
                 == newColumnValues[columnName] ? // is same old value with new value?
@@ -881,7 +849,7 @@ $(function () {
         //#endregion
 
         //#region set url
-        let url = apiUrl + "/update?" +
+        let url = baseApiUrl + "/machine/update?" +
             `language=${language}` +
             `&id=${machineId}` +
             `&oldMainCategoryName=${oldColumnValues.mainCategoryName}` +
@@ -921,14 +889,14 @@ $(function () {
 
                 removeInputsAndSelects(row, newColumnValues);
                 removeDescriptionButtonOnColumn();
-                resetErrorRow(row);
-                setDisabledOfOtherUpdateButtonsAsync(rowId, false);
+                resetErrorRow(rowId);
+                setDisabledOfOtherUpdateButtonsAsync(rowId, pageSize, updateButtonId, false);
             },
             error: (response) => {
                 //#region write error to error row
                 updateResultLabel(
-                    getIdOfErrorRow(row),
-                    getErrorMessageFromResponse(response),
+                    `#${rowId}_error`,
+                    JSON.parse(response.responseText).errorMessage,
                     errorMessageColor);
                 //#endregion
             }
@@ -945,19 +913,19 @@ $(function () {
 
         removeInputsAndSelects(row, machineInfosInSession);
         removeDescriptionButtonOnColumn();
-        resetErrorRow(row);
-        setDisabledOfOtherUpdateButtonsAsync(rowId, false);
+        resetErrorRow(rowId);
+        setDisabledOfOtherUpdateButtonsAsync(rowId, pageSize, updateButtonId, false);
     }
     //#endregion
 
     populateTable(
-        "machine",
-        "machine/display/all",
+        entityType,
+        routeForDisplay,
         language,
         pageNumber,
         pageSize,
         tableBody,
-        propertyNamesOfMachineView,
+        propertyNamesToBeShowOnTable,
         updateButtonName,
         nameOfPaginationHeader,
         lbl_entityQuantity,
@@ -965,5 +933,4 @@ $(function () {
         errorMessageColor,
         paginationButtonQuantity,
         true)
-    setDescriptionLanguage(language);
-});
+})

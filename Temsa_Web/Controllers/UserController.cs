@@ -23,7 +23,7 @@ namespace Temsa_Web.Controllers
 		{
             ViewBag.Language = language;
 
-            return View("Display");
+            return View("Display", _manager);
 		}
     }
 }

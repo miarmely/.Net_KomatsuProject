@@ -69,12 +69,12 @@ export function getHeaderFromLocalInJson(headerName) {
 export function updateResultLabel(resultLabelId, message, color,
     marginT = "0px", marginR = "0px", marginB = "0px", marginL = "0px") {
     //#region reset resultLabel
-    let resultLabel = $(resultLabelId);
-    resultLabel.empty();
+    let td_error = $(resultLabelId).children("td");
+    td_error.empty();
     //#endregion
 
     //#region change style
-    resultLabel.attr("style",
+    td_error.attr("style",
         `color:	${color}; 
 		margin-top: ${marginT}; 
 		margin-right: ${marginR};
@@ -84,8 +84,8 @@ export function updateResultLabel(resultLabelId, message, color,
     //#endregion
 
     //#region write error to resultLabel
-    resultLabel.removeAttr("hidden");  // show resultLabel
-    resultLabel.append(message);
+    td_error.removeAttr("hidden");  // show resultLabel
+    td_error.append(message);
     //#endregion
 }
 
@@ -167,6 +167,16 @@ export function getDescriptionKeyForSession(descriptionBaseKeyForSession, descri
         : descriptionBaseKeyForSession + '-' + descriptionLanguage  // set language as manuel
 }
 
+export function resetErrorRow(rowId) {
+    //#region hide and reset <td> of error
+    var td_error = $(`#${rowId}_error`)
+        .children("td")
+
+    td_error.attr("hidden", "");
+    td_error.empty();
+    //#endregion
+}
+
 export async function populateTable(
     entityType,
     specialUrl,
@@ -183,7 +193,9 @@ export async function populateTable(
     paginationButtonQuantity,
     refreshPaginationButtons) {
 
-    //#region set url
+    //#region set variables
+    description_language = language; // set page language as default 
+
     let url = `${baseApiUrl}/${specialUrl}` +
         `?language=${language}` +
         `&pageNumber=${pageNumber}` +
@@ -213,9 +225,10 @@ export async function populateTable(
             if (response.length != 0) {  // if any machine exists
                 entityCountOnTable = paginationInfosInJson.CurrentPageCount;
 
-                lbl_entityQuantity.empty();
-                lbl_entityQuantity.append(
-                    `<b>${entityCountOnTable}/${pageSize}</b> ${entityCountMessage}`);
+                let b_entityQuantityLabel = lbl_entityQuantity.children("b");
+                b_entityQuantityLabel.empty();
+                b_entityQuantityLabel.append(
+                    `${entityCountOnTable}/${pageSize}`);
             }
             //#endregion
 
@@ -240,6 +253,37 @@ export async function populateTable(
     });
 }
 
+export async function setDisabledOfOtherUpdateButtonsAsync(rowId, pageSize, updateButtonId, doDisabled) {
+    await new Promise(resolve => {
+        let btn_update = $(updateButtonId); 
+
+        //#region disable/enable other update buttons
+        for (var rowNo = 1; rowNo <= pageSize; rowNo += 1) {
+            let rowIdInLoop = `#tr_row${rowNo}`;
+
+            //#region disable/enable update button
+            if (rowIdInLoop != rowId) {
+                // get update button
+                let btn_update = $(rowIdInLoop)
+                    .children("#td_processes")
+                    .children("button")  //#update button
+
+                // when disabled wanted
+                if (doDisabled)
+                    btn_update.attr("disabled", "");
+
+                // when enabled wanted
+                else
+                    btn_update.removeAttr("disabled");
+            }
+            //#endregion
+        }
+        //#endregion
+
+        resolve();
+    })
+}
+
 async function addEntitiesToTableAsync(
     response,
     language,
@@ -249,9 +293,10 @@ async function addEntitiesToTableAsync(
     updateButtonName) {
     await new Promise(resolve => {
         //#region set variables
+        let columnQuantityOnTable = propertyNamesOfView.length + 3;  // 3: 1-> checkBox column, 2-> processes column, 3-> blank column
         let rowNo = 1;
         let rowId;
-        let row;
+        let row;        
         //#endregion
 
         //#region add entities to table
@@ -259,16 +304,32 @@ async function addEntitiesToTableAsync(
             //#region add checkbox to row
             rowId = `tr_row${rowNo}`
 
-            tableBody.append(
-                `<tr id= "${rowId}" class= ${entityView.id}>
-                    <td id="td_checkBox">
-					    <label class="i-checks m-b-none">
-						    <input type="checkbox"><i></i>
-					    </label>
-				    </td>
-                </tr>`);
+            //#region when entity type is machine
+            if(entityType == "machine")
+                tableBody.append(
+                    `<tr id= "${rowId}" class= ${entityView.id}>
+                        <td id="td_checkBox">
+					        <label class="i-checks m-b-none">
+						        <input type="checkbox"><i></i>
+					        </label>
+				        </td>
+                    </tr>`);
+            //#endregion
+
+            //#region when entity type is user
+            else
+                tableBody.append(
+                    `<tr id= "${rowId}">
+                        <td id="td_checkBox">
+					        <label class="i-checks m-b-none">
+						        <input type="checkbox"><i></i>
+					        </label>
+				        </td>
+                    </tr>`);
 
             row = $("#" + rowId);
+            //#endregion
+
             //#endregion
 
             //#region add column values of entity as dynamic
@@ -311,11 +372,13 @@ async function addEntitiesToTableAsync(
             //#endregion
 
             //#region add error row to row
-            row.append(
+            tableBody.append(
                 `<tr hidden></tr>
-			<tr id="tr_row${rowNo}_error">
-		        <td id="td_error" colspan="13" hidden></td>
-			</tr>`
+			    <tr id="tr_row${rowNo}_error">
+		            <td id="td_error"
+                        colspan=${columnQuantityOnTable} 
+                        hidden></td>
+			    </tr>`
             );
             //#endregion
 

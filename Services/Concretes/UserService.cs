@@ -168,17 +168,10 @@ namespace Services.Concretes
         }
 
         public async Task UpdateUserByTelNoAsync(
+            string language,
             string telNo,
             UserDtoForUpdate userDto)
         {
-            #region set parameters
-
-            #region sort roleNames if entered
-            if (userDto.RoleNames != null  // when role name entered
-                && userDto.RoleNames.Count > 1)  // when role names more than 1
-                userDto.RoleNames.Sort();
-            #endregion
-
             #region set parameters
             var userDtoForProc = new UserDtoForUpdateProcedure
             {
@@ -193,15 +186,11 @@ namespace Services.Concretes
                     null
                     : await ComputeMd5Async(userDto.Password),
                 #endregion
-                #region RoleNames
-                RoleNames = userDto.RoleNames == null ?
-                    null
-                    : string.Join(", ", userDto.RoleNames)
-                #endregion
+                RoleNames = userDto.RoleNames
             };
             var parameters = new DynamicParameters(userDtoForProc);
-            #endregion
 
+            parameters.Add("Language", language, DbType.String);
             #endregion
 
             #region update user (throw)

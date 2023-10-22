@@ -87,17 +87,17 @@ namespace Presantation.Controllers
         }
 
 
-        [HttpPut("update/{telNo}")]
+        [HttpPut("update")]
         //[Authorization("Admin,Editor,Yönetici,Editör")]
         [ValidationUserFormat]
         [ValidationNullArguments]
         public async Task<IActionResult> UpdateUserByTelNoAsync(
             [FromQuery(Name = "language")] string language,
-            [FromRoute(Name = "telNo")] string telNo,
+            [FromQuery(Name = "telNo")] string telNo,
             [FromBody] UserDtoForUpdate userDto)
         {
             await _manager.UserService
-                .UpdateUserByTelNoAsync(telNo, userDto);
+                .UpdateUserByTelNoAsync(language, telNo, userDto);
 
             return NoContent();
         }

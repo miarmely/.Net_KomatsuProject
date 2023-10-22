@@ -1,46 +1,102 @@
-﻿$(function () {
+﻿import { populateTable, paginationInfosInJson, setDisabledOfOtherUpdateButtonsAsync, resetErrorRow, updateResultLabel } from "./miarTools.js"
+
+$(function () {
     //#region variables
     const pageNumber = 1;
-    const pageSize = 3;
+    const pageSize = 7;
     const paginationButtonQuantity = 5;
-    const tableBody = $("#tbl_user tbody");
+    const routeForDisplay = "user/display/all";
+    const routeForUpdate = "user/update";
+    const entityType = "user"
     const nameOfPaginationHeader = "User-Pagination";
+    const propertyNamesToBeShowOnTable = [
+        "firstName",
+        "lastName",
+        "companyName",
+        "telNo",
+        "email",
+        "roleNames",
+        "createdAt"
+    ]
+    const errorMessageColor = "red";
+    const tableBody = $("#tbl_user tbody");
     const lbl_entityQuantity = $("#lbl_entityQuantity");
     const ul_pagination = $("#ul_pagination");
-    const propertyNamesOfUserView = [
-        // !!!!!!!!!!!!!!!!
-    ]
-    let entityCountOfPage;
-    let userPaginationInJson;
+    const updateButtonId = "#btn_update";
     //#endregion
 
     //#region events
-    $("#ul_pagination").click(() => {
-        //#region do unchecked "box_all" if checked
+    ul_pagination.click(() => {
+        //#region do unchecked "box_all"
         if ($("#box_all").is(":checked"))
             $("#box_all").prop("checked", false);
         //#endregion
-
+        "1"
         //#region click control of pagination buttons
-        var clickedButton = $(":focus");
+        let clickedButton = $(":focus");
 
         switch (clickedButton.attr("id")) {
-            //#region click paginationBack
+            //#region open previous page if previous page exists
             case "a_paginationBack":
-                click_paginationBack();
+                if (paginationInfosInJson.HasPrevious)
+                    populateTable(
+                        entityType,
+                        routeForDisplay,
+                        language,
+                        paginationInfosInJson.CurrentPageNo - 1,
+                        pageSize,
+                        tableBody,
+                        propertyNamesToBeShowOnTable,
+                        updateButtonName,
+                        nameOfPaginationHeader,
+                        lbl_entityQuantity,
+                        ul_pagination,
+                        errorMessageColor,
+                        paginationButtonQuantity,
+                        true)
                 break;
             //#endregion
 
-            //#region click paginationBack
+            //#region open next page if next page exists
             case "a_paginationNext":
-                click_paginationNext();
+                if (paginationInfosInJson.HasNext)
+                    populateTable(
+                        entityType,
+                        routeForDisplay,
+                        language,
+                        paginationInfosInJson.CurrentPageNo + 1,
+                        pageSize,
+                        tableBody,
+                        propertyNamesToBeShowOnTable,
+                        updateButtonName,
+                        nameOfPaginationHeader,
+                        lbl_entityQuantity,
+                        ul_pagination,
+                        errorMessageColor,
+                        paginationButtonQuantity,
+                        true)
                 break;
             //#endregion
 
-            //#region click pagination button with number
+            //#region open page that matched with clicked button number
             default:
                 let pageNo = clickedButton.prop("innerText");
-                addUsersToTable(pageNo);
+
+                populateTable(
+                    entityType,
+                    routeForDisplay,
+                    language,
+                    pageNo,
+                    pageSize,
+                    tableBody,
+                    propertyNamesToBeShowOnTable,
+                    updateButtonName,
+                    nameOfPaginationHeader,
+                    lbl_entityQuantity,
+                    ul_pagination,
+                    errorMessageColor,
+                    paginationButtonQuantity,
+                    true)
                 break;
             //#endregion
         }
@@ -78,113 +134,49 @@
             //#endregion 
         }
     });
-    //#endregion events
+    $("tbody").click(async () => {
+        //#region when update,save or delete button clicked
+        let clickedElement = $(":focus");
+        let row = clickedElement.closest("tr");
+
+        switch (clickedElement.attr("id")) {
+            case "btn_update":
+                await clicked_updateButtonAsync(row);
+                break;
+            case "btn_save":
+                await clicked_saveButtonAsync(row);
+                break;
+            case "btn_cancel":
+                await clicked_cancelButtonAsync(row);
+                break;
+        }
+        //#endregion
+    })
 
     //#region functions
-    function addPaginationButtons() {
-        //#region set buttonQauntity for pagination
-        let buttonQuantity =
-            userPaginationInJson.TotalPage < paginationButtonQuantity ?
-                userPaginationInJson.TotalPage
-                : paginationButtonQuantity
-        //#endregion
+    async function populateRoleNameSelectAsync(tableDatasForAddSelect, columnValues) {
+        new Promise(resolve => {
+            //#region add role names to roleNames <select>
+            let slct_roleNames = tableDatasForAddSelect
+                .roleNames
+                .children("select");
 
-        //#region reset paginationButtons if exists
-        if (ul_pagination.children("li").length != 0)
-            ul_pagination.empty()
-        //#endregion
+            for (let index in rolesByLanguage) {
+                let roleByLanguage = rolesByLanguage[index];
 
-        //#region add paginationBack button
-        ul_pagination.append(
-            `<li>
-                <a id="a_paginationBack" href="#" hidden>
-                    <i class="fa fa-chevron-left"></i>
-                </a>
-            </li>`);
-        //#endregion
-
-        //#region add pagination buttons
-        for (let pageNo = 1; pageNo <= buttonQuantity; pageNo += 1)
-            ul_pagination.append(
-                `<li>
-                    <a href="#"> 
-                        ${pageNo}
-                    </a>
-                </li> `);
-        //#endregion
-
-        //#region add paginationNext button
-        if (buttonQuantity > 1)
-            ul_pagination.append(
-                `<li>
-                <a id="a_paginationNext" href="#">
-                    <i class="fa fa-chevron-right"></i>
-                </a>
-            </li>`);
-        //#endregion
-    }
-
-    function hideOrShowPaginationBackAndNextButtons() {
-        if (userPaginationInJson.TotalPage > 1) {
-            //#region for paginationBack button
-            // hide
-            if (userPaginationInJson.CurrentPageNo == 1)
-                $("#a_paginationBack").attr("hidden", "");
-
-            // show
-            else
-                $("#a_paginationBack").removeAttr("hidden");
+                slct_roleNames.append(
+                    `<option>${roleByLanguage}</option>`
+                )
+            }
             //#endregion
 
-            //#region for paginationNext button
-            // hide
-            if (userPaginationInJson.CurrentPageNo == userPaginationInJson.TotalPage)
-                $("#a_paginationNext").attr("hidden", "");
-
-            // show
-            else
-                $("#a_paginationNext").removeAttr("hidden");
+            //#region set default value of <select>
+            slct_roleNames.val(
+                columnValues.roleNames)
             //#endregion
-        }
-    }
 
-    function addUsersToTable(response) {
-        let no = 1;
-
-        response.forEach(user => {
-            tableBody.append(
-                `<tr id="tr_row${no}">
-                    <td id="td_checkBox">
-                        <label class="i-checks m-b-none">
-                            <input type="checkbox"><i></i>
-                        </label>
-                    </td>
-					<td id="td_firstName">${user.firstName}</td>
-					<td id="td_lastName">${user.lastName}</td>
-					<td id="td_companyName">${user.companyName}</td>
-					<td id="td_telNo">${user.telNo}</td>
-					<td id="td_email">${user.email}</td>
-					<td id="td_roleNames">${user.roleNames.toString()}</td>
-					<td id="td_createdAt">${getDateTimeAsModified(user.createdAt)}</td>
-					<td id="td_processes">
-						<button onclick="window.click_updateButton(${no})" class="active" ui-toggle-class="">
-							<i class="fa fa-pencil text-info"> 
-                                Güncelle
-                            </i>
-						</button>
-					</td>
-                    <td style="width:30px;"></td>
-				</tr>
-                <tr> 
-                    <td hidden></td>
-                </tr>
-                <tr id="tr_error${no}">
-                    <td colspan="10" hidden>
-                    </td>
-                </tr>`
-            );
-            no += 1;
-        });
+            resolve();
+        })
     }
 
     async function deleteSelectedEntitiesAsync() {
@@ -271,77 +263,245 @@
         });
     }
 
-    function click_paginationBack() {
-        //#region open previous page if previous page exists
-        if (userPaginationInJson.HasPrevious)
-            addUsersToTable(userPaginationInJson.CurrentPageNo - 1);
+    async function clicked_updateButtonAsync(row) {
+        //#region set variables
+
+        //#region set "tableDatasForAddInput"
+        let tableDatasForAddInput = {}
+        let tableDatasForAddInputGuide = {
+            "firstName": "text",
+            "lastName": "text",
+            "companyName": "text",
+            "telNo": "number",
+            "email": "email",
+        }
+
+        // populate "tableDatasForAddInput"
+        for (let columnName in tableDatasForAddInputGuide) {
+            tableDatasForAddInput[columnName] = row
+                .children(`#td_${columnName}`);
+        }
+        //#endregion
+
+        let rowId = row.attr("id");
+        let tableDatasForAddSelect = {
+            "roleNames": row.children("#td_roleNames"),
+        };
+
+        //#region set "columnValues"
+        let columnValues = {}
+        let tableDataTypes = [tableDatasForAddInput, tableDatasForAddSelect]
+
+        //#region popualte columnValues
+        for (let index in tableDataTypes) {
+            let tableDatas = tableDataTypes[index];
+
+            // add column values to columnValues
+            for (let columnName in tableDatas) {
+                let columnValue = tableDatas[columnName].text();
+                columnValues[columnName] = columnValue;
+            }
+        }
+        //#endregion
+
+        //#endregion
+
+        //#endregion
+
+        await setDisabledOfOtherUpdateButtonsAsync(rowId, pageSize, updateButtonId, true);
+
+        //#region add <input> to columns
+        for (let columnName in tableDatasForAddInput) {
+            //#region reset column
+            let td = tableDatasForAddInput[columnName];
+            td.empty()
+            //#endregion
+
+            //#region add <input>
+            let inputType = tableDatasForAddInputGuide[columnName];
+            td.append(`<input type="${inputType}" id="inpt_${columnName}">`);
+            //#endregion
+
+            //#region add default value to <inpt>'s
+            let inputOnColumn = td.children(`#inpt_${columnName}`)
+            inputOnColumn.val(columnValues[columnName]);
+            //#endregion
+        }
+        //#endregion
+
+        //#region add <select> to columns
+        // add <select> all columns
+        for (let columnName in tableDatasForAddSelect) {
+            let td = tableDatasForAddSelect[columnName];
+            td.empty();
+            td.append("<select> </select>")
+        }
+
+        // populate <select>'s
+        await populateRoleNameSelectAsync(tableDatasForAddSelect, columnValues);
+        //#endregion
+
+        //#region add "save" and "cancel" buttons
+
+        //#region remove 'update' button
+        let td_processes = row.children("#td_processes");
+        td_processes.empty();
+        //#endregion
+
+        //#region add buttons
+        td_processes.append(
+            `<button id="btn_save" class="active" ui-toggle-class="">
+                <i class="fa fa-check text-success" style="width:15px">
+                    
+                </i>
+            <button id="btn_cancel" class="active" ui-toggle-class="">
+                <i class="fa fa-times text-danger" style="width:15px">
+                </i>`
+        );
+        //#endregion
+
+        //#endregion
+
+        //#region add columnValues to session
+        sessionStorage.setItem(
+            rowId,
+            JSON.stringify(columnValues)
+        );
         //#endregion
     }
 
-    function click_paginationNext() {
-        //#region open next page if next page exists
-        if (userPaginationInJson.HasNext)
-            addUsersToTable(userPaginationInJson.CurrentPageNo + 1);
+    async function clicked_saveButtonAsync(row) {
+        //#region set variables
+        let rowId = row.attr("id");
+        let columnNamesByElementTypes = {
+            "input": [
+                "firstName",
+                "lastName",
+                "companyName",
+                "telNo",
+                "email",
+            ],
+            "select": [
+                "roleNames"
+            ]
+        }
+        let oldColumnValues = JSON.parse(
+            sessionStorage.getItem(rowId));
+        let newColumnValues = {};
+        var data = {};
+        let url;
+
+        //#region populate newColumnValues
+        for (let elementType in columnNamesByElementTypes)
+            for (let index in columnNamesByElementTypes[elementType]) {
+                let columnName = columnNamesByElementTypes[elementType][index];
+                let inputOrSelect = row
+                    .children(`#td_${columnName}`)
+                    .children(elementType);
+
+                newColumnValues[columnName] = inputOrSelect.val();
+            }
         //#endregion
-    }
 
-    function populateTable(pageNumber, refreshPaginationButtons = false) {
+        //#region populate data
+        for (let columnName in newColumnValues) {
+            data[columnName] =
+                oldColumnValues[columnName] == newColumnValues[columnName] ? // is same old value with new value?
+                    null  // if not changed
+                    : newColumnValues[columnName]  // if changed
+        }
+        //#endregion
 
+        //#region set url
+        url = `${baseApiUrl}/${routeForUpdate}` +
+            `?language=${language}` +
+            `&telNo=${oldColumnValues.telNo}`
+        //#endregion
 
+        //#endregion
 
         $.ajax({
-            method: "GET",
-            url: baseApiUrl + `/user/display?language=${language}
-                &pageNumber=${pageNumber}
-                &pageSize=${pageSize}`,
+            method: "PUT",
+            url: url,
+            data: JSON.stringify(data),
             contentType: "application/json",
             dataType: "json",
-            beforeSend: () => {
-                //#region reset table if not empty
-                if (tableBody.children("tr").length != 0)
-                    tableBody.empty();
-                //#endregion
-            },
-            success: (response, status, xhr) => {
-                //#region get user pagination infos in headers
-                userPaginationInJson = JSON.parse(
-                    xhr.getResponseHeader(nameOfPaginationHeader));
+            success: () => {
+                //#region update row infos in session 
+                sessionStorage.setItem(
+                    rowId,
+                    JSON.stringify(newColumnValues));
                 //#endregion
 
-                //#region add entity quantity to lbl_entityQuantity
-                // set "entityCountOfPage"
-                entityCountOfPage = userPaginationInJson.currentPageCount;
-
-                lbl_entityQuantity.empty();
-                lbl_entityQuantity.append(
-                    `<b>${entityCountOfPage}/${pageSize}</b> görüntüleniyor`);
-                //#endregion
-
-                addUsersToTable(response);
-                hideOrShowPaginationBackAndNextButtons();
-
-                //#region add pagination buttons
-                if (refreshPaginationButtons)
-                    addPaginationButtons();
-                //#endregion
+                removeInputsAndSelects(row, newColumnValues);
+                resetErrorRow(rowId);
+                setDisabledOfOtherUpdateButtonsAsync(rowId, pageSize, updateButtonId, false);
             },
             error: (response) => {
-                //#region write error
-                window.writeErrorMessage(response.responseText, lbl_entityQuantity);
+                //#region write error to error row
+                updateResultLabel(
+                    `#${rowId}_error`,
+                    JSON.parse(response.responseText).errorMessage,
+                    errorMessageColor);
                 //#endregion
-            },
-        });
+            }
+        })
+    }
+
+    async function clicked_cancelButtonAsync(row) {
+        //#region get machine infos in session
+        let rowId = row.attr("id");
+
+        let userInfosInSession = JSON.parse(sessionStorage
+            .getItem(rowId));
+        //#endregion
+
+        removeInputsAndSelects(row, userInfosInSession);
+        resetErrorRow(rowId);
+        setDisabledOfOtherUpdateButtonsAsync(rowId, pageSize, updateButtonId, false);
+    }
+
+    function removeInputsAndSelects(row, columnNamesAndValues) {
+        //#region remove <input>'s and <select>'s
+        for (let columnName in columnNamesAndValues) {
+            var td = row.children(`#td_${columnName}`);
+            td.empty();
+
+            switch (columnName) {
+                case "descriptions":
+                    td.append(columnNamesAndValues[columnName][language]);
+                    break;
+                default:
+                    td.append(columnNamesAndValues[columnName]);
+                    break;
+
+            }
+
+        }
+        //#endregion
+
+        //#region add update button
+        let td_processes = row.children("#td_processes")
+
+        td_processes.empty()
+        td_processes.append(
+            `<button id="btn_update" class="active" ui-toggle-class="">
+			    <i class="fa fa-pencil text-info">
+                    ${updateButtonName}
+			    </i>
+		    </button>`);
+        //#endregion
     }
     //#endregion
 
     populateTable(
-        "user",
-        "user/display/all",
+        entityType,
+        routeForDisplay,
         language,
         pageNumber,
         pageSize,
         tableBody,
-        propertyNamesOfUserView,
+        propertyNamesToBeShowOnTable,
         updateButtonName,
         nameOfPaginationHeader,
         lbl_entityQuantity,
