@@ -1,5 +1,11 @@
 ﻿@{
 	var language = ViewBag.Language;
+	var flagPath = $"{language}.png";
+ 	
+	#region gel all languages in db
+	var allLanguagesInDb = await Model.MachineService
+		.GetAllLanguagesAsync();
+	#endregion
 
 	#region placeHolder of search by languages
 	var searchPlaceHolderByLanguages = new
@@ -16,33 +22,27 @@
 	#endregion
 
 	#region user dropdown menu by languages
-	var userDropDownMenuByLanguages = new
+	var userDropDownMenu = language switch
 	{
-		TR = new
+		"TR" => new
 		{
 			Profile = "Profil",
 			Settings = "Ayarlar",
 			Logout = "Çıkıp Yap"
 		},
-		EN = new
+		"EN" => new
 		{
 			Profile = "Profile",
 			Settings = "Settings",
 			Logout = "Logout"
 		}
 	};
-
-	var userDropDownMenu = language switch
-	{
-		"TR" => userDropDownMenuByLanguages.TR,
-		"EN" => userDropDownMenuByLanguages.EN
-	};
 	#endregion
 
 	#region sidebar menu by languages
-	var sidebarMenuByLanguages = new
+	var sidebarMenu = language switch
 	{
-		TR = new
+		"TR" => new
 		{
 			#region homepage
 			Homepage = new
@@ -126,7 +126,7 @@
 			}
 			#endregion
 		},
-		EN = new
+		"EN" => new
 		{
 			#region homepage
 			Homepage = new
@@ -211,12 +211,6 @@
 			#endregion
 		},
 	};
-
-	var sidebarMenu = language switch
-	{
-		"TR" => sidebarMenuByLanguages.TR,
-		"EN" => sidebarMenuByLanguages.EN
-	};
 	#endregion
 
 	#region footer informations by languages
@@ -279,7 +273,35 @@
 								placeholder= @searchPlaceHolder>
 						</li>
 						<!-- search end -->
-						<!-- user login dropdown start-->
+						<!-- language dropdown -->
+						<li class="dropdown">
+							<a data-toggle="dropdown" class="dropdown-toggle" href="#">
+								<img alt="@language" src="~/images/@flagPath"/>
+								<span class="username">
+									@language
+								</span>
+								<b class="caret"></b>
+							</a>
+							<ul id="ul_language" class="dropdown-menu extended logout">
+								@{
+									#region add languages to dropdown
+									foreach(var languageInDb in allLanguagesInDb)
+									{
+										flagPath = $"{languageInDb}.png";
+
+										<li>
+											<a href="?Language=@languageInDb">
+												<img alt="@languageInDb" src="~/images/@flagPath"></img>
+												<b>@languageInDb</b>
+											</a>
+										</li>
+									}
+									#endregion
+								}
+							</ul>
+						</li>
+						<!-- language dropdown -->
+						<!-- user login dropdown start -->
 						<li class="dropdown">
 							<a data-toggle="dropdown" class="dropdown-toggle" href="#">
 								<img alt="" src="~/images/user.png">
@@ -309,9 +331,11 @@
 								</li>
 							</ul>
 						</li>
-						<!-- user login dropdown end -->
+						<!-- user login dropdown start -->
 					</ul>
 				</div>
+
+
 			</header>
 			<!--header end-->
 
@@ -454,6 +478,15 @@
 
 		<script>
 			let baseApiUrl = "https://localhost:7091/api/services";
+			
+			//$("#ul_language").click(() => {
+			//	//#region open same page with other language
+			//	var selectedLanguage = $(":focus").prop("innerText");
+
+			//	window.location.href = `user/display?language=${selectedLanguage}`
+			//	//#endregion
+			//})
+
 		</script>
 	</body>
 </html>

@@ -21,8 +21,9 @@ namespace Temsa_Web.Controllers
 		public IActionResult Display(
             [FromQuery(Name = "language")] string language)
 		{
-            ViewBag.Language = language;
 
+            ViewBag.Language = language;
+			
             return View("Display", _manager);
 		}
     }

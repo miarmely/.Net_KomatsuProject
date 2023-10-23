@@ -5,17 +5,16 @@ License: Creative Commons Attribution 3.0 Unported
 License URL: http://creativecommons.org/licenses/by/3.0/
 */
 
-/*xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx*/
 
-/*------ dropdownMenu item hover ------*/
-li.dropdown-item>a:hover{
-    background-color:lightgrey;
+/* xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx */
+
+li.dropdown - item > a:hover {
+    background - color: lightgrey;
 }
 
-/*xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx*/
+/* xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx */
 
-h4, h5, h6,
-h1, h2, h3 {margin: 0;}
+    h4, h5, h6, h1, h2, h3 {margin: 0;}
 ul, ol {margin: 0;}
 p {margin: 0;}
 
@@ -213,7 +212,7 @@ ul.sidebar-menu li a.active i {
     transition:all .3s ease-in-out;
 }
 .footer {
-    background: #d19a98;
+    background: #120a8f;
     padding: 20px;
 }
 .footer p {
@@ -221,7 +220,7 @@ ul.sidebar-menu li a.active i {
     letter-spacing: 1px;
 }
 .footer p a {
-    color: #744e7d;
+    color: #FFD700;
 }
 .footer p a:hover {
     color: #fff;
@@ -789,13 +788,13 @@ ul.top-menu>li>a:hover,ul.top-menu>li>a:focus {
     height: 57px;
     line-height: 57px;
     letter-spacing: 0.2px;
-    color: #000;
+    color: #fff;
     font-size: 18px;
     font-weight: 400;
     padding: 0 16px;
-    background:#ddede0;
-   border-top-right-radius: 2px;
-   border-top-left-radius: 2px; 
+    background: #120a8f;
+    border-top-right-radius: 2px;
+    border-top-left-radius: 2px;
     text-transform: uppercase;
     text-align: center;
 }
@@ -1463,9 +1462,10 @@ section#tables  p {
 	padding: 15px!important;
 }
 .table > thead > tr > th, .table > tbody > tr > th, .table > tfoot > tr > th, .table > thead > tr > td, .table > tbody > tr > td, .table > tfoot > tr > td {
-	font-size: 0.9em;
-	color: #999;
-	border-top: none !important;
+    font-size: 0.9em;
+    /*color: #999;*/
+    color: #999;
+    border-top: none !important;
 }
 .tab-content > .active {
 	display: block;
@@ -1641,24 +1641,24 @@ ul.bs-glyphicons-list {
     -webkit-box-shadow: 0 1px 1px rgba(0,0,0,.05);
     box-shadow: 0 1px 1px rgba(0,0,0,.05);
 }
-.table-agile-info{
-	background: #eef9f0;
-    padding: 2em;
+.table-agile-info {
+    background: #E8C400;
+    padding: 0.7em;
     border-radius: 4px;
     -webkit-box-shadow: 0 1px 1px rgba(0,0,0,.05);
     box-shadow: 0 1px 1px rgba(0,0,0,.05);
 }
-.form-w3layouts{
-	background: #eef9f0;
-    padding: 2em;
+.form-w3layouts {
+    background: #E8C400;
+    padding: 0.7em;
     border-radius: 4px;
     -webkit-box-shadow: 0 1px 1px rgba(0,0,0,.05);
     box-shadow: 0 1px 1px rgba(0,0,0,.05);
 }
-.panel-default>.panel-heading {
-    color: #000000 ! important;
-    background-color: #ddede0 ! important;
-    border-color: #ddede0 ! important;
+.panel-default > .panel-heading {
+    color: #fff !important;
+    background-color: #120a8f !important;
+    border-color: #120a8f !important;
     font-size: 20px;
 }
 p.hd-title {
