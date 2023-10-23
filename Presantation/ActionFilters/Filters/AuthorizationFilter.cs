@@ -53,7 +53,7 @@ namespace Presantation.ActionFilters.Filters
                     .FromUnixTimeSeconds(expiresInLong)
                     .DateTime;
 			    
-                if (expiresInDateTime < DateTime.Now)
+                if (expiresInDateTime <  DateTime.Now)
                     throw new ErrorWithCodeException(
                         404,
                         "AE-E",

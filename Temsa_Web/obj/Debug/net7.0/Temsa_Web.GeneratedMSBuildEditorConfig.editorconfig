@@ -20,10 +20,6 @@ build_property._RazorSourceGeneratorDebug =
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxJbmRleC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Mac/Desktop/SOFTWARE/1__Software_Languages/1__C\#/2__API/1__Projects/Temsa/Temsa_Web/Views/Login/index.cshtml]
-build_metadata.AdditionalFiles.TargetPath = Vmlld3NcTG9naW5caW5kZXguY3NodG1s
-build_metadata.AdditionalFiles.CssScope = 
-
 [C:/Users/Mac/Desktop/SOFTWARE/1__Software_Languages/1__C\#/2__API/1__Projects/Temsa/Temsa_Web/Views/Machine/Create.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcTWFjaGluZVxDcmVhdGUuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
@@ -50,6 +46,10 @@ build_metadata.AdditionalFiles.CssScope =
 
 [C:/Users/Mac/Desktop/SOFTWARE/1__Software_Languages/1__C\#/2__API/1__Projects/Temsa/Temsa_Web/Views/User/Display.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVXNlclxEaXNwbGF5LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Mac/Desktop/SOFTWARE/1__Software_Languages/1__C\#/2__API/1__Projects/Temsa/Temsa_Web/Views/User/Login.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVXNlclxMb2dpbi5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
 [C:/Users/Mac/Desktop/SOFTWARE/1__Software_Languages/1__C\#/2__API/1__Projects/Temsa/Temsa_Web/Views/_ViewImports.cshtml]

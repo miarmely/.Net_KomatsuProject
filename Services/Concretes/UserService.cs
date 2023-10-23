@@ -283,7 +283,7 @@ namespace Services.Concretes
                     issuer: _config.JwtSettings.ValidIssuer,
                     audience: _config.JwtSettings.ValidAudience,
                     claims: claims,
-                    expires: DateTime.Now.AddMinutes(_config.JwtSettings.Expires),
+                    expires: DateTime.UtcNow.AddMinutes(_config.JwtSettings.Expires),
                     signingCredentials: signingCredentials);
                 #endregion
 

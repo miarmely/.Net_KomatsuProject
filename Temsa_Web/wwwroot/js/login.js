@@ -3,7 +3,7 @@
 $(function () {
     const resultLabelId = "#p_resultLabel";
     const errorMessageColor = "red";
-
+   
     $("form").submit((event) => {
         event.preventDefault();
 
@@ -12,7 +12,6 @@ $(function () {
         resultLabel.empty();
         //#endregion
 
-        //#region control login (ajax)
         $.ajax({
             method: "POST",
             url: baseApiUrl + `/user/login?language=${language}`,
@@ -27,10 +26,15 @@ $(function () {
 
                 //#region save token to localStorage
                 let token = response["token"];
-                localStorage.setItem("token", token);
+                //localStorage.setItem("token", token);
+                sessionStorage.setItem("token", token);
                 //#endregion
 
-                window.location.href = "user/create?language=TR"
+                //#region call afterLogin action
+                window.location.href = "user/create" +
+                    "?language=TR" +
+                    `&token=${token}`
+                //#endregion
             },
             error: (response) => {
                 //#region write error to resultLabel
@@ -41,7 +45,6 @@ $(function () {
                     "50px")
                 //#endregion
             }
-        })
-        //#endregion
+        });
     });
 });

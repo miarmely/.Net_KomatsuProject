@@ -34,8 +34,9 @@ namespace Temsa_Api.Extensions
 			services.AddScoped<ValidationNullArgumentsFilter>();
 		}
 
-		public static void ConfigureConfigModels(this IServiceCollection services
-			, IConfiguration configuration)
+		public static void ConfigureConfigModels(
+			this IServiceCollection services, 
+			IConfiguration configuration)
 		{
 			services.Configure<UserSettingsConfig>(configuration
 				.GetSection(nameof(UserSettingsConfig)));
@@ -53,7 +54,9 @@ namespace Temsa_Api.Extensions
 				.GetSection(nameof(DbSettingsConfig)));
 		}
 				
-		public static void ConfigureJwt(this IServiceCollection services, IConfiguration configuration)
+		public static void ConfigureJwt(
+			this IServiceCollection services, 
+			IConfiguration configuration)
 		{
 			var section = configuration.GetSection(nameof(JwtSettingsConfig));
 
