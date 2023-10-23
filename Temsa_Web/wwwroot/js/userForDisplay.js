@@ -34,7 +34,7 @@ $(function () {
         if ($("#box_all").is(":checked"))
             $("#box_all").prop("checked", false);
         //#endregion
-       
+
         //#region click control of pagination buttons
         let clickedButton = $(":focus");
 
@@ -231,6 +231,7 @@ $(function () {
         $.ajax({
             method: "DELETE",
             url: `${baseApiUrl}/${routeForDelete}?language=${language}`,
+            headers: { "Authorization": jwtToken },
             data: JSON.stringify({
                 "TelNoList": telNoList
             }),
@@ -490,6 +491,7 @@ $(function () {
         $.ajax({
             method: "PUT",
             url: url,
+            headers: { "Authorization": jwtToken },
             data: JSON.stringify(data),
             contentType: "application/json",
             dataType: "json",

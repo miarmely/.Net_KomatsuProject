@@ -1,7 +1,8 @@
 ﻿using Entities.DtoModels;
+using Entities.Exceptions;
 using Microsoft.AspNetCore.Mvc.Filters;
+using Microsoft.AspNetCore.Server.IIS.Core;
 using System.Data;
-using System.Runtime.CompilerServices;
 using System.Security.Claims;
 
 
@@ -18,36 +19,54 @@ namespace Presantation.ActionFilters.Filters
             await Task.Run(() =>
             {
                 #region get language
-                var language = context.RouteData.Values
-                    .FirstOrDefault(v => v.Value.Equals("Language"))
+                var language = context.HttpContext.Request.Query
+                    .FirstOrDefault(q => q.Key.Equals("language"))
                     .Value
-                    as string;
+                    .ToString();
                 #endregion
 
-                #region get claims on token
+                #region get expires claim
+                var expiresClaim = context.HttpContext.User.Claims
+                    .FirstOrDefault(c => c.Type.Equals("exp"));
+				#endregion
 
-                #region get roleClaims (throw)
+				#region when user not log in (throw)
+				if (expiresClaim == null)
+				{
+					var errorDto = new ErrorDto
+					{
+						StatusCode = 401,
+						ErrorCode = "AE-U",
+						ErrorDescription = "Authorization Error - Unauthorized",
+						ErrorMessage = ConvertErrorCodeToErrorMessageByLanguage(
+							language,
+							"AE-U")
+					};
+
+					throw new ErrorWithCodeException(errorDto);
+				}
+                #endregion
+
+                #region when expires time finished (throw) 
+                var expiresInLong = long.Parse(expiresClaim.Value);
+				var expiresInDateTime = DateTimeOffset
+                    .FromUnixTimeSeconds(expiresInLong)
+                    .DateTime;
+			    
+                if (expiresInDateTime < DateTime.Now)
+                    throw new ErrorWithCodeException(
+                        404,
+                        "AE-E",
+                        "Authentication Error - Expires",
+                        ConvertErrorCodeToErrorMessageByLanguage(language, "AE-E"));
+                #endregion
+
+                #region get role claims on token
+
+                #region get roleClaims
                 var roleClaims = context.HttpContext.User
                     .Claims
                     .Where(c => c.Type.Equals(ClaimTypes.Role));
-
-                #region when any roleNames not exists in token (throw)
-                if (roleClaims.Count() == 0)
-                {
-                    context.HttpContext.Items.Add("errorDetails", new ErrorDto
-                    {
-                        StatusCode = 401,
-                        ErrorCode = "AE-U",
-                        ErrorDescription = "Authorization Error - Unauthorized",
-                        ErrorMessage = ConvertErrorCodeToErrorMessageByLanguage(
-                            language,
-                            "AE-U")
-                    });
-
-                    throw new Exception();
-                }
-                #endregion
-
                 #endregion
 
                 #region get roleName in roleClaims
@@ -55,12 +74,14 @@ namespace Presantation.ActionFilters.Filters
 
                 foreach (var roleClaim in roleClaims)
                     roleNamesOnToken.Add(roleClaim.Value);
-                #endregion
+				#endregion
 
-                #endregion
+				#endregion
 
-                #region get roleNames on token and control they
-                foreach (var roleNameOnToken in roleNamesOnToken)
+				#region control role names in role claims
+
+				#region compare role names 
+				foreach (var roleNameOnToken in roleNamesOnToken)
                 {
                     #region when authority is has
                     if (_roleNamesOnAttribute.Contains(roleNameOnToken))
@@ -70,19 +91,10 @@ namespace Presantation.ActionFilters.Filters
                 #endregion
 
                 #region when authority not enough (throw)
-
-                #region save error details to HttpContext
-                context.HttpContext.Items.Add("errorDetails", new ErrorDto
-                {
-                    StatusCode = 403,
-                    ErrorCode = "AE-F",
-                    ErrorDescription = "Authorization Error - Forbidden",
-                    ErrorMessage = ConvertErrorCodeToErrorMessageByLanguage(
-                        language,
-                        "AE-F")
-                });
-
-                throw new Exception();
+                throw new ErrorWithCodeException(403,
+					"AE-F",
+					"Authorization Error - Forbidden",
+					ConvertErrorCodeToErrorMessageByLanguage(language, "AE-F"));
                 #endregion
 
                 #endregion
@@ -100,13 +112,15 @@ namespace Presantation.ActionFilters.Filters
                 "TR" => errorCode switch
                 {
                     "AE-U" => "oturum açmadınız",
-                    "AE-F" => "yetkiniz yok"
+                    "AE-F" => "yetkiniz yok",
+                    "AE-E" => "oturum süreniz doldu"
                 },
                 "EN" => errorCode switch
                 {
                     "AE-U" => "you are not logged in",
-                    "AE-F" => "you don't have permission"
-                }
+                    "AE-F" => "you don't have permission",
+                    "AE-E" => "your session time expired"
+				}
             };
         }
 

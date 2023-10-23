@@ -306,7 +306,7 @@
 							<a data-toggle="dropdown" class="dropdown-toggle" href="#">
 								<img alt="" src="~/images/user.png">
 								<span class="username">
-									Mert Akdemir
+									User
 									</span>
 								<b class="caret"></b>
 							</a>
@@ -334,8 +334,6 @@
 						<!-- user login dropdown start -->
 					</ul>
 				</div>
-
-
 			</header>
 			<!--header end-->
 
@@ -478,15 +476,7 @@
 
 		<script>
 			let baseApiUrl = "https://localhost:7091/api/services";
-			
-			//$("#ul_language").click(() => {
-			//	//#region open same page with other language
-			//	var selectedLanguage = $(":focus").prop("innerText");
-
-			//	window.location.href = `user/display?language=${selectedLanguage}`
-			//	//#endregion
-			//})
-
+			let jwtToken = "Bearer " + localStorage.getItem("token");
 		</script>
 	</body>
 </html>

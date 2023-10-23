@@ -26,6 +26,7 @@ $(function () {
                     $("#slct_role").val()
                 ]
             }),
+            headers: { "Authorization": jwtToken },
             contentType: "application/json",
             beforeSend: () => {
                 // reset result label

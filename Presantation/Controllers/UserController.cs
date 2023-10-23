@@ -49,7 +49,7 @@ namespace Presantation.Controllers
 
 
         [HttpPost("create")]
-        //[Authorization("Editor,Admin,Editör,Yönetici")]
+        [Authorization("Editor,Admin,Editör,Yönetici")]
         [ValidationUserFormat]
         [ValidationNullArguments]
         public async Task<IActionResult> CreateUserAsync(
@@ -64,7 +64,7 @@ namespace Presantation.Controllers
 
 
         [HttpGet("display/all")]
-        //[Authorization("Admin,Editor,User,Yönetici,Editör,Kullanıcı")]
+        [Authorization("Admin,Editor,User,Yönetici,Editör,Kullanıcı")]
         public async Task<IActionResult> GetAllUsersWithPaginationAsync(
             [FromQuery(Name = "language")] string language,
             [FromQuery] PaginationParameters pagingParameters)
@@ -88,7 +88,7 @@ namespace Presantation.Controllers
 
 
         [HttpPut("update")]
-        //[Authorization("Admin,Editor,Yönetici,Editör")]
+        [Authorization("Admin,Editor,Yönetici,Editör")]
         [ValidationUserFormat]
         [ValidationNullArguments]
         public async Task<IActionResult> UpdateUserByTelNoAsync(
@@ -104,7 +104,7 @@ namespace Presantation.Controllers
 
 
         [HttpDelete("delete")]
-        //[Authorization("Admin,Yönetici")]
+        [Authorization("Admin,Yönetici")]
         [ValidationNullArguments]
         public async Task<IActionResult> DeleteUsersAsync(
             [FromQuery(Name = "language")] string language,

@@ -282,6 +282,7 @@ $(function () {
             $.ajax({
                 method: "GET",
                 url: "https://localhost:7091/api/services/machine/display/mainCategory",
+                headers: { "Authorization": jwtToken },
                 data: {
                     language: language
                 },
@@ -347,6 +348,7 @@ $(function () {
             await $.ajax({
                 method: "GET",
                 url: baseApiUrl + "/machine/display/subCategory",
+                headers: { "Authorization": jwtToken },
                 data: {
                     language: language,
                     mainCategoryName: columnValues["mainCategoryName"]
@@ -414,6 +416,7 @@ $(function () {
             $.ajax({
                 method: "GET",
                 url: baseApiUrl + "/machine/display/handstatus",
+                headers: { "Authorization": jwtToken },
                 data: {
                     language: language
                 },
@@ -498,6 +501,7 @@ $(function () {
         $.ajax({
             method: "DELETE",
             url: `https://localhost:7091/api/services/machine/delete?language=${language}`,
+            headers: { "Authorization": jwtToken },
             data: JSON.stringify({
                 "MachineIdList": machineIdList
             }),
@@ -862,6 +866,7 @@ $(function () {
             method: "PUT",
             url: url,
             data: JSON.stringify(data),
+            headers: { "Authorization": jwtToken },
             contentType: "application/json",
             dataType: "json",
             success: () => {

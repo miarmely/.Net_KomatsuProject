@@ -1,6 +1,6 @@
 {
   "Version": 1,
-  "Hash": "2QVEFbut8x4CJh1tdKXuatNfxRNi2S9VQiZwXYTorEE=",
+  "Hash": "gvTHBSxh4frY5oyU/jzj9B6VD9AVXGby7gXR94hSZx4=",
   "Source": "Temsa_Web",
   "BasePath": "_content/Temsa_Web",
   "Mode": "Default",
@@ -66,6 +66,23 @@
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "wwwroot\\css\\bootstrap.min.css"
+    },
+    {
+      "Identity": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\Temsa\\Temsa_Web\\wwwroot\\css\\font.css",
+      "SourceId": "Temsa_Web",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\Temsa\\Temsa_Web\\wwwroot\\",
+      "BasePath": "_content/Temsa_Web",
+      "RelativePath": "css/font.css",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\css\\font.css"
     },
     {
       "Identity": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\Temsa\\Temsa_Web\\wwwroot\\css\\font-awesome.css",

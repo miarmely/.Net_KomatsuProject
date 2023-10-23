@@ -256,16 +256,15 @@ namespace Services.Concretes
                 #region set claims
                 var claims = new Collection<Claim>
                 {
-                    new (ClaimTypes.MobilePhone, userView.TelNo),
-                    new (ClaimTypes.Email, userView.Email),
                     new (ClaimTypes.Name, userView.FirstName),
                     new (ClaimTypes.Surname, userView.LastName),
                 };
 
                 #region add roles of user to claims
                 foreach (var roleName in userView.RoleNames)
-                    claims.Add(
-                        new Claim(ClaimTypes.Role, roleName));
+                    claims.Add(new Claim(
+                        ClaimTypes.Role, 
+                        roleName));
                 #endregion
 
                 #endregion

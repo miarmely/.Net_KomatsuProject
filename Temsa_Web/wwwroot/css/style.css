@@ -23,7 +23,7 @@ html, body {
     font-size: 100%;
     overflow-x: hidden;
     background: url(../images/bg.jpg) no-repeat 0px 0px;
-    background: white;
+    background: floralwhite;
     background-size: cover;
 }
 body a{
@@ -2366,7 +2366,7 @@ ul.inbox-pagination li {
 }
 /*-- gallery --*/
 .w3layouts-main h2 {
-	color: #8b5c7e;
+	color: white;
     font-size: 29px;
     letter-spacing: 2px;
     text-transform: uppercase;
@@ -2376,7 +2376,7 @@ ul.inbox-pagination li {
 .w3layouts-main {
     width: 30%;
     margin:5em auto;
-    background:rgba(171, 119, 157, 0.27);
+    background-color: darkblue;
     padding: 42px 35px;
 }
 /*--//header--*/
@@ -2428,7 +2428,7 @@ input.ggg{
     font-size: 18px;
     text-transform: uppercase;
     letter-spacing: 2px;
-    background: #f0bcb4;
+    background-color: goldenrod;
     color: white;
     border: none;
     outline: none;

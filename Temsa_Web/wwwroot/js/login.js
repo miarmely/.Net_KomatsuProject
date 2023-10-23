@@ -15,7 +15,7 @@ $(function () {
         //#region control login (ajax)
         $.ajax({
             method: "POST",
-            url: `https://localhost:7091/api/services/user/login?language=${language}`,
+            url: baseApiUrl + `/user/login?language=${language}`,
             contentType: "application/json",
             data: JSON.stringify({
                 "TelNo": $("#inpt_telNo").val().trim(),
@@ -23,15 +23,14 @@ $(function () {
             }),
             dataType: "json",
             success: (response) => {
-                // reset inputs
-                $("form")[0].reset();
+                $("form")[0].reset();  // reset inputs
 
-                // save token to localStorage
+                //#region save token to localStorage
                 let token = response["token"];
                 localStorage.setItem("token", token);
+                //#endregion
 
-                // open homepage
-                window.location = "Home";
+                window.location.href = "user/create?language=TR"
             },
             error: (response) => {
                 //#region write error to resultLabel

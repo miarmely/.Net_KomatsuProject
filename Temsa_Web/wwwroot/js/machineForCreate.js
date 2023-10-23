@@ -21,6 +21,7 @@ $(function () {
         $.ajax({
             method: "POST",
             url: baseApiUrl + `/machine/create?language=${language}`,
+            headers: { "Authorization": jwtToken },
             data: JSON.stringify({
                 "MainCategoryName": $("#slct_mainCategory").val(),
                 "SubCategoryName": $("#slct_subCategory").val(),

@@ -231,6 +231,7 @@ export async function populateTable(
     $.ajax({
         method: "GET",
         url: url,
+        headers: { "Authorization": jwtToken },
         contentType: "application/json",
         dataType: "json",
         beforeSend: () => {
