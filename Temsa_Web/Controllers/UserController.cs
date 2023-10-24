@@ -58,6 +58,7 @@ namespace Temsa_Web.Controllers
 					return RedirectToAction("Login", new { language });
 
 				#endregion
+
 				#region get expires in token
 				var expires = new JwtSecurityToken(token)
 					.Claims
@@ -109,6 +110,7 @@ namespace Temsa_Web.Controllers
 				#region when token invalid
 				if (await IsTokenInvalidAsync(token))
 					return RedirectToAction("Login", new { language });
+
 				#endregion
 
 				#region get expires in token

@@ -3,6 +3,7 @@
 $(function () {
     const resultLabelId = "#p_resultLabel";
     const errorMessageColor = "red";
+    const tokenKeyInSession = "token"
    
     $("form").submit((event) => {
         event.preventDefault();
@@ -27,7 +28,7 @@ $(function () {
                 //#region save token to localStorage
                 let token = response["token"];
                 //localStorage.setItem("token", token);
-                sessionStorage.setItem("token", token);
+                sessionStorage.setItem(tokenKeyInSession, token);
                 //#endregion
 
                 //#region call afterLogin action

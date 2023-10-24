@@ -1,7 +1,7 @@
 ﻿@{
 	var language = ViewBag.Language;
 	var flagPath = $"{language}.png";
- 	
+
 	#region gel all languages in db
 	var allLanguagesInDb = await Model.MachineService
 		.GetAllLanguagesAsync();
@@ -250,6 +250,7 @@
 		<!-- //font-awesome icons -->
 		<script src="~/js/jquery2.0.3.min.js"></script>
 		<script type="module" src="~/js/miarTools.js"></script>
+		<script type="module" src="~/js/_layout.js"></script>
 	</head>
 	<body>
 		<section id="container">
@@ -342,10 +343,10 @@
 				<div id="sidebar" class="nav-collapse">
 					<!-- sidebar menu start-->
 					<div class="leftside-navigation">
-						<ul class="sidebar-menu" id="nav-accordion">
+						<ul id="nav-accordion" class="sidebar-menu">
 							@*homepage*@
 							<li>
-								<a class="active" href= @sidebarMenu.Homepage.Href>
+								<a id="a_homepage" class="active">
 									<i class="fa fa-dashboard"></i>
 									<span>
 										@sidebarMenu.Homepage.Label
@@ -363,12 +364,12 @@
 								</a>
 								<ul class="sub">
 									<li>
-										<a href= @sidebarMenu.Users.SubMenus.NewUser.Href>
+										<a id="a_newUser">
 											@sidebarMenu.Users.SubMenus.NewUser.Label
 										</a>
 									</li>
 									<li>
-										<a href= @sidebarMenu.Users.SubMenus.RegisteredUsers.Href>
+										<a id="a_registeredUser">
 											@sidebarMenu.Users.SubMenus.RegisteredUsers.Label
 										</a>
 									</li>
@@ -385,12 +386,12 @@
 								</a>
 								<ul class="sub">
 									<li>
-										<a href= @sidebarMenu.Machines.SubMenus.NewMachine.Href>
+										<a id="a_newMachine">
 											@sidebarMenu.Machines.SubMenus.NewMachine.Label
 										</a>
 									</li>
 									<li>
-										<a href= @sidebarMenu.Machines.SubMenus.RegisteredMachine.Href>
+										<a id="a_registeredMachine">
 											@sidebarMenu.Machines.SubMenus.RegisteredMachine.Label
 										</a>
 									</li>
@@ -407,22 +408,22 @@
 								</a>
 								<ul class="sub">
 									<li>
-										<a href= @sidebarMenu.Forms.SubMenus.BuyingDemandForm.Href>
+										<a id="a_buyingDemandForm">
 											@sidebarMenu.Forms.SubMenus.BuyingDemandForm.Label
 										</a>
 									</li>
 									<li>
-										<a href= @sidebarMenu.Forms.SubMenus.RentingDemandForm.Href>
+										<a id="a_rentingDemandForm">
 											@sidebarMenu.Forms.SubMenus.RentingDemandForm.Label
 										</a>
 									</li>
 									<li>
-										<a href= @sidebarMenu.Forms.SubMenus.SecondHandDemandForm.Href>
+										<a id="a_secondHandDemandForm">
 											@sidebarMenu.Forms.SubMenus.SecondHandDemandForm.Label
 										</a>
 									</li>
 									<li>
-										<a href= @sidebarMenu.Forms.SubMenus.InformationDemandForm.Href>
+										<a id="a_informationDemandForm">
 											@sidebarMenu.Forms.SubMenus.InformationDemandForm.Label
 										</a>
 									</li>
@@ -431,7 +432,7 @@
 							@*/forms*@
 							@*settings*@
 							<li>
-								<a href= @sidebarMenu.Settings.Href>
+								<a id="a_settings">
 									<i class="fa fa-cog"></i>
 									<span>
 										@sidebarMenu.Settings.Label
@@ -476,7 +477,8 @@
 
 		<script>
 			let baseApiUrl = "https://localhost:7091/api/services";
-			let jwtToken = "Bearer " + sessionStorage.getItem("token");
+			let language = "@language";
+			let jwtToken = sessionStorage.getItem("token");
 		</script>
 	</body>
 </html>

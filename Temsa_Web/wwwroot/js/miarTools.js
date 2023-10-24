@@ -202,6 +202,10 @@ export function resetErrorRow(rowId) {
     //#endregion
 }
 
+export function getTokenInSession() {
+    return sessionStorage.getItem("token");
+}
+
 export async function populateTable(
     entityType,
     specialUrl,

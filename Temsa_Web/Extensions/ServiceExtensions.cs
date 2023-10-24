@@ -34,6 +34,14 @@ namespace Temsa_Web.Extensions
 			
 		public static void ConfigureServices(this IServiceCollection services) =>
 			services.AddScoped<RepositoryContext>();
+
+		public static void ConfigureCookie(this IServiceCollection services,
+			WebApplication app)
+		{
+			app.Run(context 
+				)
+
+		}
        
 
 		//public static void ConfigureJwt(
