@@ -8,6 +8,7 @@ builder.Services.ConfigureAddControllersWithView();
 builder.Services.AddAutoMapper(Assembly.GetExecutingAssembly());
 builder.Services.ConfigureServices();
 builder.Services.ConfigureManagers();
+builder.Services.ConfigureCookie();
 builder.Services.ConfigureConfigModels(builder.Configuration);
 
 var app = builder.Build();
@@ -17,7 +18,6 @@ var app = builder.Build();
 if (!app.Environment.IsDevelopment())
     app.UseHsts();
 #endregion
-
 #region add pipelines
 app.UseHttpsRedirection();
 app.UseStaticFiles();
@@ -27,7 +27,7 @@ app.UseAuthorization();
 
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=User}/{action=Login}/{id?}");
+    pattern: "{controller=Login}/{action=Index}/{id?}");
 #endregion
 
 app.Run();

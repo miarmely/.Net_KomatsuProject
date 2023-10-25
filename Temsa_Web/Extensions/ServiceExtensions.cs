@@ -1,5 +1,6 @@
 ﻿using Entities.ConfigModels;
 using Entities.ConfigModels.Contracts;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Repositories;
 using Repositories.Concretes;
 using Repositories.Contracts;
@@ -27,50 +28,23 @@ namespace Temsa_Web.Extensions
 
 		public static void ConfigureManagers(this IServiceCollection services)
 		{
-            services.AddScoped<IServiceManager, ServiceManager>();
+			services.AddScoped<IServiceManager, ServiceManager>();
 			services.AddScoped<IRepositoryManager, RepositoryManager>();
-            services.AddScoped<IConfigManager, ConfigManager>();
-        }
-			
+			services.AddScoped<IConfigManager, ConfigManager>();
+		}
+
 		public static void ConfigureServices(this IServiceCollection services) =>
 			services.AddScoped<RepositoryContext>();
 
-		public static void ConfigureCookie(this IServiceCollection services,
-			WebApplication app)
+		public static void ConfigureCookie(this IServiceCollection services)
 		{
-			app.Run(context 
-				)
-
+			services
+				.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+				.AddCookie(opt =>
+				{
+					opt.LoginPath = "/user/create";
+					opt.LogoutPath = "/user/login";
+				});
 		}
-       
-
-		//public static void ConfigureJwt(
-		//	this IServiceCollection services,
-		//	IConfiguration configuration) =>
-		//		services.AddAuthentication(config =>
-		//		{
-		//			config.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-		//			config.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-		//		})
-		//		.AddJwtBearer(config =>
-		//	{
-		//		#region set issuerSigningKey
-		//		var section = configuration.GetSection(nameof(JwtSettingsConfig));
-
-		//		var issuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8
-		//			.GetBytes(section["SecretKey"]));
-		//		#endregion
-
-		//		config.TokenValidationParameters = new TokenValidationParameters
-		//		{
-		//			ValidIssuer = section["ValidIssuer"],
-		//			ValidateIssuer = true,
-		//			ValidAudience = section["ValidAudience"],
-		//			ValidateAudience = true,
-		//			IssuerSigningKey = issuerSigningKey,
-		//			ValidateIssuerSigningKey = true,
-		//			ValidateLifetime = true
-		//		};
-		//	});
 	}
 }

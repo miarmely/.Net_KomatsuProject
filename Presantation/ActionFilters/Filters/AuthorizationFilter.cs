@@ -1,7 +1,6 @@
-﻿using Entities.DtoModels;
-using Entities.Exceptions;
+﻿using Entities.Exceptions;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
-using Microsoft.AspNetCore.Server.IIS.Core;
 using System.Data;
 using System.Security.Claims;
 
@@ -18,94 +17,147 @@ namespace Presantation.ActionFilters.Filters
         public async Task OnAuthorizationAsync(AuthorizationFilterContext context) =>
             await Task.Run(() =>
             {
-                #region get language
-                var language = context.HttpContext.Request.Query
-                    .FirstOrDefault(q => q.Key.Equals("language"))
-                    .Value
-                    .ToString();
-                #endregion
+				#region get projectName
+				var actionDetails = context.ActionDescriptor.DisplayName
+					.Split('.');
 
-                #region get expires claim
-                var expiresClaim = context.HttpContext.User.Claims
-                    .FirstOrDefault(c => c.Type.Equals("exp"));
+				var projectName = actionDetails[0];
 				#endregion
 
-				#region when user not log in (throw)
-				if (expiresClaim == null)
+				#region get language
+
+				#region for web
+				string? language = "TR";
+
+				if (projectName == "Temsa_Web")
 				{
-					var errorDto = new ErrorDto
-					{
-						StatusCode = 401,
-						ErrorCode = "AE-U",
-						ErrorDescription = "Authorization Error - Unauthorized",
-						ErrorMessage = ConvertErrorCodeToErrorMessageByLanguage(
-							language,
-							"AE-U")
-					};
-
-					throw new ErrorWithCodeException(errorDto);
+					#region get language on http context
+					var languageInContext = context.HttpContext
+						.Items
+						.FirstOrDefault(i => i.Key.Equals("language"))
+						.Value
+						as string;
+					
+					// change default language
+					if (languageInContext != null)
+						language = languageInContext;
+					#endregion
 				}
-                #endregion
+				#endregion
 
-                #region when expires time finished (throw) 
-                var expiresInLong = long.Parse(expiresClaim.Value);
+				#region for mobile
+				else
+				{
+					language = context.HttpContext.Request.Query
+						.FirstOrDefault(q => q.Key.Equals("language"))
+						.Value;
+				}
+				#endregion
+
+				#endregion
+
+				#region when user not authenticated 
+				if (!context.HttpContext.User.Identity.IsAuthenticated)
+				{
+					#region for web
+					if (projectName.Equals("Temsa_Web"))
+					{
+						// redirect to login page
+						context.Result = new RedirectToActionResult(
+							"Index",
+							"Login",
+							null);
+
+						return;
+					}
+					#endregion
+
+					#region for mobile (throw)
+					else  // Presentation
+						throw new ErrorWithCodeException(
+							401,
+							"AE-U",
+							"Authorization Error - Unauthorized",
+							ConvertErrorCodeToErrorMessageByLanguage(
+								language,
+								"AE-U"));
+					#endregion
+				}
+				#endregion
+
+				#region control expires (throw)
+
+				#region get expires claim
+				var expiresClaim = context.HttpContext.User.Claims
+					.FirstOrDefault(c => c.Type.Equals("exp"));
+				#endregion
+
+				#region when expires time finished (throw) 
+				var expiresInLong = long.Parse(expiresClaim.Value);
 				var expiresInDateTime = DateTimeOffset
-                    .FromUnixTimeSeconds(expiresInLong)
-                    .DateTime;
-			    
-                if (expiresInDateTime <  DateTime.Now)
-                    throw new ErrorWithCodeException(
-                        404,
-                        "AE-E",
-                        "Authentication Error - Expires",
-                        ConvertErrorCodeToErrorMessageByLanguage(language, "AE-E"));
-                #endregion
+					.FromUnixTimeSeconds(expiresInLong)
+					.DateTime;
 
-                #region get role claims on token
-
-                #region get roleClaims
-                var roleClaims = context.HttpContext.User
-                    .Claims
-                    .Where(c => c.Type.Equals(ClaimTypes.Role));
-                #endregion
-
-                #region get roleName in roleClaims
-                var roleNamesOnToken = new List<string>();
-
-                foreach (var roleClaim in roleClaims)
-                    roleNamesOnToken.Add(roleClaim.Value);
+				if (expiresInDateTime < DateTime.UtcNow)
+					throw new ErrorWithCodeException(
+						404,
+						"AE-E",
+						"Authentication Error - Expires",
+						ConvertErrorCodeToErrorMessageByLanguage(language, "AE-E"));
 				#endregion
 
 				#endregion
 
-				#region control role names in role claims
+				#region control roles (throw)
+
+				#region get role claims on token
+
+				#region get roleClaims
+				var roleClaims = context.HttpContext.User
+					.Claims
+					.Where(c => c.Type.Equals(ClaimTypes.Role));
+				#endregion
+
+				#region get roleName in roleClaims
+				var roleNamesOnToken = new List<string>();
+
+				foreach (var roleClaim in roleClaims)
+					roleNamesOnToken.Add(roleClaim.Value);
+				#endregion
+
+				#endregion
+
+				#region control role names in role claims (throw)
 
 				#region compare role names 
 				foreach (var roleNameOnToken in roleNamesOnToken)
-                {
-                    #region when authority is has
-                    if (_roleNamesOnAttribute.Contains(roleNameOnToken))
-                        return;
-                    #endregion
-                }
-                #endregion
+				{
+					// when authority is has
+					if (_roleNamesOnAttribute.Contains(roleNameOnToken))
+						return;
+				}
+				#endregion
 
-                #region when authority not enough (throw)
-                throw new ErrorWithCodeException(403,
+				#region when authority not enough (throw)
+				throw new ErrorWithCodeException(403,
 					"AE-F",
 					"Authorization Error - Forbidden",
 					ConvertErrorCodeToErrorMessageByLanguage(language, "AE-F"));
-                #endregion
+				#endregion
 
-                #endregion
-            });
+				#endregion
 
+				#endregion
+
+			});
 
         #region private
 
+
+
         private string ConvertErrorCodeToErrorMessageByLanguage(
-            string language,
-            string errorCode)
+			string language,
+			string errorCode)
         {
             return language switch
             {
@@ -122,7 +174,7 @@ namespace Presantation.ActionFilters.Filters
                     "AE-E" => "your session time expired"
 				}
             };
-        }
+		}
 
         #endregion
     }

@@ -15,7 +15,7 @@ $(function () {
 
         $.ajax({
             method: "POST",
-            url: baseApiUrl + `/user/login?language=${language}`,
+            url: baseApiUrl + `/login/index?language=${language}`,
             contentType: "application/json",
             data: JSON.stringify({
                 "TelNo": $("#inpt_telNo").val().trim(),
@@ -32,9 +32,7 @@ $(function () {
                 //#endregion
 
                 //#region call afterLogin action
-                window.location.href = "user/create" +
-                    "?language=TR" +
-                    `&token=${token}`
+                window.location.href = `/login/afterLogin?token=${token}`
                 //#endregion
             },
             error: (response) => {

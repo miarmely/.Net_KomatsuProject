@@ -8,7 +8,6 @@
     ".NETCoreApp,Version=v7.0": {
       "Presantation/1.0.0": {
         "dependencies": {
-          "Microsoft.AspNetCore.Authentication.JwtBearer": "7.0.10",
           "Services": "1.0.0"
         },
         "runtime": {
@@ -99,14 +98,14 @@
           }
         }
       },
-      "Microsoft.AspNetCore.Authentication.JwtBearer/7.0.10": {
+      "Microsoft.AspNetCore.Authentication.JwtBearer/7.0.13": {
         "dependencies": {
           "Microsoft.IdentityModel.Protocols.OpenIdConnect": "6.24.0"
         },
         "runtime": {
           "lib/net7.0/Microsoft.AspNetCore.Authentication.JwtBearer.dll": {
-            "assemblyVersion": "7.0.10.0",
-            "fileVersion": "7.0.1023.36439"
+            "assemblyVersion": "7.0.13.0",
+            "fileVersion": "7.0.1323.52007"
           }
         }
       },
@@ -549,6 +548,7 @@
         "dependencies": {
           "AutoMapper.Extensions.Microsoft.DependencyInjection": "12.0.1",
           "MailKit": "4.1.0",
+          "Microsoft.AspNetCore.Authentication.JwtBearer": "7.0.13",
           "Microsoft.AspNetCore.Http.Abstractions": "2.2.0",
           "Repositories": "1.0.0",
           "System.IdentityModel.Tokens.Jwt": "6.32.2"
@@ -614,12 +614,12 @@
       "path": "mailkit/4.1.0",
       "hashPath": "mailkit.4.1.0.nupkg.sha512"
     },
-    "Microsoft.AspNetCore.Authentication.JwtBearer/7.0.10": {
+    "Microsoft.AspNetCore.Authentication.JwtBearer/7.0.13": {
       "type": "package",
       "serviceable": true,
-      "sha512": "sha512-8/GWtq034kzrDapCHYbAnnJXIYAJzFcJoXP5OtlbjIWBQBLxEbstRv3N4DJAvlcGUXxy0DmmNVDiSlFAY8HpWw==",
-      "path": "microsoft.aspnetcore.authentication.jwtbearer/7.0.10",
-      "hashPath": "microsoft.aspnetcore.authentication.jwtbearer.7.0.10.nupkg.sha512"
+      "sha512": "sha512-h1B5heq5d7vRC/0CuXlcvNpKzIgZi11b9iURRBDAOSigWXTZlq62Tzix+zyIvOx5xeydE/tniTNSaqeJBQNB3Q==",
+      "path": "microsoft.aspnetcore.authentication.jwtbearer/7.0.13",
+      "hashPath": "microsoft.aspnetcore.authentication.jwtbearer.7.0.13.nupkg.sha512"
     },
     "Microsoft.AspNetCore.Http.Abstractions/2.2.0": {
       "type": "package",

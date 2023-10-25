@@ -58,8 +58,6 @@ namespace Temsa_Api.Extensions
 			this IServiceCollection services, 
 			IConfiguration configuration)
 		{
-			var section = configuration.GetSection(nameof(JwtSettingsConfig));
-
 			services.AddAuthentication(opt =>
 			{
 				opt.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -68,6 +66,8 @@ namespace Temsa_Api.Extensions
 			.AddJwtBearer(opt =>
 			{
 				#region set issuerSigningKey
+				var section = configuration.GetSection(nameof(JwtSettingsConfig));
+
 				var issuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8
 					.GetBytes(section["SecretKey"]));
 				#endregion
