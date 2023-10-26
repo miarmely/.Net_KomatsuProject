@@ -4,7 +4,7 @@
     var language = ViewBag.Language;
 
     #region set variables by languages
-
+    
     #region set form title
     var formTitle = language switch
     {
@@ -54,7 +54,6 @@
     #endregion
 
     #endregion
-
     
     #region get all roles by language
     var rolesByLanguage = await Model.UserService
@@ -205,7 +204,6 @@
 <script type="module" src="~/js/userForCreate.js"></script>
 
 <script>
-    language = "@language";
     let rolesByLanguage = @Json.Serialize(rolesByLanguage)
     let resultLabel_successMessage = "@successMessage";
 </script>

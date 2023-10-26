@@ -1,6 +1,5 @@
 ﻿@{
 	var language = ViewBag.Language;
-	var flagPath = $"{language}.png";
 
 	#region gel all languages in db
 	var allLanguagesInDb = await Model.MachineService
@@ -60,12 +59,12 @@
 					NewUser = new
 					{
 						Label = "Yeni Kullanıcı",
-						Href = $"/user/create?language={language}"
+						Href = $"/user/create"
 					},
 					RegisteredUsers = new
 					{
 						Label = "Kayıtlı Kullanıcılar",
-						Href = $"/user/display?language={language}"
+						Href = $"/user/display"
 					}
 				}
 			},
@@ -79,12 +78,12 @@
 					NewMachine = new
 					{
 						Label = "Yeni Makine",
-						Href = $"/machine/create?language={language}"
+						Href = $"/machine/create"
 					},
 					RegisteredMachine = new
 					{
 						Label = "Kayıtlı Makineler",
-						Href = $"/machine/display?language={language}"
+						Href = $"/machine/display"
 					}
 				}
 			},
@@ -144,12 +143,12 @@
 					NewUser = new
 					{
 						Label = "New User",
-						Href = $"/user/create?language={language}"
+						Href = $"/user/create"
 					},
 					RegisteredUsers = new
 					{
 						Label = "Registered Users",
-						Href = $"/user/display?language={language}"
+						Href = $"/user/display"
 					}
 				}
 			},
@@ -163,12 +162,12 @@
 					NewMachine = new
 					{
 						Label = "New Machine",
-						Href = $"/machine/create?language={language}"
+						Href = $"/machine/create"
 					},
 					RegisteredMachine = new
 					{
 						Label = "Registered Machines",
-						Href = $"/machine/display?language={language}"
+						Href = $"/machine/display"
 					}
 				}
 			},
@@ -276,6 +275,10 @@
 						<!-- search end -->
 						<!-- language dropdown -->
 						<li class="dropdown">
+							@{
+								var flagPath = $"{language}.png";
+							}
+							<!-- flag picture and language -->
 							<a data-toggle="dropdown" class="dropdown-toggle" href="#">
 								<img alt="@language" src="~/images/@flagPath"/>
 								<span class="username">
@@ -283,6 +286,8 @@
 								</span>
 								<b class="caret"></b>
 							</a>
+							<!-- //flag picture and language -->
+							<!-- language dropdown -->
 							<ul id="ul_language" class="dropdown-menu extended logout">
 								@{
 									#region add languages to dropdown
@@ -300,6 +305,7 @@
 									#endregion
 								}
 							</ul>
+							<!-- //language dropdown -->
 						</li>
 						<!-- language dropdown -->
 						<!-- user login dropdown start -->
@@ -476,8 +482,8 @@
 		<script src="~/js/jquery.scrollTo.js"></script>
 
 		<script>
-			let baseApiUrl = "https://localhost:7091/api/services";
 			let language = "@language";
+			let baseApiUrl = "https://localhost:7091/api/services";
 			let jwtToken = sessionStorage.getItem("token");
 		</script>
 	</body>

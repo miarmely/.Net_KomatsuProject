@@ -1,15 +1,13 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Presantation.Attributes;
 
 namespace Temsa_Web.Controllers
 {
+	[Authorization("User,Editor,Admin,Kullanıcı,Editör,Yönetici")]
 	public class HomeController : Controller
 	{
-		public IActionResult Index(
-			[FromQuery(Name = "language")] string language,
-			[FromQuery(Name = "token")] string token = null)
+		public IActionResult Index()
 		{
-			ViewBag.Language = language;
-
 			return View();
 		}
 	}

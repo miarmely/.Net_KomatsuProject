@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Presantation.ActionFilters;
+using Presantation.Attributes;
 using Services.Contracts;
 
 
@@ -9,22 +9,38 @@ namespace Temsa_Web.Controllers
 	public class UserController : Controller
 	{
 		private readonly IServiceManager _manager;
-	
-		public UserController(IServiceManager manager) =>
-			_manager = manager;
-			
+
+		public UserController(IServiceManager manager)	=>
+            _manager = manager;
+
 		public async Task<IActionResult> Create()
 		{
+            await UpdateLanguageInViewBagAsync();
+
 			return View("Create", _manager);
 		}
 
 		public async Task<IActionResult> Display()
 		{
-			return View("Display", _manager);
+            await UpdateLanguageInViewBagAsync();
+
+            return View("Display", _manager);
 		}
 
+		public async Task UpdateLanguageInViewBagAsync() =>
+			await Task.Run(() =>
+			{
+				#region get language from httpContext
+				var language = HttpContext.User.Claims
+					.First(c => c.Type.Equals("language"))
+					.Value
+					.ToString();
+				#endregion
 
-		/*
+				ViewBag.Language = language;
+			});
+            
+        /*
 			#region protect endpoint
 
 			#region control whether url without token entered without login
@@ -70,5 +86,5 @@ namespace Temsa_Web.Controllers
 
 			#endregion
 			*/
-	}
+    }
 }
