@@ -110,7 +110,7 @@
                     }
 				</select>
 				<button id="btn_apply" class="btn btn-sm btn-default">
-                    @updateButtonName
+                    @menubarOptionsButton
                 </button>                
             </div>
             <div class="col-sm-4">
@@ -180,11 +180,11 @@
 <script type="module" src="~/js/userForDisplay.js"></script>
 
 <script>
-    language = "@language";
 	let updateButtonName = "@updateButtonName";
     let entityQuantity_message = "@entityQuantityMessage"
-    
+    //#region get roles by language
     let rolesByLanguage = @Json.Serialize(await Model
         .UserService
-        .GetAllRolesByLanguageAsync(language))  
+        .GetAllRolesByLanguageAsync(language))
+    //#endregion
 </script>

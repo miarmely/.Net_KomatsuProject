@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Presantation.Attributes;
 using Services.Contracts;
-
+using System.Security.Claims;
 
 namespace Temsa_Web.Controllers
 {
@@ -10,81 +10,47 @@ namespace Temsa_Web.Controllers
 	{
 		private readonly IServiceManager _manager;
 
-		public UserController(IServiceManager manager)	=>
-            _manager = manager;
+		public UserController(IServiceManager manager) =>
+			_manager = manager;
 
 		public async Task<IActionResult> Create()
 		{
-            await UpdateLanguageInViewBagAsync();
+			await PopulateViewBagAsync();
 
 			return View("Create", _manager);
 		}
 
 		public async Task<IActionResult> Display()
 		{
-            await UpdateLanguageInViewBagAsync();
+			await PopulateViewBagAsync();
 
-            return View("Display", _manager);
+			return View("Display", _manager);
 		}
 
-		public async Task UpdateLanguageInViewBagAsync() =>
+		#region private
+
+		private async Task PopulateViewBagAsync() =>
 			await Task.Run(() =>
 			{
-				#region get language from httpContext
-				var language = HttpContext.User.Claims
+				#region add language
+				ViewBag.Language = HttpContext.User.Claims
 					.First(c => c.Type.Equals("language"))
-					.Value
-					.ToString();
-				#endregion
-
-				ViewBag.Language = language;
-			});
-            
-        /*
-			#region protect endpoint
-
-			#region control whether url without token entered without login
-			if (token == null)
-			{
-				#region get expires claim from HttpContext
-				var expiresClaim = Request.HttpContext.User.Claims
-					.FirstOrDefault(c => c.Type.Equals("exp"));
-				#endregion
-
-				#region when url entered without login or token expired 
-				if (expiresClaim == null
-					|| await IsTokenExpiredAsync(expiresClaim.Value))
-					return RedirectToAction("Login", new { language });
-				#endregion
-			}
-			#endregion
-
-			#region control whether url with token entered without login
-			else
-			{
-				#region when token invalid
-				if (await IsTokenInvalidAsync(token))
-					return RedirectToAction("Login", new { language });
-
-				#endregion
-
-				#region get expires in token
-				var expires = new JwtSecurityToken(token)
-					.Claims
-					.First(c => c.Type.Equals("exp"))
 					.Value;
 				#endregion
 
-				#region when token expired
-				if (await IsTokenExpiredAsync(expires))
-					return RedirectToAction("Login", new { language });
-
-				// when logged but page closed then page opened again
+				#region add firstName
+				ViewBag.FirstName = HttpContext.User.Claims
+					.First(c => c.Type.Equals(ClaimTypes.Name))
+					.Value;
 				#endregion
-			}
-			#endregion
 
-			#endregion
-			*/
-    }
+				#region add lastName
+				ViewBag.LastName = HttpContext.User.Claims
+					.First(c => c.Type.Equals(ClaimTypes.Surname))
+					.Value;
+				#endregion
+			});
+
+		#endregion
+	}
 }

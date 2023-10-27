@@ -2,6 +2,7 @@
 using Entities.QueryParameters;
 using Microsoft.AspNetCore.Mvc;
 using Services.Contracts;
+using System.Security.Claims;
 
 namespace Temsa_Web.Controllers
 {
@@ -17,20 +18,46 @@ namespace Temsa_Web.Controllers
 			_manager = manager;
 		}
 
-		public IActionResult Create(
+		public async Task<IActionResult> Create(
 			[FromQuery(Name = "Language")] string language)
 		{
-			ViewBag.Language = language;
+			await PopulateViewBagAsync();
 
 			return View("Create", _manager);
 		}
 
-		public IActionResult Display(
-			[FromQuery(Name = "Language")] string language)
+		public async Task<IActionResult> Display()
 		{
-			ViewBag.Language = language;
-			
+			await PopulateViewBagAsync();
+
 			return View("Display", _manager);
 		}
+
+
+		#region private
+
+		private async Task PopulateViewBagAsync() =>
+			await Task.Run(() =>
+			{
+				#region add language
+				ViewBag.Language = HttpContext.User.Claims
+					.First(c => c.Type.Equals("language"))
+					.Value;
+				#endregion
+
+				#region add firstName
+				ViewBag.FirstName = HttpContext.User.Claims
+					.First(c => c.Type.Equals(ClaimTypes.Name))
+					.Value;
+				#endregion
+
+				#region add lastName
+				ViewBag.LastName = HttpContext.User.Claims
+					.First(c => c.Type.Equals(ClaimTypes.Surname))
+					.Value;
+				#endregion
+			});
+
+		#endregion
 	}
 }

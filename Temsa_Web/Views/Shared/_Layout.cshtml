@@ -59,12 +59,12 @@
 					NewUser = new
 					{
 						Label = "Yeni Kullanıcı",
-						Href = $"/user/create"
+						Href = "/user/create"
 					},
 					RegisteredUsers = new
 					{
 						Label = "Kayıtlı Kullanıcılar",
-						Href = $"/user/display"
+						Href = "/user/display"
 					}
 				}
 			},
@@ -249,7 +249,6 @@
 		<!-- //font-awesome icons -->
 		<script src="~/js/jquery2.0.3.min.js"></script>
 		<script type="module" src="~/js/miarTools.js"></script>
-		<script type="module" src="~/js/_layout.js"></script>
 	</head>
 	<body>
 		<section id="container">
@@ -265,6 +264,7 @@
 					</div>
 				</div>
 				<!-- /logo -->
+				<!-- user settings -->
 				<div class="top-nav clearfix">
 					<ul class="nav pull-right top-menu">
 						<!-- search start -->
@@ -313,13 +313,13 @@
 							<a data-toggle="dropdown" class="dropdown-toggle" href="#">
 								<img alt="" src="~/images/user.png">
 								<span class="username">
-									User
-									</span>
+									@ViewBag.FirstName.ToUpper() @ViewBag.LastName.ToUpper()
+								</span>
 								<b class="caret"></b>
 							</a>
 							<ul class="dropdown-menu extended logout">
 								<li>
-									<a href="#">
+									<a  href="#">
 										<i class="fa fa-user"></i>
 										@userDropDownMenu.Profile
 									</a>
@@ -331,7 +331,7 @@
 									</a>
 								</li>
 								<li>
-									<a href="#">
+									<a id="a_logout" href="#">
 										<i class="fa fa-close"></i>
 										@userDropDownMenu.Logout
 									</a>
@@ -341,6 +341,7 @@
 						<!-- user login dropdown start -->
 					</ul>
 				</div>
+				<!-- //user settings -->
 			</header>
 			<!--header end-->
 
@@ -352,7 +353,7 @@
 						<ul id="nav-accordion" class="sidebar-menu">
 							@*homepage*@
 							<li>
-								<a id="a_homepage" class="active">
+								<a href="@sidebarMenu.Homepage.Href" class="active">
 									<i class="fa fa-dashboard"></i>
 									<span>
 										@sidebarMenu.Homepage.Label
@@ -370,12 +371,12 @@
 								</a>
 								<ul class="sub">
 									<li>
-										<a id="a_newUser">
+										<a href="@sidebarMenu.Users.SubMenus.NewUser.Href">
 											@sidebarMenu.Users.SubMenus.NewUser.Label
 										</a>
 									</li>
 									<li>
-										<a id="a_registeredUser">
+										<a href="@sidebarMenu.Users.SubMenus.RegisteredUsers.Href">
 											@sidebarMenu.Users.SubMenus.RegisteredUsers.Label
 										</a>
 									</li>
@@ -392,12 +393,12 @@
 								</a>
 								<ul class="sub">
 									<li>
-										<a id="a_newMachine">
+										<a href="@sidebarMenu.Machines.SubMenus.NewMachine.Href">
 											@sidebarMenu.Machines.SubMenus.NewMachine.Label
 										</a>
 									</li>
 									<li>
-										<a id="a_registeredMachine">
+										<a href="@sidebarMenu.Machines.SubMenus.RegisteredMachine.Href">
 											@sidebarMenu.Machines.SubMenus.RegisteredMachine.Label
 										</a>
 									</li>
@@ -414,22 +415,22 @@
 								</a>
 								<ul class="sub">
 									<li>
-										<a id="a_buyingDemandForm">
+										<a href="@sidebarMenu.Forms.SubMenus.BuyingDemandForm.Href">
 											@sidebarMenu.Forms.SubMenus.BuyingDemandForm.Label
 										</a>
 									</li>
 									<li>
-										<a id="a_rentingDemandForm">
+										<a href="@sidebarMenu.Forms.SubMenus.RentingDemandForm.Href">
 											@sidebarMenu.Forms.SubMenus.RentingDemandForm.Label
 										</a>
 									</li>
 									<li>
-										<a id="a_secondHandDemandForm">
+										<a href="@sidebarMenu.Forms.SubMenus.SecondHandDemandForm.Href">
 											@sidebarMenu.Forms.SubMenus.SecondHandDemandForm.Label
 										</a>
 									</li>
 									<li>
-										<a id="a_informationDemandForm">
+										<a href="@sidebarMenu.Forms.SubMenus.InformationDemandForm.Href">
 											@sidebarMenu.Forms.SubMenus.InformationDemandForm.Label
 										</a>
 									</li>
@@ -438,7 +439,7 @@
 							@*/forms*@
 							@*settings*@
 							<li>
-								<a id="a_settings">
+								<a href="@sidebarMenu.Settings.Href">
 									<i class="fa fa-cog"></i>
 									<span>
 										@sidebarMenu.Settings.Label
@@ -484,7 +485,7 @@
 		<script>
 			let language = "@language";
 			let baseApiUrl = "https://localhost:7091/api/services";
-			let jwtToken = sessionStorage.getItem("token");
+			let jwtToken = "Bearer " + localStorage.getItem("token");
 		</script>
 	</body>
 </html>

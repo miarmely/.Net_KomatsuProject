@@ -200,13 +200,14 @@
 
 <script type="module" src="~/js/machineForDisplay.js"></script>
 <script>
-    language = "@language";
     let updateButtonName = "@updateButtonName";
     let entityQuantity_message = "@entityQuantityMessage"
-
+    //#region add description button name to js
     let description_baseButtonName = @Html.Raw(Json
         .Serialize(baseDescriptionButtonName));
-
+    //#endregion
+    //#region add all languagse in db to js
     let allLanguagesInDb = @Html.Raw(Json
         .Serialize(allLanguagesInDb));
+    //#endregion
 </script>

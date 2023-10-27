@@ -65,7 +65,7 @@ namespace Temsa_Web.Controllers
                 new AuthenticationProperties());
             #endregion
 
-            return RedirectToAction("Create", "User");
+            return RedirectToAction("create", "user");
         }
 
         public void ChangeLanguageInHttpContext(
