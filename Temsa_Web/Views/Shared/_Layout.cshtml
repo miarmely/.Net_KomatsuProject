@@ -6,223 +6,273 @@
 		.GetAllLanguagesAsync();
 	#endregion
 
-	#region placeHolder of search by languages
-	var searchPlaceHolderByLanguages = new
+	#region placeHolder of search bar by languages
+	var searchBarPlaceHolderByLanguages = new Dictionary<string, string>
 	{
-		TR = " Ara",
-		EN = " Search"
-	};
-
-	var searchPlaceHolder = language switch
-	{
-		"TR" => searchPlaceHolderByLanguages.TR,
-		"EN" => searchPlaceHolderByLanguages.EN
+		{"TR", " Ara"},
+		{"EN", " Search"},
 	};
 	#endregion
 
-	#region user dropdown menu by languages
-	var userDropDownMenu = language switch
+	#region user settings menu by languages
+	var userSettingsMenuByLanguages = new Dictionary<string, Dictionary<string, Dictionary<string, string>>>
 	{
-		"TR" => new
+		{"TR", new Dictionary<string, Dictionary<string, string>>
 		{
-			Profile = "Profil",
-			Settings = "Ayarlar",
-			Logout = "Çıkıp Yap"
-		},
-		"EN" => new
+			#region profile
+			{"#a_profile", new Dictionary<string, string>
+			{
+				{ "Icon", "fa fa-user"},
+				{ "Label", " Profil"}
+			}},
+			#endregion
+			#region settings
+			{"#a_settings", new Dictionary<string, string>
+			{
+				{ "Icon", "fa fa-user"},
+				{ "Label", " Ayarlar"}
+			}},
+			#endregion
+			#region logout
+			{"#a_logout", new Dictionary<string, string>
+			{
+				{ "Icon", "fa fa-user"},
+				{ "Label", " Çıkıp Yap"}
+			}}
+			#endregion
+		}},
+		{"TR", new Dictionary<string, Dictionary<string, string>>
 		{
-			Profile = "Profile",
-			Settings = "Settings",
-			Logout = "Logout"
-		}
+			#region profile
+			{"#a_profile", new Dictionary<string, string>
+			{
+				{ "Icon", "fa fa-user"},
+				{ "Label", " Profile"}
+			}},
+			#endregion
+			#region settings
+			{"#a_settings", new Dictionary<string, string>
+			{
+				{ "Icon", "fa fa-cog"},
+				{ "Label", " Settings"}
+			}},
+			#endregion
+			#region logout
+			{"#a_logout", new Dictionary<string, string>
+			{
+				{ "Icon", "fa fa-close"},
+				{ "Label", " Logout"}
+			}}
+			#endregion
+		}},
 	};
 	#endregion
 
 	#region sidebar menu by languages
-	var sidebarMenu = language switch
+
+	#region menus with drop down
+	var sidebarMenusWithDropDownByLanguages = new Dictionary<string, Dictionary<string, Dictionary<string, Dictionary<string, string>>>>
 	{
-		"TR" => new
+		{"TR", new Dictionary<string, Dictionary<string, Dictionary<string, string>>>
 		{
-			#region homepage
-			Homepage = new
-			{
-				Label = "Ana Sayfa",
-				Href = "#"
-			},
-			#endregion
 			#region users
-			Users = new
+			{"Users", new Dictionary<string, Dictionary<string, string>>
 			{
-				Label = "Kullanıcılar",
-				SubMenus = new
+				{"Users", new Dictionary<string, string>
 				{
-					NewUser = new
-					{
-						Label = "Yeni Kullanıcı",
-						Href = "/user/create"
-					},
-					RegisteredUsers = new
-					{
-						Label = "Kayıtlı Kullanıcılar",
-						Href = "/user/display"
-					}
-				}
-			},
+					{"Label", "Kullanıcılar"},
+					{"Href", "javascript:;"},
+				}},
+				{"a_sidebarMenu_newUser", new Dictionary<string, string>
+				{
+					{"Label", "Yeni Kullanıcı"},
+					{"Href", "user/create"},
+				}},
+				{"a_sidebarMenu_registeredUsers", new Dictionary<string, string>
+				{
+					{"Label", "Kayıtlı Kullanıcılar"},
+					{"Href", "user/display"},
+				}},
+			}},
 			#endregion
 			#region machines
-			Machines = new
+			{"Machines", new Dictionary<string, Dictionary<string, string>>
 			{
-				Label = "Makineler",
-				SubMenus = new
+				{"Machines", new Dictionary<string, string>
 				{
-					NewMachine = new
-					{
-						Label = "Yeni Makine",
-						Href = $"/machine/create"
-					},
-					RegisteredMachine = new
-					{
-						Label = "Kayıtlı Makineler",
-						Href = $"/machine/display"
-					}
-				}
-			},
+					{"Label", "Makineler"},
+					{"Href", "javascript:;"},
+				}},
+				{"a_sidebarMenu_newMachine", new Dictionary<string, string>
+				{
+					{"Label", "Yeni Makine"},
+					{"Href", "machine/create"},
+				}},
+				{"a_sidebarMenu_registeredMachine", new Dictionary<string, string>
+				{
+					{"Label", "Kayıtlı Makineler"},
+					{"Href", "machine/display"},
+				}},
+			}},
 			#endregion
 			#region forms
-			Forms = new
+			{"Forms", new Dictionary<string, Dictionary<string, string>>
 			{
-				Label = "Formlar",
-				SubMenus = new
+				{"Forms", new Dictionary<string, string>
 				{
-					BuyingDemandForm = new
-					{
-						Label = "Satın Alma Talep Formu",
-						Href = "#"
-					},
-					RentingDemandForm = new
-					{
-						Label = "Kiralama Talep Formu",
-						Href = "#"
-					},
-					SecondHandDemandForm = new
-					{
-						Label = "İkinci el Talep Formu",
-						Href = "#"
-					},
-					InformationDemandForm = new
-					{
-						Label = "Bilgi Talep Formu",
-						Href = "#"
-					}
-				}
-			},
+					{"Label", "Formlar"},
+					{"Href", "javascript:;"},
+				}},
+				{"a_sidebarMenu_buyingDemandForm", new Dictionary<string, string>
+				{
+					{"Label", "Satın Alma Talep Formu"},
+					{"Href", "#"},
+				}},
+				{"a_sidebarMenu_rentingDemandForm", new Dictionary<string, string>
+				{
+					{"Label", "Kiralama Talep Formu"},
+					{"Href", "#"},
+				}},
+				{"a_sidebarMenu_secondHandDemandForm", new Dictionary<string, string>
+				{
+					{"Label", "İkinci El Talep Formu"},
+					{"Href", "#"},
+				}},
+				{"a_sidebarMenu_informationDemandForm", new Dictionary<string, string>
+				{
+					{"Label", "Bilgi Talep Formu"},
+					{"Href", "#"},
+				}},
+			}},
 			#endregion
-			#region settings
-			Settings = new
-			{
-				Label = "Ayarlar",
-				Href = "#"
-			}
-			#endregion
-		},
-		"EN" => new
+		}},
+		{"EN", new Dictionary<string, Dictionary<string, Dictionary<string, string>>>
 		{
-			#region homepage
-			Homepage = new
-			{
-				Label = "Homepage",
-				Href = "#"
-			},
-			#endregion
 			#region users
-			Users = new
+			{"Users", new Dictionary<string, Dictionary<string, string>>
 			{
-				Label = "Users",
-				SubMenus = new
+				{"Users", new Dictionary<string, string>
 				{
-					NewUser = new
-					{
-						Label = "New User",
-						Href = $"/user/create"
-					},
-					RegisteredUsers = new
-					{
-						Label = "Registered Users",
-						Href = $"/user/display"
-					}
-				}
-			},
+					{"Label", "Users"},
+					{"Href", "javascript:;"},
+				}},
+				{"a_sidebarMenu_newUser", new Dictionary<string, string>
+				{
+					{"Label", "New User"},
+					{"Href", "user/create"},
+				}},
+				{"a_sidebarMenu_registeredUsers", new Dictionary<string, string>
+				{
+					{"Label", "Registered Users"},
+					{"Href", "user/display"},
+				}},
+			}},
 			#endregion
 			#region machines
-			Machines = new
+			{"Machines", new Dictionary<string, Dictionary<string, string>>
 			{
-				Label = "Machines",
-				SubMenus = new
+				{"Machines", new Dictionary<string, string>
 				{
-					NewMachine = new
-					{
-						Label = "New Machine",
-						Href = $"/machine/create"
-					},
-					RegisteredMachine = new
-					{
-						Label = "Registered Machines",
-						Href = $"/machine/display"
-					}
-				}
-			},
+					{"Label", "Machines"},
+					{"Href", "javascript:;"},
+				}},
+				{"a_sidebarMenu_newMachine", new Dictionary<string, string>
+				{
+					{"Label", "New Machine"},
+					{"Href", "machine/create"},
+				}},
+				{"a_sidebarMenu_registeredMachine", new Dictionary<string, string>
+				{
+					{"Label", "Registered Machines"},
+					{"Href", "machine/display"},
+				}},
+			}},
 			#endregion
 			#region forms
-			Forms = new
+			{"Forms", new Dictionary<string, Dictionary<string, string>>
 			{
-				Label = "Forms",
-				SubMenus = new
+				{"Forms", new Dictionary<string, string>
 				{
-					BuyingDemandForm = new
-					{
-						Label = "Buying Demand Form",
-						Href = "#"
-					},
-					RentingDemandForm = new
-					{
-						Label = "Renting Demand Form",
-						Href = "#"
-					},
-					SecondHandDemandForm = new
-					{
-						Label = "Second Hand Demand Form",
-						Href = "#"
-					},
-					InformationDemandForm = new
-					{
-						Label = "Information Demand Form",
-						Href = "#"
-					}
-				}
-			},
+					{"Label", "Forms"},
+					{"Href", "javascript:;"},
+				}},
+				{"a_sidebarMenu_buyingDemandForm", new Dictionary<string, string>
+				{
+					{"Label", "Buying Demand Form"},
+					{"Href", "#"},
+				}},
+				{"a_sidebarMenu_rentingDemandForm", new Dictionary<string, string>
+				{
+					{"Label", "Renting Demand Form"},
+					{"Href", "#"},
+				}},
+				{"a_sidebarMenu_secondHandDemandForm", new Dictionary<string, string>
+				{
+					{"Label", "Secondhand Demand Form"},
+					{"Href", "#"},
+				}},
+				{"a_sidebarMenu_informationDemandForm", new Dictionary<string, string>
+				{
+					{"Label", "Information Demand Form"},
+					{"Href", "#"},
+				}},
+			}},
 			#endregion
-			#region settings
-			Settings = new
-			{
-				Label = "Settings",
-				Href = "#"
-			}
-			#endregion
-		},
+		}},
 	};
 	#endregion
 
-	#region footer informations by languages
-	var footerInfosByLanguages = new
+	#region menus without dropdown
+	var sidebarMenusWithoutDropDownByLanguages = new Dictionary<string, Dictionary<string, Dictionary<string, string>>>
 	{
-		TR = "© 2023 Tüm hakları saklıdır. | Designed by ",
-		EN = "© 2023 All rights reserved. | Designed by "
+		{"TR", new Dictionary<string, Dictionary<string, string>>
+		{
+			#region homepage
+			{"a_sidebarMenu_homePage", new Dictionary<string, string>
+			{
+				{"Icon", "fa fa-dashboard"},
+				{"Label", "Ana Sayfa"},
+				{"Href", "#"}
+			}},
+			#endregion
+			#region settings
+			{"a_sidebarMenu_settings", new Dictionary<string, string>
+			{
+				{"Icon", "fa fa-cog"},
+				{"Label", "Ayarlar"},
+				{"Label", "#"}
+			}},
+			#endregion
+		}},
+		{"EN", new Dictionary<string, Dictionary<string, string>>
+		{
+			#region homepage
+			{"a_sidebarMenu_homepage", new Dictionary<string, string>
+			{
+				{"Icon", "fa fa-dashboard"},
+				{"Label", "Homepage"},
+				{"Label", "#"}
+			}},
+			#endregion
+			#region settings
+			{"a_sidebarMenu_settings", new Dictionary<string, string>
+			{
+				{"Icon", "fa fa-cog"},
+				{"Label", "Settings"},
+				{"Label", "#"}
+			}},
+			#endregion
+		}},
 	};
+	#endregion
 
-	var footerInfos = language switch
+	#endregion
+
+	#region footer informations by languages
+	var footerInfosByLanguages = new Dictionary<string, string>
 	{
-		"TR" => footerInfosByLanguages.TR,
-		"EN" => footerInfosByLanguages.EN
+		{"TR", "© 2023 Tüm hakları saklıdır. | Designed by "},
+		{"EN", "© 2023 All rights reserved. | Designed by "}
 	};
 	#endregion
 }
@@ -265,45 +315,40 @@
 					</div>
 				</div>
 				<!-- /logo -->
-				<!-- user settings -->
 				<div class="top-nav clearfix">
 					<ul class="nav pull-right top-menu">
-						<!-- search start -->
+						<!-- search bar start -->
 						<li>
-							<input type="text" class="form-control search" 
-								placeholder= @searchPlaceHolder>
+							<input id="inpt_searchBar" type="text" class="form-control search" />
 						</li>
-						<!-- search end -->
+						<!-- search bar end -->
 						<!-- language dropdown -->
 						<li class="dropdown">
-							@{
-								var flagPath = $"{language}.png";
-							}
 							<!-- flag picture and language -->
 							<a data-toggle="dropdown" class="dropdown-toggle" href="#">
-								<img alt="@language" src="~/images/@flagPath"/>
-								<span class="username">
-									@language
-								</span>
+								<img id="img_selectedFlag">
+								<span id="spn_selectedLanguage" class="username"></span>
 								<b class="caret"></b>
 							</a>
 							<!-- //flag picture and language -->
 							<!-- language dropdown -->
 							<ul id="ul_language" class="dropdown-menu extended logout">
-								@{
-									#region add languages to dropdown
-									foreach(var languageInDb in allLanguagesInDb)
-									{
-										flagPath = $"{languageInDb}.png";
+							@{
+								#region add languages to dropdown
+								var flagPath = "";
+									
+								foreach(var languageInDb in allLanguagesInDb)
+								{
+									flagPath = $"{languageInDb}.png";
 
-										<li>
-											<a href="?Language=@languageInDb">
-												<img alt="@languageInDb" src="~/images/@flagPath"></img>
-												<b>@languageInDb</b>
-											</a>
-										</li>
-									}
-									#endregion
+									<li>
+										<a href="#">
+											<img alt="@languageInDb" src="~/images/@flagPath" />
+											<b>@languageInDb</b>
+										</a>
+									</li>
+								}
+								#endregion
 								}
 							</ul>
 							<!-- //language dropdown -->
@@ -318,35 +363,16 @@
 								</span>
 								<b class="caret"></b>
 							</a>
-							<ul class="dropdown-menu extended logout">
-								<li>
-									<a  href="#">
-										<i class="fa fa-user"></i>
-										@userDropDownMenu.Profile
-									</a>
-								</li>
-								<li>
-									<a href="#">
-										<i class="fa fa-cog"></i>
-										@userDropDownMenu.Settings
-									</a>
-								</li>
-								<li>
-									<a id="a_logout" href="#">
-										<i class="fa fa-close"></i>
-										@userDropDownMenu.Logout
-									</a>
-								</li>
+							<ul id="ul_userSettingsMenu" class="dropdown-menu extended logout">
 							</ul>
 						</li>
 						<!-- user settings dropdown start -->
 					</ul>
 				</div>
-				<!-- //user settings -->
 			</header>
 			<!--header end-->
 
-			<!--sidebar start-->
+			<!--sidebar menu start-->
 			<aside>
 				<div id="sidebar" class="nav-collapse">
 					<!-- sidebar menu start-->
@@ -354,11 +380,9 @@
 						<ul id="nav-accordion" class="sidebar-menu">
 							@*homepage*@
 							<li>
-								<a href="@sidebarMenu.Homepage.Href" class="active">
+								<a id="a_sideBar_homepage" href="#" class="active">
 									<i class="fa fa-dashboard"></i>
-									<span>
-										@sidebarMenu.Homepage.Label
-									</span>
+									<span></span>
 								</a>
 							</li>
 							@*/homepage*@
@@ -366,9 +390,7 @@
 							<li class="sub-menu">
 								<a href="javascript:;">
 									<i class="fa fa-book"></i>
-									<span>
-										@sidebarMenu.Users.Label
-									</span>
+									<span></span>
 								</a>
 								<ul class="sub">
 									<li>
@@ -453,7 +475,7 @@
 					<!-- sidebar menu end-->
 				</div>
 			</aside>
-			<!--sidebar end-->
+			<!--sidebar menu end-->
 
 			<!--main content start-->
 			<section id="main-content">
@@ -484,9 +506,16 @@
 		<script src="~/js/jquery.scrollTo.js"></script>
 
 		<script>
-			let language = "@language";
-			let baseApiUrl = "https://localhost:7091/api/services";
-			let jwtToken = "Bearer " + localStorage.getItem("token");
+			const searchBarPlaceHolder = "@searchBarPlaceHolderByLanguages[language]";
+			const userSettingsMenu = @Json.Serialize(userSettingsMenuByLanguages[language]);
+			const sideBarMenus_sorting = ["Homepage", "Users", "Machines", "Forms", "Settings"]
+			const sidebarMenus_withDropDown = @Json.Serialize(sidebarMenusWithDropDownByLanguages[language]);
+			const sidebarMenus_withoutDropDown = @Json.Serialize(sidebarMenusWithoutDropDownByLanguages[language]);
+			const footerInfos = "@footerInfosByLanguages[language])";
+			const allLanguageInDb = @Json.Serialize(allLanguagesInDb);
+			const baseApiUrl = "https://localhost:7091/api/services";
+			const jwtToken = "Bearer " + localStorage.getItem("token");
+			let language = localStorage.getItem("language");
 		</script>
 	</body>
 </html>

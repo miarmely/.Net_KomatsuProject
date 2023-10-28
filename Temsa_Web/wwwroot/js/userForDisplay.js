@@ -134,7 +134,7 @@ $(function () {
 
         switch (opt_selected.val()) {
             //#region delete selected values
-            case "1":
+            case "0":
                 await deleteSelectedUsersAsync();
                 break;
             //#endregion 
