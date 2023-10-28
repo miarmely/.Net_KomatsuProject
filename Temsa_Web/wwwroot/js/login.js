@@ -31,9 +31,9 @@ $(function () {
                 //#endregion
 
                 //#region call afterLogin action
-                window.location.href = "/login/afterLogin" +
+                location.replace("/authentication/afterLogin" +
                     `?token=${token}` +
-                    `&language=${language}`
+                    `&language=${language}`);
                 //#endregion
             },
             error: (response) => {

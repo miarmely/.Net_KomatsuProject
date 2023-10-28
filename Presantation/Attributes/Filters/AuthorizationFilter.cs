@@ -32,8 +32,8 @@ namespace Presantation.Attributes.Filters
 					{
 						#region redirect to login page
 						context.Result = new RedirectToActionResult(
-							"Index",
 							"Login",
+							"Authentication",
 							null);
 						#endregion
 
@@ -47,9 +47,7 @@ namespace Presantation.Attributes.Filters
 							401,
 							"AE-U",
 							"Authorization Error - Unauthorized",
-							ConvertErrorCodeToErrorMessageByLanguage(
-								"TR",
-								"AE-U"));
+							ConvertErrorCodeToErrorMessageByLanguage("TR", "AE-U"));
 					#endregion
 				}
 				#endregion

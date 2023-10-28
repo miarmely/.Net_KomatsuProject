@@ -1,11 +1,13 @@
 ﻿using Entities.ConfigModels.Contracts;
 using Entities.QueryParameters;
 using Microsoft.AspNetCore.Mvc;
+using Presantation.Attributes;
 using Services.Contracts;
 using System.Security.Claims;
 
 namespace Temsa_Web.Controllers
 {
+	[Authorization("User,Editor,Admin,Kullanıcı,Editör,Yönetici")]
 	public class MachineController : Controller
 	{
 		private readonly IConfigManager _configManager;

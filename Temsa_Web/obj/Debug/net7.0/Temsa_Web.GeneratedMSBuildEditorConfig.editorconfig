@@ -16,12 +16,12 @@ build_property.GenerateRazorMetadataSourceChecksumAttributes =
 build_property.MSBuildProjectDirectory = C:\Users\Mac\Desktop\SOFTWARE\1__Software_Languages\1__C#\2__API\1__Projects\Temsa\Temsa_Web
 build_property._RazorSourceGeneratorDebug = 
 
-[C:/Users/Mac/Desktop/SOFTWARE/1__Software_Languages/1__C\#/2__API/1__Projects/Temsa/Temsa_Web/Views/Home/Index.cshtml]
-build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxJbmRleC5jc2h0bWw=
+[C:/Users/Mac/Desktop/SOFTWARE/1__Software_Languages/1__C\#/2__API/1__Projects/Temsa/Temsa_Web/Views/Authentication/Login.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQXV0aGVudGljYXRpb25cTG9naW4uY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Mac/Desktop/SOFTWARE/1__Software_Languages/1__C\#/2__API/1__Projects/Temsa/Temsa_Web/Views/Login/Index.cshtml]
-build_metadata.AdditionalFiles.TargetPath = Vmlld3NcTG9naW5cSW5kZXguY3NodG1s
+[C:/Users/Mac/Desktop/SOFTWARE/1__Software_Languages/1__C\#/2__API/1__Projects/Temsa/Temsa_Web/Views/Home/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxJbmRleC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
 [C:/Users/Mac/Desktop/SOFTWARE/1__Software_Languages/1__C\#/2__API/1__Projects/Temsa/Temsa_Web/Views/Machine/Create.cshtml]
@@ -36,8 +36,8 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUmVnaXN0ZXJcaW5kZXguY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Mac/Desktop/SOFTWARE/1__Software_Languages/1__C\#/2__API/1__Projects/Temsa/Temsa_Web/Views/Shared/LoginAndRegisterLayout.cshtml]
-build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXExvZ2luQW5kUmVnaXN0ZXJMYXlvdXQuY3NodG1s
+[C:/Users/Mac/Desktop/SOFTWARE/1__Software_Languages/1__C\#/2__API/1__Projects/Temsa/Temsa_Web/Views/Shared/_LoginAndRegisterLayout.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9Mb2dpbkFuZFJlZ2lzdGVyTGF5b3V0LmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
 [C:/Users/Mac/Desktop/SOFTWARE/1__Software_Languages/1__C\#/2__API/1__Projects/Temsa/Temsa_Web/Views/Shared/_ValidationScriptsPartial.cshtml]

@@ -18,6 +18,7 @@ var app = builder.Build();
 if (!app.Environment.IsDevelopment())
     app.UseHsts();
 #endregion
+
 #region add pipelines
 app.UseHttpsRedirection();
 app.UseStaticFiles();
@@ -27,7 +28,7 @@ app.UseAuthorization();
 
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Login}/{action=Index}/{id?}");
+    pattern: "{controller=authentication}/{action=login}/{id?}");
 #endregion
 
 app.Run();
