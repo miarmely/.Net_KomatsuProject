@@ -63,4 +63,10 @@ $(function () {
         });
     });
     //#endregion
+
+    function populateHtml() {
+
+
+
+    }
 });

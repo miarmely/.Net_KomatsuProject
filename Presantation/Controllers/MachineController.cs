@@ -70,7 +70,6 @@ namespace Presantation.Controllers
                 .GetMainCategoryNamesByLanguageAsync(language);
 
             return Ok(mainCategoryNames);
-
         }
 
 

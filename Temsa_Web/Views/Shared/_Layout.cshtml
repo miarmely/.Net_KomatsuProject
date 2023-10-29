@@ -1,144 +1,79 @@
-﻿@{
-	var language = ViewBag.Language;
+﻿@using System.Security.Claims;
+
+@{
+	#region get firstName and lastName from claims
+	var firstName = Context.User.Claims
+		.First(c => c.Type.Equals(ClaimTypes.Name))
+		.Value
+		.ToUpper();
+	
+	var lastName = Context.User.Claims
+		.First(c => c.Type.Equals(ClaimTypes.Surname))
+		.Value
+		.ToUpper();
+	#endregion
 
 	#region gel all languages in db
 	var allLanguagesInDb = await Model.MachineService
 		.GetAllLanguagesAsync();
 	#endregion
 
-	#region placeHolder of search bar by languages
-	var searchBarPlaceHolderByLanguages = new Dictionary<string, string>
-	{
-		{"TR", " Ara"},
-		{"EN", " Search"},
-	};
-	#endregion
-
-	#region user settings menu by languages
-	var userSettingsMenuByLanguages = new Dictionary<string, Dictionary<string, Dictionary<string, string>>>
-	{
-		{"TR", new Dictionary<string, Dictionary<string, string>>
-		{
-			#region profile
-			{"#a_profile", new Dictionary<string, string>
-			{
-				{ "Icon", "fa fa-user"},
-				{ "Label", " Profil"}
-			}},
-			#endregion
-			#region settings
-			{"#a_settings", new Dictionary<string, string>
-			{
-				{ "Icon", "fa fa-user"},
-				{ "Label", " Ayarlar"}
-			}},
-			#endregion
-			#region logout
-			{"#a_logout", new Dictionary<string, string>
-			{
-				{ "Icon", "fa fa-user"},
-				{ "Label", " Çıkıp Yap"}
-			}}
-			#endregion
-		}},
-		{"TR", new Dictionary<string, Dictionary<string, string>>
-		{
-			#region profile
-			{"#a_profile", new Dictionary<string, string>
-			{
-				{ "Icon", "fa fa-user"},
-				{ "Label", " Profile"}
-			}},
-			#endregion
-			#region settings
-			{"#a_settings", new Dictionary<string, string>
-			{
-				{ "Icon", "fa fa-cog"},
-				{ "Label", " Settings"}
-			}},
-			#endregion
-			#region logout
-			{"#a_logout", new Dictionary<string, string>
-			{
-				{ "Icon", "fa fa-close"},
-				{ "Label", " Logout"}
-			}}
-			#endregion
-		}},
-	};
-	#endregion
-
 	#region sidebar menu by languages
-
-	#region menus with drop down
-	var sidebarMenusWithDropDownByLanguages = new Dictionary<string, Dictionary<string, Dictionary<string, Dictionary<string, string>>>>
+	
+	#region sidebar menus with dropdown
+	var sidebarMenusWithDropdownByLanguages = new Dictionary<string, Dictionary<string, Dictionary<string, Dictionary<string, string>>>>
 	{
 		{"TR", new Dictionary<string, Dictionary<string, Dictionary<string, string>>>
 		{
 			#region users
-			{"Users", new Dictionary<string, Dictionary<string, string>>
+			{"users", new Dictionary<string, Dictionary<string, string>>
 			{
-				{"Users", new Dictionary<string, string>
-				{
-					{"Label", "Kullanıcılar"},
-					{"Href", "javascript:;"},
-				}},
-				{"a_sidebarMenu_newUser", new Dictionary<string, string>
+				{"newUser", new Dictionary<string, string>
 				{
 					{"Label", "Yeni Kullanıcı"},
-					{"Href", "user/create"},
+					{"Href", "/user/create"},
 				}},
-				{"a_sidebarMenu_registeredUsers", new Dictionary<string, string>
+				{"registeredUsers", new Dictionary<string, string>
 				{
 					{"Label", "Kayıtlı Kullanıcılar"},
-					{"Href", "user/display"},
+					{"Href", "/user/display"},
 				}},
 			}},
 			#endregion
 			#region machines
-			{"Machines", new Dictionary<string, Dictionary<string, string>>
+			{"machines", new Dictionary<string, Dictionary<string, string>>
 			{
-				{"Machines", new Dictionary<string, string>
-				{
-					{"Label", "Makineler"},
-					{"Href", "javascript:;"},
-				}},
-				{"a_sidebarMenu_newMachine", new Dictionary<string, string>
+				{"newMachine", new Dictionary<string, string>
 				{
 					{"Label", "Yeni Makine"},
-					{"Href", "machine/create"},
+					{"Href", "/machine/create"},
 				}},
-				{"a_sidebarMenu_registeredMachine", new Dictionary<string, string>
+				{"registeredMachine", new Dictionary<string, string>
 				{
 					{"Label", "Kayıtlı Makineler"},
-					{"Href", "machine/display"},
+					{"Href", "/machine/display"},
 				}},
 			}},
 			#endregion
 			#region forms
-			{"Forms", new Dictionary<string, Dictionary<string, string>>
+			{"forms", new Dictionary<string, Dictionary<string, string>>
 			{
-				{"Forms", new Dictionary<string, string>
-				{
-					{"Label", "Formlar"},
-					{"Href", "javascript:;"},
-				}},
-				{"a_sidebarMenu_buyingDemandForm", new Dictionary<string, string>
+				{"buyingDemandForm", new Dictionary<string, string>
 				{
 					{"Label", "Satın Alma Talep Formu"},
 					{"Href", "#"},
 				}},
-				{"a_sidebarMenu_rentingDemandForm", new Dictionary<string, string>
+				{"rentingDemandForm", new Dictionary<string, string>
 				{
 					{"Label", "Kiralama Talep Formu"},
 					{"Href", "#"},
 				}},
-				{"a_sidebarMenu_secondHandDemandForm", new Dictionary<string, string>
+				{"secondHandDemandForm", new Dictionary<string, string>
 				{
 					{"Label", "İkinci El Talep Formu"},
 					{"Href", "#"},
 				}},
-				{"a_sidebarMenu_informationDemandForm", new Dictionary<string, string>
+				{"informationDemandForm", new Dictionary<string, string>
 				{
 					{"Label", "Bilgi Talep Formu"},
 					{"Href", "#"},
@@ -149,69 +84,54 @@
 		{"EN", new Dictionary<string, Dictionary<string, Dictionary<string, string>>>
 		{
 			#region users
-			{"Users", new Dictionary<string, Dictionary<string, string>>
+			{"users", new Dictionary<string, Dictionary<string, string>>
 			{
-				{"Users", new Dictionary<string, string>
-				{
-					{"Label", "Users"},
-					{"Href", "javascript:;"},
-				}},
-				{"a_sidebarMenu_newUser", new Dictionary<string, string>
+				{"newUser", new Dictionary<string, string>
 				{
 					{"Label", "New User"},
-					{"Href", "user/create"},
+					{"Href", "/user/create"},
 				}},
-				{"a_sidebarMenu_registeredUsers", new Dictionary<string, string>
+				{"registeredUsers", new Dictionary<string, string>
 				{
 					{"Label", "Registered Users"},
-					{"Href", "user/display"},
+					{"Href", "/user/display"},
 				}},
 			}},
 			#endregion
 			#region machines
-			{"Machines", new Dictionary<string, Dictionary<string, string>>
+			{"machines", new Dictionary<string, Dictionary<string, string>>
 			{
-				{"Machines", new Dictionary<string, string>
-				{
-					{"Label", "Machines"},
-					{"Href", "javascript:;"},
-				}},
-				{"a_sidebarMenu_newMachine", new Dictionary<string, string>
+				{"newMachine", new Dictionary<string, string>
 				{
 					{"Label", "New Machine"},
-					{"Href", "machine/create"},
+					{"Href", "/machine/create"},
 				}},
-				{"a_sidebarMenu_registeredMachine", new Dictionary<string, string>
+				{"registeredMachine", new Dictionary<string, string>
 				{
 					{"Label", "Registered Machines"},
-					{"Href", "machine/display"},
+					{"Href", "/machine/display"},
 				}},
 			}},
 			#endregion
 			#region forms
-			{"Forms", new Dictionary<string, Dictionary<string, string>>
+			{"forms", new Dictionary<string, Dictionary<string, string>>
 			{
-				{"Forms", new Dictionary<string, string>
-				{
-					{"Label", "Forms"},
-					{"Href", "javascript:;"},
-				}},
-				{"a_sidebarMenu_buyingDemandForm", new Dictionary<string, string>
+				{"buyingDemandForm", new Dictionary<string, string>
 				{
 					{"Label", "Buying Demand Form"},
 					{"Href", "#"},
 				}},
-				{"a_sidebarMenu_rentingDemandForm", new Dictionary<string, string>
+				{"rentingDemandForm", new Dictionary<string, string>
 				{
 					{"Label", "Renting Demand Form"},
 					{"Href", "#"},
 				}},
-				{"a_sidebarMenu_secondHandDemandForm", new Dictionary<string, string>
+				{"secondHandDemandForm", new Dictionary<string, string>
 				{
 					{"Label", "Secondhand Demand Form"},
 					{"Href", "#"},
 				}},
-				{"a_sidebarMenu_informationDemandForm", new Dictionary<string, string>
+				{"informationDemandForm", new Dictionary<string, string>
 				{
 					{"Label", "Information Demand Form"},
 					{"Href", "#"},
@@ -222,54 +142,10 @@
 	};
 	#endregion
 
-	#region menus without dropdown
-	var sidebarMenusWithoutDropDownByLanguages = new Dictionary<string, Dictionary<string, Dictionary<string, string>>>
-	{
-		{"TR", new Dictionary<string, Dictionary<string, string>>
-		{
-			#region homepage
-			{"a_sidebarMenu_homePage", new Dictionary<string, string>
-			{
-				{"Icon", "fa fa-dashboard"},
-				{"Label", "Ana Sayfa"},
-				{"Href", "#"}
-			}},
-			#endregion
-			#region settings
-			{"a_sidebarMenu_settings", new Dictionary<string, string>
-			{
-				{"Icon", "fa fa-cog"},
-				{"Label", "Ayarlar"},
-				{"Label", "#"}
-			}},
-			#endregion
-		}},
-		{"EN", new Dictionary<string, Dictionary<string, string>>
-		{
-			#region homepage
-			{"a_sidebarMenu_homepage", new Dictionary<string, string>
-			{
-				{"Icon", "fa fa-dashboard"},
-				{"Label", "Homepage"},
-				{"Label", "#"}
-			}},
-			#endregion
-			#region settings
-			{"a_sidebarMenu_settings", new Dictionary<string, string>
-			{
-				{"Icon", "fa fa-cog"},
-				{"Label", "Settings"},
-				{"Label", "#"}
-			}},
-			#endregion
-		}},
-	};
-	#endregion
-
 	#endregion
 
 	#region footer informations by languages
-	var footerInfosByLanguages = new Dictionary<string, string>
+	var footerInfoByLanguages = new Dictionary<string, string>
 	{
 		{"TR", "© 2023 Tüm hakları saklıdır. | Designed by "},
 		{"EN", "© 2023 All rights reserved. | Designed by "}
@@ -314,7 +190,7 @@
 						<div class="fa fa-bars"></div>
 					</div>
 				</div>
-				<!-- /logo -->
+				<!-- //logo -->
 				<div class="top-nav clearfix">
 					<ul class="nav pull-right top-menu">
 						<!-- search bar start -->
@@ -349,7 +225,7 @@
 									</li>
 								}
 								#endregion
-								}
+							}
 							</ul>
 							<!-- //language dropdown -->
 						</li>
@@ -359,7 +235,7 @@
 							<a data-toggle="dropdown" class="dropdown-toggle" href="#">
 								<img alt="" src="~/images/user.png">
 								<span class="username">
-									@ViewBag.FirstName.ToUpper() @ViewBag.LastName.ToUpper()
+									@firstName @lastName
 								</span>
 								<b class="caret"></b>
 							</a>
@@ -370,114 +246,20 @@
 					</ul>
 				</div>
 			</header>
-			<!--header end-->
-
-			<!--sidebar menu start-->
+			<!-- header end -->
+			<!-- sidebar menu start -->
 			<aside>
 				<div id="sidebar" class="nav-collapse">
 					<!-- sidebar menu start-->
 					<div class="leftside-navigation">
 						<ul id="nav-accordion" class="sidebar-menu">
-							@*homepage*@
-							<li>
-								<a id="a_sideBar_homepage" href="#" class="active">
-									<i class="fa fa-dashboard"></i>
-									<span></span>
-								</a>
-							</li>
-							@*/homepage*@
-							@*users*@
-							<li class="sub-menu">
-								<a href="javascript:;">
-									<i class="fa fa-book"></i>
-									<span></span>
-								</a>
-								<ul class="sub">
-									<li>
-										<a href="@sidebarMenu.Users.SubMenus.NewUser.Href">
-											@sidebarMenu.Users.SubMenus.NewUser.Label
-										</a>
-									</li>
-									<li>
-										<a href="@sidebarMenu.Users.SubMenus.RegisteredUsers.Href">
-											@sidebarMenu.Users.SubMenus.RegisteredUsers.Label
-										</a>
-									</li>
-								</ul>
-							</li>
-							@*/users*@
-							@*machines*@
-							<li class="sub-menu">
-								<a href="javascript:;">
-									<i class="fa fa-book"></i>
-									<span>
-										@sidebarMenu.Machines.Label
-									</span>
-								</a>
-								<ul class="sub">
-									<li>
-										<a href="@sidebarMenu.Machines.SubMenus.NewMachine.Href">
-											@sidebarMenu.Machines.SubMenus.NewMachine.Label
-										</a>
-									</li>
-									<li>
-										<a href="@sidebarMenu.Machines.SubMenus.RegisteredMachine.Href">
-											@sidebarMenu.Machines.SubMenus.RegisteredMachine.Label
-										</a>
-									</li>
-								</ul>
-							</li>
-							@*/machines*@
-							@*forms*@
-							<li class="sub-menu">
-								<a href="javascript:;">
-									<i class="fa fa-book"></i>
-									<span>
-										@sidebarMenu.Forms.Label
-									</span>
-								</a>
-								<ul class="sub">
-									<li>
-										<a href="@sidebarMenu.Forms.SubMenus.BuyingDemandForm.Href">
-											@sidebarMenu.Forms.SubMenus.BuyingDemandForm.Label
-										</a>
-									</li>
-									<li>
-										<a href="@sidebarMenu.Forms.SubMenus.RentingDemandForm.Href">
-											@sidebarMenu.Forms.SubMenus.RentingDemandForm.Label
-										</a>
-									</li>
-									<li>
-										<a href="@sidebarMenu.Forms.SubMenus.SecondHandDemandForm.Href">
-											@sidebarMenu.Forms.SubMenus.SecondHandDemandForm.Label
-										</a>
-									</li>
-									<li>
-										<a href="@sidebarMenu.Forms.SubMenus.InformationDemandForm.Href">
-											@sidebarMenu.Forms.SubMenus.InformationDemandForm.Label
-										</a>
-									</li>
-								</ul>
-							</li>
-							@*/forms*@
-							@*settings*@
-							<li>
-								<a href="@sidebarMenu.Settings.Href">
-									<i class="fa fa-cog"></i>
-									<span>
-										@sidebarMenu.Settings.Label
-									</span>
-								</a>
-							</li>
-							@*/settings*@
 						</ul>            
 					</div>
 					<!-- sidebar menu end-->
 				</div>
 			</aside>
-			<!--sidebar menu end-->
-
-			<!--main content start-->
+			<!-- sidebar menu end -->
+			<!-- main content start -->
 			<section id="main-content">
 				<section class="wrapper">
 					@RenderBody()
@@ -487,14 +269,14 @@
 				<div class="footer">
 					<div class="wthree-copyright">
 						<p>
-							@footerInfos
+							<span id="spn_footerInfo"></span>
 							<a href="https://mostidea.com.tr">MostIdea</a>
 						</p>
 					</div>
 				</div>
 				<!-- / footer -->
 			</section>
-			<!--main content end-->
+			<!-- main content end -->
 		</section>
 
 		<script src="~/js/bootstrap.js"></script>
@@ -506,16 +288,106 @@
 		<script src="~/js/jquery.scrollTo.js"></script>
 
 		<script>
-			const searchBarPlaceHolder = "@searchBarPlaceHolderByLanguages[language]";
-			const userSettingsMenu = @Json.Serialize(userSettingsMenuByLanguages[language]);
-			const sideBarMenus_sorting = ["Homepage", "Users", "Machines", "Forms", "Settings"]
-			const sidebarMenus_withDropDown = @Json.Serialize(sidebarMenusWithDropDownByLanguages[language]);
-			const sidebarMenus_withoutDropDown = @Json.Serialize(sidebarMenusWithoutDropDownByLanguages[language]);
-			const footerInfos = "@footerInfosByLanguages[language])";
-			const allLanguageInDb = @Json.Serialize(allLanguagesInDb);
+			let language;
 			const baseApiUrl = "https://localhost:7091/api/services";
 			const jwtToken = "Bearer " + localStorage.getItem("token");
-			let language = localStorage.getItem("language");
+			//const searchBarPlaceHolder = (@Json.Serialize(searchBarPlaceHolderByLanguages))[language];
+			//const footerInfo = "(@Json.Serialize(footerInfoByLanguages)[language])";
+			//const userSettingsMenu = (@Json.Serialize(userSettingsMenuByLanguages);
+			//const sidebarMenus = (@Json.Serialize(sidebarMenusByLanguages))[language];
+			//const sidebarMenusWithDropdown = (@Json.Serialize(sidebarMenusWithDropdownByLanguages)[language]);
+			//const allLanguageInDb = @Json.Serialize(allLanguagesInDb);
+
+			const searchBarPlaceHolderByLanguages = {
+				"TR": "Ara",
+				"EN": "Search"
+			};
+			const userSettingsMenuByLanguages = {
+				"TR": {
+					"#a_profile": {
+						"Icon": "fa fa-user",
+						"Label": " Profil"
+					},
+					"#a_settings": {
+						"Icon": "fa fa-cog",
+						"Label": " Ayarlar"
+					},
+					"#a_logout": {
+						"Icon": "fa fa-close",
+						"Label": " Çıkıp Yap"
+					},
+				},
+				"EN": {
+					"#a_profile": {
+						"Icon": "fa fa-user",
+						"Label": " Profile"
+					},
+					"#a_settings": {
+						"Icon": "fa fa-cog",
+						"Label": " Settings"
+					},
+					"#a_logout": {
+						"Icon": "fa fa-close",
+						"Label": " Logout"
+					},
+				}
+			}
+			const sidebarMenusByLanguages = {
+				"TR": {
+					"homePage": {
+						"Icon": "fa fa-dashboard",
+						"Label": "Ana Sayfa",
+						"Href": "#"
+					},
+					"users": {
+						"Icon": "fa fa-dashboard",
+						"Label": "Kullanıcılar",
+						"Href": "#"
+					},
+					"machines": {
+						"Icon": "fa fa-dashboard",
+						"Label": "Makineler",
+						"Href": "#"
+					},
+					"forms": {
+						"Icon": "fa fa-dashboard",
+						"Label": "Formlar",
+						"Href": "#"
+					},
+					"settings": {
+						"Icon": "fa fa-dashboard",
+						"Label": "Ayarlar",
+						"Href": "#"
+					}
+				},
+				"EN": {
+					"homePage": {
+						"Icon": "fa fa-dashboard",
+						"Label": "HomePage",
+						"Href": "#"
+					},
+					"users": {
+						"Icon": "fa fa-dashboard",
+						"Label": "Users",
+						"Href": "#"
+					},
+					"machines": {
+						"Icon": "fa fa-dashboard",
+						"Label": "Machines",
+						"Href": "#"
+					},
+					"forms": {
+						"Icon": "fa fa-dashboard",
+						"Label": "Forms",
+						"Href": "#"
+					},
+					"settings": {
+						"Icon": "fa fa-dashboard",
+						"Label": "Settings",
+						"Href": "#"
+					}
+				}
+			}
 		</script>
 	</body>
 </html>

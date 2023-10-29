@@ -1,9 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Server.IIS;
 using Presantation.Attributes;
 using Services.Contracts;
 using System.Security.Claims;
-using System.Web;
+
 
 namespace Temsa_Web.Controllers
 {
@@ -29,25 +28,12 @@ namespace Temsa_Web.Controllers
 			return View("Display", _manager);
 		}
 
-		public void ChangeLanguageInHttpContext(string newLanguage)
-		{
-			HttpContext.User.Claims
-				.First(c => c.Type.Equals("language"));
-				
-
-		}
 
 		#region private
 
 		private async Task PopulateViewBagAsync() =>
 			await Task.Run(() =>
 			{
-				#region add language
-				ViewBag.Language = HttpContext.User.Claims
-					.First(c => c.Type.Equals("language"))
-					.Value;
-				#endregion
-
 				#region add firstName
 				ViewBag.FirstName = HttpContext.User.Claims
 					.First(c => c.Type.Equals(ClaimTypes.Name))

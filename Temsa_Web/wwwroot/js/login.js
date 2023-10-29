@@ -1,10 +1,12 @@
 ﻿import { updateResultLabel } from "./miarTools.js";
 
 $(function () {
+    //#region variables
     const resultLabelId = "#p_resultLabel";
     const errorMessageColor = "red";
-    const tokenKeyInSession = "token"
-   
+    //#endregion
+
+    //#region events
     $("form").submit((event) => {
         event.preventDefault();
 
@@ -25,9 +27,9 @@ $(function () {
             success: (response) => {
                 $("form")[0].reset();  // reset inputs
 
-                //#region save token to localStorage
+                //#region populate local storage
                 let token = response["token"];
-                localStorage.setItem(tokenKeyInSession, token);
+                populateLocalStorage(token);
                 //#endregion
 
                 //#region call afterLogin action
@@ -47,4 +49,37 @@ $(function () {
             }
         });
     });
+    //#endregion
+
+    //#region functions
+    function populateLocalStorage(token) {
+        //#region add token
+        localStorage.setItem("token", token);
+        //#endregion
+        
+        //#region add roles, main category names, languages and hand status
+        let localStorageKeysAndUrls = {
+            "allRoles": `/user/display/role?language=${language}`,
+            "allMainCategoryNames": `/machine/display/mainCategory?language=${language}`,
+            "allLanguages": `/machine/display/language`,
+            "allHandStatuses": `/machine/display/handStatus`,
+        }
+
+        // send dnymaic ajax request
+        for (let localStorageKey in localStorageKeysAndUrls) {
+            let specialUrl = localStorageKeysAndUrls[localStorageKey];
+
+            $.ajax({
+                method: "GET",
+                url: baseApiUrl + specialUrl,
+                contentType: "application/json",
+                dataType: "json",
+                success: (response) => {
+                    localStorage.setItem(localStorageKey, response);
+                }
+            });
+        }
+        //#endregion
+    }
+    //#endregion
 });

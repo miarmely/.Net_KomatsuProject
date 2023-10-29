@@ -1,5 +1,7 @@
 ﻿$(function () {
+    //#region variables
     const ul_sidebarMenu = $("#nav-accordion");
+    //#endregion
 
     //#region events
     $("#a_logout").click(() => {
@@ -39,65 +41,83 @@
 
     function populateElementsOnHeader() {
         //#region add placeholder to search bar
-        $("#inpt_searchbBar").attr("placeholder", searchBarPlaceHolder);
+        $("#inpt_searchBar").attr("placeholder", searchBarPlaceHolder);
         //#endregion
 
         //#region add default flag picture and language of "language dropdown"
-        $("#img_selectedFlag").attr("alt", language); // for flag
-        $("#img_selectedFlag").attr("src", `~/images/${language}.png`);  // for flag
-        $("#spn_selectedLanguage").text(language);  // for language
+        // add flag
+        $("#img_selectedFlag").attr("alt", language);
+        $("#img_selectedFlag").attr("src", `/images/${language}.png`);
+
+        // add language
+        $("#spn_selectedLanguage").text(language);
         //#endregion
 
         populateUserSettingsMenu();
     }
 
     function populateSideBarMenu() {
-        for (let sidebarMenuName in sideBarMenus_sorting) {
-            // #region when sidebar menu haven't dropdown
-            if (sidebarMenus_withoutDropDown[sidebarMenuName] != null) {
-
-                ul_sidebarMenu.append(
-                    `<li>
-						<a id="a_sideBar_homepage" href="#" class="active">
-							<i class="fa fa-dashboard"></i>
-							<span></span>
-						</a>
-				    </li>`
-                );
-            }
+        //#region add all sidebar menus without dropdown
+        for (let sidebarMenuName in sidebarMenus) {
+            //#region set variables
+            let sidebarMenu = sidebarMenus[sidebarMenuName];
+            let li_sidebarMenu_id = `li_sidebarMenu_${sidebarMenuName}`;
             //#endregion
 
-            //#region when sidebar menu have dropdown
-            else {
+            //#region add menus to side bar 
+            ul_sidebarMenu.append(
+                `<li id="${li_sidebarMenu_id}">
+					<a  href="${sidebarMenu.Href}">
+						<i class="${sidebarMenu.Icon}"></i>
+						<span>
+                            ${sidebarMenu.Label}
+                        </span>
+					</a>
+				</li>`
+            );
+            //#endregion
+        }
+        //#endregion
 
+        //#region add dropdown to sidebar menus with dropdown
+        for (let sidebarMenuName in sidebarMenusWithDropdown) {
+            //#region set variables
+            let li_sidebarMenu = $(`#li_sidebarMenu_${sidebarMenuName}`);
+            let ul_sidebarMenuWithDropdown_id = `ul_sidebarMenusWithDropdown_${sidebarMenuName}`;
+            let sidebarMenusOnDropdown = sidebarMenusWithDropdown[sidebarMenuName]
+            //#endregion
 
-                ul_sidebarMenu.append(
+            //#region add <ul> to sidebar menu
+            li_sidebarMenu.append(
+                `<ul id="${ul_sidebarMenuWithDropdown_id}" class="sub">
+                </ul>`
+            );
+            //#endregion
+
+            //#region add dropdown sidebar menus to <ul>
+            for (let sidebarMenuNameOnDropdown in sidebarMenusOnDropdown) {
+                let sidebarMenuOnDropdown = sidebarMenusOnDropdown[sidebarMenuNameOnDropdown];
+
+                $("#" + ul_sidebarMenuWithDropdown_id).append(
                     `<li class="sub-menu">
-						<a href="${}">
-							<i class="fa fa-book"></i>
-							<span></span>
-						</a>
-						<ul class="sub">
-							<li>
-								<a href="@sidebarMenu.Users.SubMenus.NewUser.Href">
-									@sidebarMenu.Users.SubMenus.NewUser.Label
-								</a>
-							</li>
-							<li>
-								<a href="@sidebarMenu.Users.SubMenus.RegisteredUsers.Href">
-									@sidebarMenu.Users.SubMenus.RegisteredUsers.Label
-								</a>
-							</li>
-						</ul>
-					</li>`
+    			        <a href="${sidebarMenuOnDropdown.Href}">
+    				        ${sidebarMenuOnDropdown.Label}
+    			        </a>
+    		        </li>`
                 );
-
             }
             //#endregion
         }
-
+        //#endregion
     }
-    In  //#endregion
 
+    function populateFooter() {
+        // add footer info
+        $("#spn_footerInfo").append(footerInfo);
+    }
+    //#endregion
 
+    populateElementsOnHeader();
+    populateSideBarMenu();
+    populateFooter();
 });

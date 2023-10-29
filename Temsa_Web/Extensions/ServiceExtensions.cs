@@ -11,21 +11,6 @@ namespace Temsa_Web.Extensions
 {
 	public static class ServiceExtensions
 	{
-		public static void ConfigureAddControllersWithView(
-			this IServiceCollection services) =>
-				services.AddControllersWithViews();
-
-		public static void ConfigureConfigModels(
-			this IServiceCollection services,
-			IConfiguration configuration)
-		{
-			services.Configure<JwtSettingsConfig>(configuration
-				.GetSection(nameof(JwtSettingsConfig)));
-
-			services.Configure<DbSettingsConfig>(configuration
-				.GetSection(nameof(DbSettingsConfig)));
-		}
-
 		public static void ConfigureManagers(this IServiceCollection services)
 		{
 			services.AddScoped<IServiceManager, ServiceManager>();
@@ -46,5 +31,20 @@ namespace Temsa_Web.Extensions
 					opt.LogoutPath = "/user/login";
 				});
 		}
-	}
+
+        public static void ConfigureAddControllersWithView(
+        this IServiceCollection services) =>
+            services.AddControllersWithViews();
+
+        public static void ConfigureConfigModels(
+            this IServiceCollection services,
+            IConfiguration configuration)
+        {
+            services.Configure<JwtSettingsConfig>(configuration
+                .GetSection(nameof(JwtSettingsConfig)));
+
+            services.Configure<DbSettingsConfig>(configuration
+                .GetSection(nameof(DbSettingsConfig)));
+        }
+    }
 }
