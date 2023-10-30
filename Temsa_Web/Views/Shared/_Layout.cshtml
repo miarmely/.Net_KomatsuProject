@@ -17,140 +17,6 @@
 	var allLanguagesInDb = await Model.MachineService
 		.GetAllLanguagesAsync();
 	#endregion
-
-	#region sidebar menu by languages
-	
-	#region sidebar menus with dropdown
-	var sidebarMenusWithDropdownByLanguages = new Dictionary<string, Dictionary<string, Dictionary<string, Dictionary<string, string>>>>
-	{
-		{"TR", new Dictionary<string, Dictionary<string, Dictionary<string, string>>>
-		{
-			#region users
-			{"users", new Dictionary<string, Dictionary<string, string>>
-			{
-				{"newUser", new Dictionary<string, string>
-				{
-					{"Label", "Yeni Kullanıcı"},
-					{"Href", "/user/create"},
-				}},
-				{"registeredUsers", new Dictionary<string, string>
-				{
-					{"Label", "Kayıtlı Kullanıcılar"},
-					{"Href", "/user/display"},
-				}},
-			}},
-			#endregion
-			#region machines
-			{"machines", new Dictionary<string, Dictionary<string, string>>
-			{
-				{"newMachine", new Dictionary<string, string>
-				{
-					{"Label", "Yeni Makine"},
-					{"Href", "/machine/create"},
-				}},
-				{"registeredMachine", new Dictionary<string, string>
-				{
-					{"Label", "Kayıtlı Makineler"},
-					{"Href", "/machine/display"},
-				}},
-			}},
-			#endregion
-			#region forms
-			{"forms", new Dictionary<string, Dictionary<string, string>>
-			{
-				{"buyingDemandForm", new Dictionary<string, string>
-				{
-					{"Label", "Satın Alma Talep Formu"},
-					{"Href", "#"},
-				}},
-				{"rentingDemandForm", new Dictionary<string, string>
-				{
-					{"Label", "Kiralama Talep Formu"},
-					{"Href", "#"},
-				}},
-				{"secondHandDemandForm", new Dictionary<string, string>
-				{
-					{"Label", "İkinci El Talep Formu"},
-					{"Href", "#"},
-				}},
-				{"informationDemandForm", new Dictionary<string, string>
-				{
-					{"Label", "Bilgi Talep Formu"},
-					{"Href", "#"},
-				}},
-			}},
-			#endregion
-		}},
-		{"EN", new Dictionary<string, Dictionary<string, Dictionary<string, string>>>
-		{
-			#region users
-			{"users", new Dictionary<string, Dictionary<string, string>>
-			{
-				{"newUser", new Dictionary<string, string>
-				{
-					{"Label", "New User"},
-					{"Href", "/user/create"},
-				}},
-				{"registeredUsers", new Dictionary<string, string>
-				{
-					{"Label", "Registered Users"},
-					{"Href", "/user/display"},
-				}},
-			}},
-			#endregion
-			#region machines
-			{"machines", new Dictionary<string, Dictionary<string, string>>
-			{
-				{"newMachine", new Dictionary<string, string>
-				{
-					{"Label", "New Machine"},
-					{"Href", "/machine/create"},
-				}},
-				{"registeredMachine", new Dictionary<string, string>
-				{
-					{"Label", "Registered Machines"},
-					{"Href", "/machine/display"},
-				}},
-			}},
-			#endregion
-			#region forms
-			{"forms", new Dictionary<string, Dictionary<string, string>>
-			{
-				{"buyingDemandForm", new Dictionary<string, string>
-				{
-					{"Label", "Buying Demand Form"},
-					{"Href", "#"},
-				}},
-				{"rentingDemandForm", new Dictionary<string, string>
-				{
-					{"Label", "Renting Demand Form"},
-					{"Href", "#"},
-				}},
-				{"secondHandDemandForm", new Dictionary<string, string>
-				{
-					{"Label", "Secondhand Demand Form"},
-					{"Href", "#"},
-				}},
-				{"informationDemandForm", new Dictionary<string, string>
-				{
-					{"Label", "Information Demand Form"},
-					{"Href", "#"},
-				}},
-			}},
-			#endregion
-		}},
-	};
-	#endregion
-
-	#endregion
-
-	#region footer informations by languages
-	var footerInfoByLanguages = new Dictionary<string, string>
-	{
-		{"TR", "© 2023 Tüm hakları saklıdır. | Designed by "},
-		{"EN", "© 2023 All rights reserved. | Designed by "}
-	};
-	#endregion
 }
 
 <!DOCTYPE html>
@@ -288,106 +154,185 @@
 		<script src="~/js/jquery.scrollTo.js"></script>
 
 		<script>
-			let language;
+			let language = localStorage.getItem("language"); // language was add at "login.cshtml".
 			const baseApiUrl = "https://localhost:7091/api/services";
 			const jwtToken = "Bearer " + localStorage.getItem("token");
-			//const searchBarPlaceHolder = (@Json.Serialize(searchBarPlaceHolderByLanguages))[language];
-			//const footerInfo = "(@Json.Serialize(footerInfoByLanguages)[language])";
-			//const userSettingsMenu = (@Json.Serialize(userSettingsMenuByLanguages);
-			//const sidebarMenus = (@Json.Serialize(sidebarMenusByLanguages))[language];
-			//const sidebarMenusWithDropdown = (@Json.Serialize(sidebarMenusWithDropdownByLanguages)[language]);
-			//const allLanguageInDb = @Json.Serialize(allLanguagesInDb);
-
 			const searchBarPlaceHolderByLanguages = {
 				"TR": "Ara",
 				"EN": "Search"
 			};
 			const userSettingsMenuByLanguages = {
 				"TR": {
-					"#a_profile": {
-						"Icon": "fa fa-user",
-						"Label": " Profil"
+					"profile": {
+						"icon": "fa fa-user",
+						"label": " Profil"
 					},
-					"#a_settings": {
-						"Icon": "fa fa-cog",
-						"Label": " Ayarlar"
+					"settings": {
+						"icon": "fa fa-cog",
+						"label": " Ayarlar"
 					},
-					"#a_logout": {
-						"Icon": "fa fa-close",
-						"Label": " Çıkıp Yap"
+					"logout": {
+						"icon": "fa fa-close",
+						"label": " Çıkıp Yap"
 					},
 				},
 				"EN": {
-					"#a_profile": {
-						"Icon": "fa fa-user",
-						"Label": " Profile"
+					"profile": {
+						"icon": "fa fa-user",
+						"label": " Profile"
 					},
-					"#a_settings": {
-						"Icon": "fa fa-cog",
-						"Label": " Settings"
+					"settings": {
+						"icon": "fa fa-cog",
+						"label": " Settings"
 					},
-					"#a_logout": {
-						"Icon": "fa fa-close",
-						"Label": " Logout"
+					"logout": {
+						"icon": "fa fa-close",
+						"label": " Logout"
 					},
 				}
 			}
-			const sidebarMenusByLanguages = {
+			const sidebar_mainMenus_byLanguages = {
 				"TR": {
 					"homePage": {
-						"Icon": "fa fa-dashboard",
-						"Label": "Ana Sayfa",
-						"Href": "#"
+						"icon": "fa fa-dashboard",
+						"label": "Ana Sayfa",
+						"href": "#"
 					},
 					"users": {
-						"Icon": "fa fa-dashboard",
-						"Label": "Kullanıcılar",
-						"Href": "#"
+						"icon": "fa fa-dashboard",
+						"label": "Kullanıcılar",
+						"href": "#"
 					},
 					"machines": {
-						"Icon": "fa fa-dashboard",
-						"Label": "Makineler",
-						"Href": "#"
+						"icon": "fa fa-dashboard",
+						"label": "Makineler",
+						"href": "#"
 					},
 					"forms": {
-						"Icon": "fa fa-dashboard",
-						"Label": "Formlar",
-						"Href": "#"
+						"icon": "fa fa-dashboard",
+						"label": "Formlar",
+						"href": "#"
 					},
 					"settings": {
-						"Icon": "fa fa-dashboard",
-						"Label": "Ayarlar",
-						"Href": "#"
+						"icon": "fa fa-dashboard",
+						"label": "Ayarlar",
+						"href": "#"
 					}
 				},
 				"EN": {
 					"homePage": {
-						"Icon": "fa fa-dashboard",
-						"Label": "HomePage",
-						"Href": "#"
+						"icon": "fa fa-dashboard",
+						"label": "HomePage",
+						"href": "#"
 					},
 					"users": {
-						"Icon": "fa fa-dashboard",
-						"Label": "Users",
-						"Href": "#"
+						"icon": "fa fa-dashboard",
+						"label": "Users",
+						"href": "#"
 					},
 					"machines": {
-						"Icon": "fa fa-dashboard",
-						"Label": "Machines",
-						"Href": "#"
+						"icon": "fa fa-dashboard",
+						"label": "Machines",
+						"href": "#"
 					},
 					"forms": {
-						"Icon": "fa fa-dashboard",
-						"Label": "Forms",
-						"Href": "#"
+						"icon": "fa fa-dashboard",
+						"label": "Forms",
+						"href": "#"
 					},
 					"settings": {
-						"Icon": "fa fa-dashboard",
-						"Label": "Settings",
-						"Href": "#"
+						"icon": "fa fa-dashboard",
+						"label": "Settings",
+						"href": "#"
 					}
 				}
-			}
+			};
+			const sidebar_subMenus_byLanguages = {
+				"TR": {
+					"users": {
+						"newUser": {
+							"label": "Yeni Kullanıcı",
+							"href": "/user/create",
+						},
+						"registeredUsers": {
+							"label": "Kayıtlı Kullanıcılar",
+							"href": "/user/display/all",
+						}
+					},
+					"machines": {
+						"newMachines": {
+							"label": "Yeni Makine",
+							"href": "/machine/create",
+						},
+						"registeredMachines": {
+							"label": "Kayıtlı Makineler",
+							"href": "/machine/display/all",
+						}
+					},
+					"forms": {
+						"buyingDemandForm": {
+							"label": "Satın Alma Talep Formu",
+							"href": "#",
+						},
+						"rentingDemandForm": {
+							"label": "Kiralama Talep Formu",
+							"href": "#",
+						},
+						"secondHandDemandForm": {
+							"label": "İkinci El Talep Formu",
+							"href": "#",
+						},
+						"informationDemandForm": {
+							"label": "Bilgi Talep Formu",
+							"href": "#",
+						}
+					}
+				},
+				"EN": {
+					"users": {
+						"newUser": {
+							"label": "New User",
+							"href": "/user/create",
+						},
+						"registeredUsers": {
+							"label": "Registered Users",
+							"href": "/user/display/all",
+						}
+					},
+					"machines": {
+						"newMachines": {
+							"label": "New Machine",
+							"href": "/machine/create",
+						},
+						"registeredMachines": {
+							"label": "Registered Machines",
+							"href": "/machine/display/all",
+						}
+					},
+					"forms": {
+						"buyingDemandForm": {
+							"label": "Buying Demand Form",
+							"href": "#",
+						},
+						"rentingDemandForm": {
+							"label": "Renting Demand Form",
+							"href": "#",
+						},
+						"secondHandDemandForm": {
+							"label": "Secondhand Demand Form",
+							"href": "#",
+						},
+						"informationDemandForm": {
+							"label": "Information Demand Form",
+							"href": "#",
+						}
+					}
+				}
+			};
+			const footerInfoByLanguages = {
+				"TR": "© 2023 Tüm hakları saklıdır. | Designed by ",
+				"EN": "© 2023 All rights reserved. | Designed by "
+			};
 		</script>
 	</body>
 </html>

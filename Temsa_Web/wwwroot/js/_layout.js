@@ -1,6 +1,9 @@
 ﻿$(function () {
     //#region variables
-    const ul_sidebarMenu = $("#nav-accordion");
+    const ul_sidebar_mainMenus = $("#nav-accordion");
+    const sidebar_mainMenus = sidebar_mainMenus_byLanguages[language];
+    const sidebar_allSubMenus = sidebar_subMenus_byLanguages[language];
+    const footerInfo = footerInfoByLanguages[language];
     //#endregion
 
     //#region events
@@ -18,106 +21,162 @@
             }
         })
     })
+    $(".sidebar-menu").click(() => {
+        //#region control whether click to main menu that have sub menus
+        let a_selectedMenu = $(":focus");
+        
+        switch (a_selectedMenu.attr("class")) {
+            //#region when select menu that have sub menus
+            case "dcjq-parent":
+                //#region display sub menus
+                let ul_selectedMenu = a_selectedMenu.siblings();
+
+                if (ul_selectedMenu.css("display") == "none")
+                    ul_selectedMenu.css("display", "");
+                //#endregion
+
+                //#region hide sub menus
+                else
+                    ul_selectedMenu.css("display", "none");                
+                //#endregion
+
+                break;
+            //#endregion
+        }
+        //#endregion     
+    });
     //#endregion
 
     //#region function
-    function populateUserSettingsMenu() {
-        // #region add menus of user settings
-        for (let menuId in userSettingsMenu) {
-            let iconClass = userSettingsMenu[menuId]["Icon"];
-            let menuName = userSettingsMenu[menuId]["Label"];
+    async function populateUserSettingsMenuAsync() {
+        new Promise(resolve => {
+            // #region add menus of user settings
+            let userSettingsMenu = userSettingsMenuByLanguages[language];
 
-            $("#ul_userSettingsMenu").append(
-                `<li>
-				    <a id="${menuId}" href="#">
+            for (let menuName in userSettingsMenu) {
+                let iconClass = userSettingsMenu[menuName]["icon"];
+                let label = userSettingsMenu[menuName]["label"];
+
+                $("#ul_userSettingsMenu").append(
+                    `<li>
+				    <a id="a_${menuName}" href="#">
 					    <i class="${iconClass}"></i>
-					    ${menuName}
+					    ${label}
 				    </a>
 			    </li>`
-            );
-        }
-        //#endregion
-    }
-
-    function populateElementsOnHeader() {
-        //#region add placeholder to search bar
-        $("#inpt_searchBar").attr("placeholder", searchBarPlaceHolder);
-        //#endregion
-
-        //#region add default flag picture and language of "language dropdown"
-        // add flag
-        $("#img_selectedFlag").attr("alt", language);
-        $("#img_selectedFlag").attr("src", `/images/${language}.png`);
-
-        // add language
-        $("#spn_selectedLanguage").text(language);
-        //#endregion
-
-        populateUserSettingsMenu();
-    }
-
-    function populateSideBarMenu() {
-        //#region add all sidebar menus without dropdown
-        for (let sidebarMenuName in sidebarMenus) {
-            //#region set variables
-            let sidebarMenu = sidebarMenus[sidebarMenuName];
-            let li_sidebarMenu_id = `li_sidebarMenu_${sidebarMenuName}`;
-            //#endregion
-
-            //#region add menus to side bar 
-            ul_sidebarMenu.append(
-                `<li id="${li_sidebarMenu_id}">
-					<a  href="${sidebarMenu.Href}">
-						<i class="${sidebarMenu.Icon}"></i>
-						<span>
-                            ${sidebarMenu.Label}
-                        </span>
-					</a>
-				</li>`
-            );
-            //#endregion
-        }
-        //#endregion
-
-        //#region add dropdown to sidebar menus with dropdown
-        for (let sidebarMenuName in sidebarMenusWithDropdown) {
-            //#region set variables
-            let li_sidebarMenu = $(`#li_sidebarMenu_${sidebarMenuName}`);
-            let ul_sidebarMenuWithDropdown_id = `ul_sidebarMenusWithDropdown_${sidebarMenuName}`;
-            let sidebarMenusOnDropdown = sidebarMenusWithDropdown[sidebarMenuName]
-            //#endregion
-
-            //#region add <ul> to sidebar menu
-            li_sidebarMenu.append(
-                `<ul id="${ul_sidebarMenuWithDropdown_id}" class="sub">
-                </ul>`
-            );
-            //#endregion
-
-            //#region add dropdown sidebar menus to <ul>
-            for (let sidebarMenuNameOnDropdown in sidebarMenusOnDropdown) {
-                let sidebarMenuOnDropdown = sidebarMenusOnDropdown[sidebarMenuNameOnDropdown];
-
-                $("#" + ul_sidebarMenuWithDropdown_id).append(
-                    `<li class="sub-menu">
-    			        <a href="${sidebarMenuOnDropdown.Href}">
-    				        ${sidebarMenuOnDropdown.Label}
-    			        </a>
-    		        </li>`
                 );
             }
             //#endregion
-        }
-        //#endregion
+
+            resolve();
+        });
+    }
+
+    async function populateElementsOnHeaderAsync() {
+        new Promise(resolve => {
+            //#region add placeholder to search bar
+            $("#inpt_searchBar").attr("placeholder", searchBarPlaceHolderByLanguages[language]);
+            //#endregion
+
+            //#region add default flag picture and language of "language dropdown"
+            // add flag
+            $("#img_selectedFlag").attr("alt", language);
+            $("#img_selectedFlag").attr("src", `/images/${language}.png`);
+
+            // add language
+            $("#spn_selectedLanguage").text(language);
+            //#endregion
+
+            resolve();
+        })
+    }
+
+    async function populateSideBarMenuAsync() {
+        new Promise(resolve => {
+            //#region add sidebar main menus
+            for (let menuName in sidebar_mainMenus) {
+                //#region set variables
+                let sidebar_mainManu = sidebar_mainMenus[menuName];
+                let li_sidebar_mainMenu_id = `li_sidebar_mainMenu_${menuName}`;
+                let a_sidebar_mainMenu_id = `a_sidebar_mainMenu_${menuName}`;
+                //#endregion
+
+                //#region add menus to side bar 
+                ul_sidebar_mainMenus.append(
+                    `<li id="${li_sidebar_mainMenu_id}">
+					    <a id="${a_sidebar_mainMenu_id}" href="${sidebar_mainManu.href}">
+						    <i class="${sidebar_mainManu.icon}"></i>
+						    <span>${sidebar_mainManu.label}</span>
+					    </a>
+				    </li>`
+                );
+
+                // when menu have submenus
+                if (sidebar_allSubMenus[menuName] != null) {
+                    //#region configure dropdown
+                    let a_sidebar_mainMenu = $("#" + a_sidebar_mainMenu_id);
+
+                    // add class to <li> and <a>
+                    $("#" + li_sidebar_mainMenu_id).attr("class", "sub-menu dcjq-parent-li");
+                    a_sidebar_mainMenu.attr("class", "dcjq-parent");
+
+                    // add arrow icon to right
+                    a_sidebar_mainMenu.append(
+                        `<span class="dcjq-icon"></span>`
+                    )
+                    //#endregion
+                }
+                //#endregion
+            }
+            //#endregion
+
+            //#region add sidebar sub menus
+            for (let menuName in sidebar_allSubMenus) {
+                //#region set variables
+                let li_sidebar_mainMenu = $(`#li_sidebar_mainMenu_${menuName}`);
+                let ul_sidebar_subMenus_id = `ul_sidebar_subMenus_${menuName}`;
+                let sidebar_subMenusOfMainMenu = sidebar_allSubMenus[menuName]
+                //#endregion
+
+                //#region add <ul> to sidebar sub menu
+                li_sidebar_mainMenu.append(
+                    `<ul id="${ul_sidebar_subMenus_id}" class="sub" style="display: none">
+                    </ul>`
+                );
+                //#endregion
+
+                //#region add sub menus to <ul>
+                for (let subMenuName in sidebar_subMenusOfMainMenu) {
+                    let sidebar_subMenu = sidebar_subMenusOfMainMenu[subMenuName];
+
+                    $("#" + ul_sidebar_subMenus_id).append(
+                        `<li>
+    			            <a href="${sidebar_subMenu.href}">${sidebar_subMenu.label}</a>
+    		            </li>`
+                    );
+                }
+                //#endregion
+            }
+            //#endregion
+
+            resolve();
+        });
     }
 
     function populateFooter() {
-        // add footer info
         $("#spn_footerInfo").append(footerInfo);
+    }
+
+    async function populateHtml() {
+        await populateElementsOnHeaderAsync();
+        await populateUserSettingsMenuAsync();
+        await populateSideBarMenuAsync();
+        populateFooter();
     }
     //#endregion
 
-    populateElementsOnHeader();
-    populateSideBarMenu();
-    populateFooter();
+    populateHtml();
 });
+
+
+

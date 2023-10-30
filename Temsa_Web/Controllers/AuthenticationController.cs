@@ -21,11 +21,7 @@ namespace Temsa_Web.Controllers
             _manager = manager;
         }
 
-        public IActionResult Login(
-			[FromQuery(Name = "language")] string language = "TR")
-		{
-			ViewBag.Language = language;
-
+        public IActionResult Login() {
 			return View("Login");
 		}
 

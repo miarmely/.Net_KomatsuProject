@@ -1,7 +1,5 @@
 ﻿@{
 	Layout = "_LoginAndRegisterLayout";
-
-	var language = ViewBag.Language;
 }
 
 <div class="log-w3">
@@ -26,8 +24,12 @@
 
 <script type="module" src="~/js/login.js"></script>
 <script>
-	//#region add language to local
-	let language = "@language";
-	localStorage.setItem("language", language); 
+	let language = localStorage.getItem("language");
+	
+	//#region add default language to local
+	if(language == null){
+		localStorage.getItem("language", "TR");
+		language = "TR";
+	}
 	//#endregion
 </script>
