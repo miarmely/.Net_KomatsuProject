@@ -1,5 +1,4 @@
 ﻿using Entities.ConfigModels.Contracts;
-using Entities.QueryParameters;
 using Microsoft.AspNetCore.Mvc;
 using Presantation.Attributes;
 using Services.Contracts;

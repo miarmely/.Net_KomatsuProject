@@ -3,7 +3,6 @@ using Entities.ConfigModels.Contracts;
 using Entities.DtoModels;
 using Entities.ViewModels;
 using Repositories.Contracts;
-using System.Linq.Expressions;
 
 namespace Repositories.Concretes
 {

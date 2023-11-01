@@ -28,8 +28,8 @@
 	
 	//#region add default language to local
 	if(language == null){
-		localStorage.getItem("language", "TR");
 		language = "TR";
+		localStorage.getItem("language", language);
 	}
 	//#endregion
 </script>

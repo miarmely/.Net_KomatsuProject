@@ -12,11 +12,6 @@
 		.Value
 		.ToUpper();
 	#endregion
-
-	#region gel all languages in db
-	var allLanguagesInDb = await Model.MachineService
-		.GetAllLanguagesAsync();
-	#endregion
 }
 
 <!DOCTYPE html>
@@ -75,23 +70,6 @@
 							<!-- //flag picture and language -->
 							<!-- language dropdown -->
 							<ul id="ul_language" class="dropdown-menu extended logout">
-							@{
-								#region add languages to dropdown
-								var flagPath = "";
-									
-								foreach(var languageInDb in allLanguagesInDb)
-								{
-									flagPath = $"{languageInDb}.png";
-
-									<li>
-										<a href="#">
-											<img alt="@languageInDb" src="~/images/@flagPath" />
-											<b>@languageInDb</b>
-										</a>
-									</li>
-								}
-								#endregion
-							}
 							</ul>
 							<!-- //language dropdown -->
 						</li>

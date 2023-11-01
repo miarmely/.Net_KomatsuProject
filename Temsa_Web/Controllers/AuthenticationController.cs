@@ -21,13 +21,14 @@ namespace Temsa_Web.Controllers
             _manager = manager;
         }
 
-        public IActionResult Login() {
-			return View("Login");
-		}
-
+        public async Task<IActionResult> Login()
+        {
+            return View("Login");
+        }
+			
+		
 		public async Task<IActionResult> AfterLogin(
-			[FromQuery(Name = "token")] string token,
-			[FromQuery(Name = "language")] string language)
+			[FromQuery(Name = "token")] string token)
 		{
 			#region when token invalid
 			if (await IsTokenInvalidAsync(token))
@@ -51,7 +52,7 @@ namespace Temsa_Web.Controllers
 				CookieAuthenticationDefaults.AuthenticationScheme,
 				new ClaimsPrincipal(claimsIdentity));
 			#endregion
-
+			
             return RedirectToAction("create", "user");
 		}
 

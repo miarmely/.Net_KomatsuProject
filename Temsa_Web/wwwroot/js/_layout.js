@@ -4,6 +4,7 @@
     const sidebar_mainMenus = sidebar_mainMenus_byLanguages[language];
     const sidebar_allSubMenus = sidebar_subMenus_byLanguages[language];
     const footerInfo = footerInfoByLanguages[language];
+    const allLanguagesKeyInLocal = "allLanguages";
     //#endregion
 
     //#region events
@@ -24,7 +25,7 @@
     $(".sidebar-menu").click(() => {
         //#region control whether click to main menu that have sub menus
         let a_selectedMenu = $(":focus");
-        
+
         switch (a_selectedMenu.attr("class")) {
             //#region when select menu that have sub menus
             case "dcjq-parent":
@@ -37,7 +38,7 @@
 
                 //#region hide sub menus
                 else
-                    ul_selectedMenu.css("display", "none");                
+                    ul_selectedMenu.css("display", "none");
                 //#endregion
 
                 break;
@@ -48,6 +49,23 @@
     //#endregion
 
     //#region function
+    function populateLanguageDropdown(languagesInArray) {
+        //#region add languages to dropdown
+        for (let index in languagesInArray) {
+            let language = languagesInArray[index];
+
+            $("#ul_language").append(
+                `<li>
+                    <a href="#">
+                        <img alt="${language}" src="../images/${language}.png" />
+                        <b>${language}</b>
+                    </a>
+                </li>`
+            );
+        }
+        //#endregion
+    }
+
     async function populateUserSettingsMenuAsync() {
         new Promise(resolve => {
             // #region add menus of user settings
@@ -81,10 +99,43 @@
             //#region add default flag picture and language of "language dropdown"
             // add flag
             $("#img_selectedFlag").attr("alt", language);
-            $("#img_selectedFlag").attr("src", `/images/${language}.png`);
+            $("#img_selectedFlag").attr("src", `../images/${language}.png`);
 
             // add language
             $("#spn_selectedLanguage").text(language);
+            //#endregion
+
+            //#region populate language dropdown from (ajax) or (local)
+            let languagesInLocal = localStorage.getItem(allLanguagesKeyInLocal);
+
+            //#region when languages not exists in local
+            if (languagesInLocal == null)
+                $.ajax({
+                    method: "GET",
+                    url: baseApiUrl + "/machine/display/language",
+                    headers: {
+                        "Authorization": jwtToken
+                    },
+                    contentType: "application/json",
+                    dataType: "json",
+                    success: (response) => {
+                        populateLanguageDropdown(response);
+
+                        //#region add languages to local
+                        localStorage.setItem(
+                            allLanguagesKeyInLocal,
+                            JSON.stringify(response));
+                        //#endregion
+                    }
+                });
+            //#endregion
+
+            //#region when languages exists in local
+            else
+                populateLanguageDropdown(
+                    JSON.parse(languagesInLocal));
+            //#endregion
+
             //#endregion
 
             resolve();

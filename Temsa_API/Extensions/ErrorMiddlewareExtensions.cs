@@ -30,6 +30,12 @@ namespace Temsa_Api.Extensions
                             #region get errorDto (catch)
                             var errorDto = JsonSerializer
                                 .Deserialize<ErrorDto>(errorMessage);
+
+                            // if error can be deserialize then this error is
+                            // expected error. But when error can't be desirealize 
+                            // then this error is unexpected error and not know that where 
+                            // from throwed so this error should be show without desiralize
+                            // at "catch"
                             #endregion
 
                             #region when expected error occured
@@ -41,7 +47,7 @@ namespace Temsa_Api.Extensions
                         }
                         catch(Exception ex)
                         {
-                            #region when unexpected error occured
+                            #region when throwed error from unexpected place
                             context.Response.StatusCode = 500;
 
                             await context.Response.WriteAsJsonAsync(new
@@ -49,8 +55,8 @@ namespace Temsa_Api.Extensions
                                 StatusCode = 500,
                                 ErrorCode = "ISE",
                                 ErrorDescription = "Internal Server Error",
-                                ErrorMessage = ex.Message
-                            });
+                                ErrorMessage = errorMessage
+							});
                             #endregion
                         }                        
                     }

@@ -1,9 +1,7 @@
 ﻿@model IServiceManager;
 
 @{
-    #region set variables by languages
-
-    #region set table title
+    #region set table title by languages
     var tableTitleByLanguages =  new Dictionary<string, string> 
     {
         { "TR", "YENİ KULLANICI OLUŞTUR" },
@@ -11,7 +9,7 @@
     };
     #endregion
 
-    #region set label ids and names
+    #region set label ids and names by languages
     var labelNamesAndFeaturesByLanguages = new Dictionary<string, Dictionary<string, Dictionary<string, string>>>
     {
         {"TR", new Dictionary<string, Dictionary<string, string>>{
@@ -119,7 +117,7 @@
     };
     #endregion
 
-    #region set save button name
+    #region set save button name by languages
     var saveButtonNameByLanguages = new Dictionary<string, string>
     {
         { "TR", "Kaydet" },
@@ -127,14 +125,12 @@
     };
     #endregion
 
-    #region set success message
+    #region set success message by languages
     var successMessageByLanguages = new Dictionary<string, string>
     {
         { "TR", "kullanıcı başarıyla kaydedildi" },
         { "EN", "user saved with successsfull" }
     };
-    #endregion
-
     #endregion
 }
 

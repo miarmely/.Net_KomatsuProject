@@ -32,7 +32,7 @@ namespace Presantation.Attributes.Filters
 
             #region get language on parameter
             var language = context.ActionArguments
-                .FirstOrDefault(a => a.Equals("language"))
+                .FirstOrDefault(a => a.Key.Equals("language"))
                 .Value
                 as string;
             #endregion

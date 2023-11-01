@@ -34,8 +34,7 @@ $(function () {
 
                 //#region call afterLogin action
                 location.replace("/authentication/afterLogin" +
-                    `?token=${token}` +
-                    `&language=${language}`);
+                    `?token=${token}`);
                 //#endregion
             },
             error: (response) => {
@@ -56,29 +55,33 @@ $(function () {
         //#region add token
         localStorage.setItem("token", token);
         //#endregion
-        
+
         //#region add roles, main category names, languages and hand status
         let localStorageKeysAndUrls = {
             "allRoles": `/user/display/role?language=${language}`,
             "allMainCategoryNames": `/machine/display/mainCategory?language=${language}`,
             "allLanguages": `/machine/display/language`,
-            "allHandStatuses": `/machine/display/handStatus`,
+            "allHandStatuses": `/machine/display/handStatus?language=${language}`,
         }
 
-        // send dnymaic ajax request
-        for (let localStorageKey in localStorageKeysAndUrls) {
-            let specialUrl = localStorageKeysAndUrls[localStorageKey];
+        for (let localStorageKey in localStorageKeysAndUrls) 
+            // send request when data not exists local
+            if (localStorage.getItem(localStorageKey) == null) {
+                let specialUrl = localStorageKeysAndUrls[localStorageKey];
 
-            $.ajax({
-                method: "GET",
-                url: baseApiUrl + specialUrl,
-                contentType: "application/json",
-                dataType: "json",
-                success: (response) => {
-                    localStorage.setItem(localStorageKey, response);
-                }
-            });
-        }
+                $.ajax({
+                    method: "GET",
+                    url: baseApiUrl + specialUrl,
+                    headers: {
+                        "Authorization": "Bearer " + token
+                    },
+                    contentType: "application/json",
+                    dataType: "json",
+                    success: (response) => {
+                        localStorage.setItem(localStorageKey, response);
+                    }
+                });
+            }
         //#endregion
     }
     //#endregion
