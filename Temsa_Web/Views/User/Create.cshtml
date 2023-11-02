@@ -1,214 +1,14 @@
 ﻿@model IServiceManager;
 
-@{
-    #region set table title by languages
-    var tableTitleByLanguages =  new Dictionary<string, string> 
-    {
-        { "TR", "YENİ KULLANICI OLUŞTUR" },
-        { "EN", "CREATE NEW USER" }
-    };
-    #endregion
-
-    #region set label ids and names by languages
-    var labelNamesAndFeaturesByLanguages = new Dictionary<string, Dictionary<string, Dictionary<string, string>>>
-    {
-        {"TR", new Dictionary<string, Dictionary<string, string>>{
-            #region firstName
-            { "firstName", new Dictionary<string, string> {
-                {"Label", "Ad"},
-                {"Type", "text"},
-                {"HelpMessage", null}
-            }},
-            #endregion
-            #region lastName
-            { "lastName", new Dictionary<string, string> {
-                {"Label", "Soyad"},
-                {"Type", "text"},
-                {"HelpMessage", null}
-            }},
-            #endregion
-            #region telNo
-            { "telNo", new Dictionary<string, string> {
-                {"Label", "Telefon"},
-                {"Type", "phone"},
-                {"HelpMessage", "* Başında sıfır olmadan 10 haneli olarak giriniz."}
-            }},
-            #endregion
-            #region email
-            { "email", new Dictionary<string, string> {
-                {"Label", "Email"},
-                {"Type", "email"},
-                {"HelpMessage", null}
-            }},
-            #endregion
-            #region companyName
-            { "companyName", new Dictionary<string, string> {
-                {"Label", "Şirket"},
-                {"Type", "text"},
-                {"HelpMessage", null}
-            }},
-            #endregion
-            #region roles
-            { "roles", new Dictionary<string, string> {
-                {"Label", "Rol"},
-                {"Type", null},
-                {"HelpMessage", null}
-            }},
-            #endregion
-            #region password
-            { "password", new Dictionary<string, string> {
-                {"Label", "Şifre"},
-                {"Type", "text"},
-                {"HelpMessage", "* 6 ile 16 karakter arasında giriniz."}
-            }}
-            #endregion
-        }},
-        {"EN", new Dictionary<string, Dictionary<string, string>>{
-            #region firstName
-            { "firstName", new Dictionary<string, string> {
-                {"Label", "Firstname"},
-                {"Type", "text"},
-                {"HelpMessage", null}
-            }},
-            #endregion
-            #region lastName
-            { "lastName", new Dictionary<string, string> {
-                {"Label", "Lastname"},
-                {"Type", "text"},
-                {"HelpMessage", null}
-            }},
-            #endregion
-            #region telNo
-            { "telNo", new Dictionary<string, string> {
-                {"Label", "Phone"},
-                {"Type", "phone"},
-                {"HelpMessage", "* enter as 10 digits without zero at head"}
-            }},
-            #endregion
-            #region email
-            { "email", new Dictionary<string, string> {
-                {"Label", "Email"},
-                {"Type", "email"},
-                {"HelpMessage", null}
-            }},
-            #endregion
-            #region companyName
-            { "companyName", new Dictionary<string, string> {
-                {"Label", "Company"},
-                {"Type", "text"},
-                {"HelpMessage", null}
-            }},
-            #endregion
-            #region roles
-            { "roles", new Dictionary<string, string> {
-                {"Label", "Role"},
-                {"Type", null},
-                {"HelpMessage", null}
-            }},
-            #endregion
-            #region password
-            { "password", new Dictionary<string, string> {
-                {"Label", "Password"},
-                {"Type", "text"},
-                {"HelpMessage", "* enter between 6 and 16 char"}
-            }}
-            #endregion
-        }}
-    };
-    #endregion
-
-    #region set save button name by languages
-    var saveButtonNameByLanguages = new Dictionary<string, string>
-    {
-        { "TR", "Kaydet" },
-        { "EN", "Save" }
-    };
-    #endregion
-
-    #region set success message by languages
-    var successMessageByLanguages = new Dictionary<string, string>
-    {
-        { "TR", "kullanıcı başarıyla kaydedildi" },
-        { "EN", "user saved with successsfull" }
-    };
-    #endregion
-}
-
 <div class="form-w3layouts">
     <div class="row">
         <div class="col-lg-12">    
             <section class="panel">
-                <header id="header_tableTitle" class="panel-heading">
-                </header>
+                <header id="header_formTitle" class="panel-heading"></header>
                 <div class="panel-body">
                     <form>
-                        <div class="form-horizontal bucket-form">
-                            @{
-                                /*
-                                #region add labels and <input>'s or <select>'s
-                                foreach(var columnId in labelIdsAndNames.Keys)
-                                {
-                                    #region set variables
-                                    var labelName = labelIdsAndNames[columnId][0];
-                                    var inputType = labelIdsAndNames[columnId][1];
-                                    var labelMessage = labelIdsAndNames[columnId][2];
-                                    #endregion
-
-                                    #region add labels and inputs without role
-                                    if(columnId != "inpt_roles"){
-                                        <div class="form-group">
-                                            <label class="col-sm-3 control-label">
-                                                @labelName
-                                            </label>
-                                            <div class="col-sm-6">
-                                                <input id="@columnId" type="@inputType" class="form-control" required>
-                                                <span class="help-block">@labelMessage</span>
-                                            </div>
-                                        </div>
-                                    }
-                                    #endregion
-
-                                    #region add role label and select
-                                    else
-                                    {
-                                        <div class="form-group">
-                                            <label class="col-sm-3 control-label">
-                                                Rol
-                                            </label>
-                                            <div class="col-sm-6">
-                                                <select id="slct_role" class="form-control m-bot15">
-                                                    @{
-                                                        #region add roles to role <select>
-                                                        foreach(var roleByLanguage in rolesByLanguage)
-                                                        {
-                                                            <option>@roleByLanguage</option>    
-                                                        }
-                                                        #endregion
-                                                    }
-                                                </select>
-                                            </div>
-                                        </div>  
-                                    }
-                                    #endregion
-                                }
-                                #endregion
-                                */
-                            }
-
-                             <!-- register button -->
-                            <div class="form-group">
-                                <div class="col-sm-6; text-center">
-                                    <button id="btn_register" type="submit" class="btn btn-danger" style="background-color: darkblue">
-                                        @*@saveButtonName*@
-                                    </button>
-                                </div>
-                                <div style="text-align:center">
-                                    <p id="p_resultLabel"></p>
-                                </div>
-                            </div>
-                            <!-- /register button-->
-                        </div>
-                        </form>
+                        <div id="div_form" class="form-horizontal bucket-form" style="padding-top:20px"></div>
+                    </form>
                 </div>
             </section>
         </div>
@@ -218,8 +18,92 @@
 <script type="module" src="~/js/userForCreate.js"></script>
 
 <script>
-    //const tableTitle = (@Json.Serialize(tableTitleByLanguages))[language];
-    //const saveButtonName = (@Json.Serialize(saveButtonNameByLanguages))[language]
-    //const labelNamesAndFeatures = (@Json.Serialize(labelNamesAndFeaturesByLanguages))[language]
-    //const resultLabel_successMessage = (@Json.Serialize(successMessageByLanguages))[language];
+    let formTitleByLanguages = {
+    "TR": "YENİ KULLANICI OLUŞTUR",
+    "EN": "CREATE NEW USER"
+}
+    let formLabelNamesAndFeaturesByLanguages = {
+        "TR": {
+            "firstName": {
+                "label": "Ad",
+                "type": "text",
+                "helpMessage": ""
+            },
+            "lastName": {
+                "label": "Soyad",
+                "type": "text",
+                "helpMessage": ""
+            },
+            "telNo": {
+                "label": "Telefon",
+                "type": "phone",
+                "helpMessage": "* Başında sıfır olmadan 10 haneli olarak giriniz."
+            },
+            "email": {
+                "label": "Email",
+                "type": "email",
+                "helpMessage": ""
+            },
+            "companyName": {
+                "label": "Şirket",
+                "type": "text",
+                "helpMessage": ""
+            },
+            "roles": {
+                "label": "Rol",
+                "type": null,
+                "helpMessage": ""
+            },
+            "password": {
+                "label": "Şifre",
+                "type": "text",
+                "helpMessage": "* 6 ile 16 karakter arasında giriniz."
+            }
+        },
+        "EN": {
+            "firstName": {
+                "label": "Firstname",
+                "type": "text",
+                "helpMessage": ""
+            },
+            "lastName": {
+                "label": "Lastname",
+                "type": "text",
+                "helpMessage": ""
+            },
+            "telNo": {
+                "label": "Telephone",
+                "type": "phone",
+                "helpMessage": "* enter as 10 digits without zero at head"
+            },
+            "email": {
+                "label": "Email",
+                "type": "email",
+                "helpMessage": ""
+            },
+            "companyName": {
+                "label": "Company",
+                "type": "text",
+                "helpMessage": ""
+            },
+            "roles": {
+                "label": "Role",
+                "type": null,
+                "helpMessage": ""
+            },
+            "password": {
+                "label": "Password",
+                "type": "text",
+                "helpMessage": "* enter between 6 and 16 chars"
+            }
+        }
+    }
+    let saveButtonNameByLanguages = {
+        "TR": "Kaydet",
+        "EN": "Save"
+    }
+    let resultLabel_successMessageByLanguages = {
+        "TR": "kullanıcı başarıyla kaydedildi",
+        "EN": "user saved with successsfull"
+    }
 </script>
