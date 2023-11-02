@@ -1,6 +1,7 @@
 ﻿$(function () {
     //#region variables
     const ul_sidebar_mainMenus = $("#nav-accordion");
+    const ul_languages = $("#ul_languages");
     const sidebar_mainMenus = sidebar_mainMenus_byLanguages[language];
     const sidebar_allSubMenus = sidebar_subMenus_byLanguages[language];
     const footerInfo = footerInfoByLanguages[language];
@@ -46,15 +47,44 @@
         }
         //#endregion     
     });
+    ul_languages.click(() => {
+        //#region get selected language
+        let selectedElement = $(":focus");
+        let selectedLanguage = selectedElement.prop("innerText");
+        //#endregion
+
+        //#region update language in local
+        if (selectedLanguage != undefined) {
+            language = selectedLanguage.trim() // update in _layout
+            localStorage.setItem("language", language)  // update in local
+        }
+        //#endregion
+
+        //#region update default flag and language and refresh page
+        updateDefaultFlagAndLanguage();
+        location.reload();
+        //#endregion
+    })
     //#endregion
 
     //#region function
+    function updateDefaultFlagAndLanguage() {
+        //#region add default flag picture and language of "language dropdown"
+        // add flag
+        $("#img_selectedFlag").attr("alt", language);
+        $("#img_selectedFlag").attr("src", `../images/${language}.png`);
+
+        // add language
+        $("#spn_selectedLanguage").text(language);
+        //#endregion
+    }
+
     function populateLanguageDropdown(languagesInArray) {
         //#region add languages to dropdown
         for (let index in languagesInArray) {
             let language = languagesInArray[index];
 
-            $("#ul_language").append(
+            $("#ul_languages").append(
                 `<li>
                     <a href="#">
                         <img alt="${language}" src="../images/${language}.png" />
@@ -96,14 +126,7 @@
             $("#inpt_searchBar").attr("placeholder", searchBarPlaceHolderByLanguages[language]);
             //#endregion
 
-            //#region add default flag picture and language of "language dropdown"
-            // add flag
-            $("#img_selectedFlag").attr("alt", language);
-            $("#img_selectedFlag").attr("src", `../images/${language}.png`);
-
-            // add language
-            $("#spn_selectedLanguage").text(language);
-            //#endregion
+            updateDefaultFlagAndLanguage();
 
             //#region populate language dropdown from (ajax) or (local)
             let languagesInLocal = localStorage.getItem(allLanguagesKeyInLocal);
