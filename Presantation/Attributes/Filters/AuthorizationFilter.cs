@@ -97,11 +97,32 @@ namespace Presantation.Attributes.Filters
 					.DateTime;
 
 				if (expiresInDateTime < DateTime.UtcNow)
-					throw new ErrorWithCodeException(
-						404,
-						"AE-E",
-						"Authentication Error - Expires",
-						ConvertErrorCodeToErrorMessageByLanguage(language, "AE-E"));
+				{
+					#region for web redirect to login
+					if (projectName.Equals("Temsa_Web"))
+					{
+                        context.Result = new RedirectToActionResult(
+                            "login",
+                            "authentication",
+                            null);
+
+                        return;
+                    }
+                    #endregion
+
+					#region for mobile throw error (throw)
+                    else
+                        throw new ErrorWithCodeException(
+                            404,
+                            "AE-E",
+                            "Authentication Error - Expires",
+                            ConvertErrorCodeToErrorMessageByLanguage(
+								language, 
+								"AE-E"));
+					#endregion
+                }
+
+				
 				#endregion
 
 				#endregion

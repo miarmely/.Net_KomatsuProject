@@ -14,39 +14,14 @@ namespace Temsa_Web.Controllers
 		public UserController(IServiceManager manager) =>
 			_manager = manager;
 
-		public async Task<IActionResult> Create()
+		public IActionResult Create()
 		{
-			await PopulateViewBagAsync();
-
 			return View("Create", _manager);
 		}
 
-		public async Task<IActionResult> Display()
+		public IActionResult Display()
 		{
-			await PopulateViewBagAsync();
-
 			return View("Display", _manager);
 		}
-
-
-		#region private
-
-		private async Task PopulateViewBagAsync() =>
-			await Task.Run(() =>
-			{
-				#region add firstName
-				ViewBag.FirstName = HttpContext.User.Claims
-					.First(c => c.Type.Equals(ClaimTypes.Name))
-					.Value;
-				#endregion
-
-				#region add lastName
-				ViewBag.LastName = HttpContext.User.Claims
-					.First(c => c.Type.Equals(ClaimTypes.Surname))
-					.Value;
-				#endregion
-			});
-
-		#endregion
 	}
 }

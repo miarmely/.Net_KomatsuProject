@@ -72,7 +72,7 @@
         //#region add default flag picture and language of "language dropdown"
         // add flag
         $("#img_selectedFlag").attr("alt", language);
-        $("#img_selectedFlag").attr("src", `../images/${language}.png`);
+        $("#img_selectedFlag").attr("src", `/images/${language}.png`);
 
         // add language
         $("#spn_selectedLanguage").text(language);
@@ -87,7 +87,7 @@
             $("#ul_languages").append(
                 `<li>
                     <a href="#">
-                        <img alt="${language}" src="../images/${language}.png" />
+                        <img alt="${language}" src="/images/${language}.png" />
                         <b>${language}</b>
                     </a>
                 </li>`

@@ -1,4 +1,4 @@
-﻿import { updateResultLabel } from "./miarTools.js";
+﻿import { populateRoleSelect, updateResultLabel } from "./miarTools.js";
 
 
 $(function () {
@@ -103,26 +103,7 @@ $(function () {
                 );
                 //#endregion
 
-                //#region populate role <select> (ajax)
-                $.ajax({
-                    method: "GET",
-                    url: baseApiUrl + `/user/display/role?language=${language}`,
-                    headers: { "Authorization": jwtToken },
-                    contentType: "application/json",
-                    dataType: "json",
-                    success: (response) => {
-                        //#region add roles as <option>
-                        for (let index in response) {
-                            let roleName = response[index];
-                        
-                            $("#" + slct_roleName_id).append(
-                                `<option>${roleName}</option>`
-                            );
-                        }
-                        //#endregion
-                    }
-                })
-                //#endregion
+                populateRoleSelect($("#slct_roles"));
             }
             //#endregion
         }

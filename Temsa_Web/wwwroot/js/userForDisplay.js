@@ -1,4 +1,4 @@
-﻿import { populateTable, paginationInfosInJson, setDisabledOfOtherUpdateButtonsAsync, resetErrorRow, updateResultLabel, entityCountOnTable, updateErrorRow } from "./miarTools.js"
+﻿import { populateTable, paginationInfosInJson, setDisabledOfOtherUpdateButtonsAsync, resetErrorRow, updateResultLabel, entityCountOnTable, updateErrorRow, populateRoleSelect } from "./miarTools.js"
 
 $(function () {
     //#region variables
@@ -10,22 +10,16 @@ $(function () {
     const routeForDelete = "user/delete";
     const entityType = "user"
     const nameOfPaginationHeader = "User-Pagination";
-    const propertyNamesToBeShowOnTable = [
-        "firstName",
-        "lastName",
-        "companyName",
-        "telNo",
-        "email",
-        "roleNames",
-        "createdAt"
-    ]
     const errorMessageColor = "red";
-    const tableBody = $("#tbl_user tbody");
+    const table_body = $("#tbl_user tbody");
+    const table_head = $("#tbl_user thead tr");
     const entityQuantity_id = "#lbl_entityQuantity";
+    const entityQuantity_message = entityQuantityMessageByLanguages[language];
     const lbl_entityQuantity = $(entityQuantity_id);
     const ul_pagination = $("#ul_pagination");
     const updateButtonId = "#btn_update";
     const box_all = $("#box_all");
+    const updateButtonName = updateButtonNameByLanguages[language];
     //#endregion
 
     //#region events
@@ -48,8 +42,8 @@ $(function () {
                         language,
                         paginationInfosInJson.CurrentPageNo - 1,
                         pageSize,
-                        tableBody,
-                        propertyNamesToBeShowOnTable,
+                        table_body,
+                        columnNamesToBeFill,
                         updateButtonName,
                         nameOfPaginationHeader,
                         lbl_entityQuantity,
@@ -70,8 +64,8 @@ $(function () {
                         language,
                         paginationInfosInJson.CurrentPageNo + 1,
                         pageSize,
-                        tableBody,
-                        propertyNamesToBeShowOnTable,
+                        table_body,
+                        columnNamesToBeFill,
                         updateButtonName,
                         nameOfPaginationHeader,
                         lbl_entityQuantity,
@@ -93,8 +87,8 @@ $(function () {
                     language,
                     pageNo,
                     pageSize,
-                    tableBody,
-                    propertyNamesToBeShowOnTable,
+                    table_body,
+                    columnNamesToBeFill,
                     updateButtonName,
                     nameOfPaginationHeader,
                     lbl_entityQuantity,
@@ -130,9 +124,9 @@ $(function () {
         //#endregion
     })
     $("#btn_apply").click(async () => {
-        let opt_selected = $("#slct_menubar option:selected");
+        let slct_tableMenubar = $("#slct_tableMenubar");
 
-        switch (opt_selected.val()) {
+        switch (slct_tableMenubar.val()) {
             //#region delete selected values
             case "0":
                 await deleteSelectedUsersAsync();
@@ -161,31 +155,6 @@ $(function () {
     //#endregion
 
     //#region functions
-    async function populateRoleNameSelectAsync(tableDatasForAddSelect, columnValues) {
-        new Promise(resolve => {
-            //#region add role names to roleNames <select>
-            let slct_roleNames = tableDatasForAddSelect
-                .roleNames
-                .children("select");
-
-            for (let index in rolesByLanguage) {
-                let roleByLanguage = rolesByLanguage[index];
-
-                slct_roleNames.append(
-                    `<option>${roleByLanguage}</option>`
-                )
-            }
-            //#endregion
-
-            //#region set default value of <select>
-            slct_roleNames.val(
-                columnValues.roleNames)
-            //#endregion
-
-            resolve();
-        })
-    }
-
     async function deleteSelectedUsersAsync() {
         //#region set variables
         let telNoList = [];
@@ -208,7 +177,7 @@ $(function () {
                 if (checkBox.is(":checked")) {
                     //#region when update process continuing
                     if (row.children("td").children("input").length != 0)  // when any <input> exists
-                        clicked_cancelButtonAsync(rowNo);  // cancel update process
+                        clicked_cancelButtonAsync(row);  // cancel update process
                     //#endregion
 
                     telNo = row.children("#td_telNo").text();
@@ -231,7 +200,9 @@ $(function () {
         $.ajax({
             method: "DELETE",
             url: `${baseApiUrl}/${routeForDelete}?language=${language}`,
-            headers: { "Authorization": jwtToken },
+            headers: {
+                "Authorization": jwtToken
+            },
             data: JSON.stringify({
                 "TelNoList": telNoList
             }),
@@ -250,8 +221,8 @@ $(function () {
                             language,
                             currentPageNo,
                             pageSize,
-                            tableBody,
-                            propertyNamesToBeShowOnTable,
+                            table_body,
+                            columnNamesToBeFill,
                             updateButtonName,
                             nameOfPaginationHeader,
                             lbl_entityQuantity,
@@ -270,8 +241,8 @@ $(function () {
                             language,
                             currentPageNo - 1,
                             pageSize,
-                            tableBody,
-                            propertyNamesToBeShowOnTable,
+                            table_body,
+                            columnNamesToBeFill,
                             updateButtonName,
                             nameOfPaginationHeader,
                             lbl_entityQuantity,
@@ -284,7 +255,7 @@ $(function () {
 
                     //#region when any machines not found
                     else {
-                        tableBody.empty();
+                        table_body.empty();
 
                         updateResultLabel(
                             entityQuantity_id,
@@ -303,8 +274,8 @@ $(function () {
                         language,
                         currentPageNo,
                         pageSize,
-                        tableBody,
-                        propertyNamesToBeShowOnTable,
+                        table_body,
+                        columnNamesToBeFill,
                         updateButtonName,
                         nameOfPaginationHeader,
                         lbl_entityQuantity,
@@ -360,7 +331,7 @@ $(function () {
         let columnValues = {}
         let tableDataTypes = [tableDatasForAddInput, tableDatasForAddSelect]
 
-        //#region popualte columnValues
+        //#region populate columnValues
         for (let index in tableDataTypes) {
             let tableDatas = tableDataTypes[index];
 
@@ -397,16 +368,18 @@ $(function () {
         }
         //#endregion
 
-        //#region add <select> to columns
-        // add <select> all columns
+        //#region role <select> to column
+        // add role <select>
         for (let columnName in tableDatasForAddSelect) {
             let td = tableDatasForAddSelect[columnName];
             td.empty();
             td.append("<select> </select>")
         }
 
-        // populate <select>'s
-        await populateRoleNameSelectAsync(tableDatasForAddSelect, columnValues);
+        // populate role <select>
+        populateRoleSelect(
+            tableDatasForAddSelect.roleNames.children("select"),
+            columnValues.roleNames);
         //#endregion
 
         //#region add "save" and "cancel" buttons
@@ -561,16 +534,65 @@ $(function () {
 		    </button>`);
         //#endregion
     }
+
+    function populateHtml() {
+        //#region add table title
+        $(".panel-heading").append(
+            tableTitleByLanguages[language]);
+        //#endregion
+
+        //#region add table menubars
+        let tableMenubarOptions = tableMenubar_optionsByLanguages[language];
+
+        for (let index = 0; index < tableMenubarOptions.length; index += 1) {
+            let tableMenubarOption = tableMenubarOptions[index];
+
+            $("#slct_tableMenubar").append(
+                `<option value="${index}">
+                    ${tableMenubarOption}
+                 </option>`
+            )
+        }
+        //#endregion
+
+        //#region add apply button name
+        $("#btn_apply").append(
+            tableMenubar_applyButtonName[language])
+        //#endregion
+
+        //#region add column names
+        // add column names
+        for (let column in columnNamesByLanguages[language]) {
+            let columnName = columnNamesByLanguages[language][column];
+
+            table_head.append(
+                `<th>${columnName}</th>`
+            );
+        }
+
+        // add blank column to end
+        table_head.append(
+            `<th style="width:30px"></th>`
+        );
+        //#endregion
+
+        //#region add entity quantity message
+        $("#lbl_entityQuantity").append(
+            `<b>0</b> ${entityQuantity_message}`
+        );
+        //#endregion
+    }
     //#endregion
 
+    populateHtml();
     populateTable(
         entityType,
         routeForDisplay,
         language,
         pageNumber,
         pageSize,
-        tableBody,
-        propertyNamesToBeShowOnTable,
+        table_body,
+        columnNamesToBeFill,
         updateButtonName,
         nameOfPaginationHeader,
         lbl_entityQuantity,
@@ -578,5 +600,5 @@ $(function () {
         errorMessageColor,
         paginationButtonQuantity,
         entityQuantity_message,
-        true)
+        true);
 });

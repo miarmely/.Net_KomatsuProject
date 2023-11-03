@@ -213,7 +213,7 @@ export async function populateTable(
     pageNumber,
     pageSize,
     tableBody,
-    propertyNamesOfView,
+    columnNamesToBeFill,
     updateButtonName,
     nameOfPaginationHeader,
     lbl_entityQuantity,
@@ -245,7 +245,7 @@ export async function populateTable(
             //#endregion
         },
         success: (response, status, xhr) => {
-            addEntitiesToTableAsync(response, language, tableBody, entityType, propertyNamesOfView, updateButtonName);
+            addEntitiesToTableAsync(response, language, tableBody, entityType, columnNamesToBeFill, updateButtonName);
 
             //#region get pagination infos from headers
             paginationInfosInJson = JSON.parse(
@@ -289,7 +289,7 @@ export async function populateTable(
 
 export async function setDisabledOfOtherUpdateButtonsAsync(rowId, pageSize, updateButtonId, doDisabled) {
     await new Promise(resolve => {
-        let btn_update = $(updateButtonId); 
+        let btn_update = $(updateButtonId);
 
         //#region disable/enable other update buttons
         for (var rowNo = 1; rowNo <= pageSize; rowNo += 1) {
@@ -318,19 +318,93 @@ export async function setDisabledOfOtherUpdateButtonsAsync(rowId, pageSize, upda
     })
 }
 
+export async function populateRoleSelect(slct_roles, defaultRole = null) {
+    await new Promise(resolve => {
+        let roleNamesInLocal = JSON.parse(localStorage.getItem("allRoles"));
+
+        //#region add role names via ajax
+        if (roleNamesInLocal == null  // roles of any language not exists in local
+            || roleNamesInLocal[language] == null)  // roles of the language not exists in local
+            $.ajax({
+                method: "GET",
+                url: baseApiUrl + `/user/display/role?language=${language}`,
+                headers: {
+                    "Authorization": jwtToken
+                },
+                contentType: "application/json",
+                dataType: "json",
+                success: (response) => {
+                    //#region add roleNames to role <select>
+                    for (let index in response) {
+                        let roleName = response[index];
+
+                        slct_roles.append(
+                            `<option>${roleName}</option>`
+                        )
+                    }
+                    //#endregion
+
+                    //#region add roles to local
+
+                    //#region set "roleNamesInLocal"
+                    if (roleNamesInLocal == null)  // when any roles not exists
+                        roleNamesInLocal = {};
+
+                    roleNamesInLocal[language] = response;
+                    //#endregion
+
+                    //#region add local
+                    localStorage.setItem(
+                        "allRoles",
+                        JSON.stringify(roleNamesInLocal));
+                    //#endregion
+
+                    //#endregion
+
+                    //#region set default role of <select>
+                    if (defaultRole != null)
+                        slct_roles.val(defaultRole);
+                    //#endregion
+                }
+            });
+        //#endregion
+
+        //#region add role names via local
+        else {
+            //#region add role names
+            for (let index in roleNamesInLocal[language]) {
+                let roleName = roleNamesInLocal[language][index];
+
+                slct_roles.append(
+                    `<option>${roleName}</option>`
+                )
+            }
+            //#endregion
+
+            //#region set default role of <select>
+            if (defaultRole != null)
+                slct_roles.val(defaultRole);
+            //#endregion
+        }
+        //#endregion
+
+        resolve();
+    })
+}
+
 async function addEntitiesToTableAsync(
     response,
     language,
     tableBody,
     entityType,
-    propertyNamesOfView,
+    columnNamesToBeFill,
     updateButtonName) {
     await new Promise(resolve => {
         //#region set variables
-        let columnQuantityOnTable = propertyNamesOfView.length + 3;  // 3: 1-> checkBox column, 2-> processes column, 3-> blank column
+        let columnQuantityOnTable = columnNamesToBeFill.length + 3;  // 3: 1-> checkBox column, 2-> processes column, 3-> blank column
         let rowNo = 1;
         let rowId;
-        let row;        
+        let row;
         //#endregion
 
         //#region add entities to table
@@ -339,7 +413,7 @@ async function addEntitiesToTableAsync(
             rowId = `tr_row${rowNo}`
 
             //#region when entity type is machine
-            if(entityType == "machine")
+            if (entityType == "machine")
                 tableBody.append(
                     `<tr id= "${rowId}" class= ${entityView.id}>
                         <td id="td_checkBox">
@@ -367,8 +441,8 @@ async function addEntitiesToTableAsync(
             //#endregion
 
             //#region add column values of entity as dynamic
-            for (let index in propertyNamesOfView) {
-                let columnName = propertyNamesOfView[index];
+            for (let index in columnNamesToBeFill) {
+                let columnName = columnNamesToBeFill[index];
 
                 //#region set columnValue
                 let columnValue = columnName != "descriptions" ?
