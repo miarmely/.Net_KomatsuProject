@@ -318,78 +318,65 @@ export async function setDisabledOfOtherUpdateButtonsAsync(rowId, pageSize, upda
     })
 }
 
-export async function populateRoleSelect(slct_roles, defaultRole = null) {
-    await new Promise(resolve => {
-        let roleNamesInLocal = JSON.parse(localStorage.getItem("allRoles"));
+export async function getDataByAjaxOrLocalAsync(dataNameInLocal, apiUrl) {
+    //#region get data from local
+    let dataInLocal = JSON.parse(
+        localStorage.getItem(dataNameInLocal));
+    //#endregion
 
-        //#region add role names via ajax
-        if (roleNamesInLocal == null  // roles of any language not exists in local
-            || roleNamesInLocal[language] == null)  // roles of the language not exists in local
-            $.ajax({
-                method: "GET",
-                url: baseApiUrl + `/user/display/role?language=${language}`,
-                headers: {
-                    "Authorization": jwtToken
-                },
-                contentType: "application/json",
-                dataType: "json",
-                success: (response) => {
-                    //#region add roleNames to role <select>
-                    for (let index in response) {
-                        let roleName = response[index];
+    //#region get data by ajax if not exists in local
+    if (dataInLocal == null  // data of any language not exists in local
+        || dataInLocal[language] == null)  // data belong to language not exists in local
+        $.ajax({
+            method: "GET",
+            url: baseApiUrl + apiUrl,
+            headers: {
+                "Authorization": jwtToken
+            },
+            contentType: "application/json",
+            dataType: "json",
+            success: (response) => {
+                //#region add data to local
 
-                        slct_roles.append(
-                            `<option>${roleName}</option>`
-                        )
-                    }
-                    //#endregion
+                //#region initialize "dataInLocal"
+                if (dataInLocal == null)  // when any data not exists
+                    dataInLocal = {};
 
-                    //#region add roles to local
+                dataInLocal[language] = response;
+                //#endregion
 
-                    //#region set "roleNamesInLocal"
-                    if (roleNamesInLocal == null)  // when any roles not exists
-                        roleNamesInLocal = {};
+                //#region add to local
+                localStorage.setItem(
+                    dataNameInLocal,
+                    JSON.stringify(dataInLocal));
+                //#endregion
 
-                    roleNamesInLocal[language] = response;
-                    //#endregion
+                //#endregion
 
-                    //#region add local
-                    localStorage.setItem(
-                        "allRoles",
-                        JSON.stringify(roleNamesInLocal));
-                    //#endregion
-
-                    //#endregion
-
-                    //#region set default role of <select>
-                    if (defaultRole != null)
-                        slct_roles.val(defaultRole);
-                    //#endregion
-                }
-            });
-        //#endregion
-
-        //#region add role names via local
-        else {
-            //#region add role names
-            for (let index in roleNamesInLocal[language]) {
-                let roleName = roleNamesInLocal[language][index];
-
-                slct_roles.append(
-                    `<option>${roleName}</option>`
-                )
+                [language];
             }
-            //#endregion
+        });
+    //#endregion
 
-            //#region set default role of <select>
-            if (defaultRole != null)
-                slct_roles.val(defaultRole);
-            //#endregion
-        }
-        //#endregion
+    else
+        return dataInLocal[language];
+}
 
-        resolve();
-    })
+export async function populateSelectAsync(select, options, optionToBeDisplay = null) {
+    //#region add <option>'s to <select>
+    for (let index in options) {
+        let option = options[index];
+
+        select.append(
+            `<option>${option}</option>`
+        )
+    }
+    //#endregion
+
+    //#region set option to be display on <select>
+    if (optionToBeDisplay != null)
+        select.val(optionToBeDisplay);
+    //#endregion
 }
 
 async function addEntitiesToTableAsync(

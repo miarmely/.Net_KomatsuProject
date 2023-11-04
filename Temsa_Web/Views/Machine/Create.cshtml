@@ -1,71 +1,5 @@
 ﻿@model IServiceManager;
 
-@{
-    var language = ViewBag.Language;
-
-    #region mainTitle by language
-    var mainTitle = language switch
-    {
-        "TR" => "YENİ MAKİNE OLUŞTUR",
-        "EN" => "CREATE NEW MACHINE"
-    };
-    #endregion
-
-    #region inputLabels by language
-    var inputLabels = language switch
-    {
-        "TR" => new 
-        {
-            MainCategory = "Ana Kategori",
-            SubCategory = "Alt Kategori",
-            Brand = "Marka",
-            Model = "Model",
-            Year = "Yılı",
-            HandStatus = new
-            {
-                Label = "El Durumu",
-                RadioButton1 = "Sıfır",
-                RadioButton2 = "İkinci El"
-            },
-            Stock = "Stok Adedi"    
-        },
-        "EN" => new 
-        {
-            MainCategory = "Maincategory",
-            SubCategory = "Subcategory",
-            Brand = "Brand",
-            Model = "Model",
-            Year = "Year",
-            HandStatus = new
-            {
-                Label = "Hand Status",
-                RadioButton1 = "Zero",
-                RadioButton2 = "Second Hand"
-            },
-            Stock = "Stock" 
-        }
-    };
-    #endregion
-
-    #region button names by language
-    var updateButtonName = language switch
-    {
-        "TR" => "KAYDET",
-        "EN" => "SAVE"
-    };
-
-    var descriptionButtonName = language switch
-    {
-        "TR" => "Açıklama",
-        "EN" => "Description"
-    };
-    #endregion
-
-    #region get all languages in database
-    var allLanguagesInDb = await Model.MachineService
-        .GetAllLanguagesAsync();
-    #endregion
-}
 
 <div class="form-w3layouts">
     <div class="row">
@@ -73,12 +7,11 @@
             <section class="panel">
                 @*table main title*@
                 <header class="panel-heading">
-                    @mainTitle
                 </header>
                 @*/table main title*@
                 <div class="panel-body">
                     <form>
-                        <div class="form-horizontal bucket-form">
+                        @*<div id="div_form" class="form-horizontal bucket-form">
                             <!-- MainCategory -->
                             <div class="form-group">
                                 <label class="col-sm-3 control-label">
@@ -171,7 +104,6 @@
                              <!-- Year -->
                             <div class="form-group">
                                 <label class="col-sm-3 control-label">
-                                    @inputLabels.Year
                                 </label>
                                 <div class="col-sm-6">
                                     <input id="inpt_year" type="number" class="form-control" value="2023" required>
@@ -196,8 +128,8 @@
                                     </div>
                                 </div>
                             </div>
-                            <!-- /HandStatus-->
-                            @*Description*@
+                            <!-- /HandStatus -->
+                            <!-- *Description -->
                             <div class="form-group">
                                 <label class="col-sm-3 control-label">
                                     <div class="input-group m-bot15">
@@ -226,7 +158,7 @@
                                     <textarea id="inpt_description" style="resize:none" type="text" class="form-control" rows="10"></textarea>
                                 </div>
                             </div>
-                            @*/Description*@
+                            <!-- /Description -->
                             <!-- ImagePath -->
                             @*<div class="form-group">
                                 <label class="col-sm-3 control-label">Rol</label>
@@ -237,13 +169,12 @@
                                         <option>Admin</option>
                                     </select>
                                 </div>
-                            </div>   *@
+                            </div> 
                             <!-- /ImagePath -->
                             <!-- registration button -->
                             <div class="form-group">
                                 <div class="col-sm-6; text-center">
                                     <button id="btn_register" style="background-color:darkblue" type="submit" class="btn btn-danger">
-                                        @updateButtonName
                                     </button>
                                 </div>
                                 <div style="text-align:center">
@@ -251,7 +182,7 @@
                                 </div>
                             </div>
                             <!-- /registration button-->
-                        </div>
+                        </div>*@
                     </form>
                 </div>
             </section>
@@ -261,8 +192,98 @@
 
 <script type="module"  src="~/js/machineForCreate.js"></script>
 
-<script> 
-    let description_buttonName = "@descriptionButtonName";
-    let serializedAllLanguagesInDb = @Html.Raw(Json
-        .Serialize(allLanguagesInDb));
+<script>
+    const tableTitleByLanguages = {
+    "TR": "YENİ MAKİNE OLUŞTUR",
+    "EN": "CREATE NEW MACHINE"
+}
+    const formLabelsByLanguages = {
+        "TR": {
+            "mainCategory": {
+                "label": "Ana Kategori",
+                "type": "select",
+                "apiUrl": "/machine/display/mainCategory"
+            },
+            "subCategory": {
+                "label": "Alt Kategori",
+                "type": "select",
+                "apiUrl": "/machine/display/subCategory"
+            },
+            "brand": {
+                "label": "Marka",
+                "type": "input",
+                "helpMessage": ""
+            },
+            "model": {
+                "label": "Model",
+                "type": "input",
+                "helpMessage": ""
+            },
+            "year": {
+                "label": "Yıl",
+                "type": "input",
+                "helpMessage": ""
+            },
+            "handStatus": {
+                "label": "El Durumu",
+                "type": "radio",
+                "radioTexts": [
+                    "Sıfır",
+                    "İkinci El"
+                ]
+                "apiUrl": "/machine/display/handStatus"
+            },
+            "stock": {
+                "label": "Stok Adedi",
+                "type": "input",
+                "helpMessage": ""
+            }
+        },
+        "EN": {
+            "mainCategory": {
+                "label": "Maincategory",
+                "type": "select",
+            },
+            "subCategory": {
+                "label": "Subcategory",
+                "type": "select",
+            },
+            "brand": {
+                "label": "Brand",
+                "type": "input",
+                "helpMessage": ""
+            },
+            "model": {
+                "label": "Model",
+                "type": "input",
+                "helpMessage": ""
+            },
+            "year": {
+                "label": "Year",
+                "type": "input",
+                "helpMessage": ""
+            },
+            "handStatus": {
+                "label": "Hand Status",
+                "type": "radio",
+                "radioTexts": [
+                    "Zero",
+                    "Second Hand"
+                ]
+            },
+            "stock": {
+                "label": "Stock",
+                "type": "input",
+                "helpMessage": ""
+            }
+        },
+    }
+    const updateButtonNameByLanguages = {
+        "TR": "KAYDET",
+        "EN": "SAVE"
+    }
+    const descriptionButtonNameByLanguages = {
+        "TR": "Açıklama",
+        "EN": "Description"
+    }
 </script>

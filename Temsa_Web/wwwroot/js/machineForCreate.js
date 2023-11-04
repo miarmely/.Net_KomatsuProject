@@ -6,17 +6,19 @@ $(function () {
     const resultLabelErrorColor = "rgb(255, 75, 75)";
     const resultLabelSuccessColor = "green";
     const allLanguagesInDb = serializedAllLanguagesInDb;
-    let description_inputId = "#inpt_description";
-    let description_buttonId = "#btn_description";
-    let description_unsavedColor = "red";
-    let description_savedColor = "lightgreen";
-    let description_baseKeyForSession = "Machine-Create-Description";
+    const description_inputId = "#inpt_description";
+    const description_buttonId = "#btn_description";
+    const description_unsavedColor = "red";
+    const description_savedColor = "lightgreen";
+    const description_baseKeyForSession = "Machine-Create-Description";
     //#endregion
 
     //#region events
     $("form").submit(event => {
+        //#region reset resultLabel
         event.preventDefault();
-        $(resultLabelId).empty(); // reset resultLabel
+        $(resultLabelId).empty();
+        //#endregion
 
         $.ajax({
             method: "POST",
@@ -112,4 +114,50 @@ $(function () {
             description_savedColor);
     })
     //#endregion
+
+    function populateHtml() {
+        //#region add table title
+        $(".panel-heading").append(
+            tableTitleByLanguages[language]);
+        //#endregion
+
+        for (let formLabelName in formLabelsByLanguages[language]) {
+            //#region add labels except description
+            let formLabel = formLabelsByLanguages[language][formLabelName];
+            let div_formlabelInput_id = `div_${ formLabel.label }Input`;
+
+            $("#div_form").append(
+                `<div class="form-group">
+                    <label class="col-sm-3 control-label">
+                        ${formLabel.label}
+                    </label>
+                    <div id="${div_formlabelInput_id}" class="col-sm-6">
+                    </div>
+                </div>`
+            );
+            //#endregion
+
+            let div_formlabelInput = $("#" + div_formlabelInput_id);
+
+            switch (formLabel.type) {
+                case "select":
+                    //#region add <select> to <div>
+                    div_formlabelInput.append(
+                        `<select id="slct_mainCategory" class="form-control m-bot15>
+                        </select>`
+                    );
+                    //#endregion
+
+                    
+
+
+                    break;
+                case "input":
+                    break;
+                case "radio":
+                    break;
+            }
+        }
+
+    }
 })

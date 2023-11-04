@@ -1,4 +1,4 @@
-﻿import { populateTable, paginationInfosInJson, setDisabledOfOtherUpdateButtonsAsync, resetErrorRow, updateResultLabel, entityCountOnTable, updateErrorRow, populateRoleSelect } from "./miarTools.js"
+﻿import { populateTable, paginationInfosInJson, setDisabledOfOtherUpdateButtonsAsync, resetErrorRow, updateResultLabel, entityCountOnTable, updateErrorRow, getDataByAjaxOrLocalAsync, populateSelectAsync } from "./miarTools.js"
 
 $(function () {
     //#region variables
@@ -322,10 +322,12 @@ $(function () {
         }
         //#endregion
 
+        //#region set "rowId" and "tableDatasForAddSelect"
         let rowId = row.attr("id");
         let tableDatasForAddSelect = {
             "roleNames": row.children("#td_roleNames"),
         };
+        //#endregion
 
         //#region set "columnValues"
         let columnValues = {}
@@ -368,7 +370,7 @@ $(function () {
         }
         //#endregion
 
-        //#region role <select> to column
+        //#region add role <select> to column
         // add role <select>
         for (let columnName in tableDatasForAddSelect) {
             let td = tableDatasForAddSelect[columnName];
@@ -376,10 +378,18 @@ $(function () {
             td.append("<select> </select>")
         }
 
+        // get all roles 
+        let allRoles = await getDataByAjaxOrLocalAsync(
+            localKeys_allRoles,
+            `/user/display/role?language=${language}`,
+        )
+        
         // populate role <select>
-        populateRoleSelect(
+        await populateSelectAsync(
             tableDatasForAddSelect.roleNames.children("select"),
-            columnValues.roleNames);
+            allRoles,
+            columnValues.roleNames
+        );
         //#endregion
 
         //#region add "save" and "cancel" buttons
@@ -536,51 +546,55 @@ $(function () {
     }
 
     function populateHtml() {
-        //#region add table title
-        $(".panel-heading").append(
-            tableTitleByLanguages[language]);
-        //#endregion
+        return new Promise(resolve => {
+            //#region add table title
+            $(".panel-heading").append(
+                tableTitleByLanguages[language]);
+            //#endregion
 
-        //#region add table menubars
-        let tableMenubarOptions = tableMenubar_optionsByLanguages[language];
+            //#region add table menubars
+            let tableMenubarOptions = tableMenubar_optionsByLanguages[language];
 
-        for (let index = 0; index < tableMenubarOptions.length; index += 1) {
-            let tableMenubarOption = tableMenubarOptions[index];
+            for (let index = 0; index < tableMenubarOptions.length; index += 1) {
+                let tableMenubarOption = tableMenubarOptions[index];
 
-            $("#slct_tableMenubar").append(
-                `<option value="${index}">
+                $("#slct_tableMenubar").append(
+                    `<option value="${index}">
                     ${tableMenubarOption}
                  </option>`
-            )
-        }
-        //#endregion
+                )
+            }
+            //#endregion
 
-        //#region add apply button name
-        $("#btn_apply").append(
-            tableMenubar_applyButtonName[language])
-        //#endregion
+            //#region add apply button name
+            $("#btn_apply").append(
+                tableMenubar_applyButtonName[language])
+            //#endregion
 
-        //#region add column names
-        // add column names
-        for (let column in columnNamesByLanguages[language]) {
-            let columnName = columnNamesByLanguages[language][column];
+            //#region add column names
+            // add column names
+            for (let column in columnNamesByLanguages[language]) {
+                let columnName = columnNamesByLanguages[language][column];
 
+                table_head.append(
+                    `<th>${columnName}</th>`
+                );
+            }
+
+            // add blank column to end
             table_head.append(
-                `<th>${columnName}</th>`
+                `<th style="width:30px"></th>`
             );
-        }
+            //#endregion
 
-        // add blank column to end
-        table_head.append(
-            `<th style="width:30px"></th>`
-        );
+            //#region add entity quantity message
+            $("#lbl_entityQuantity").append(
+                `<b>0</b> ${entityQuantity_message}`
+            );
         //#endregion
 
-        //#region add entity quantity message
-        $("#lbl_entityQuantity").append(
-            `<b>0</b> ${entityQuantity_message}`
-        );
-        //#endregion
+            resolve();
+        })
     }
     //#endregion
 
