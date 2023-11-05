@@ -1,4 +1,4 @@
-﻿import { populateTable, paginationInfosInJson, setDisabledOfOtherUpdateButtonsAsync, resetErrorRow, updateResultLabel, entityCountOnTable, updateErrorRow, getDataByAjaxOrLocalAsync, populateSelectAsync } from "./miarTools.js"
+﻿import { populateTable, paginationInfosInJson, setDisabledOfOtherUpdateButtonsAsync, resetErrorRow, updateResultLabel, entityCountOnTable, updateErrorRow, populateElementByAjaxOrLocalAsync, populateSelectAsync} from "./miarTools.js"
 
 $(function () {
     //#region variables
@@ -378,17 +378,17 @@ $(function () {
             td.append("<select> </select>")
         }
 
-        // get all roles 
-        let allRoles = await getDataByAjaxOrLocalAsync(
+        // populate role <select>
+        await populateElementByAjaxOrLocalAsync(
             localKeys_allRoles,
             `/user/display/role?language=${language}`,
-        )
-        
-        // populate role <select>
-        await populateSelectAsync(
-            tableDatasForAddSelect.roleNames.children("select"),
-            allRoles,
-            columnValues.roleNames
+            (data) => {
+                populateSelectAsync(
+                    tableDatasForAddSelect.roleNames.children("select"),
+                    data,
+                    columnValues.roleNames
+                );
+            }
         );
         //#endregion
 

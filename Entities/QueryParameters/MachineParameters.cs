@@ -11,6 +11,6 @@
     public record MachineParametersForDisplaySubCategoryNames
     {
        public string Language { get; init; }
-       public string MainCategoryName { get; init; }
+       public string? MainCategoryName { get; init; }
     }
 }

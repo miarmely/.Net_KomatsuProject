@@ -121,8 +121,6 @@ namespace Presantation.Attributes.Filters
 								"AE-E"));
 					#endregion
                 }
-
-				
 				#endregion
 
 				#endregion
@@ -170,9 +168,8 @@ namespace Presantation.Attributes.Filters
 
 			});
 
+
         #region private
-
-
 
         private string ConvertErrorCodeToErrorMessageByLanguage(
 			string language,

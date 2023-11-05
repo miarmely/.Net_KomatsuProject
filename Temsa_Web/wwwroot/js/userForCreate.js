@@ -1,4 +1,4 @@
-﻿import { getDataByAjaxOrLocalAsync, populateSelectAsync, updateResultLabel } from "./miarTools.js";
+﻿import { populateElementByAjaxOrLocalAsync, populateSelectAsync, updateResultLabel } from "./miarTools.js";
 
 
 $(function () {
@@ -107,15 +107,14 @@ $(function () {
                     //#endregion
 
                     //#region populate role <select>
-                    let allRoles = await getDataByAjaxOrLocalAsync(
+                    await populateElementByAjaxOrLocalAsync(
                         localKeys_allRoles,
-                        `/user/display/role?language=${language}`
-                    );
-
-                    await populateSelectAsync(
-                        $("#slct_roles"),
-                        allRoles,
-                    )
+                        `/user/display/role?language=${language}`,
+                        (data) => {
+                            populateSelectAsync(
+                                $("#slct_roles"),
+                                data);
+                        });
                     //#endregion
                 }
                 //#endregion

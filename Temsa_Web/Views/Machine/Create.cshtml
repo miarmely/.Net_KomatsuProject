@@ -5,184 +5,12 @@
     <div class="row">
         <div class="col-lg-12">    
             <section class="panel">
-                @*table main title*@
                 <header class="panel-heading">
                 </header>
-                @*/table main title*@
                 <div class="panel-body">
                     <form>
-                        @*<div id="div_form" class="form-horizontal bucket-form">
-                            <!-- MainCategory -->
-                            <div class="form-group">
-                                <label class="col-sm-3 control-label">
-                                    @inputLabels.MainCategory
-                                </label>
-                                <div class="col-sm-6">
-                                    <select id="slct_mainCategory" class="form-control m-bot15">
-                                        @{
-                                            #region get mainCategoryNames by language
-                                            var mainCategoryNames = await Model.MachineService
-                                                .GetMainCategoryNamesByLanguageAsync(language);
-                                            #endregion
-
-                                            #region add mainCategoryNames
-                                            foreach(var mainCategoryName in mainCategoryNames)
-                                            {
-                                                <option>@mainCategoryName</option>
-                                            }
-                                            #endregion
-                                        }                                        
-                                    </select>
-                                </div>
-                            </div>
-                            <!-- /MainCategory -->
-                            <!-- SubCategory -->
-                            <div class="form-group">
-                                <label class="col-sm-3 control-label">
-                                    @inputLabels.SubCategory
-                                </label>
-                                <div class="col-sm-6">
-                                    <select id="slct_subCategory" class="form-control m-bot15">
-                                        @{
-                                            #region get subCategoryNames
-                                            var machineParameters = new MachineParametersForDisplaySubCategoryNames
-                                            {
-                                                Language = language,
-                                                MainCategoryName = language == "TR"?
-                                                    "İş Makineleri"
-                                                    : "Work Machines"
-                                            };
-
-                                            var subCategoryNames = await Model.MachineService
-                                                .GetSubCategoryNamesOfMainCategoryByLanguageAsync(
-                                                    machineParameters);
-                                            #endregion
-
-                                            #region add subCategoryNames as <option>
-                                            foreach(var subCategoryName in subCategoryNames)
-                                            {
-                                                <option>@subCategoryName</option>    
-                                            }
-                                            #endregion
-                                        }
-                                    </select>
-                                </div>
-                            </div>
-                            <!-- /SubCategory -->
-                            <!-- Model -->
-                            <div class="form-group">
-                                <label class="col-sm-3 control-label">
-                                    @inputLabels.Model
-                                </label>
-                                <div class="col-sm-6">
-                                    <input id="inpt_model" type="text" class="form-control" required>
-                                    <span class="help-block"></span>
-                                </div>
-                            </div>
-                            <!-- /Model -->
-                            <!-- BrandName -->
-                            <div class="form-group">
-                                <label class="col-sm-3 control-label">
-                                    @inputLabels.Brand
-                                </label>
-                                <div class="col-sm-6">
-                                    <input id="inpt_brand" type="text" class="form-control" required>
-                                    <span class="help-block"></span>
-                                </div>
-                            </div>
-                            <!-- /BrandName -->
-                            <!-- Stock -->
-                            <div class="form-group">
-                                <label class="col-sm-3 control-label">
-                                    @inputLabels.Stock
-                                </label>
-                                <div class="col-sm-6">
-                                    <input id="inpt_stock" type="number" class="form-control" value="1" required>
-                                </div>
-                            </div>
-                            <!-- /Stock -->
-                             <!-- Year -->
-                            <div class="form-group">
-                                <label class="col-sm-3 control-label">
-                                </label>
-                                <div class="col-sm-6">
-                                    <input id="inpt_year" type="number" class="form-control" value="2023" required>
-                                </div>
-                            </div>
-                            <!-- /Year --> 
-                            <!-- HandStatus -->
-                            <div class="form-group">
-                                <label class="col-sm-3 control-label">
-                                    @inputLabels.HandStatus.Label
-                                </label>
-                                <div class="col-sm-6">
-                                    <div class="radio">
-                                        <label style="margin-right:10px">
-                                            <input type="radio" name="handStatus" value="@inputLabels.HandStatus.RadioButton1"  checked="">
-                                             @inputLabels.HandStatus.RadioButton1
-                                        </label>
-                                        <label>
-                                            <input type="radio" name="handStatus" value="@inputLabels.HandStatus.RadioButton2">
-                                            @inputLabels.HandStatus.RadioButton2
-                                        </label>
-                                    </div>
-                                </div>
-                            </div>
-                            <!-- /HandStatus -->
-                            <!-- *Description -->
-                            <div class="form-group">
-                                <label class="col-sm-3 control-label">
-                                    <div class="input-group m-bot15">
-                                        <div class="input-group-btn">
-                                            <button id="btn_description" style="background-color:darkblue; color:red" tabindex="-1" class="btn btn-info" type="button">
-                                                @descriptionButtonName (@language)
-                                            </button>
-                                            <button tabindex="-1" style="background-color: darkblue;" data-toggle="dropdown" class="btn btn-info dropdown-toggle" type="button">
-                                                <span class="caret"></span>
-                                            </button>
-                                            <ul id="ul_description"  role="menu" class="dropdown-menu pull-right">
-                                                @{
-                                                    #region populate languages
-                                                    foreach(var languageInDb in allLanguagesInDb){
-                                                        <li>
-                                                            <a href="#">@languageInDb</a>
-                                                       </li>
-                                                    }
-                                                    #endregion
-                                                }
-                                            </ul>
-                                        </div>
-                                    </div>
-                                </label>
-                                <div class="col-sm-6">
-                                    <textarea id="inpt_description" style="resize:none" type="text" class="form-control" rows="10"></textarea>
-                                </div>
-                            </div>
-                            <!-- /Description -->
-                            <!-- ImagePath -->
-                            @*<div class="form-group">
-                                <label class="col-sm-3 control-label">Rol</label>
-                                <div class="col-sm-6">
-                                    <select id="slct_role" class="form-control m-bot15">
-                                        <option>User</option>
-                                        <option>Editor</option>
-                                        <option>Admin</option>
-                                    </select>
-                                </div>
-                            </div> 
-                            <!-- /ImagePath -->
-                            <!-- registration button -->
-                            <div class="form-group">
-                                <div class="col-sm-6; text-center">
-                                    <button id="btn_register" style="background-color:darkblue" type="submit" class="btn btn-danger">
-                                    </button>
-                                </div>
-                                <div style="text-align:center">
-                                    <p id="p_resultLabel"></p>
-                                </div>
-                            </div>
-                            <!-- /registration button-->
-                        </div>*@
+                        <div id="div_form" class="form-horizontal bucket-form">
+                        </div>
                     </form>
                 </div>
             </section>
@@ -197,85 +25,32 @@
     "TR": "YENİ MAKİNE OLUŞTUR",
     "EN": "CREATE NEW MACHINE"
 }
-    const formLabelsByLanguages = {
+    const formLabelNamesByLanguages = {
         "TR": {
-            "mainCategory": {
-                "label": "Ana Kategori",
-                "type": "select",
-                "apiUrl": "/machine/display/mainCategory"
-            },
-            "subCategory": {
-                "label": "Alt Kategori",
-                "type": "select",
-                "apiUrl": "/machine/display/subCategory"
-            },
-            "brand": {
-                "label": "Marka",
-                "type": "input",
-                "helpMessage": ""
-            },
-            "model": {
-                "label": "Model",
-                "type": "input",
-                "helpMessage": ""
-            },
-            "year": {
-                "label": "Yıl",
-                "type": "input",
-                "helpMessage": ""
-            },
+            "mainCategory": "Ana Kategori",
+            "subCategory": "Alt Kategori",
+            "brand": "Marka",
+            "model": "Model",
+            "year": "Yıl",
             "handStatus": {
                 "label": "El Durumu",
-                "type": "radio",
-                "radioTexts": [
-                    "Sıfır",
-                    "İkinci El"
-                ]
-                "apiUrl": "/machine/display/handStatus"
+                "radio1": "Sıfır",
+                "radio2": "İkinci El"
             },
-            "stock": {
-                "label": "Stok Adedi",
-                "type": "input",
-                "helpMessage": ""
-            }
+            "stock": "Stok Adedi",
         },
         "EN": {
-            "mainCategory": {
-                "label": "Maincategory",
-                "type": "select",
-            },
-            "subCategory": {
-                "label": "Subcategory",
-                "type": "select",
-            },
-            "brand": {
-                "label": "Brand",
-                "type": "input",
-                "helpMessage": ""
-            },
-            "model": {
-                "label": "Model",
-                "type": "input",
-                "helpMessage": ""
-            },
-            "year": {
-                "label": "Year",
-                "type": "input",
-                "helpMessage": ""
-            },
+            "mainCategory": "Maincategory",
+            "subCategory": "Subcategory",
+            "brand": "Brand",
+            "model": "Model",
+            "year": "Year",
             "handStatus": {
                 "label": "Hand Status",
-                "type": "radio",
-                "radioTexts": [
-                    "Zero",
-                    "Second Hand"
-                ]
+                "radio1": "Zero",
+                "radio2": "Second Hand"
             },
-            "stock": {
-                "label": "Stock",
-                "type": "input",
-                "helpMessage": ""
-            }
+            "stock": "Stock",
         },
     }
     const updateButtonNameByLanguages = {

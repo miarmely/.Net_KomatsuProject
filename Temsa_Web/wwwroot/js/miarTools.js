@@ -318,7 +318,11 @@ export async function setDisabledOfOtherUpdateButtonsAsync(rowId, pageSize, upda
     })
 }
 
-export async function getDataByAjaxOrLocalAsync(dataNameInLocal, apiUrl) {
+export async function populateElementByAjaxOrLocalAsync(
+    dataNameInLocal,
+    apiUrl,
+    func_populate,
+    func_afterSuccess = null) {
     //#region get data from local
     let dataInLocal = JSON.parse(
         localStorage.getItem(dataNameInLocal));
@@ -336,6 +340,8 @@ export async function getDataByAjaxOrLocalAsync(dataNameInLocal, apiUrl) {
             contentType: "application/json",
             dataType: "json",
             success: (response) => {
+                func_populate(response);
+
                 //#region add data to local
 
                 //#region initialize "dataInLocal"
@@ -353,13 +359,24 @@ export async function getDataByAjaxOrLocalAsync(dataNameInLocal, apiUrl) {
 
                 //#endregion
 
-                [language];
+                //#region call function after populate process
+                if (func_afterSuccess != null)
+                    func_afterSuccess();
+                //#endregion
             }
         });
     //#endregion
 
-    else
-        return dataInLocal[language];
+    //#region when data already in local
+    else {
+        func_populate(dataInLocal[language]);
+
+        //#region call function after populate process
+        if (func_afterSuccess != null)
+            func_afterSuccess();
+        //#endregion
+    }
+    //#endregion
 }
 
 export async function populateSelectAsync(select, options, optionToBeDisplay = null) {
@@ -377,6 +394,9 @@ export async function populateSelectAsync(select, options, optionToBeDisplay = n
     if (optionToBeDisplay != null)
         select.val(optionToBeDisplay);
     //#endregion
+}
+
+export async function populateRadioAsync(radio, values, valueToBeDisplay = null) {
 }
 
 async function addEntitiesToTableAsync(
