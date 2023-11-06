@@ -155,7 +155,6 @@ export function clicked_descriptionDropdownItem(
 }
 
 export function clicked_descriptionDropdownButton(
-    pageLanguage,
     descriptionInputId,
     descriptionButtonId,
     descriptionBaseKeyForSession,
@@ -175,7 +174,7 @@ export function changed_descriptionInput(
     descriptionButtonId,
     descriptionUnsavedColor,
     descriptionSavedColor) {
-    //#region set description current color if empty 
+    //#region initialize description current color if empty 
     if (description_currentColor == undefined)
         description_currentColor = descriptionUnsavedColor;
     //#endregion
@@ -186,10 +185,16 @@ export function changed_descriptionInput(
     //#endregion
 }
 
-export function getDescriptionKeyForSession(descriptionBaseKeyForSession, descriptionLanguage = null) {
-    return descriptionLanguage == null ?
-        descriptionBaseKeyForSession + '-' + description_language  // set language as auto
-        : descriptionBaseKeyForSession + '-' + descriptionLanguage  // set language as manuel
+export function getDescriptionKeyForSession(descriptionBaseKeyForSession) {
+    //#region when any language not selected in description dropdown
+    if (description_language == null)
+        return descriptionBaseKeyForSession + '-' + language;  // page language
+    //#endregion
+
+    //#region when any language selected in description dropdown
+    else
+        return descriptionBaseKeyForSession + '-' + description_language;
+    //#endregion
 }
 
 export function resetErrorRow(rowId) {
@@ -328,7 +333,7 @@ export async function populateElementByAjaxOrLocalAsync(
         localStorage.getItem(dataNameInLocal));
     //#endregion
 
-    //#region get data by ajax if not exists in local
+    //#region get data by ajax if not exists in local (ajax)
     if (dataInLocal == null  // data of any language not exists in local
         || dataInLocal[language] == null)  // data belong to language not exists in local
         $.ajax({
@@ -394,9 +399,6 @@ export async function populateSelectAsync(select, options, optionToBeDisplay = n
     if (optionToBeDisplay != null)
         select.val(optionToBeDisplay);
     //#endregion
-}
-
-export async function populateRadioAsync(radio, values, valueToBeDisplay = null) {
 }
 
 async function addEntitiesToTableAsync(

@@ -692,21 +692,22 @@ $(function () {
         th_descriptions.empty();
         th_descriptions.append(
             `<div class="btn-group">
-            <button id="${descriptionButtonIdWithoutDash}"  type="button"  style="background-color: darkblue;  color: red" class="btn btn-danger">
-                <b>${description_baseButtonName} (${language})</b>
-            </button>
+                <button id="${descriptionButtonIdWithoutDash}"  type="button"  style="background-color: darkblue;  color: red" class="btn btn-danger">
+                    <b>${description_baseButtonName} (${language})</b>
+                </button>
 
-            <button id="btn_descriptionDropdown"  type="button"  style="background-color: darkblue" class="btn btn-danger dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                <span class="caret"></span>
-            </button>
+                <button id="btn_descriptionDropdown"  type="button"  style="background-color: darkblue" class="btn btn-danger dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <span class="caret"></span>
+                </button>
 
-            <div class="dropdown-menu">
-                <div class="col-xs-1" style="padding:0px">
-                    <ul id="ul_dropdownMenu" style="list-style-type:none">
-                    </ul>
+                <div class="dropdown-menu">
+                    <div class="col-xs-1" style="padding:0px">
+                        <ul id="ul_dropdownMenu" style="list-style-type:none">
+                        </ul>
+                    </div>
                 </div>
-            </div>
-        </div>`);
+            </div>`
+        );
         //#endregion
 
         //#region populate languages to "th_descriptions" dropdown

@@ -66,81 +66,77 @@ $(function () {
     //#endregion
 
     //#region functions
-    function populateForm() {
-        return new Promise(async resolve => {
-            //#region add form title
-            $("#header_formTitle").append(
-                formTitleByLanguages[language]);
+    async function populateFormAsync() {
+        //#region add form title
+        $("#header_formTitle").append(
+            formTitleByLanguages[language]);
+        //#endregion
+
+        //#region add labels and <input>'s or <select>'s
+        for (let formLabelName in formLabelNamesAndFeaturesByLanguages[language]) {
+            //#region add labels and inputs without role
+            let formLabel = formLabelNamesAndFeaturesByLanguages[language][formLabelName];
+
+            if (formLabelName != "roles")
+                div_form.append(
+                    `<div class="form-group">
+                    <label class="col-sm-3 control-label">${formLabel.label}</label>
+                    <div class="col-sm-6">
+                        <input id="inpt_${formLabelName}" type="${formLabel.type}" class="form-control" required>
+                            <span class="help-block">${formLabel.helpMessage}</span>
+                    </div>
+                </div>`
+                );
             //#endregion
 
-            //#region add labels and <input>'s or <select>'s
-            for (let formLabelName in formLabelNamesAndFeaturesByLanguages[language]) {
-                //#region add labels and inputs without role
-                let formLabel = formLabelNamesAndFeaturesByLanguages[language][formLabelName];
+            //#region add role label and <select>
+            else {
+                //#region add role <select>
+                let slct_roleName_id = `slct_${formLabelName}`;
 
-                if (formLabelName != "roles")
-                    div_form.append(
-                        `<div class="form-group">
+                $("#div_form").append(
+                    `<div class="form-group">
                         <label class="col-sm-3 control-label">${formLabel.label}</label>
                         <div class="col-sm-6">
-                            <input id="inpt_${formLabelName}" type="${formLabel.type}" class="form-control" required>
-                                <span class="help-block">${formLabel.helpMessage}</span>
+                            <select id="${slct_roleName_id}" class="form-control m-bot15">             
+                                </select>
                         </div>
                     </div>`
-                    );
+                );
                 //#endregion
 
-                //#region add role label and <select>
-                else {
-                    //#region add role <select>
-                    let slct_roleName_id = `slct_${formLabelName}`;
-
-                    $("#div_form").append(
-                        `<div class="form-group">
-                            <label class="col-sm-3 control-label">${formLabel.label}</label>
-                            <div class="col-sm-6">
-                                <select id="${slct_roleName_id}" class="form-control m-bot15">             
-                                 </select>
-                            </div>
-                        </div>`
-                    );
-                    //#endregion
-
-                    //#region populate role <select>
-                    await populateElementByAjaxOrLocalAsync(
-                        localKeys_allRoles,
-                        `/user/display/role?language=${language}`,
-                        (data) => {
-                            populateSelectAsync(
-                                $("#slct_roles"),
-                                data);
-                        });
-                    //#endregion
-                }
+                //#region populate role <select>
+                await populateElementByAjaxOrLocalAsync(
+                    localKeys_allRoles,
+                    `/user/display/role?language=${language}`,
+                    (data) => {
+                        populateSelectAsync(
+                            $("#slct_roles"),
+                            data);
+                    });
                 //#endregion
             }
             //#endregion
+        }
+        //#endregion
 
-            //#region add save button
-            div_form.append(
-                `<div class="form-group">
-                <div class="col-sm-6; text-center">
-                    <button id="btn_save" type="submit" class="btn btn-danger" style="background-color: darkblue">
-                        ${saveButtonNameByLanguages[language]}
-                    </button>
-                </div>
-                <div style="text-align:center">
-                    <p id="p_resultLabel"></p>
-                </div>
-            </div>`
-            )
-            //#endregion
-
-            resolve();
-        });
+        //#region add save button
+        div_form.append(
+            `<div class="form-group">
+            <div class="col-sm-6; text-center">
+                <button id="btn_save" type="submit" class="btn btn-danger" style="background-color: darkblue">
+                    ${saveButtonNameByLanguages[language]}
+                </button>
+            </div>
+            <div style="text-align:center">
+                <p id="p_resultLabel"></p>
+            </div>
+        </div>`
+        )
+        //#endregion
     }
     //#endregion
 
-    populateForm();
+    populateFormAsync();
 });
 
