@@ -4,18 +4,19 @@
 
 <div class="log-w3">
 	<div class="w3layouts-main">
-		<h2>GİRİŞ YAP</h2>
+		<h2 id="h2_mainTitle">
+		</h2>
 
 		<form>
-			<input id="inpt_telNo" type="text" class="ggg" 
-					placeholder="TELEFON NUMARASI" required>
-			<input id="inpt_password" type="password" class="ggg" 
-					placeholder="ŞİFRE" required>
+			<input id="inpt_telNo" type="text" class="ggg" placeholder="" required>
+			<input id="inpt_password" type="password" class="ggg" placeholder="" required>
 			<!-- <span><input type="checkbox" /> Beni Hatırla</span> -->
-			<h6><a href="#">Şifremi Unuttum?</a></h6>
-					
+			<h6>
+				<a id="a_iForgotMyPassword" href="#">
+				</a>
+			</h6>		
 			<div class="clearfix"></div>
-			<input type="submit" value="GİRİŞ" id="btn_login">
+			<input type="submit" value="" id="btn_login">
 		</form>
 
 		<p id="p_resultLabel"></p>
@@ -24,12 +25,35 @@
 
 <script type="module" src="~/js/login.js"></script>
 <script>
+	//#region language
 	let language = localStorage.getItem("language");
 	
-	//#region add default language to local
+	// region add default language to local if not exists
 	if(language == null){
 		language = "TR";
 		localStorage.getItem("language", language);
 	}
 	//#endregion
+	const mainTitleByLanguages = {
+		"TR": "GİRİŞ YAP",
+		"EN": "LOGIN"
+	}
+	const inputPlaceHoldersByLanguages = {
+		"TR": {
+			"telNo": "TELEFON",
+			"password": "ŞİFRE"
+		},
+		"EN": {
+			"telNo": "TELEPHONE",
+			"password": "PASSWORD"
+		}
+	}
+	const iForgotMyPasswordByLanguages = {
+		"TR": "Şifremi Unuttum?",
+		"EN": "I Forgot My Password?"
+	}
+	const loginButtonNameByLanguages = {
+		"TR": "GİRİŞ",
+		"EN": "LOGIN"
+	}
 </script>

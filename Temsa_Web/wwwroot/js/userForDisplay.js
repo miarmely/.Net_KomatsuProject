@@ -545,8 +545,8 @@ $(function () {
         //#endregion
     }
 
-    function populateHtml() {
-        return new Promise(resolve => {
+    async function populateHtmlAsync() {
+        await new Promise(resolve => {
             //#region add table title
             $(".panel-heading").append(
                 tableTitleByLanguages[language]);
@@ -598,7 +598,7 @@ $(function () {
     }
     //#endregion
 
-    populateHtml();
+    populateHtmlAsync();
     populateTable(
         entityType,
         routeForDisplay,

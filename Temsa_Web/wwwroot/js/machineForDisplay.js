@@ -1,10 +1,4 @@
-﻿import {
-    entityCountOnTable, changeDescriptionButtonColor, clicked_descriptionDropdownButton,
-    clicked_descriptionDropdownItem, description_currentColor,
-    getDescriptionKeyForSession, paginationInfosInJson, populateTable,
-    updateResultLabel, setDisabledOfOtherUpdateButtonsAsync, updateErrorRow
-} from "./miarTools.js";
-
+﻿import { entityCountOnTable, changeDescriptionButtonColor, clicked_descriptionDropdownButton, clicked_descriptionDropdownItem, description_currentColor, getDescriptionKeyForSession, paginationInfosInJson, populateTable, updateResultLabel, setDisabledOfOtherUpdateButtonsAsync, updateErrorRow, populateElementByAjaxOrLocalAsync, resetErrorRow } from "./miarTools.js";
 
 $(function () {
     //#region variables
@@ -33,12 +27,17 @@ $(function () {
         "descriptions",
         "createdAt"
     ]
-    const tableBody = $("#tbl_machine tbody");
+    const table_body = $("#tbl_machine tbody");
+    const table_head = $("#tbl_machine thead tr");
     const ul_pagination = $("#ul_pagination");
-    const th_descriptions = $("#th_descriptions");
+    const th_descriptions_id = "#th_descriptions";
     const updateButtonId = "#btn_update";
     const entityQuantity_id = "#lbl_entityQuantity"
     const lbl_entityQuantity = $(entityQuantity_id);
+    const entityQuantity_message = entityQuantityMessageByLanguages[language];
+    const updateButtonName = updateButtonNameByLanguages[language];
+    const description_baseButtonName = description_baseButtonNameByLanguages[language];
+    const ul_description_id = "#ul_description";
     //#endregion
 
     //#region events
@@ -61,7 +60,7 @@ $(function () {
                         language,
                         paginationInfosInJson.CurrentPageNo - 1,
                         pageSize,
-                        tableBody,
+                        table_body,
                         propertyNamesToBeShowOnTable,
                         updateButtonName,
                         nameOfPaginationHeader,
@@ -83,7 +82,7 @@ $(function () {
                         language,
                         paginationInfosInJson.CurrentPageNo + 1,
                         pageSize,
-                        tableBody,
+                        table_body,
                         propertyNamesToBeShowOnTable,
                         updateButtonName,
                         nameOfPaginationHeader,
@@ -106,7 +105,7 @@ $(function () {
                     language,
                     pageNo,
                     pageSize,
-                    tableBody,
+                    table_body,
                     propertyNamesToBeShowOnTable,
                     updateButtonName,
                     nameOfPaginationHeader,
@@ -147,9 +146,9 @@ $(function () {
         //#endregion
     })
     $("#btn_apply").click(async () => {
-        let opt_selected = $("#slct_menubar option:selected");
+        let slct_tableMenubar = $("#slct_tableMenubar");
 
-        switch (opt_selected.val()) {
+        switch (slct_tableMenubar.val()) {
             //#region delete selected values
             case "0":
                 await deleteSelectedMachinesAsync();
@@ -157,35 +156,32 @@ $(function () {
             //#endregion 
         }
     });
-    $("th").click(() => {  // control description column
-        let selectedElement = $(":focus");
+    $(table_head).click(() => {
+        //#region when description button or dropdown clicked
+        let clickedElement = $(":focus");
 
-        switch (selectedElement.attr("id")) {
-            //#region when click to description dropdown items
-            case "a_descriptionDropdownItem":
-                clicked_descriptionDropdownItem(
-                    selectedElement,
-                    description_inputId,
-                    description_buttonId,
-                    description_baseButtonName,
-                    description_unsavedColor,
-                    description_baseKeyForSession);
+        //#region when clicked languages in description dropdown
+        if (clickedElement.attr("class") == "a_description")
+            clicked_descriptionDropdownItem(
+                $(":focus"),
+                description_inputId,
+                description_buttonId,
+                description_baseButtonName,
+                description_unsavedColor,
+                description_baseKeyForSession);
+        //#endregion
 
-                break;
-            //#endregion
+        //#region when description button clicked
+        else if (clickedElement.attr("id")
+            == description_buttonId.substring(1))  // #btn_description => btn_description
+            clicked_descriptionDropdownButton(
+                description_inputId,
+                description_buttonId,
+                description_baseKeyForSession,
+                description_savedColor);
+        //#endregion
 
-            //#region when click to description button on <th>
-            case "btn_description":
-                clicked_descriptionDropdownButton(
-                    language,
-                    description_inputId,
-                    description_buttonId,
-                    description_baseKeyForSession,
-                    description_savedColor);
-
-                break;
-            //#endregion
-        }
+        //#endregion
     });
     $("tbody").click(async () => {
         //#region when update,save or delete button clicked
@@ -231,9 +227,7 @@ $(function () {
                 default:
                     td.append(columnNamesAndValues[columnName]);
                     break;
-
             }
-
         }
         //#endregion
 
@@ -251,15 +245,8 @@ $(function () {
     }
 
     function removeDescriptionButtonOnColumn() {
-        th_descriptions.empty();
-        th_descriptions.text(description_baseButtonName);
-    }
-
-    function resetErrorRow(rowId) {
-        var tr_row_error = $(rowId + "_error");
-
-        tr_row_error.empty();  // reset
-        tr_row_error.attr("hidden", "");  // hide
+        $(th_descriptions_id).empty();
+        $(th_descriptions_id).text(description_baseButtonName);
     }
 
     async function populateMainCategoryNameSelectAsync(tableDatasForAddSelect, columnValues) {
@@ -520,7 +507,7 @@ $(function () {
                             language,
                             currentPageNo,
                             pageSize,
-                            tableBody,
+                            table_body,
                             propertyNamesToBeShowOnTable,
                             updateButtonName,
                             nameOfPaginationHeader,
@@ -540,7 +527,7 @@ $(function () {
                             language,
                             currentPageNo - 1,
                             pageSize,
-                            tableBody,
+                            table_body,
                             propertyNamesToBeShowOnTable,
                             updateButtonName,
                             nameOfPaginationHeader,
@@ -554,7 +541,7 @@ $(function () {
 
                     //#region when any machines not found
                     else {
-                        tableBody.empty();
+                        table_body.empty();
 
                         updateResultLabel(
                             entityQuantity_id,
@@ -573,7 +560,7 @@ $(function () {
                         language,
                         currentPageNo,
                         pageSize,
-                        tableBody,
+                        table_body,
                         propertyNamesToBeShowOnTable,
                         updateButtonName,
                         nameOfPaginationHeader,
@@ -653,7 +640,7 @@ $(function () {
         }
         //#endregion
 
-        //#endregion
+        //#endregion$(ul_description_id)
 
         setDisabledOfOtherUpdateButtonsAsync(rowId, pageSize, updateButtonId, true);
 
@@ -684,13 +671,13 @@ $(function () {
         }
         //#endregion
 
-        //#region add dropdown to description column
+        //#region add description dropdown
 
         //#region create dropdown
         let descriptionButtonIdWithoutDash = description_buttonId.substring(1); // #btn_description ~~> btn_description 
 
-        th_descriptions.empty();
-        th_descriptions.append(
+        $(th_descriptions_id).empty();
+        $(th_descriptions_id).append(
             `<div class="btn-group">
                 <button id="${descriptionButtonIdWithoutDash}"  type="button"  style="background-color: darkblue;  color: red" class="btn btn-danger">
                     <b>${description_baseButtonName} (${language})</b>
@@ -702,7 +689,7 @@ $(function () {
 
                 <div class="dropdown-menu">
                     <div class="col-xs-1" style="padding:0px">
-                        <ul id="ul_dropdownMenu" style="list-style-type:none">
+                        <ul id="${ul_description_id.substring(1)}" style="list-style-type:none">
                         </ul>
                     </div>
                 </div>
@@ -710,33 +697,38 @@ $(function () {
         );
         //#endregion
 
-        //#region populate languages to "th_descriptions" dropdown
-        let ul_dropdownMenu = $("#ul_dropdownMenu");
-        ul_dropdownMenu.empty();
+        //#region populate languages to description dropdown
+        $(ul_description_id).empty();
 
-        for (let index in allLanguagesInDb) {
-            let languageInDb = allLanguagesInDb[index];
+        await populateElementByAjaxOrLocalAsync(
+            localKeys_allLanguages,
+            "/machine/display/language",
+            (data) => {
+                //#region populate languages
+                for (let index in data) {
+                    let languageInDb = data[index];
 
-            //#region populate dropdown with languages
-            ul_dropdownMenu.append(
-                `<li class="dropdown-item">
-                <a  id="a_descriptionDropdownItem"
-                    href="#"  
-                    style="padding: 3px 75px;  color:black">
-                    ${languageInDb}
-                </a>
-            </li>`
-            )
-            //#endregion
+                    //#region populate dropdown with languages
+                    $(ul_description_id).append(
+                        `<li class="dropdown-item">
+                            <a class="a_description" href="#" style="padding: 3px 75px;  color:black">
+                                ${languageInDb}
+                            </a>
+                        </li>`
+                    );
+                    //#endregion
 
-            //#region update descriptions in session
-            let descriptionByLanguage = columnValues["descriptions"][languageInDb];
+                    //#region update descriptions in session
+                    let descriptionByLanguage = columnValues["descriptions"][languageInDb];
 
-            sessionStorage.setItem(
-                getDescriptionKeyForSession(description_baseKeyForSession, languageInDb),
-                descriptionByLanguage);
-            //#endregion
-        }
+                    sessionStorage.setItem(
+                        getDescriptionKeyForSession(description_baseKeyForSession, languageInDb),
+                        descriptionByLanguage);
+                    //#endregion
+                }
+                //#endregion
+            }
+        )
         //#endregion
 
         //#endregion
@@ -822,7 +814,6 @@ $(function () {
         //#endregion
 
         //#region set data
-
         var data = {};
 
         //#region add columns new value to data except description 
@@ -839,9 +830,7 @@ $(function () {
             //#region set variables
             let oldDescriptionByLanguage = oldColumnValues["descriptions"][descriptionLanguage];
             let newDescriptionByLanguage = sessionStorage.getItem(
-                getDescriptionKeyForSession(
-                    description_baseKeyForSession,
-                    descriptionLanguage));
+                description_baseKeyForSession+ '-'+ descriptionLanguage);
             //#endregion
 
             //#region add description to data
@@ -873,11 +862,17 @@ $(function () {
             success: () => {
                 //#region update row infos in session 
 
-                //#region add descriptions to newColumnValues
+                //#region add descriptions to "newColumnValues"
                 newColumnValues["descriptions"] = {};
 
-                for (var index in allLanguagesInDb) {
-                    let languageInDb = allLanguagesInDb[index];
+                // get all languages
+                let allLanguages = JSON.parse(
+                    localStorage.getItem(localKeys_allLanguages))
+                    [language];
+
+                // add descriptions
+                for (var index in allLanguages) {
+                    let languageInDb = allLanguages[index];
                     let newDescriptionByLanguage = sessionStorage.getItem(
                         getDescriptionKeyForSession(
                             description_baseKeyForSession,
@@ -924,15 +919,68 @@ $(function () {
         resetErrorRow(rowId);
         setDisabledOfOtherUpdateButtonsAsync(rowId, pageSize, updateButtonId, false);
     }
+
+    async function populateHtmlAsync() {
+        await new Promise(resolve => {
+            //#region add table title
+            $(".panel-heading").append(
+                tableTitleByLanguages[language]);
+            //#endregion
+
+            //#region add table menubars
+            let tableMenubarOptions = tableMenubar_optionsByLanguages[language];
+
+            for (let index = 0; index < tableMenubarOptions.length; index += 1) {
+                let tableMenubarOption = tableMenubarOptions[index];
+
+                $("#slct_tableMenubar").append(
+                    `<option value="${index}">
+                        ${tableMenubarOption}
+                     </option>`
+                )
+            }
+            //#endregion
+
+            //#region add apply button name
+            $("#btn_apply").append(
+                tableMenubar_applyButtonName[language])
+            //#endregion
+
+            //#region add column names
+            // add column names
+            for (let column in columnNamesByLanguages[language]) {
+                let columnName = columnNamesByLanguages[language][column];
+
+                table_head.append(
+                    `<th id="th_${column}">${columnName}</th>`
+                );
+            }
+
+            // add blank column to end
+            table_head.append(
+                `<th style="width:30px"></th>`
+            );
+            //#endregion
+
+            //#region add entity quantity message
+            $("#lbl_entityQuantity").append(
+                `<b>0</b> ${entityQuantityMessageByLanguages[language]}`
+            );
+            //#endregion
+
+            resolve();
+        })
+    }
     //#endregion
 
+    populateHtmlAsync();
     populateTable(
         entityType,
         routeForDisplay,
         language,
         pageNumber,
         pageSize,
-        tableBody,
+        table_body,
         propertyNamesToBeShowOnTable,
         updateButtonName,
         nameOfPaginationHeader,

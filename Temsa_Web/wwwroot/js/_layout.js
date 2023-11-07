@@ -9,19 +9,36 @@ $(function() {
     //#endregion
 
     //#region events
-    $("#a_logout").click(() => {
-        // remove token
-        localStorage.removeItem("token");
+    $("#ul_userSettingsMenu").click(() => {
+        let selectedMenu = $(":focus");
 
-        // logout and redirect to login
-        $.ajax({
-            method: "GET",
-            url: "/authentication/logout",
-            success: () => {
-                // open login page
-                location.replace(`/?language=${language}`);
-            }
-        })
+        //#region when logout selected (ajax)
+        if (selectedMenu.attr("id") == "a_logout") {
+            //#region reset local
+            let localKeysToBeRemove = [
+                localKeys_allLanguages,
+                localKeys_allMainCategories,
+                localKeys_allRoles,
+                localKeys_allSubCategories,
+                "token"
+            ]
+
+            for (let index in localKeysToBeRemove) 
+                localStorage.removeItem(
+                    localKeysToBeRemove[index]);
+            //#endregion
+
+            // logout and redirect to login
+            $.ajax({
+                method: "GET",
+                url: "/authentication/logout",
+                success: () => {
+                    // open login page
+                    location.replace(`/`);
+                }
+            })
+        }
+        //#endregion
     })
     $(".sidebar-menu").click(() => {
         //#region control whether click to main menu that have sub menus

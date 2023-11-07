@@ -1,136 +1,20 @@
 ﻿@model IServiceManager;
 
-@{
-    #region get languages
-    var language = ViewBag.Language;
-    var allLanguagesInDb = await Model.MachineService.GetAllLanguagesAsync();
-    #endregion
-
-    #region set element names by languages
-
-    #region set table title
-    var TableTitle = language switch
-    {
-        "TR" => "KAYITLI MAKİNELER",
-        "EN" => "REGISTERED MACHINES"
-    };
-    #endregion
-
-    #region set menubar options
-    var menubarOptions = language switch
-    {
-        "TR" => new string[]
-        {
-            "Seçilenleri Sil"
-        },
-        "EN" => new string[]
-        {
-            "Delete Selected"
-        }
-    };
-    #endregion
-
-    #region set column ids and names
-    var columnIdsAndNamesDict = language switch
-    {
-        "TR" => new Dictionary<string, string>
-        {
-            { "th_mainCategoryName", "Ana Kategori" },
-            { "th_subCategoryName", "Alt Kategori" },
-            { "th_model", "Model" },
-            { "th_brandName", "Marka" },
-            { "th_handStatus", "El Durumu" },
-            { "th_stock", "Stok" },
-            { "th_rented", "Kiralık" },
-            { "th_sold", "Satılık" },
-            { "th_year", "Yıl" },
-            { "th_descriptions", "Açıklama" },
-            { "th_createdAt", "Kayıt Tarihi" },
-            { "th_processes", "İşlemler" },
-        },
-        "EN" => new Dictionary<string, string>
-        {
-            { "th_mainCategory", "Main Category" },
-            { "th_subCategory", "Sub Category" },
-            { "th_model", "Model" },
-            { "th_brandName", "Brand" },
-            { "th_handStatus", "Hand Status" },
-            { "th_stock", "Stock" },
-            { "th_rented", "Rented" },
-            { "th_sold", "Sold" },
-            { "th_year", "Year" },
-            { "th_descriptions", "Description" },
-            { "th_createdAt", "Registration Date" },
-            { "th_processes", "Processes" }
-        },
-    };
-    #endregion
-
-    #region set entity count message
-    var entityQuantityMessage = language switch
-    {
-        "TR" => "makine gösteriliyor",
-        "EN" => "machine displaying"
-    };
-    #endregion
-
-    #region set button names
-
-    #region set menubar options button name
-    var menubarOptionsButton = language switch
-    {
-        "TR" => "Uygula",
-        "EN" => "Apply"
-    };
-    #endregion
-
-    #region set update button name
-    var updateButtonName = language switch
-    {
-        "TR" => "Güncelle",
-        "EN" => "Update",
-    };
-    #endregion
-
-    #region set base description button name
-    var baseDescriptionButtonName = language switch
-    {
-        "TR" => "Açıklama",
-        "EN" => "Description"
-    };
-    #endregion
-
-    #endregion    
-
-    #endregion
-}
 
 <div class="table-agile-info">
     <div class="panel panel-default">
         @*table title*@
         <div class="panel-heading">
-            @TableTitle
         </div>
         @*/table title*@
 
-        @*menubar*@
+        @*table menubar*@
         <div class="row w3-res-tb">
             @*menubar options*@
             <div class="col-sm-5 m-b-xs">
-				<select id="slct_menubar" class="input-sm form-control w-sm inline v-middle">
-                    @{
-                        #region add <options> to menubar
-                        for(var index=0; index < menubarOptions.Length; index++)
-                        {
-                            <option value=@index>
-                                @menubarOptions[index]
-                            </option>    
-                        }
-                        #endregion
-                    }
+				<select id="slct_tableMenubar" class="input-sm form-control w-sm inline v-middle">
 				</select>
 				<button id="btn_apply" class="btn btn-sm btn-default">
-                    @menubarOptionsButton
                 </button>                
             </div>
             <div class="col-sm-4">
@@ -149,7 +33,7 @@
 			</div>*@
 			@*/search bar*@
 		</div>
-		@*/menubar*@
+		@*/table menubar*@
 
         @*/data*@
         <div class="table-responsive">
@@ -161,17 +45,6 @@
 								<input id="box_all" type="checkbox"><i></i>
                             </label>
                         </th>
-                        @{
-                            #region add column names
-                            foreach(var columnId in columnIdsAndNamesDict.Keys)
-                            {
-                                <th id="@columnId">
-                                    <b>@columnIdsAndNamesDict[columnId]</b>
-                                </th> 
-                            }
-                            #endregion
-                        }
-                        <th style="width:30px;"></th>
                     </tr>
                 </thead>
                 <tbody>
@@ -185,7 +58,6 @@
             <div class="row">
                 <div class="col-sm-5 text-left">
                     <small id="lbl_entityQuantity" class="text-muted inline m-t-sm m-b-s">
-						<b>0</b> @entityQuantityMessage
 					</small>
                 </div>
                 <div class="col-sm-7 text-right text-center-xs">                
@@ -200,14 +72,62 @@
 
 <script type="module" src="~/js/machineForDisplay.js"></script>
 <script>
-    let updateButtonName = "@updateButtonName";
-    let entityQuantity_message = "@entityQuantityMessage"
-    //#region add description button name to js
-    let description_baseButtonName = @Html.Raw(Json
-        .Serialize(baseDescriptionButtonName));
-    //#endregion
-    //#region add all languagse in db to js
-    let allLanguagesInDb = @Html.Raw(Json
-        .Serialize(allLanguagesInDb));
-    //#endregion
+    const tableTitleByLanguages = {
+        "TR": "KAYITLI MAKİNELER",
+        "EN": "REGISTERED MACHINES"
+    };
+    const columnNamesByLanguages = {
+        "TR": {
+            "mainCategory": "Ana Kategori",
+            "subCategory": "Alt Kategori",
+            "model": "Model",
+            "brand": "Marka",
+            "handStatus": "El Durumu",
+            "stock": "Stok",
+            "rented": "Kiralık",
+            "sold": "Satılık",
+            "year": "Yıl",
+            "descriptions": "Açıklama",
+            "createdAt": "Kayıt Tarihi",
+            "processes": "İşlemler",
+        },
+        "EN": {
+            "mainCategory": "Maincategory",
+            "subCategory": "Subcategory",
+            "model": "Model",
+            "brand": "Brand",
+            "handStatus": "Hand Status",
+            "stock": "Stock",
+            "rented": "Rent",
+            "sold": "Sold",
+            "year": "Year",
+            "descriptions": "Description",
+            "createdAt": "Registration Date",
+            "processes": "Processes",
+        },    
+    };
+    const entityQuantityMessageByLanguages = {
+        "TR": "makine gösteriliyor",
+        "EN": "machine displaying"
+    };
+    const tableMenubar_optionsByLanguages = {
+        "TR": [
+            "Seçilenleri Sil"
+        ],
+        "EN": [
+            "Delete Selected"
+        ]
+    };
+    const tableMenubar_applyButtonName = {
+        "TR": "Uygula",
+        "EN": "Apply"
+    };
+    const updateButtonNameByLanguages = {
+        "TR": "Güncelle",
+        "EN": "Update"
+    };
+    const description_baseButtonNameByLanguages = {
+        "TR": "Açıklama",
+        "EN": "Description"
+    };
 </script>

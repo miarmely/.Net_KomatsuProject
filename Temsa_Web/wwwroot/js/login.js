@@ -4,6 +4,7 @@ $(function () {
     //#region variables
     const resultLabelId = "#p_resultLabel";
     const errorMessageColor = "red";
+    const inputPlaceHolders = inputPlaceHoldersByLanguages[language];
     //#endregion
 
     //#region events
@@ -27,9 +28,9 @@ $(function () {
             success: (response) => {
                 $("form")[0].reset();  // reset inputs
 
-                //#region populate local storage
+                //#region add token to local
                 let token = response["token"];
-                populateLocalStorage(token);
+                localStorage.setItem("token", token);
                 //#endregion
 
                 //#region call afterLogin action
@@ -51,38 +52,18 @@ $(function () {
     //#endregion
 
     //#region functions
-    function populateLocalStorage(token) {
-        //#region add token
-        localStorage.setItem("token", token);
-        //#endregion
+    async function populateHtmlAsync() {
+        await new Promise(resolve => {
+            $("#h2_mainTitle").append(mainTitleByLanguages[language])
+            $("#inpt_telNo").attr("placeholder", inputPlaceHolders.telNo)
+            $("#inpt_password").attr("placeholder", inputPlaceHolders.password)
+            $("#a_iForgotMyPassword").append(iForgotMyPasswordByLanguages[language])
+            $("#btn_login").attr("value", loginButtonNameByLanguages[language]);
 
-        //#region add roles, main category names, languages and hand status
-        let localStorageKeysAndUrls = {
-            "allRoles": `/user/display/role?language=${language}`,
-            "allMainCategoryNames": `/machine/display/mainCategory?language=${language}`,
-            "allLanguages": `/machine/display/language`,
-            "allHandStatuses": `/machine/display/handStatus?language=${language}`,
-        }
-
-        for (let localStorageKey in localStorageKeysAndUrls) 
-            // send request when data not exists local
-            if (localStorage.getItem(localStorageKey) == null) {
-                let specialUrl = localStorageKeysAndUrls[localStorageKey];
-
-                $.ajax({
-                    method: "GET",
-                    url: baseApiUrl + specialUrl,
-                    headers: {
-                        "Authorization": "Bearer " + token
-                    },
-                    contentType: "application/json",
-                    dataType: "json",
-                    success: (response) => {
-                        localStorage.setItem(localStorageKey, response);
-                    }
-                });
-            }
-        //#endregion
+            resolve();
+        });
     }
     //#endregion
+
+    populateHtmlAsync();
 });

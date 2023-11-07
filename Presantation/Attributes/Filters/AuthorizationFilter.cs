@@ -22,10 +22,43 @@ namespace Presantation.Attributes.Filters
 					.Split('.');
 
 				var projectName = actionDetails[0];
-				#endregion
+                #endregion
 
-				#region when user not sign in (throw)
-				if (!context.HttpContext.User.Identity.IsAuthenticated)
+                #region get language
+                string? language = "TR";
+
+                #region for web
+                if (projectName == "Temsa_Web")
+                {
+                    #region get language on http context
+                    var languageInContext = context.HttpContext
+                        .Items
+                        .FirstOrDefault(i => i.Key.Equals("language"))
+                        .Value
+                        as string;
+
+                    // change default language
+                    if (languageInContext != null)
+                        language = languageInContext;
+                    #endregion
+                }
+                #endregion
+
+                #region for mobile
+                else
+                {
+                    language = context.HttpContext.Request.Query
+                        .FirstOrDefault(q => q.Key.Equals("language"))
+                        .Value
+						.ToString()
+						.ToUpper();
+                }
+                #endregion
+
+                #endregion
+
+                #region when user not sign in (throw)
+                if (!context.HttpContext.User.Identity.IsAuthenticated)
 				{
 					#region for web
 					if (projectName.Equals("Temsa_Web"))
@@ -47,40 +80,11 @@ namespace Presantation.Attributes.Filters
 							401,
 							"AE-U",
 							"Authorization Error - Unauthorized",
-							ConvertErrorCodeToErrorMessageByLanguage("TR", "AE-U"));
+							ConvertErrorCodeToErrorMessageByLanguage(
+								language, 
+								"AE-U"));
 					#endregion
 				}
-				#endregion
-
-				#region get language
-				string? language = "TR";
-
-				#region for web
-				if (projectName == "Temsa_Web")
-				{
-					#region get language on http context
-					var languageInContext = context.HttpContext
-						.Items
-						.FirstOrDefault(i => i.Key.Equals("language"))
-						.Value
-						as string;
-					
-					// change default language
-					if (languageInContext != null)
-						language = languageInContext;
-					#endregion
-				}
-				#endregion
-
-				#region for mobile
-				else
-				{
-					language = context.HttpContext.Request.Query
-						.FirstOrDefault(q => q.Key.Equals("language"))
-						.Value;
-				}
-				#endregion
-
 				#endregion
 
 				#region control expires (throw)
