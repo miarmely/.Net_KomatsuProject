@@ -35,8 +35,9 @@
 		<link href="~/css/font-awesome.css" rel="stylesheet">
 		<!-- //font-awesome icons -->
 		<script src="~/js/jquery2.0.3.min.js"></script>
-		<script type="module" src="~/js/miarTools.js"></script>
 		<script type="module" src="~/js/_layout.js"></script>
+		<script type="module" src="~/js/miarTools.js"></script>
+		<script type="module" src="~/js/miarHeader.js"></script>
 	</head>
 	<body>
 		<section id="container">
@@ -61,17 +62,13 @@
 						<!-- search bar end -->
 						<!-- language dropdown -->
 						<li class="dropdown">
-							<!-- flag picture and language -->
 							<a data-toggle="dropdown" class="dropdown-toggle" href="#">
-								<img id="img_selectedFlag">
-								<span id="spn_selectedLanguage" class="username"></span>
+								<img id="img_displayingFlag">
+								<span id="spn_displayingLanguage" class="username"></span>
 								<b class="caret"></b>
 							</a>
-							<!-- //flag picture and language -->
-							<!-- language dropdown -->
 							<ul id="ul_languages" class="dropdown-menu extended logout">
 							</ul>
-							<!-- //language dropdown -->
 						</li>
 						<!-- language dropdown -->
 						<!-- user settings dropdown start -->
@@ -315,6 +312,8 @@
 			const localKeys_allMainCategories = "allMainCategories";
 			const localKeys_allSubCategories = "allSubCategories";
 			const localKeys_allLanguages = "allLanguages";
+			const img_displayingFlag_id = "img_displayingFlag";
+			const spn_displayingLanguage_id = "spn_displayingLanguage";
 		</script>
 	</body>
 </html>

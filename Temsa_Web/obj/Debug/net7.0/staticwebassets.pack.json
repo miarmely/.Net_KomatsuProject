@@ -193,6 +193,10 @@
       "PackagePath": "staticwebassets\\js\\machineForDisplay.js"
     },
     {
+      "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\Temsa\\Temsa_Web\\wwwroot\\js\\miarHeader.js",
+      "PackagePath": "staticwebassets\\js\\miarHeader.js"
+    },
+    {
       "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\Temsa\\Temsa_Web\\wwwroot\\js\\miarTools.js",
       "PackagePath": "staticwebassets\\js\\miarTools.js"
     },

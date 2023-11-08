@@ -327,7 +327,7 @@ export async function populateElementByAjaxOrLocalAsync(
     dataNameInLocal,
     apiUrl,
     func_populate,
-    func_afterSuccess = null) {
+    func_afterPopulated = null) {
     //#region get data from local
     let dataInLocal = JSON.parse(
         localStorage.getItem(dataNameInLocal));
@@ -365,8 +365,8 @@ export async function populateElementByAjaxOrLocalAsync(
                 //#endregion
 
                 //#region call function after populate process
-                if (func_afterSuccess != null)
-                    func_afterSuccess();
+                if (func_afterPopulated != null)
+                    func_afterPopulated();
                 //#endregion
             }
         });
@@ -377,8 +377,8 @@ export async function populateElementByAjaxOrLocalAsync(
         func_populate(dataInLocal[language]);
 
         //#region call function after populate process
-        if (func_afterSuccess != null)
-            func_afterSuccess();
+        if (func_afterPopulated != null)
+            func_afterPopulated();
         //#endregion
     }
     //#endregion

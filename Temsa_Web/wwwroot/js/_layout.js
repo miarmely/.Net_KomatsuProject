@@ -1,4 +1,5 @@
 ﻿import { populateElementByAjaxOrLocalAsync } from "./miarTools.js"
+import { updateDefaultFlagAndLanguage, populateLanguageDropdown, clicked_languageDropdown } from "./miarHeader.js";
 
 $(function() {
     //#region variables
@@ -6,6 +7,7 @@ $(function() {
     const ul_languages = $("#ul_languages");
     const sidebar_mainMenus = sidebar_mainMenus_byLanguages[language];
     const sidebar_allSubMenus = sidebar_subMenus_byLanguages[language];
+    const ul_languages_id = "ul_languages";
     //#endregion
 
     //#region events
@@ -63,56 +65,13 @@ $(function() {
             //#endregion
         }
         //#endregion     
-    });
-    ul_languages.click(() => {
-        //#region get selected language
-        let selectedElement = $(":focus");
-        let selectedLanguage = selectedElement.prop("innerText");
-        //#endregion
-
-        //#region update language in local
-        if (selectedLanguage != undefined) {
-            language = selectedLanguage.trim() // update in _layout
-            localStorage.setItem("language", language)  // update in local
-        }
-        //#endregion
-
-        //#region update default flag and language and refresh page
-        updateDefaultFlagAndLanguage();
-        location.reload();
-        //#endregion
     })
+    ul_languages.click(() =>
+        clicked_languageDropdown($(":focus"))
+    )
     //#endregion
 
     //#region function
-    function updateDefaultFlagAndLanguage() {
-        //#region add flag
-        $("#img_selectedFlag").attr("alt", language);
-        $("#img_selectedFlag").attr("src", `/images/${language}.png`);
-        //#endregion
-
-        //#region add language
-        $("#spn_selectedLanguage").text(language);
-        //#endregion
-    }
-
-    function populateLanguageDropdown(languagesInArray) {
-        //#region add languages to dropdown
-        for (let index in languagesInArray) {
-            let language = languagesInArray[index];
-
-            $("#ul_languages").append(
-                `<li>
-                    <a href="#">
-                        <img alt="${language}" src="/images/${language}.png" />
-                        <b>${language}</b>
-                    </a>
-                </li>`
-            );
-        }
-        //#endregion
-    }
-
     async function populateUserSettingsMenuAsync() {
         // #region add menus of user settings
         let userSettingsMenu = userSettingsMenuByLanguages[language];
@@ -123,11 +82,11 @@ $(function() {
 
             $("#ul_userSettingsMenu").append(
                 `<li>
-				<a id="a_${menuName}" href="#">
-					<i class="${iconClass}"></i>
-					${label}
-				</a>
-			</li>`
+				    <a id="a_${menuName}" href="#">
+					    <i class="${iconClass}"></i>
+					    ${label}
+				    </a>
+			    </li>`
             );
         }
         //#endregion
@@ -140,14 +99,20 @@ $(function() {
             searchBarPlaceHolderByLanguages[language]);
         //#endregion
 
-        updateDefaultFlagAndLanguage();
+        //#region update displaying flag and language
+        await updateDefaultFlagAndLanguage(
+            img_displayingFlag_id,
+            spn_displayingLanguage_id);
+        //#endregion
 
         //#region populate language dropdown
         await populateElementByAjaxOrLocalAsync(
             localKeys_allLanguages,
             "/machine/display/language",
             (data) => {
-                populateLanguageDropdown(data);
+                populateLanguageDropdown(
+                    ul_languages_id,
+                    data);
             }
         );
         //#endregion       

@@ -3,10 +3,22 @@
 }
 
 <div class="log-w3">
+	<div class="top-nav clearfix">
+		<ul class="nav pull-right top-menu">
+			<li class="dropdown">
+				<a data-toggle="dropdown" class="dropdown-toggle" href="#">
+					<img id="img_displayingFlag" src="">
+					<span id="spn_displayingLanguage" class="username"></span>
+					<b class="caret"></b>
+				</a>
+				<ul id="ul_languages" class="dropdown-menu extended logout">
+				</ul>
+			</li>
+		</ul>
+	</div>
 	<div class="w3layouts-main">
 		<h2 id="h2_mainTitle">
 		</h2>
-
 		<form>
 			<input id="inpt_telNo" type="text" class="ggg" placeholder="" required>
 			<input id="inpt_password" type="password" class="ggg" placeholder="" required>
@@ -18,7 +30,6 @@
 			<div class="clearfix"></div>
 			<input type="submit" value="" id="btn_login">
 		</form>
-
 		<p id="p_resultLabel"></p>
 	</div>
 </div>
@@ -50,7 +61,7 @@
 	}
 	const iForgotMyPasswordByLanguages = {
 		"TR": "Şifremi Unuttum?",
-		"EN": "I Forgot My Password?"
+		"EN": "Forgot Password?"
 	}
 	const loginButtonNameByLanguages = {
 		"TR": "GİRİŞ",
