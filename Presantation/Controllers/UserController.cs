@@ -17,14 +17,30 @@ namespace Presantation.Controllers
         public UserController(IServiceManager services) =>
             _manager = services;
        
-        [HttpPost("login")]
+        [HttpPost("login/mobil")]
         [ValidationUserFormat]
-        public async Task<IActionResult> LoginAsync(
+        public async Task<IActionResult> LoginForMobileAsync(
             [FromQuery(Name = "language")] string language,
             [FromBody] UserDtoForLogin userDto)
         {
             var token = await _manager.UserService
-                .LoginAsync(language, userDto);
+                .LoginForMobileAsync(language, userDto);
+
+            return Ok(new
+            {
+                Token = token
+            });
+        }
+
+
+        [HttpPost("login/web")]
+        [ValidationUserFormat]
+        public async Task<IActionResult> LoginForWebAsync(
+            [FromQuery(Name = "language")] string language,
+            [FromBody] UserDtoForLogin userDto)
+        {
+            var token = await _manager.UserService
+                .LoginForWebAsync(language, userDto);
 
             return Ok(new
             {
@@ -87,7 +103,7 @@ namespace Presantation.Controllers
 
 
         [HttpPut("update")]
-        [Authorization("Admin,Editor,Yönetici,Editör")]
+        [Authorization("Admin,Yönetici")]
         [ValidationUserFormat]
         [ValidationNullArguments]
         public async Task<IActionResult> UpdateUserByTelNoAsync(

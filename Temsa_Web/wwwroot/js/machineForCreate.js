@@ -200,7 +200,7 @@ $(function () {
                 )
                 //#endregion
 
-                //#region !!!!!!!! disable mainCategoryNames !!!!!!!!!!!!!!!
+                //#region !!!!!!!!!!!!!!! disable mainCategoryNames !!!!!!!!!!!!!!! (TEMPORARY)
                 for (let index = 2; index <= data.length; index += 1) {
                     let option = $("#" + slct_mainCategory_id)
                         .children(`option:nth-child(${index})`)

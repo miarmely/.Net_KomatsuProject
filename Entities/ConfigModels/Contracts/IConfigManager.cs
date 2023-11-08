@@ -7,5 +7,6 @@
 		MailSettingsConfig MailSettings { get; }
 		FileServiceSettingsConfig FileServiceSettings { get; }
 		DbSettingsConfig DbSettings { get; }
+		LoginSettingsConfig LoginSettings { get; }
 	}
 }

@@ -6,7 +6,8 @@ namespace Services.Contracts
 {
     public interface IUserService
 	{
-        Task<string> LoginAsync(string language, UserDtoForLogin userDto);
+        Task<string> LoginForMobileAsync(string language, UserDtoForLogin userDto);
+        Task<string> LoginForWebAsync(string language, UserDtoForLogin userDto);
         Task RegisterAsync(string language, UserDtoForRegister userDto);
         Task CreateUserAsync(string language, UserDtoForCreate userDto);
         Task DeleteUsersByTelNoListAsync(string language, UserDtoForDelete userDto);

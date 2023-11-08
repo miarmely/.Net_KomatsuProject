@@ -288,6 +288,16 @@ $(function () {
                         mainCategoryNameKeyOnSession,
                         JSON.stringify(response));
                     //#endregion
+
+                    //#region !!!!!!!!!!!!!!! disable mainCategoryNames !!!!!!!!!!!!!!! (TEMPORARY)
+                    for (let index = 2; index <= response.length; index += 1) {
+                        let option = $("#td_mainCategoryName select")
+                            .children(`option:nth-child(${index})`)
+
+                        option.attr("disabled", "")
+                        option.attr("style", "color:darkgrey")
+                    }
+                    //#endregion
                 }
             });
         //#endregion
@@ -299,7 +309,17 @@ $(function () {
 
             for (let index in mainCategoryNames) {
                 slct_mainCategoryName.append(
-                    `<option> ${mainCategoryNames[index]} </option>`);
+                    `<option>${mainCategoryNames[index]}</option>`);
+            }
+            //#endregion
+
+            //#region !!!!!!!!!!!!!!! disable mainCategoryNames !!!!!!!!!!!!!!! (TEMPORARY)
+            for (let index = 2; index <= mainCategoryNames.length; index += 1) {
+                let option = $("#td_mainCategoryName select")
+                    .children(`option:nth-child(${index})`)
+
+                option.attr("disabled", "")
+                option.attr("style", "color:darkgrey")
             }
             //#endregion
         }
@@ -308,8 +328,6 @@ $(function () {
         //#region set default value of <select>
         slct_mainCategoryName.val(
             columnValues["mainCategoryName"]);
-        //#endregion
-
         //#endregion
     }
 
@@ -640,7 +658,7 @@ $(function () {
         }
         //#endregion
 
-        //#endregion$(ul_description_id)
+        //#endregion
 
         setDisabledOfOtherUpdateButtonsAsync(rowId, pageSize, updateButtonId, true);
 
@@ -830,7 +848,7 @@ $(function () {
             //#region set variables
             let oldDescriptionByLanguage = oldColumnValues["descriptions"][descriptionLanguage];
             let newDescriptionByLanguage = sessionStorage.getItem(
-                description_baseKeyForSession+ '-'+ descriptionLanguage);
+                description_baseKeyForSession + '-' + descriptionLanguage);
             //#endregion
 
             //#region add description to data
@@ -868,7 +886,7 @@ $(function () {
                 // get all languages
                 let allLanguages = JSON.parse(
                     localStorage.getItem(localKeys_allLanguages))
-                    [language];
+                [language];
 
                 // add descriptions
                 for (var index in allLanguages) {

@@ -6,6 +6,7 @@ using Entities.Exceptions;
 using Entities.QueryParameters;
 using Entities.ViewModels;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Server.IIS.Core;
 using Microsoft.IdentityModel.Tokens;
 using Repositories;
 using Repositories.Contracts;
@@ -25,7 +26,7 @@ namespace Services.Concretes
         private readonly IRepositoryManager _manager;
         private readonly IConfigManager _config;
         private readonly IMapper _mapper;
-        
+
         public UserService(IRepositoryManager manager,
             IConfigManager config,
             IMapper mapper)
@@ -35,32 +36,48 @@ namespace Services.Concretes
             _mapper = mapper;
         }
 
-        public async Task<string> LoginAsync(string language, UserDtoForLogin userDto)
+        public async Task<string> LoginForMobileAsync(string language, UserDtoForLogin userDto)
         {
-            #region set paramaters
-            var parameters = new DynamicParameters();
-            var hashedPassword = await ComputeMd5Async(userDto.Password);
+            var userView = await GetUserInfosAsync(language, userDto);
 
-            parameters.Add("Language", language, DbType.String);
-            parameters.Add("TelNo", userDto.TelNo, DbType.String);
-            parameters.Add("Password", hashedPassword, DbType.String);
-            parameters.Add("StatusCode", 0, DbType.Int16, ParameterDirection.Output);
-            parameters.Add("ErrorCode", "", DbType.String, ParameterDirection.Output);
-            parameters.Add("ErrorMessage", "", DbType.String, ParameterDirection.Output);
-            parameters.Add("ErrorDescription", "", DbType.String, ParameterDirection.Output);
+            return await GenerateTokenForUserAsync(userView);
+        }
+
+        public async Task<string> LoginForWebAsync(string language, UserDtoForLogin userDto)
+        {
+            var userView = await GetUserInfosAsync(language, userDto);
+
+            #region control role (throw)
+
+            #region when language TR and user role invalid (throw)
+            if (language.Equals("TR")
+                && !userView.RoleNames.Any(r => _config.LoginSettings
+                    .RolesCanBeLoginInTR
+                    .Contains(r)))
+            {
+                throw new ErrorWithCodeException(
+                    403,
+                    "AE-F",
+                    "Authorization Error - Forbidden",
+                    "yetkiniz yok");
+            }
             #endregion
 
-            #region login (throw)
-            var userView = await _manager.UserRepository
-                .LoginAsync(parameters);
-
-            // when telNo or password is wrong (throw)
-            if (userView == null)
+            #region when language EN and user role invalid (throw)
+            else if (language.Equals("EN")
+                && !userView.RoleNames.Any(r => _config.LoginSettings
+                    .RolesCanBeLoginInEN
+                    .Contains(r)))
+            {
                 throw new ErrorWithCodeException(
-                    parameters.Get<Int16>("StatusCode"),
-                    parameters.Get<string>("ErrorCode"),
-                    parameters.Get<string>("ErrorDescription"),
-                    parameters.Get<string>("ErrorMessage"));
+                    403,
+                    "AE-F",
+                    "Authorization Error - Forbidden",
+                    "you don't have permission");
+            }
+
+            #endregion
+
             #endregion
 
             return await GenerateTokenForUserAsync(userView);
@@ -104,7 +121,7 @@ namespace Services.Concretes
             #region create user (throw)
             var errorDto = await _manager.UserRepository
                 .CreateUserAsync(parameters);
-            
+
             // when any error occured
             if (errorDto != null)
                 throw new ErrorWithCodeException(errorDto);
@@ -196,7 +213,7 @@ namespace Services.Concretes
             #region update user (throw)
             var errorDto = await _manager.UserRepository
                 .UpdateUserByTelNoAsync(parameters);
-            
+
             // when any error occured
             if (errorDto != null)
                 throw new ErrorWithCodeException(errorDto);
@@ -252,7 +269,8 @@ namespace Services.Concretes
             });
 
         private async Task<string> GenerateTokenForUserAsync(UserView userView) =>
-            await Task.Run(() => {
+            await Task.Run(() =>
+            {
                 #region set claims
                 var claims = new Collection<Claim>
                 {
@@ -263,7 +281,7 @@ namespace Services.Concretes
                 #region add roles of user to claims
                 foreach (var roleName in userView.RoleNames)
                     claims.Add(new Claim(
-                        ClaimTypes.Role, 
+                        ClaimTypes.Role,
                         roleName));
                 #endregion
 
@@ -290,7 +308,39 @@ namespace Services.Concretes
                 return new JwtSecurityTokenHandler()
                     .WriteToken(token);
             });
-            
+
+        private async Task<UserView> GetUserInfosAsync(string language, UserDtoForLogin userDto)
+        {
+            #region set paramaters
+            var parameters = new DynamicParameters();
+            var hashedPassword = await ComputeMd5Async(userDto.Password);
+
+            parameters.Add("Language", language, DbType.String);
+            parameters.Add("TelNo", userDto.TelNo, DbType.String);
+            parameters.Add("Password", hashedPassword, DbType.String);
+            parameters.Add("StatusCode", 0, DbType.Int16, ParameterDirection.Output);
+            parameters.Add("ErrorCode", "", DbType.String, ParameterDirection.Output);
+            parameters.Add("ErrorMessage", "", DbType.String, ParameterDirection.Output);
+            parameters.Add("ErrorDescription", "", DbType.String, ParameterDirection.Output);
+            #endregion
+
+            #region get user view
+            var userView = await _manager.UserRepository
+                .LoginAsync(parameters);
+            #endregion
+
+            #region when telNo or password is wrong (throw)
+            if (userView == null)
+                throw new ErrorWithCodeException(
+                    parameters.Get<Int16>("StatusCode"),
+                    parameters.Get<string>("ErrorCode"),
+                    parameters.Get<string>("ErrorDescription"),
+                    parameters.Get<string>("ErrorMessage"));
+            #endregion
+
+            return userView;
+        }
+
         #endregion
     }
 }

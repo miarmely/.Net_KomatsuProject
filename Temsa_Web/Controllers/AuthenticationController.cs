@@ -26,21 +26,19 @@ namespace Temsa_Web.Controllers
             return View("Login");
         }
 			
-		
 		public async Task<IActionResult> AfterLogin(
-			[FromQuery(Name = "token")] string token)
+            [FromQuery(Name = "token")] string token)
 		{
 			#region when token invalid
 			if (await IsTokenInvalidAsync(token))
 				return RedirectToAction(
 					"Login",
-					"Authentication",
-					new { ViewBag.Language });
-			#endregion
+					"Authentication");
+            #endregion
 
-			#region get claimsIdentity
-			var jwtTokenClaims = new JwtSecurityToken(token)
-				  .Claims;
+            #region set claimsIdentity
+            var jwtTokenClaims = new JwtSecurityToken(token)
+                  .Claims;
 
             var claimsIdentity = new ClaimsIdentity(
 				jwtTokenClaims,

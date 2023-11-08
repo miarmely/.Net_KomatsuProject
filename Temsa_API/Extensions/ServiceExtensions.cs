@@ -51,7 +51,10 @@ namespace Temsa_Api.Extensions
 
 			services.Configure<DbSettingsConfig>(configuration
 				.GetSection(nameof(DbSettingsConfig)));
-		}
+
+            services.Configure<LoginSettingsConfig>(configuration
+				.GetSection(nameof(LoginSettingsConfig)));
+        }
 				
 		public static void ConfigureJwt(
 			this IServiceCollection services, 

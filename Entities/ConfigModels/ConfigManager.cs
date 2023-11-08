@@ -8,28 +8,32 @@ namespace Entities.ConfigModels
 		private readonly Lazy<UserSettingsConfig> _userSettings;
 		private readonly Lazy<JwtSettingsConfig> _jwtSettings;
 		private readonly Lazy<MailSettingsConfig> _mailSettings;
-		private readonly Lazy<FileServiceSettingsConfig> _fileServiceSettings;
 		private readonly Lazy<DbSettingsConfig> _dbSettings;
+		private readonly Lazy<LoginSettingsConfig> _loginSettings;
+        private readonly Lazy<FileServiceSettingsConfig> _fileServiceSettings;
 
-		public UserSettingsConfig UserSettings => _userSettings.Value;
+        public UserSettingsConfig UserSettings => _userSettings.Value;
 		public JwtSettingsConfig JwtSettings => _jwtSettings.Value;
 		public MailSettingsConfig MailSettings => _mailSettings.Value;
-		public FileServiceSettingsConfig FileServiceSettings => _fileServiceSettings.Value;
 		public DbSettingsConfig DbSettings => _dbSettings.Value;
+		public LoginSettingsConfig LoginSettings => _loginSettings.Value;
+        public FileServiceSettingsConfig FileServiceSettings => _fileServiceSettings.Value;
 
         public ConfigManager(IOptions<UserSettingsConfig> userSettings,
 			IOptions<JwtSettingsConfig> jwtSettings,
 			IOptions<MailSettingsConfig> mailSettings,
 			IOptions<FileServiceSettingsConfig> fileServiceSettings,
-			IOptions<DbSettingsConfig> dbSettings)
+			IOptions<DbSettingsConfig> dbSettings,
+			IOptions<LoginSettingsConfig> loginSettings)
         {
 			_userSettings = new Lazy<UserSettingsConfig>(() => userSettings.Value);
 			_jwtSettings = new Lazy<JwtSettingsConfig>(() => jwtSettings.Value);
 			_mailSettings = new Lazy<MailSettingsConfig>(() => mailSettings.Value);
             _dbSettings = new Lazy<DbSettingsConfig>(() => dbSettings.Value);
+			_loginSettings = new Lazy<LoginSettingsConfig>(() => loginSettings.Value);
             _fileServiceSettings = new Lazy<FileServiceSettingsConfig>(() =>
 				fileServiceSettings.Value);
-		}
+        }
 
 	}
 }

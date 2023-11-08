@@ -19,7 +19,7 @@ $(function () {
 
         $.ajax({
             method: "POST",
-            url: baseApiUrl + `/user/login?language=${language}`,
+            url: baseApiUrl + `/user/login/web?language=${language}`,
             contentType: "application/json",
             data: JSON.stringify({
                 "TelNo": $("#inpt_telNo").val().trim(),
