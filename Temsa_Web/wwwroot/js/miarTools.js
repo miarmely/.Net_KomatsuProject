@@ -1,19 +1,18 @@
 ﻿//#region variables
 export let description_currentColor;
 export let description_infoInSession;
-export let description_language;
+export let description_language = language;
 export let paginationInfosInJson;
 export let entityCountOnTable;
 //#endregion
 
 //#region function
-export function setDescriptionLanguage(language) {
-    description_language = language;
+export function setDescriptionLanguage(newLanguage) {
+    description_language = newLanguage;
 }
 
-export function changeDescriptionButtonColor(descriptionButtonId, color) {
-    $(descriptionButtonId).css("color", color);
-    description_currentColor = color;
+export function getDescriptionKeyForSession(descriptionBaseKeyForSession) {
+    return descriptionBaseKeyForSession + '-' + description_language;
 }
 
 export function getDateTimeInString(dateTime) {
@@ -64,6 +63,15 @@ export function getDateTimeInString(dateTime) {
 export function getHeaderFromLocalInJson(headerName) {
     return JSON.parse(
         localStorage.getItem(headerName));
+}
+
+export function getTokenInSession() {
+    return sessionStorage.getItem("token");
+}
+
+export function changeDescriptionButtonColor(descriptionButtonId, color) {
+    $(descriptionButtonId).css("color", color);
+    description_currentColor = color;
 }
 
 export function updateResultLabel(
@@ -185,18 +193,6 @@ export function changed_descriptionInput(
     //#endregion
 }
 
-export function getDescriptionKeyForSession(descriptionBaseKeyForSession) {
-    //#region when any language not selected in description dropdown
-    if (description_language == null)
-        return descriptionBaseKeyForSession + '-' + language;  // page language
-    //#endregion
-
-    //#region when any language selected in description dropdown
-    else
-        return descriptionBaseKeyForSession + '-' + description_language;
-    //#endregion
-}
-
 export function resetErrorRow(rowId) {
     //#region hide and reset <td> of error
     var td_error = $(`#${rowId}_error`)
@@ -205,10 +201,6 @@ export function resetErrorRow(rowId) {
     td_error.attr("hidden", "");
     td_error.empty();
     //#endregion
-}
-
-export function getTokenInSession() {
-    return sessionStorage.getItem("token");
 }
 
 export async function populateTable(
