@@ -101,6 +101,10 @@
       "PackagePath": "staticwebassets\\images\\next.png"
     },
     {
+      "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\4__Temsa\\Temsa_Web\\wwwroot\\images\\noImage.png",
+      "PackagePath": "staticwebassets\\images\\noImage.png"
+    },
+    {
       "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\4__Temsa\\Temsa_Web\\wwwroot\\images\\pass.png",
       "PackagePath": "staticwebassets\\images\\pass.png"
     },
