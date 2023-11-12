@@ -6,21 +6,39 @@
     //#endregion
 
     //#region events
-    $("#inpt_chooseFile").change(() => {
+    $("#inpt_chooseFile").change((event) => {
         //#region get selected file
-        let selectedFileInfos = $("#inpt_chooseFile")[0];
-        let selectedFile = selectedFileInfos.files[0];
+        let selectedFile = event.target.files[0];
         //#endregion
 
+        //#region when selected file not image
+        if (!selectedFile.type.startsWith("image/")) {
+            return;
+        }
+        //#endregion
+            
         //#region display selected file
         const fileReader = new FileReader();
-
+        
         fileReader.readAsDataURL(selectedFile);
         fileReader.onload = function (event) {
-            //#region add src link to img
-            let dataUrlForSrc = event.target.result;
-            $("#img_sliders").attr("src", dataUrlForSrc);
+            //#region add src to <img>
+            let dataUrl = event.target.result;
+            $("#img_sliders").attr("src", dataUrl);
             //#endregion
+
+            $.ajax({
+                method: "POST",
+                url: baseApiUrl + "/file/upload",
+                data: JSON.stringify({
+                    "fileName": `${selectedFile.name}`,
+                    "contentInBase64Str": dataUrl.replace("data:image/jpeg;base64,", "")
+                }),
+                contentType: "application/json",
+                success: () => {
+                    alert("success");
+                }
+            })
         }
         //#endregion
     })
@@ -55,7 +73,7 @@
     async function setSliderMaxSizesAsync() {
         //#region set max width and height of slider
         const divWidth = $(".panel-body")[0].clientWidth - 40;  // 40: i choosed as trying
-        const divHeight = 500;
+        const divHeight = $("#container")[0].clientHeight / 2;
 
         img_sliders.css("max-width", divWidth);
         img_sliders.css("max-height", divHeight);
