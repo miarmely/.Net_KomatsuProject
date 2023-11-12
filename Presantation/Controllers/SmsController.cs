@@ -30,10 +30,10 @@ namespace Presantation.Controllers
                     <SmsInsert_1_N xmlns=""http://83.66.137.24/PgApiWs"">
                       <Username>Marubeni135</Username>
                       <Password>Marubeni246!</Password>
-                      <SendDate>{DateTime.UtcNow}</SendDate>
-                      <ExpireDate>{DateTime.UtcNow.AddMinutes(5)}</ExpireDate>
+                      <SendDate>null</SendDate>
+                      <ExpireDate>null</ExpireDate>
                       <Recepients>
-                        <string>5528093408</string>
+                        <string>+905528093408</string>
                       </Recepients>
                       <Message>Deneme</Message>
                     </SmsInsert_1_N>
@@ -56,6 +56,5 @@ namespace Presantation.Controllers
 
             return Ok();
         }
-
     }
 }
