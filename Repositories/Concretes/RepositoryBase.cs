@@ -34,7 +34,7 @@ namespace Repositories.Concretes
 
         public async Task<IEnumerable<T>> QueryAsync<T>(
             string procedureName, 
-            DynamicParameters parameters)
+            DynamicParameters? parameters)
         {
             #region send query
             using (var connection = _context.CreateSqlConnection())
@@ -78,7 +78,7 @@ namespace Repositories.Concretes
 
         private CommandDefinition GetCommandDefinitionForProcedures(
             string commandText, 
-            DynamicParameters parameters) =>
+            DynamicParameters? parameters) =>
                 new CommandDefinition(
                     commandText,
                     parameters,

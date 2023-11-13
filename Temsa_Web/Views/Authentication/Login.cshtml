@@ -34,16 +34,14 @@
 	</div>
 </div>
 
-<script type="module" src="~/js/login.js"></script>
+<script type="module" src="~/js/miar_login.js"></script>
 <script>
 	//#region language
 	let language = localStorage.getItem("language");
-	
-	// region add default language to local if not exists
-	if(language == null){
-		language = "TR";
-		localStorage.getItem("language", language);
-	}
+	 
+	// add device language when not exists in local
+	if(language == null)
+		language = navigator.language == "en-US" ? "EN" : "TR"
 	//#endregion
 	const mainTitleByLanguages = {
 		"TR": "GİRİŞ YAP",

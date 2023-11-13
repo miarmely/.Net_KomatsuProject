@@ -1,6 +1,4 @@
-﻿using Entities.DtoModels.EnumModels;
-
-namespace Entities.DtoModels.MachineDtos
+﻿namespace Entities.DtoModels.MachineDtos
 {
     public record MachineDtoForDisplay
     {

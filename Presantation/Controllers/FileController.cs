@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Presantation.Attributes;
 using Services.Contracts;
 
+
 namespace Presantation.Controllers
 {
     [Route("api/services/[Controller]")]
@@ -15,15 +16,38 @@ namespace Presantation.Controllers
             _manager = manager;
 
 
-        [HttpPost("upload")]
+        [HttpPost("slider/upload")]
         [Authorization("Admin,Editor,Yönetici,Editör")]
         public async Task<IActionResult> UploadSliderImage(
-            [FromBody] ImageFileDto imageFileDto)
+            [FromBody] SliderDto sliderDto)
         {
             await _manager.FileService
-                .UploadSliderImageAsync(imageFileDto);
+                .UploadSlidersAsync(sliderDto);
 
             return NoContent();
+        }
+
+
+        [HttpDelete("slider/delete")]
+        [Authorization("Admin,Editor,Yönetici,Editör")]
+        public async Task<IActionResult> DeleteAllSliders(
+            [FromQuery(Name = "path")] string pathAfterWwwroot)
+        {
+            await _manager.FileService
+                .DeleteAllSlidersAsync(pathAfterWwwroot);
+
+            return NoContent();
+        }
+
+
+        [HttpGet("slider/display")]
+        [Authorization("Admin,Editor,User,Yönetici,Editör,Kullanıcı")]
+        public async Task <IActionResult> GetAllSliders()
+        {
+            var sliderViews = await _manager.FileService
+                .GetAllSlidersAsync();
+
+            return Ok(sliderViews);
         }
     }
 }

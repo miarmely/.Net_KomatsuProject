@@ -1,63 +1,96 @@
-﻿using Entities.ConfigModels.Contracts;
+﻿using Dapper;
 using Entities.DtoModels;
+using Entities.ViewModels;
 using Org.BouncyCastle.Utilities.Encoders;
+using Repositories.Contracts;
 using Services.Contracts;
+using System.Data;
+
 
 namespace Services.Concretes
 {
 	public class FileService : IFileService
 	{
-		private readonly IConfigManager _config;
+        private readonly IRepositoryManager _manager;
 
-		public FileService(IConfigManager config) =>
-			_config = config;
-		
-		public async Task<byte[]> ConvertFileToByteAsync(string filePath)
+        public FileService(IRepositoryManager manager) =>
+            _manager = manager;
+
+        public async Task<IEnumerable<SliderView>> GetAllSlidersAsync() =>
+            await _manager.FileRepository
+                .GetAllSlidersAsync();
+        
+        public async Task UploadSlidersAsync(SliderDto sliderDto)
 		{
-			int MaxChunkSizeInBytes = _config.FileServiceSettings.MaxChunkSizeInBytes;
-			byte[] fileByteArray;
-			
-			#region convert file to byteArary
-			using (var stream = new FileStream(filePath, FileMode.Open, FileAccess.Read))
-			{
-				var chunkedFileByteArray = new byte[MaxChunkSizeInBytes];
-				int totalBytesRead = 0;
-				int bytesRead;
-
-				#region set fileByteArray size
-				while ((bytesRead = await stream
-					.ReadAsync(chunkedFileByteArray, 0, MaxChunkSizeInBytes)) != 0)
-					totalBytesRead += bytesRead;
-				#endregion
-
-				#region write bytes to FileByteArray
-				stream.Seek(0, SeekOrigin.Begin);  // set cursor to begin.
-
-				fileByteArray = new byte[totalBytesRead];
-				await stream.ReadAsync(fileByteArray, 0, totalBytesRead);
-				#endregion
-			}
-			#endregion
-
-			return fileByteArray;
-		}
-
-        public async Task UploadSliderImageAsync(ImageFileDto imageFileDto)
-		{
-            #region set path of slider folder
-            // remove "Temsa_Api" path and add "Temsa_Web/..." path
-            var filePath = Directory
+            #region set paths
+            var baseFilePath = Directory
                 .GetCurrentDirectory()
                 .Replace(
 					"Temsa_Api",
-                    $"Temsa_Web\\wwwroot\\images\\sliders\\{imageFileDto.FileName}");
+                    $"Temsa_Web\\wwwroot\\{sliderDto.PathAfterWwwroot}\\");
+
+            var fullFilePath = baseFilePath 
+                + "\\" 
+                + sliderDto.FileName;
+
+            var filePathForDb = sliderDto.PathAfterWwwroot 
+                + "\\" 
+                + sliderDto.FileName;
             #endregion
 
-            #region upload images to specified path
-            var contentInBytes = Base64.Decode(imageFileDto.ContentInBase64Str);
+            #region upload slider to folder
 
-            await File.WriteAllBytesAsync(filePath, contentInBytes);
+            #region decode file in base64
+            var contentInBytes = Base64
+                .Decode(sliderDto.FileContentInBase64Str);
+            #endregion
+
+            #region create file
+            await File.WriteAllBytesAsync(
+                fullFilePath, 
+				contentInBytes);
+            #endregion
+
+            #endregion
+
+            #region upload slider to db
+            // set parameters
+            var paramaters = new DynamicParameters();
+            paramaters.Add("SliderPath", filePathForDb, DbType.String);
+
+            // upload
+            await _manager.FileRepository
+                .UploadSliderAsync(paramaters);
             #endregion
         }
+
+        public async Task DeleteAllSlidersAsync(string pathAfterWwwroot)
+        {
+            #region set base file path
+            var baseFilePath = Directory
+                .GetCurrentDirectory()
+                .Replace(
+                    "Temsa_Api",
+                    $"Temsa_Web\\wwwroot\\{pathAfterWwwroot}\\");
+            #endregion
+
+            await DeleteAllFilesOnDirectoryAsync(baseFilePath);
+
+            await _manager.FileRepository
+                .TruncateAllSlidersAsync();
+        }
+            
+
+        #region private
+        private async Task DeleteAllFilesOnDirectoryAsync(string baseFilePath)
+		{
+            #region delete all files
+            var filePathsInDirectory = Directory.GetFiles(baseFilePath);
+
+            foreach (var filePath in filePathsInDirectory)
+                File.Delete(filePath);
+            #endregion
+        }
+        #endregion
     }
 }

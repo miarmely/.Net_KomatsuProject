@@ -6,21 +6,17 @@ using System.Security.Claims;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Entities.ConfigModels.Contracts;
-using Services.Contracts;
+
 
 namespace Temsa_Web.Controllers
 {
 	public class AuthenticationController : Controller
 	{
-		private readonly IServiceManager _manager;
 		private readonly IConfigManager _configs;
 
-        public AuthenticationController(IConfigManager configs, IServiceManager manager)
-        {
+        public AuthenticationController(IConfigManager configs) =>   
             _configs = configs;
-            _manager = manager;
-        }
-
+        
         public async Task<IActionResult> Login()
         {
             return View("Login");

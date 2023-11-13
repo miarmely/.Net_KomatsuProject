@@ -9,7 +9,7 @@ namespace Repositories.Contracts
 
         Task<IEnumerable<T>> QueryAsync<T>(
             string procedureName,
-            DynamicParameters parameters);
+            DynamicParameters? parameters);
 
         Task<T> QuerySingleOrDefaultAsync<T>(
            string procedureName,

@@ -22,6 +22,8 @@
         public string Machine_GetMainCategoryNames { get; init; }
         public string Machine_GetSubCategoryNames { get; init; }
         public string Machine_GetAllHandStatus { get; init; }
+        public string Slider_Create { get; init; }
+        public string Slider_DisplayAll { get; init; }
     }
 
     public record TableNames

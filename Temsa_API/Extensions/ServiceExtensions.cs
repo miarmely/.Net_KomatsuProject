@@ -46,9 +46,6 @@ namespace Temsa_Api.Extensions
 			services.Configure<MailSettingsConfig>(configuration
 				.GetSection(nameof(MailSettingsConfig)));
 
-			services.Configure<FileServiceSettingsConfig>(configuration
-				.GetSection(nameof(FileServiceSettingsConfig)));
-
 			services.Configure<DbSettingsConfig>(configuration
 				.GetSection(nameof(DbSettingsConfig)));
 
