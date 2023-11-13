@@ -1,6 +1,6 @@
 {
   "Version": 1,
-  "Hash": "54Q09Ic8g9NnbsKmADsr74KRAh7q/iiZLqD74+TGO1g=",
+  "Hash": "yEQxCAvDoOQQX/UEHAmPUssNQ4CaNjuzGtgEiGr97jU=",
   "Source": "Temsa_Web",
   "BasePath": "_content/Temsa_Web",
   "Mode": "Default",
@@ -510,6 +510,23 @@
       "OriginalItemSpec": "wwwroot\\images\\search-icon.png"
     },
     {
+      "Identity": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\4__Temsa\\Temsa_Web\\wwwroot\\images\\sliders\\8Q04bI.jpg",
+      "SourceId": "Temsa_Web",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\4__Temsa\\Temsa_Web\\wwwroot\\",
+      "BasePath": "_content/Temsa_Web",
+      "RelativePath": "images/sliders/8Q04bI.jpg",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\images\\sliders\\8Q04bI.jpg"
+    },
+    {
       "Identity": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\4__Temsa\\Temsa_Web\\wwwroot\\images\\sliders\\assassins-creed-mirage-logo-ry.jpg",
       "SourceId": "Temsa_Web",
       "SourceType": "Discovered",
@@ -525,40 +542,6 @@
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "wwwroot\\images\\sliders\\assassins-creed-mirage-logo-ry.jpg"
-    },
-    {
-      "Identity": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\4__Temsa\\Temsa_Web\\wwwroot\\images\\sliders\\assassins-creed-mirage-logo-ry-2560x1600.jpg",
-      "SourceId": "Temsa_Web",
-      "SourceType": "Discovered",
-      "ContentRoot": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\4__Temsa\\Temsa_Web\\wwwroot\\",
-      "BasePath": "_content/Temsa_Web",
-      "RelativePath": "images/sliders/assassins-creed-mirage-logo-ry-2560x1600.jpg",
-      "AssetKind": "All",
-      "AssetMode": "All",
-      "AssetRole": "Primary",
-      "RelatedAsset": "",
-      "AssetTraitName": "",
-      "AssetTraitValue": "",
-      "CopyToOutputDirectory": "Never",
-      "CopyToPublishDirectory": "PreserveNewest",
-      "OriginalItemSpec": "wwwroot\\images\\sliders\\assassins-creed-mirage-logo-ry-2560x1600.jpg"
-    },
-    {
-      "Identity": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\4__Temsa\\Temsa_Web\\wwwroot\\images\\sliders\\background_pattern_shadow_85567_2560x1600.jpg",
-      "SourceId": "Temsa_Web",
-      "SourceType": "Discovered",
-      "ContentRoot": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\4__Temsa\\Temsa_Web\\wwwroot\\",
-      "BasePath": "_content/Temsa_Web",
-      "RelativePath": "images/sliders/background_pattern_shadow_85567_2560x1600.jpg",
-      "AssetKind": "All",
-      "AssetMode": "All",
-      "AssetRole": "Primary",
-      "RelatedAsset": "",
-      "AssetTraitName": "",
-      "AssetTraitValue": "",
-      "CopyToOutputDirectory": "Never",
-      "CopyToPublishDirectory": "PreserveNewest",
-      "OriginalItemSpec": "wwwroot\\images\\sliders\\background_pattern_shadow_85567_2560x1600.jpg"
     },
     {
       "Identity": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\4__Temsa\\Temsa_Web\\wwwroot\\images\\sliders\\HD-wallpaper-uzman-asker-dark-jandarma-logo-tsk-turkish-army-vatan.jpg",
@@ -578,23 +561,6 @@
       "OriginalItemSpec": "wwwroot\\images\\sliders\\HD-wallpaper-uzman-asker-dark-jandarma-logo-tsk-turkish-army-vatan.jpg"
     },
     {
-      "Identity": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\4__Temsa\\Temsa_Web\\wwwroot\\images\\sliders\\IMG_2307.JPG",
-      "SourceId": "Temsa_Web",
-      "SourceType": "Discovered",
-      "ContentRoot": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\4__Temsa\\Temsa_Web\\wwwroot\\",
-      "BasePath": "_content/Temsa_Web",
-      "RelativePath": "images/sliders/IMG_2307.JPG",
-      "AssetKind": "All",
-      "AssetMode": "All",
-      "AssetRole": "Primary",
-      "RelatedAsset": "",
-      "AssetTraitName": "",
-      "AssetTraitValue": "",
-      "CopyToOutputDirectory": "Never",
-      "CopyToPublishDirectory": "PreserveNewest",
-      "OriginalItemSpec": "wwwroot\\images\\sliders\\IMG_2307.JPG"
-    },
-    {
       "Identity": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\4__Temsa\\Temsa_Web\\wwwroot\\images\\sliders\\NvEE6FC.jpg",
       "SourceId": "Temsa_Web",
       "SourceType": "Discovered",
@@ -610,23 +576,6 @@
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "wwwroot\\images\\sliders\\NvEE6FC.jpg"
-    },
-    {
-      "Identity": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\4__Temsa\\Temsa_Web\\wwwroot\\images\\sliders\\panther_predator_big_cat_125419_2560x1600.jpg",
-      "SourceId": "Temsa_Web",
-      "SourceType": "Discovered",
-      "ContentRoot": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\4__Temsa\\Temsa_Web\\wwwroot\\",
-      "BasePath": "_content/Temsa_Web",
-      "RelativePath": "images/sliders/panther_predator_big_cat_125419_2560x1600.jpg",
-      "AssetKind": "All",
-      "AssetMode": "All",
-      "AssetRole": "Primary",
-      "RelatedAsset": "",
-      "AssetTraitName": "",
-      "AssetTraitValue": "",
-      "CopyToOutputDirectory": "Never",
-      "CopyToPublishDirectory": "PreserveNewest",
-      "OriginalItemSpec": "wwwroot\\images\\sliders\\panther_predator_big_cat_125419_2560x1600.jpg"
     },
     {
       "Identity": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\4__Temsa\\Temsa_Web\\wwwroot\\images\\TR.png",

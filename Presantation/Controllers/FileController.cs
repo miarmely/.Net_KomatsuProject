@@ -1,7 +1,7 @@
 ﻿using Entities.DtoModels;
 using Microsoft.AspNetCore.Mvc;
-using Org.BouncyCastle.Utilities.Encoders;
 using Presantation.Attributes;
+using Services.Contracts;
 
 namespace Presantation.Controllers
 {
@@ -9,27 +9,19 @@ namespace Presantation.Controllers
     [ApiController]
     public class FileController : ControllerBase
     {
+        private readonly IServiceManager _manager;
+
+        public FileController(IServiceManager manager) => 
+            _manager = manager;
+
+
         [HttpPost("upload")]
         [Authorization("Admin,Editor,Yönetici,Editör")]
-        public async Task<IActionResult> UploadSliderImg(
-            [FromBody] ImgFileDto imgFileDto)
+        public async Task<IActionResult> UploadSliderImage(
+            [FromBody] ImageFileDto imageFileDto)
         {
-            #region set path of sliders folder
-            // remove "Temsa_Api" path and add "Temsa_Web/..." path
-            var currentDirectory = Directory
-                .GetCurrentDirectory()
-                .Replace(
-                    "Temsa_Api", 
-                    $"Temsa_Web\\wwwroot\\images\\sliders\\{imgFileDto.FileName}");
-
-            #endregion
-
-            #region upload img to file path
-            var contentInBytes = Base64.Decode(imgFileDto.ContentInBase64Str);
-            
-            await System.IO.File
-                .WriteAllBytesAsync(currentDirectory, contentInBytes);
-            #endregion
+            await _manager.FileService
+                .UploadSliderImageAsync(imageFileDto);
 
             return NoContent();
         }

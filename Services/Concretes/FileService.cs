@@ -1,4 +1,6 @@
 ﻿using Entities.ConfigModels.Contracts;
+using Entities.DtoModels;
+using Org.BouncyCastle.Utilities.Encoders;
 using Services.Contracts;
 
 namespace Services.Concretes
@@ -10,7 +12,7 @@ namespace Services.Concretes
 		public FileService(IConfigManager config) =>
 			_config = config;
 		
-		public async Task<byte[]> ConvertFileToByte(string filePath)
+		public async Task<byte[]> ConvertFileToByteAsync(string filePath)
 		{
 			int MaxChunkSizeInBytes = _config.FileServiceSettings.MaxChunkSizeInBytes;
 			byte[] fileByteArray;
@@ -39,5 +41,23 @@ namespace Services.Concretes
 
 			return fileByteArray;
 		}
-	}
+
+        public async Task UploadSliderImageAsync(ImageFileDto imageFileDto)
+		{
+            #region set path of slider folder
+            // remove "Temsa_Api" path and add "Temsa_Web/..." path
+            var filePath = Directory
+                .GetCurrentDirectory()
+                .Replace(
+					"Temsa_Api",
+                    $"Temsa_Web\\wwwroot\\images\\sliders\\{imageFileDto.FileName}");
+            #endregion
+
+            #region upload images to specified path
+            var contentInBytes = Base64.Decode(imageFileDto.ContentInBase64Str);
+
+            await File.WriteAllBytesAsync(filePath, contentInBytes);
+            #endregion
+        }
+    }
 }

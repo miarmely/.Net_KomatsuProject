@@ -1,7 +1,10 @@
-﻿namespace Services.Contracts
+﻿using Entities.DtoModels;
+
+namespace Services.Contracts
 {
 	public interface IFileService
 	{
-		Task<byte[]> ConvertFileToByte(string filePath);
-	}
+		Task<byte[]> ConvertFileToByteAsync(string filePath);
+		Task UploadSliderImageAsync(ImageFileDto imageFileDto);
+    }
 }

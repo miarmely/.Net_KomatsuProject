@@ -16,20 +16,9 @@ $(function() {
 
         //#region when logout selected (ajax)
         if (selectedMenu.attr("id") == "a_logout") {
-            //#region reset local
-            let localKeysToBeRemove = [
-                localKeys_allLanguages,
-                localKeys_allMainCategories,
-                localKeys_allRoles,
-                localKeys_allSubCategories,
-                "token"
-            ]
-
-            for (let index in localKeysToBeRemove) 
-                localStorage.removeItem(
-                    localKeysToBeRemove[index]);
-            //#endregion
-
+            // reset local
+            localStorage.clear();
+            
             // logout and redirect to login
             $.ajax({
                 method: "GET",
