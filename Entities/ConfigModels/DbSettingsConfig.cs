@@ -5,6 +5,7 @@
         public ProcedureNames ProcedureNames { get; init; }
         public TableNames TableNames { get; init; }
     }
+
     public record ProcedureNames
     {
         public string User_Login { get; init; }
@@ -24,10 +25,11 @@
         public string Machine_GetAllHandStatus { get; init; }
         public string Slider_Create { get; init; }
         public string Slider_DisplayAll { get; init; }
+        public string Slider_DisplaySliderPathBySliderNo { get; init; }
     }
-
     public record TableNames
     {
         public string Language { get; init; }
+        public string Sliders { get; init; }
     }
 }

@@ -12,7 +12,7 @@ namespace Presantation.Controllers
     {
         private readonly IServiceManager _manager;
 
-        public FileController(IServiceManager manager) => 
+        public FileController(IServiceManager manager) =>
             _manager = manager;
 
 
@@ -22,15 +22,16 @@ namespace Presantation.Controllers
             [FromBody] SliderDto sliderDto)
         {
             await _manager.FileService
-                .UploadSlidersAsync(sliderDto);
+                .UploadSliderAsync(sliderDto);
 
             return NoContent();
         }
 
 
         [HttpDelete("slider/delete")]
-        [Authorization("Admin,Editor,Yönetici,Editör")]
+        //[Authorization("Admin,Editor,Yönetici,Editör")]
         public async Task<IActionResult> DeleteAllSliders(
+            [FromQuery(Name = "language")] string language,
             [FromQuery(Name = "path")] string pathAfterWwwroot)
         {
             await _manager.FileService
@@ -40,14 +41,27 @@ namespace Presantation.Controllers
         }
 
 
-        [HttpGet("slider/display")]
-        [Authorization("Admin,Editor,User,Yönetici,Editör,Kullanıcı")]
-        public async Task <IActionResult> GetAllSliders()
+        [HttpGet("slider/display/all")]
+        //[Authorization("Admin,Editor,User,Yönetici,Editör,Kullanıcı")]
+        public async Task<IActionResult> GetAllSliders(
+            [FromQuery(Name = "language")] string language)
         {
             var sliderViews = await _manager.FileService
-                .GetAllSlidersAsync();
+                .GetAllSlidersAsync(language);
 
             return Ok(sliderViews);
+        }
+
+
+        [HttpGet("slider/display/one")]
+        public async Task<IActionResult> GetSliderBySliderNo(
+            [FromQuery(Name = "language")] string language,
+            [FromQuery(Name = "sliderNo")] int sliderNo)
+        {
+            var sliderPath = await _manager.FileService
+                .GetSliderPathBySliderNoAsync(language, sliderNo);
+
+            return Ok(sliderPath);
         }
     }
 }

@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "mKGus+CPLwy3kJjShhWINcKqlGHWshjmjoCRJZJ8XVn3NYDVVDRBrYlhXSX9pTL3H2r3MJsU2J4qMnbAs3uoRA==",
+  "dgSpecHash": "skLwDqkHcEXSR0LGly4oyauLHnl1ND0d9k9rNt+vcsSqqxs8rLSFkHVkre+XhXtn3eXBNbtmzSxzSycVkxbfNg==",
   "success": true,
-  "projectFilePath": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\4__Temsa\\Presantation\\Presantation.csproj",
+  "projectFilePath": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Presantation\\Presantation.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\Mac\\.nuget\\packages\\automapper\\12.0.1\\automapper.12.0.1.nupkg.sha512",
     "C:\\Users\\Mac\\.nuget\\packages\\automapper.extensions.microsoft.dependencyinjection\\12.0.1\\automapper.extensions.microsoft.dependencyinjection.12.0.1.nupkg.sha512",
