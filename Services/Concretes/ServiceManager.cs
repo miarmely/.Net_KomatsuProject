@@ -28,7 +28,7 @@ namespace Services.Concretes
 			_machineService = new Lazy<IMachineService>(() => 
 				new MachineService(manager));
 			_fileService = new Lazy<IFileService>(() => 
-				new FileService(manager));
+				new FileService(manager, config));
         }
 	}
 }

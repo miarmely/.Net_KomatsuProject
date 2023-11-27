@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Presantation.Attributes;
 using Services.Contracts;
-
+using System.ComponentModel.DataAnnotations;
 
 namespace Presantation.Controllers
 {
@@ -20,7 +20,7 @@ namespace Presantation.Controllers
         [HttpPost("login/mobil")]
         [ValidationUserFormat]
         public async Task<IActionResult> LoginForMobileAsync(
-            [FromQuery(Name = "language")] string language,
+            [FromQuery(Name = "language")][Required] string language,
             [FromBody] UserDtoForLogin userDto)
         {
             var token = await _manager.UserService
@@ -36,7 +36,7 @@ namespace Presantation.Controllers
         [HttpPost("login/web")]
         [ValidationUserFormat]
         public async Task<IActionResult> LoginForWebAsync(
-            [FromQuery(Name = "language")] string language,
+            [FromQuery(Name = "language")][Required] string language,
             [FromBody] UserDtoForLogin userDto)
         {
             var token = await _manager.UserService
@@ -53,7 +53,7 @@ namespace Presantation.Controllers
         [ValidationUserFormat]
         [ValidationNullArguments]
         public async Task<IActionResult> RegisterAsync(
-            [FromQuery(Name = "language")] string language,
+            [FromQuery(Name = "language")][Required] string language,
             [FromBody] UserDtoForRegister userDto)
         {
             await _manager.UserService
@@ -68,7 +68,7 @@ namespace Presantation.Controllers
         [ValidationUserFormat]
         [ValidationNullArguments]
         public async Task<IActionResult> CreateUserAsync(
-            [FromQuery(Name = "language")] string language,
+            [FromQuery(Name = "language")][Required] string language,
             [FromBody] UserDtoForCreate userDto)
 		{
             await _manager.UserService
@@ -81,7 +81,7 @@ namespace Presantation.Controllers
         [HttpGet("display/all")]
         [Authorization("Admin,Editor,User,Yönetici,Editör,Kullanıcı")]
         public async Task<IActionResult> GetAllUsersWithPaginationAsync(
-            [FromQuery(Name = "language")] string language,
+            [FromQuery(Name = "language")][Required] string language,
             [FromQuery] PaginationParameters pagingParameters)
         {
             var entity = await _manager.UserService
@@ -93,7 +93,7 @@ namespace Presantation.Controllers
 
         [HttpGet("display/role")]
         public async Task<IActionResult> GetAllRolesByLanguage(
-            [FromQuery(Name = "language")] string language)
+            [FromQuery(Name = "language")][Required] string language)
         {
             var roles = await _manager.UserService
                 .GetAllRolesByLanguageAsync(language);
@@ -107,8 +107,8 @@ namespace Presantation.Controllers
         [ValidationUserFormat]
         [ValidationNullArguments]
         public async Task<IActionResult> UpdateUserByTelNoAsync(
-            [FromQuery(Name = "language")] string language,
-            [FromQuery(Name = "telNo")] string telNo,
+            [FromQuery(Name = "language")][Required] string language,
+            [FromQuery(Name = "telNo")][Required] string telNo,
             [FromBody] UserDtoForUpdate userDto)
         {
             await _manager.UserService
@@ -122,7 +122,7 @@ namespace Presantation.Controllers
         [Authorization("Admin,Yönetici")]
         [ValidationNullArguments]
         public async Task<IActionResult> DeleteUsersAsync(
-            [FromQuery(Name = "language")] string language,
+            [FromQuery(Name = "language")][Required] string language,
             [FromBody] UserDtoForDelete userDto)
         {
             await _manager.UserService

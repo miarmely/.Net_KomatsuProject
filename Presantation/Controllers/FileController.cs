@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Presantation.Attributes;
 using Services.Contracts;
-
+using System.ComponentModel.DataAnnotations;
 
 namespace Presantation.Controllers
 {
@@ -18,7 +18,8 @@ namespace Presantation.Controllers
 
         [HttpPost("slider/upload")]
         [Authorization("Admin,Editor,Yönetici,Editör")]
-        public async Task<IActionResult> UploadSliderImage(
+        public async Task<IActionResult> UploadSlider(
+            [FromQuery(Name = "language")] [Required] string language, // for authorization
             [FromBody] SliderDto sliderDto)
         {
             await _manager.FileService
@@ -28,23 +29,10 @@ namespace Presantation.Controllers
         }
 
 
-        [HttpDelete("slider/delete")]
-        //[Authorization("Admin,Editor,Yönetici,Editör")]
-        public async Task<IActionResult> DeleteAllSliders(
-            [FromQuery(Name = "language")] string language,
-            [FromQuery(Name = "path")] string pathAfterWwwroot)
-        {
-            await _manager.FileService
-                .DeleteAllSlidersAsync(pathAfterWwwroot);
-
-            return NoContent();
-        }
-
-
         [HttpGet("slider/display/all")]
-        //[Authorization("Admin,Editor,User,Yönetici,Editör,Kullanıcı")]
+        [Authorization("Admin,Editor,User,Yönetici,Editör,Kullanıcı")]
         public async Task<IActionResult> GetAllSliders(
-            [FromQuery(Name = "language")] string language)
+            [FromQuery(Name = "language")][Required] string language)
         {
             var sliderViews = await _manager.FileService
                 .GetAllSlidersAsync(language);
@@ -54,14 +42,28 @@ namespace Presantation.Controllers
 
 
         [HttpGet("slider/display/one")]
+        [Authorization("Admin,Editor,User,Yönetici,Editör,Kullanıcı")]
         public async Task<IActionResult> GetSliderBySliderNo(
-            [FromQuery(Name = "language")] string language,
-            [FromQuery(Name = "sliderNo")] int sliderNo)
+            [FromQuery(Name = "language")][Required] string language,
+            [FromQuery(Name = "sliderNo")][Required] int sliderNo)
         {
             var sliderPath = await _manager.FileService
                 .GetSliderPathBySliderNoAsync(language, sliderNo);
 
             return Ok(sliderPath);
+        }
+
+
+        [HttpDelete("slider/delete/all")]
+        [Authorization("Admin,Editor,Yönetici,Editör")]
+        public async Task<IActionResult> DeleteAllSliders(
+         [FromQuery(Name = "language")][Required] string language,
+         [FromQuery(Name = "path")][Required] string folderPathAfterWwwroot)
+        {
+            await _manager.FileService
+                .DeleteAllSlidersAsync(language, folderPathAfterWwwroot);
+
+            return NoContent();
         }
     }
 }

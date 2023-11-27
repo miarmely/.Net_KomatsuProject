@@ -1,4 +1,5 @@
 ﻿using Dapper;
+using Entities.ConfigModels.Contracts;
 using Entities.DtoModels;
 using Entities.Exceptions;
 using Entities.ViewModels;
@@ -13,9 +14,59 @@ namespace Services.Concretes
     public class FileService : IFileService
     {
         private readonly IRepositoryManager _manager;
+        private readonly IConfigManager _configs;
 
-        public FileService(IRepositoryManager manager) =>
+        public FileService(
+            IRepositoryManager manager,
+            IConfigManager configs)
+        {
             _manager = manager;
+            _configs = configs;
+        }
+
+        public async Task UploadSliderAsync(SliderDto sliderDto)
+        {
+            #region set paths
+            var fullFolderPath = Directory
+                .GetCurrentDirectory()
+                .Replace(
+                    "Temsa_Api",
+                    $@"Temsa_Web\wwwroot\{sliderDto.FolderPathAfterWwwroot}\");
+
+            var fullFilePath = fullFolderPath
+                + "\\"
+                + sliderDto.FileName;
+
+            var filePathForDb = sliderDto.FolderPathAfterWwwroot
+                + "\\"
+                + sliderDto.FileName;
+            #endregion
+
+            #region upload slider to folder
+
+            #region decode file in base64
+            var contentInBytes = Base64
+                .Decode(sliderDto.FileContentInBase64Str);
+            #endregion
+
+            #region create file
+            await File.WriteAllBytesAsync(
+                fullFilePath,
+                contentInBytes);
+            #endregion
+
+            #endregion
+
+            #region upload slider to db
+            // set parameters
+            var paramaters = new DynamicParameters();
+            paramaters.Add("SliderPath", filePathForDb, DbType.String);
+
+            // upload
+            await _manager.FileRepository
+                .UploadSliderAsync(paramaters);
+            #endregion
+        }
 
         public async Task<IEnumerable<SliderView>> GetAllSlidersAsync(
             string language)
@@ -53,7 +104,6 @@ namespace Services.Concretes
 
             return sliderViews;
         }
-
 
         public async Task<string> GetSliderPathBySliderNoAsync(
             string language,
@@ -93,92 +143,72 @@ namespace Services.Concretes
 
             return sliderPath;
         }
-
-        public async Task UploadSliderAsync(SliderDto sliderDto)
-        {
-            #region set paths
-            var baseFilePath = Directory
-                .GetCurrentDirectory()
-                .Replace(
-                    "Temsa_Api",
-                    $"Temsa_Web\\wwwroot\\{sliderDto.PathAfterWwwroot}\\");
-
-            var fullFilePath = baseFilePath
-                + "\\"
-                + sliderDto.FileName;
-
-            var filePathForDb = sliderDto.PathAfterWwwroot
-                + "\\"
-                + sliderDto.FileName;
-            #endregion
-
-            #region upload slider to folder
-
-            #region decode file in base64
-            var contentInBytes = Base64
-                .Decode(sliderDto.FileContentInBase64Str);
-            #endregion
-
-            #region create file
-            await File.WriteAllBytesAsync(
-                fullFilePath,
-                contentInBytes);
-            #endregion
-
-            #endregion
-
-            #region upload slider to db
-            // set parameters
-            var paramaters = new DynamicParameters();
-            paramaters.Add("SliderPath", filePathForDb, DbType.String);
-
-            // upload
-            await _manager.FileRepository
-                .UploadSliderAsync(paramaters);
-            #endregion
-        }
-
-        public async Task DeleteAllSlidersAsync(string pathAfterWwwroot)
+        
+        public async Task DeleteAllSlidersAsync(string language, string folderPathAfterWwwroot)
         {
             #region set base file path
             var baseFilePath = Directory
                 .GetCurrentDirectory()
                 .Replace(
                     "Temsa_Api",
-                    $"Temsa_Web\\wwwroot\\{pathAfterWwwroot}\\");
+                    $@"Temsa_Web\wwwroot\{folderPathAfterWwwroot}\");
             #endregion
 
-            await DeleteAllFilesOnDirectoryAsync(baseFilePath);
-
-            await _manager.FileRepository
-                .TruncateAllSlidersAsync();
+            await DeleteAllFilesOnDirectoryAndDbAsync(language, baseFilePath);
         }
 
 
         #region private
-        private async Task DeleteAllFilesOnDirectoryAsync(string baseFilePath)
+
+        private async Task DeleteAllFilesOnDirectoryAndDbAsync(
+            string language, 
+            string baseFilePath)
         {
-            #region delete all files
+            #region get files on directory
+            string[] filePathsInDirectory;
+
             try
             {
-                var filePathsInDirectory = Directory.GetFiles(baseFilePath);
+                filePathsInDirectory = Directory
+                    .GetFiles(baseFilePath);
             }
-            catch (DirectoryNotFoundException ex)
+            catch (Exception ex)
             {
-                throw new ErrorWithCodeException(
-                    404,
-                    "N")
-            }
-            
-            
-            
+                #region when directory not found (throw)
                 
-                
+                #region set errorMessage by language 
+                var error = _configs.ErrorMessages.NF_S_FP;
+                var errorMessage = language switch
+                {
+                    "TR" => error.ErrorMessage.TR,
+                    "EN" => error.ErrorMessage.EN
+                };
+                #endregion
 
+                #region throw error
+                throw new ErrorWithCodeException(
+                    error.StatusCode,
+                    error.ErrorCode,
+                    error.ErrorDescription,
+                    errorMessage);
+                #endregion
+
+                #endregion
+            }
+            #endregion
+
+            #region delete all files
             foreach (var filePath in filePathsInDirectory)
                 File.Delete(filePath);
             #endregion
+
+            #region delete on db
+            if (filePathsInDirectory.Length != 0)
+                await _manager.FileRepository
+                   .TruncateAllSlidersAsync();
+            #endregion
         }
+
         #endregion
     }
 }
