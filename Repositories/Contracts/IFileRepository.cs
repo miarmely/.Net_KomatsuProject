@@ -8,7 +8,7 @@ namespace Repositories.Contracts
         Task UploadSliderAsync(DynamicParameters parameters);
         Task<IEnumerable<SliderView>?> GetAllSlidersAsync(
             DynamicParameters parameters);
-        Task TruncateAllSlidersAsync();
         Task<string?> GetSliderPathBySliderNoAsync(DynamicParameters parameters);
+        Task TruncateAllSlidersAsync();
     }
 }

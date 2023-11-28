@@ -1,6 +1,7 @@
 ﻿using Dapper;
+using Entities.ConfigModels;
 using Entities.ConfigModels.Contracts;
-using Entities.DtoModels;
+using Entities.DtoModels.SliderDtos;
 using Entities.Exceptions;
 using Entities.ViewModels;
 using Org.BouncyCastle.Utilities.Encoders;
@@ -24,7 +25,7 @@ namespace Services.Concretes
             _configs = configs;
         }
 
-        public async Task UploadSliderAsync(SliderDto sliderDto)
+        public async Task UploadSliderAsync(SliderDtoForUpload sliderDto)
         {
             #region set paths
             var fullFolderPath = Directory
@@ -143,41 +144,42 @@ namespace Services.Concretes
 
             return sliderPath;
         }
-        
-        public async Task DeleteAllSlidersAsync(string language, string folderPathAfterWwwroot)
-        {
-            #region set base file path
-            var baseFilePath = Directory
-                .GetCurrentDirectory()
-                .Replace(
-                    "Temsa_Api",
-                    $@"Temsa_Web\wwwroot\{folderPathAfterWwwroot}\");
-            #endregion
 
-            await DeleteAllFilesOnDirectoryAndDbAsync(language, baseFilePath);
+        public async Task DeleteMultipleSliderAsync(
+            string language,
+            string folderPathAfterWwwroot,
+            SliderDtoForMultipleDelete sliderDto)
+        {
+            await DeleteMultipleFileOnFolderAsync(
+                language,
+                folderPathAfterWwwroot,
+                sliderDto.FileNames);
         }
 
 
         #region private
 
-        private async Task DeleteAllFilesOnDirectoryAndDbAsync(
-            string language, 
-            string baseFilePath)
+        private async Task<string[]> GetFullFilePathsOnDirectoryAsync(
+            string language,
+            string folderPathAfterWwwroot)
         {
-            #region get files on directory
+            #region set variables
             string[] filePathsInDirectory;
+            var fullFolderPath = await GetFullFolderPathAsync(folderPathAfterWwwroot);
+            #endregion
 
+            #region get files on directory (throw)
             try
             {
-                filePathsInDirectory = Directory
-                    .GetFiles(baseFilePath);
+                filePathsInDirectory = Directory.GetFiles(fullFolderPath);
             }
             catch (Exception ex)
             {
                 #region when directory not found (throw)
-                
+
                 #region set errorMessage by language 
                 var error = _configs.ErrorMessages.NF_S_FP;
+
                 var errorMessage = language switch
                 {
                     "TR" => error.ErrorMessage.TR,
@@ -197,15 +199,91 @@ namespace Services.Concretes
             }
             #endregion
 
-            #region delete all files
+            return filePathsInDirectory;
+        }
+
+        private async Task<string> GetFullFolderPathAsync(
+            string folderPathAfterWwwroot) =>
+                Directory
+                    .GetCurrentDirectory()
+                    .Replace(
+                        "Temsa_Api",
+                        $@"Temsa_Web\wwwroot\{folderPathAfterWwwroot}\");
+
+        private async Task DeleteOneFileOnFolderAsync(
+            string folderPathAfterWwwroot,
+            string fileName)
+        {
+            #region set paths
+            var fullFolderPath = await GetFullFolderPathAsync(folderPathAfterWwwroot);
+            var fullFilePath = fullFolderPath + fileName;
+            #endregion
+
+            File.Delete(fullFilePath);
+        }
+
+        private async Task DeleteOneFileOnDbAsync(
+            string folderPathAfterWwwroot,
+            string fileName)
+        {
+
+
+        }  // empty
+
+        private async Task DeleteAllFilesOnFolderAsync(
+            string language,
+            string folderPathAfterWwwroot)
+        {
+            #region get file paths on directory (throw)
+            var filePathsInDirectory = await GetFullFilePathsOnDirectoryAsync(
+                language,
+                folderPathAfterWwwroot);
+            #endregion
+
+            #region delete all files on folder
             foreach (var filePath in filePathsInDirectory)
                 File.Delete(filePath);
             #endregion
+        }
 
-            #region delete on db
-            if (filePathsInDirectory.Length != 0)
+        private async Task DeleteAllFilesOnDbAsync(
+            string language,
+            string folderPathAfterWwwroot)
+        {
+            #region get file paths on directory (throw)
+            var filePathsInDirectory = await GetFullFilePathsOnDirectoryAsync(
+                language,
+                folderPathAfterWwwroot);
+            #endregion
+
+            #region delete all files on db
+            if (filePathsInDirectory.Length > 0)
                 await _manager.FileRepository
                    .TruncateAllSlidersAsync();
+            #endregion
+        }
+
+        private async Task DeleteMultipleFileOnFolderAsync(
+            string language,
+            string folderPathAfterWwwroot,
+            List<string> fileNames)
+        {
+            #region get full file names on directory (throw)
+            var fullFilePathsOnDirectory = await GetFullFilePathsOnDirectoryAsync(
+                language,
+                folderPathAfterWwwroot);
+
+            var fullFolderPath = GetFullFolderPathAsync(folderPathAfterWwwroot);
+            #endregion
+
+            #region delete files on directory if not in fileNames
+            foreach (var fullFileNameOnDirectory in fullFilePathsOnDirectory)
+            {
+                #region delete file on directory
+                if (!fileNames.Any(f => fullFolderPath + f == fullFileNameOnDirectory))
+                    File.Delete(fullFileNameOnDirectory);
+                #endregion
+            }
             #endregion
         }
 

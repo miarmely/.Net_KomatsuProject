@@ -26,11 +26,11 @@ $(function () {
     })
     $("#btn_save").click(async () => {
         //#region any slider not added
-        if (Object.keys(sliderFiles).length == 0)
+        if (Object.keys(slider_selectedFilesInfos).length == 0)
             return;
         //#endregion
 
-        await uploadSliderFilesAsync();
+        await uploadSlidersAsync();
     })
     inpt_chooseFile.change(async (event) => {
         //#region get selected file
@@ -109,7 +109,7 @@ $(function () {
         btn_sliderNo.append(currentSliderNo + "/" + maxSliderQuantity);
     }
 
-    async function uploadSliderFilesAsync() {
+    async function uploadSlidersAsync() {
         // 1st ajax: delete sliders from db and folder 
         // 2nd ajax: upload sliders to db and local
         $.ajax({
@@ -126,10 +126,10 @@ $(function () {
                 //#region upload sliders (ajax)
                 let sliderFileNames = {}
 
-                for (let sliderNo in sliderFiles) {
-                    //#region set variables
-                    let sliderFile = sliderFiles[sliderNo];
-                    sliderFileNames[sliderNo] = sliderFile.name;
+                for (let sliderNo in slider_selectedFilesInfos) {
+                    //#region populate "sliderFileNames"
+                    let sliderInfos = slider_selectedFilesInfos[sliderNo];
+                    sliderFileNames[sliderNo] = sliderInfos.name;
                     //#endregion
 
                     //#region upload file (ajax)
@@ -143,7 +143,9 @@ $(function () {
                         $.ajax({
                             method: "POST",
                             url: baseApiUrl + "/file/slider/upload",
-                            headers: { "authorization": jwtToken },
+                            headers: {
+                                "authorization": jwtToken
+                            },
                             contentType: "application/json",
                             dataType: "json",
                             data: JSON.stringify({
@@ -178,7 +180,7 @@ $(function () {
             },
             error: () => {
                 updateResultLabel(
-                    resultLabel.attr("id"),
+                    resultLabeL_id,
                     "any error occured in server side",
                     resultLabel_errorColor);
             }

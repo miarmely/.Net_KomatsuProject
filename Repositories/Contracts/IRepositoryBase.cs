@@ -20,5 +20,7 @@ namespace Repositories.Contracts
             DynamicParameters parameters,
             Func<TPart1, TPart2, TResult> map,
             string SplitOn);
+
+        Task TruncateTableAsync(string tableName);
     }
 }

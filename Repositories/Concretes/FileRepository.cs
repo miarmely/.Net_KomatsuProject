@@ -34,7 +34,7 @@ namespace Repositories.Concretes
                     parameters);
 
         public async Task TruncateAllSlidersAsync() =>
-            await base.QueryAsync<int>($@"
-                TRUNCATE TABLE {_configs.DbSettings.TableNames.Sliders}");        
+            await base
+                .TruncateTableAsync(Configs.DbSettings.TableNames.Sliders);
     }
 }

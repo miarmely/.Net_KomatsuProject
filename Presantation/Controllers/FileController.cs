@@ -1,4 +1,4 @@
-﻿using Entities.DtoModels;
+﻿using Entities.DtoModels.SliderDtos;
 using Microsoft.AspNetCore.Mvc;
 using Presantation.Attributes;
 using Services.Contracts;
@@ -19,8 +19,8 @@ namespace Presantation.Controllers
         [HttpPost("slider/upload")]
         [Authorization("Admin,Editor,Yönetici,Editör")]
         public async Task<IActionResult> UploadSlider(
-            [FromQuery(Name = "language")] [Required] string language, // for authorization
-            [FromBody] SliderDto sliderDto)
+            [FromQuery(Name = "language")][Required] string language, // for authorization
+            [FromBody] SliderDtoForUpload sliderDto)
         {
             await _manager.FileService
                 .UploadSliderAsync(sliderDto);
@@ -54,14 +54,15 @@ namespace Presantation.Controllers
         }
 
 
-        [HttpDelete("slider/delete/all")]
-        [Authorization("Admin,Editor,Yönetici,Editör")]
-        public async Task<IActionResult> DeleteAllSliders(
-         [FromQuery(Name = "language")][Required] string language,
-         [FromQuery(Name = "path")][Required] string folderPathAfterWwwroot)
+        [HttpDelete("slider/delete/multiple")]
+        //[Authorization("Admin,Editor,Yönetici,Editör")]
+        public async Task<IActionResult> DeleteMultipleSlider(
+         [FromQuery(Name = "language")][Required] string language,  // for authorization
+         [FromQuery(Name = "folderPath")][Required] string folderPathAfterWwwroot,
+         [FromBody] SliderDtoForMultipleDelete sliderDto)
         {
             await _manager.FileService
-                .DeleteAllSlidersAsync(language, folderPathAfterWwwroot);
+                .DeleteMultipleSliderAsync(language, folderPathAfterWwwroot, sliderDto);
 
             return NoContent();
         }
