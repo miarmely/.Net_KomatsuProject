@@ -10,5 +10,6 @@ namespace Repositories.Contracts
             DynamicParameters parameters);
         Task<string?> GetSliderPathBySliderNoAsync(DynamicParameters parameters);
         Task TruncateAllSlidersAsync();
+        Task DeleteMultipleSliderAsync(DynamicParameters parameters);
     }
 }

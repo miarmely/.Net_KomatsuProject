@@ -57,12 +57,14 @@ namespace Presantation.Controllers
         [HttpDelete("slider/delete/multiple")]
         //[Authorization("Admin,Editor,Yönetici,Editör")]
         public async Task<IActionResult> DeleteMultipleSlider(
-         [FromQuery(Name = "language")][Required] string language,  // for authorization
+         [FromQuery(Name = "language")][Required] string language, // authorization
          [FromQuery(Name = "folderPath")][Required] string folderPathAfterWwwroot,
          [FromBody] SliderDtoForMultipleDelete sliderDto)
         {
-            await _manager.FileService
-                .DeleteMultipleSliderAsync(language, folderPathAfterWwwroot, sliderDto);
+            await _manager.FileService.DeleteMultipleSliderAsync(
+                language, 
+                folderPathAfterWwwroot, 
+                sliderDto);
 
             return NoContent();
         }

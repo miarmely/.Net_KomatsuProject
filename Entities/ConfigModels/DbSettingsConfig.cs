@@ -26,6 +26,7 @@
         public string Slider_Create { get; init; }
         public string Slider_DisplayAll { get; init; }
         public string Slider_DisplaySliderPathBySliderNo { get; init; }
+        public string Slider_MultipleDelete { get; init; }
     }
     public record TableNames
     {

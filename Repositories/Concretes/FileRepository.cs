@@ -7,13 +7,11 @@ namespace Repositories.Concretes
 {
     public class FileRepository : RepositoryBase, IFileRepository
     {
-        private readonly IConfigManager _configs;
-
         public FileRepository(
             RepositoryContext context,
             IConfigManager configs)
-            : base(context, configs) =>
-            _configs = configs;
+            : base(context, configs)
+            {}
 
         public async Task UploadSliderAsync(DynamicParameters parameters) =>
             await base.QuerySingleOrDefaultAsync<int>(
@@ -36,5 +34,10 @@ namespace Repositories.Concretes
         public async Task TruncateAllSlidersAsync() =>
             await base
                 .TruncateTableAsync(Configs.DbSettings.TableNames.Sliders);
+           
+        public async Task DeleteMultipleSliderAsync(DynamicParameters parameters) =>
+            await base.QuerySingleOrDefaultAsync<int>(
+                Configs.DbSettings.ProcedureNames.Slider_MultipleDelete,
+                parameters);
     }
 }
