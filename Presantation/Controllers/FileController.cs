@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Presantation.Attributes;
 using Services.Contracts;
 using System.ComponentModel.DataAnnotations;
+using System.Reflection;
 
 namespace Presantation.Controllers
 {
@@ -55,7 +56,7 @@ namespace Presantation.Controllers
 
 
         [HttpDelete("slider/delete/multiple")]
-        //[Authorization("Admin,Editor,Yönetici,Editör")]
+        [Authorization("Admin,Editor,Yönetici,Editör")]
         public async Task<IActionResult> DeleteMultipleSlider(
          [FromQuery(Name = "language")][Required] string language, // authorization
          [FromQuery(Name = "folderPath")][Required] string folderPathAfterWwwroot,

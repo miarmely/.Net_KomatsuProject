@@ -8,11 +8,9 @@ namespace Repositories.Concretes
 {
     public class MachineRepository : RepositoryBase, IMachineRepository
     {
-        private readonly IConfigManager _configs;
-
         public MachineRepository(RepositoryContext context, IConfigManager configs)
             : base(context, configs)
-                => _configs = configs;
+        { }
        
         public async Task<ErrorDto?> CreateMachineAsync(DynamicParameters parameters) =>
             await base.QuerySingleOrDefaultAsync<ErrorDto>(
@@ -57,7 +55,7 @@ namespace Repositories.Concretes
         public async Task<IEnumerable<string>> GetAllLanguagesAsync() =>
             await base.QueryAsync<string>($@"
                 SELECT  Name 
-                FROM    {_configs.DbSettings.TableNames.Language}");
+                FROM    {base.Configs.DbSettings.TableNames.Language}");
 
         public async Task<ErrorDto?> UpdateMachineAsync(DynamicParameters parameters) =>
             await base.QuerySingleOrDefaultAsync<ErrorDto>(

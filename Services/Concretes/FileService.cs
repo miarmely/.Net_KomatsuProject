@@ -7,7 +7,7 @@ using Org.BouncyCastle.Utilities.Encoders;
 using Repositories.Contracts;
 using Services.Contracts;
 using System.Data;
-
+using System.Reflection;
 
 namespace Services.Concretes
 {
@@ -34,11 +34,11 @@ namespace Services.Concretes
                     $@"Temsa_Web\wwwroot\{sliderDto.FolderPathAfterWwwroot}\");
 
             var fullFilePath = fullFolderPath
-                + "\\"
+                + @"\"
                 + sliderDto.FileName;
 
             var filePathForDb = sliderDto.FolderPathAfterWwwroot
-                + "\\"
+                + @"\"
                 + sliderDto.FileName;
             #endregion
 
@@ -156,7 +156,7 @@ namespace Services.Concretes
                 sliderDto.FileNamesToBeNotDelete);
             #endregion
 
-            #region truncate db
+            #region truncate slider table
             await _manager.FileRepository
                 .TruncateAllSlidersAsync();
             #endregion

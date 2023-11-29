@@ -12,12 +12,13 @@ $(function () {
     const inpt_chooseFile = $("#inpt_chooseFile");
     const resultLabeL_id = "#spn_resultLabel";
     const resultLabel = $(resultLabeL_id);
-    const sliderFolderPath = "images\\sliders";
+    const slider_folderPathAfterWwwRoot = "images\\sliders";
     const spn_fileStatusLabel_id = "#spn_fileStatusLabel";
     const spn_fileStatusLabel_color = "#120a8f";
     let currentSliderNo = 1;
     let slider_selectedFilesInfos = {};
     let slider_noAndPaths = {};
+    let slider_uploadedSliderQuantity = 0;
     //#endregion
 
     //#region events
@@ -25,7 +26,7 @@ $(function () {
         await setSliderMaxHeightAndWidthAsync();
     })
     $("#btn_save").click(async () => {
-        //#region any slider not added
+        //#region any slider not selected
         if (Object.keys(slider_selectedFilesInfos).length == 0)
             return;
         //#endregion
@@ -114,9 +115,9 @@ $(function () {
         // 2nd ajax: upload sliders to db and local
         $.ajax({
             method: "DELETE",
-            url: baseApiUrl + "/file/slider/delete/all" +
+            url: (baseApiUrl + "/file/slider/delete/multiple" +
                 `?language=${language}` +
-                `&path=${sliderFolderPath}`,
+                `&folderPath=${slider_folderPathAfterWwwRoot}`),
             headers: {
                 "authorization": jwtToken
             },
@@ -124,64 +125,72 @@ $(function () {
             dataType: "json",
             success: () => {
                 //#region upload sliders (ajax)
-                let sliderFileNames = {}
+                let selectedSliderFilesQuantity = Object
+                    .keys(slider_selectedFilesInfos)
+                    .length;
 
                 for (let sliderNo in slider_selectedFilesInfos) {
-                    //#region populate "sliderFileNames"
+                    //#region upload slider to folder and db (ajax)
                     let sliderInfos = slider_selectedFilesInfos[sliderNo];
-                    sliderFileNames[sliderNo] = sliderInfos.name;
-                    //#endregion
-
-                    //#region upload file (ajax)
                     let reader = new FileReader();
 
-                    reader.readAsDataURL(sliderFile);
+                    reader.readAsDataURL(sliderInfos);
                     reader.onload = function (event) {
-                        //#region upload slider images (ajax)
                         let dataUrl = event.target.result;
 
                         $.ajax({
                             method: "POST",
-                            url: baseApiUrl + "/file/slider/upload",
+                            url: baseApiUrl + `/file/slider/upload?language=${language}`,
                             headers: {
                                 "authorization": jwtToken
                             },
                             contentType: "application/json",
                             dataType: "json",
                             data: JSON.stringify({
-                                "pathAfterWwwRoot": sliderFolderPath,
-                                "fileName": sliderFile.name,
-                                "fileContentInBase64Str": dataUrl.replace("data:image/jpeg;base64,", "")   // add only base64 part of dataUrl
+                                "FolderPathAfterWwwroot": slider_folderPathAfterWwwRoot,
+                                "FileName": sliderInfos.name,
+                                "FileContentInBase64Str": dataUrl.replace("data:image/jpeg;base64,", "")   // add only base64 part of dataUrl
                             }),
                             success: () => {
-                                updateResultLabel(
-                                    resultLabeL_id,
-                                    resultLabel_successMessageByLanguages[language],
-                                    resultLabel_successColor);
+                                //#region update to "slider_noAndPaths"
+                                slider_noAndPaths[sliderNo] = sliderInfos.name;
+                                //#endregion
+
+                                //#region when all selected sliders uploaded
+                                slider_uploadedSliderQuantity += 1;
+
+                                if (slider_uploadedSliderQuantity == selectedSliderFilesQuantity) {
+                                    //#region update "sliderNoAndPaths" on local
+                                    localStorage.setItem(
+                                        localKeys_sliderNoAndPaths,
+                                        JSON.stringify(slider_noAndPaths));
+                                    //#endregion
+
+                                    //#region write success message
+                                    updateResultLabel(
+                                        resultLabeL_id,
+                                        resultLabel_successMessageByLanguages[language],
+                                        resultLabel_successColor);
+                                    //#endregion
+                                }
+                                //#endregion
                             },
-                            error: (response) => {
+                            error: () => {
                                 updateResultLabel(
                                     resultLabeL_id,
-                                    JSON.parse(response.responseText).errorMessage,
-                                    resultLabel_errorColor);
+                                    "error occured when some sliders uploading"],
+                                    resultLabel_successColor);
                             }
                         })
-                        //#endregion
                     }
                     //#endregion
                 }
-                //#endregion
-
-                //#region add slider files to local
-                localStorage.setItem(
-                    localKeys_sliderFileNames,
-                    JSON.stringify(sliderFiles));
                 //#endregion
             },
             error: () => {
                 updateResultLabel(
                     resultLabeL_id,
-                    "any error occured in server side",
+                    "any error occured on server side, please try again later",
                     resultLabel_errorColor);
             }
         })
@@ -202,7 +211,7 @@ $(function () {
     }
 
     async function displaySliderByPathAsync() {
-        //#region when slider that to be display hasn't been changed previously
+        //#region when slider to be display hasn't been changed previously
         let selectedFileInfos = slider_selectedFilesInfos[currentSliderNo];
 
         if (selectedFileInfos == undefined) {
@@ -220,10 +229,10 @@ $(function () {
         }
         //#endregion
 
-        //#region when slider that to be display has been changed previously
+        //#region when slider to be display has been changed previously
         else {
             //#region add "noImage" image and "image loading..." message 
-            img_sliders.attr("src", noImagePath);  // until slider loads
+            img_sliders.removeAttr("src");  // until slider loads
             updateResultLabel(
                 spn_fileStatusLabel_id,
                 "resim yükleniyor...",
