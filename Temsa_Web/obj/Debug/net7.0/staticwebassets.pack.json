@@ -77,6 +77,18 @@
       "PackagePath": "staticwebassets\\images\\EN.png"
     },
     {
+      "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\images\\Sliders\\wallpaper_1.jpg",
+      "PackagePath": "staticwebassets\\images\\Sliders\\wallpaper_1.jpg"
+    },
+    {
+      "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\images\\Sliders\\wallpaper_4.jpg",
+      "PackagePath": "staticwebassets\\images\\Sliders\\wallpaper_4.jpg"
+    },
+    {
+      "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\images\\Sliders\\wallpaper_7.jpg",
+      "PackagePath": "staticwebassets\\images\\Sliders\\wallpaper_7.jpg"
+    },
+    {
       "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\images\\TR.png",
       "PackagePath": "staticwebassets\\images\\TR.png"
     },

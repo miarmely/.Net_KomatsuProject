@@ -1,6 +1,6 @@
 ﻿namespace Entities.DtoModels.SliderDtos
 {
-    public record SliderDtoForMultipleDelete
+    public record SliderDtoForDelete
     {
         public List<string> FileNamesToBeNotDelete { get; init; }
 

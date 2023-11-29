@@ -117,7 +117,7 @@ $(function () {
             method: "DELETE",
             url: (baseApiUrl + "/file/slider/delete/multiple" +
                 `?language=${language}` +
-                `&folderPath=${slider_folderPathAfterWwwRoot}`),
+                `&folderPathAfterWwwroot=${slider_folderPathAfterWwwRoot}`),
             headers: {
                 "authorization": jwtToken
             },

@@ -6,31 +6,27 @@
         public TableNames TableNames { get; init; }
     }
 
-    public record ProcedureNames
-    {
-        public string User_Login { get; init; }
-        public string User_Create { get; init; }
-        public string User_DisplayAll { get; init; }
-        public string User_DisplayByTelNo { get; init; }
-        public string User_DisplayAllRoles { get; init; }
-        public string User_Update { get; init; }
-        public string User_Delete { get; init; }
-        public string Machine_Create { get; init; }
-        public string Machine_DisplayAll { get; init; }
-        public string Machine_DisplayByCondition { get; init; }
-        public string Machine_Update { get; init; }
-        public string Machine_Delete { get; init; }
-        public string Machine_GetMainCategoryNames { get; init; }
-        public string Machine_GetSubCategoryNames { get; init; }
-        public string Machine_GetAllHandStatus { get; init; }
-        public string Slider_Create { get; init; }
-        public string Slider_DisplayAll { get; init; }
-        public string Slider_DisplaySliderPathBySliderNo { get; init; }
-        public string Slider_MultipleDelete { get; init; }
-    }
-    public record TableNames
-    {
-        public string Language { get; init; }
-        public string Sliders { get; init; }
-    }
+    public record ProcedureNames(
+		string User_Login,
+		string User_Create,
+		string User_DisplayAll,
+		string User_DisplayByTelNo,
+		string User_DisplayAllRoles,
+		string User_Update,
+		string User_Delete,
+		string Machine_Create,
+		string Machine_DisplayAll,
+		string Machine_DisplayByCondition,
+		string Machine_Update,
+		string Machine_Delete,
+		string Machine_GetMainCategoryNames,
+		string Machine_GetSubCategoryNames,
+		string Machine_GetAllHandStatus,
+		string Slider_Create,
+		string Slider_DisplayAll,
+		string Slider_DisplaySliderPathBySliderNo);
+
+    public record TableNames(
+		string Language,
+		string Sliders);
 }

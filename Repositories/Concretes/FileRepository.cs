@@ -13,7 +13,7 @@ namespace Repositories.Concretes
             : base(context, configs)
             {}
 
-        public async Task UploadSliderAsync(DynamicParameters parameters) =>
+        public async Task UploadSlidersAsync(DynamicParameters parameters) =>
             await base.QuerySingleOrDefaultAsync<int>(
                 base.Configs.DbSettings.ProcedureNames.Slider_Create,
                 parameters);
@@ -34,10 +34,5 @@ namespace Repositories.Concretes
         public async Task TruncateAllSlidersAsync() =>
             await base
                 .TruncateTableAsync(Configs.DbSettings.TableNames.Sliders);
-           
-        public async Task DeleteMultipleSliderAsync(DynamicParameters parameters) =>
-            await base.QuerySingleOrDefaultAsync<int>(
-                Configs.DbSettings.ProcedureNames.Slider_MultipleDelete,
-                parameters);
     }
 }

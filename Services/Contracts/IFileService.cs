@@ -1,4 +1,5 @@
 ﻿using Entities.DtoModels.SliderDtos;
+using Entities.QueryParameters;
 using Entities.ViewModels;
 
 
@@ -6,12 +7,14 @@ namespace Services.Contracts
 {
     public interface IFileService
     {
-        Task UploadSliderAsync(SliderDtoForUpload sliderDto);
-        Task<IEnumerable<SliderView>> GetAllSlidersAsync(string language);
-        Task<string> GetSliderPathBySliderNoAsync(string language, int sliderNo);
+        Task UploadSliderToFolderAsync(SliderDtoForUploadToFolder sliderDto);
+        Task UploadSlidersToDbAsync(SliderDtoForUploadToDb sliderDto);
+		Task<IEnumerable<SliderView>> GetAllSlidersAsync(
+            SliderParamatersForDisplayAll sliderParams);
+        Task<string> GetSliderPathBySliderNoAsync(
+            SliderParametersForDisplayOne sliderParams);
         Task DeleteMultipleSliderAsync(
-            string language,
-            string folderPathAfterWwwroot, 
-            SliderDtoForMultipleDelete sliderDto);
+			SliderParametersForDelete sliderParams,
+			SliderDtoForDelete sliderDto);
     }
 }

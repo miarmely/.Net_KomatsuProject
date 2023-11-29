@@ -2,12 +2,13 @@
 using Entities.ConfigModels.Contracts;
 using Entities.DtoModels.SliderDtos;
 using Entities.Exceptions;
+using Entities.QueryParameters;
 using Entities.ViewModels;
 using Org.BouncyCastle.Utilities.Encoders;
 using Repositories.Contracts;
 using Services.Contracts;
 using System.Data;
-using System.Reflection;
+
 
 namespace Services.Concretes
 {
@@ -24,20 +25,14 @@ namespace Services.Concretes
             _configs = configs;
         }
 
-        public async Task UploadSliderAsync(SliderDtoForUpload sliderDto)
+        public async Task UploadSliderToFolderAsync(
+            SliderDtoForUploadToFolder sliderDto)
         {
             #region set paths
-            var fullFolderPath = Directory
-                .GetCurrentDirectory()
-                .Replace(
-                    "Temsa_Api",
-                    $@"Temsa_Web\wwwroot\{sliderDto.FolderPathAfterWwwroot}\");
+            var fullFolderPath = await GetFullFolderPathAsync(
+                sliderDto.FolderPathAfterWwwroot);
 
             var fullFilePath = fullFolderPath
-                + @"\"
-                + sliderDto.FileName;
-
-            var filePathForDb = sliderDto.FolderPathAfterWwwroot
                 + @"\"
                 + sliderDto.FileName;
             #endregion
@@ -56,36 +51,57 @@ namespace Services.Concretes
             #endregion
 
             #endregion
-
-            #region upload slider to db
-            // set parameters
-            var paramaters = new DynamicParameters();
-            paramaters.Add("SliderPath", filePathForDb, DbType.String);
-
-            // upload
-            await _manager.FileRepository
-                .UploadSliderAsync(paramaters);
-            #endregion
         }
 
-        public async Task<IEnumerable<SliderView>> GetAllSlidersAsync(
-            string language)
+		public async Task UploadSlidersToDbAsync(SliderDtoForUploadToDb sliderDto)
+		{
+			#region set parameters
+			var parameters = new DynamicParameters();
+
+			parameters.Add(
+				"FileNames",
+                sliderDto.ToString(), 
+                DbType.String);
+            #endregion
+
+            #region upload sliders
+            await _manager.FileRepository
+				.UploadSlidersAsync(parameters);
+			#endregion
+		}
+
+		public async Task<IEnumerable<SliderView>> GetAllSlidersAsync(
+            SliderParamatersForDisplayAll sliderParams)
         {
             #region set parameters
             var parameters = new DynamicParameters();
+            
+            parameters.Add("Language", 
+                sliderParams.Language, 
+                DbType.String);
 
-            parameters.Add("Language", language, DbType.String);
+            parameters.Add("FolderPathAfterWwwroot",
+                sliderParams.FolderPathAfterWwwroot,
+                DbType.String);
 
-            parameters.Add("StatusCode", language, DbType.Int16,
+            parameters.Add("StatusCode", 
+                0, 
+                DbType.Int16,
                 ParameterDirection.Output);
 
-            parameters.Add("ErrorCode", language, DbType.String,
+            parameters.Add("ErrorCode", 
+                "", 
+                DbType.String,
                 ParameterDirection.Output);
 
-            parameters.Add("ErrorDescription", language, DbType.String,
+            parameters.Add("ErrorDescription", 
+                "", 
+                DbType.String,
                 ParameterDirection.Output);
 
-            parameters.Add("ErrorMessage", language, DbType.String,
+            parameters.Add("ErrorMessage", 
+                "", 
+                DbType.String,
                 ParameterDirection.Output);
             #endregion
 
@@ -106,25 +122,36 @@ namespace Services.Concretes
         }
 
         public async Task<string> GetSliderPathBySliderNoAsync(
-            string language,
-            int sliderNo)
+			SliderParametersForDisplayOne sliderParams)
         {
             #region set parameters
             var parameters = new DynamicParameters();
 
-            parameters.Add("Language", language, DbType.String);
-            parameters.Add("SliderNo", sliderNo, DbType.Int16);
+            parameters.Add("Language", sliderParams.Language, DbType.String);
+			parameters.Add("SliderNo", sliderParams.SliderNo, DbType.Int16);
 
-            parameters.Add("StatusCode", null, DbType.Int16,
+            parameters.Add("FolderPathAfterWwwroot",
+				sliderParams.FolderPathAfterWwwroot,
+                DbType.String);
+            
+            parameters.Add("StatusCode", 
+                null, 
+                DbType.Int16,
                 ParameterDirection.Output);
 
-            parameters.Add("ErrorCode", "", DbType.String,
+            parameters.Add("ErrorCode", 
+                "", 
+                DbType.String,
                 ParameterDirection.Output);
 
-            parameters.Add("ErrorDescription", "", DbType.String,
+            parameters.Add("ErrorDescription", 
+                "", 
+                DbType.String,
                 ParameterDirection.Output);
 
-            parameters.Add("ErrorMessage", "", DbType.String,
+            parameters.Add("ErrorMessage", 
+                "", 
+                DbType.String,
                 ParameterDirection.Output);
             #endregion
 
@@ -145,14 +172,13 @@ namespace Services.Concretes
         }
 
         public async Task DeleteMultipleSliderAsync(
-            string language,
-            string folderPathAfterWwwroot,
-            SliderDtoForMultipleDelete sliderDto)
+            SliderParametersForDelete sliderParams,
+            SliderDtoForDelete sliderDto)
         {
             #region delete from folder
             await DeleteMultipleFileOnFolderAsync(
-                language,
-                folderPathAfterWwwroot,
+				sliderParams.Language,
+				sliderParams.FolderPathAfterWwwroot,
                 sliderDto.FileNamesToBeNotDelete);
             #endregion
 

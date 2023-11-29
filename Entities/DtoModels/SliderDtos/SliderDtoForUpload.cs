@@ -1,9 +1,15 @@
 ﻿namespace Entities.DtoModels.SliderDtos
 {
-    public record SliderDtoForUpload
-    {
-        public string FolderPathAfterWwwroot { get; init; }
-        public string FileName { get; init; }
-        public string FileContentInBase64Str { get; init; }
-    }
+    public record SliderDtoForUploadToFolder(
+		string FolderPathAfterWwwroot,
+		string FileName,
+		string FileContentInBase64Str);
+
+	public record SliderDtoForUploadToDb
+	{
+		public List<string> FileNames { get; init; }
+
+		public override string ToString() =>
+			String.Join(",", FileNames);
+	}
 }
