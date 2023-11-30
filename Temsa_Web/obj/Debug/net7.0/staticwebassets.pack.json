@@ -81,8 +81,16 @@
       "PackagePath": "staticwebassets\\images\\Sliders\\IMG_2307.JPG"
     },
     {
-      "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\images\\Sliders\\NvEE6FC.jpg",
-      "PackagePath": "staticwebassets\\images\\Sliders\\NvEE6FC.jpg"
+      "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\images\\Sliders\\img3.wallspic.com-assassins_creed_3-black-logo-assassins_creed_brotherhood-assassins_creed_origins-2560x1600.jpg",
+      "PackagePath": "staticwebassets\\images\\Sliders\\img3.wallspic.com-assassins_creed_3-black-logo-assassins_creed_brotherhood-assassins_creed_origins-2560x1600.jpg"
+    },
+    {
+      "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\images\\Sliders\\panther_predator_big_cat_125419_2560x1600.jpg",
+      "PackagePath": "staticwebassets\\images\\Sliders\\panther_predator_big_cat_125419_2560x1600.jpg"
+    },
+    {
+      "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\images\\Sliders\\wallpaper_2.jpg",
+      "PackagePath": "staticwebassets\\images\\Sliders\\wallpaper_2.jpg"
     },
     {
       "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\images\\Sliders\\wallpaper_3.jpg",
@@ -115,6 +123,10 @@
     {
       "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\images\\nav-expand.png",
       "PackagePath": "staticwebassets\\images\\nav-expand.png"
+    },
+    {
+      "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\images\\newImage.png",
+      "PackagePath": "staticwebassets\\images\\newImage.png"
     },
     {
       "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\images\\next.png",

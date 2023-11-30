@@ -1,21 +1,25 @@
 ﻿import { updateResultLabel } from "./miar_tools.js";
 
+
 $(function () {
     //#region variables
-    const maxSliderQuantity = 10;
     const img_sliders_id = "img_sliders";
     const img_sliders = $("#" + img_sliders_id);
     const btn_previous = $("#btn_previous");
     const btn_next = $("#btn_next");
     const btn_sliderNo = $("#btn_sliderNo");
-    const noImagePath = "/images/noImage.png";
     const inpt_chooseFile = $("#inpt_chooseFile");
     const resultLabeL_id = "#spn_resultLabel";
     const resultLabel = $(resultLabeL_id);
     const slider_folderPathAfterWwwRoot = "images\\sliders";
     const spn_fileStatusLabel_id = "#spn_fileStatusLabel";
     const spn_fileStatusLabel_color = "#120a8f";
+    const img_buttonNext = $("#img_buttonNext");
+    const image_noImagePath = "/images/noImage.png";
+    const image_newImagePath = "/images/newImage.png";
+    const image_newImagePath_style = "max-width:45px; max-height:45px";
     let currentSliderNo = 0;
+    let maxSliderQuantity;  // associated with "slider_noAndPaths" length
     let slider_selectedFilesInfos = {};
     let slider_noAndPaths = [];
     //#endregion
@@ -50,6 +54,11 @@ $(function () {
         }
         //#endregion
 
+        //#region active next button with "NoImage.png"
+        if (currentSliderNo == maxSliderQuantity - 1)
+            btn_next.removeAttr("disabled");
+        //#endregion
+
         //#region display slider by dataUrl
         slider_selectedFilesInfos[currentSliderNo] = selectedFileInfos // save selectedFile
         await displaySliderByDataUrlAsync(selectedFileInfos);
@@ -61,11 +70,19 @@ $(function () {
         await updateSliderNoButtonAsync();
         //#endregion
 
-        //#region hide previous button and show next button
+        //#region hide previous button and active next button
         if (currentSliderNo == 0)
             btn_previous.attr("hidden", "")
 
-        btn_next.removeAttr("hidden");
+        btn_next.removeAttr("disabled");
+        //#endregion
+
+        //#region add "next.png" to next button
+        if (img_buttonNext.attr("src") == image_newImagePath) {
+            img_buttonNext.removeAttr("src");  // remove "noImage.png";
+            img_buttonNext.attr("src", "/images/next.png");
+            img_buttonNext.removeAttr("style");  // reset sizes
+        }
         //#endregion
 
         //#region display image
@@ -74,21 +91,37 @@ $(function () {
         //#endregion
     })
     btn_next.click(async () => {
-        //#region update slider no button
+        //#region when clicked to next button with "noImage.png"
+        if (img_buttonNext.attr("src") == image_newImagePath) {
+            maxSliderQuantity += 1;
+
+            // disable next button with "noImage.png"
+            btn_next.attr("disabled", "");
+        }
+        //#endregion
+
+        //#region update "sliderNo" button
         currentSliderNo += 1;
         await updateSliderNoButtonAsync();
         //#endregion
 
-        //#region hide next button and show previous button
-        if (currentSliderNo == maxSliderQuantity - 1)
-            btn_next.attr("hidden", "")
+        //#region display slider
+        btn_previous.removeAttr("hidden");  // show previous button
+        inpt_chooseFile.val(""); // reset choose file input
 
-        btn_previous.removeAttr("hidden");
+        await displaySliderByPathAsync();
         //#endregion
 
-        //#region display image
-        inpt_chooseFile.val(""); // reset choose file input
-        await displaySliderByPathAsync();
+        //#region add "newImage.png" to next button
+        if (currentSliderNo == maxSliderQuantity - 1) {
+            // add "newImage.png" to button next
+            img_buttonNext.attr("src", image_newImagePath);
+            img_buttonNext.attr("style", image_newImagePath_style);  // set sizes
+
+            // disable button next with "newImage.png"
+            if (img_sliders.attr("src") == image_noImagePath)
+                btn_next.attr("disabled", "");
+        }
         //#endregion
     })
     //#endregion
@@ -106,7 +139,8 @@ $(function () {
 
     async function updateSliderNoButtonAsync() {
         btn_sliderNo.empty();
-        btn_sliderNo.append((currentSliderNo + 1) + "/" + maxSliderQuantity);
+        btn_sliderNo.append(
+            (currentSliderNo + 1) + "/" + maxSliderQuantity);
     }
 
     async function uploadSlidersAsync() {
@@ -269,14 +303,14 @@ $(function () {
 
             //#region when slider not exists on "slider_noAndPaths"
             else
-                img_sliders.attr("src", noImagePath)
+                img_sliders.attr("src", image_noImagePath)
             //#endregion
         }
         //#endregion
 
         //#region when slider to be display has been changed previously
         else {
-            //#region add "noImage" image and "image loading..." message 
+            //#region remove image and add "image loading..." message 
             img_sliders.removeAttr("src");  // until slider loads
             updateResultLabel(
                 spn_fileStatusLabel_id,
@@ -290,12 +324,36 @@ $(function () {
         //#endregion
     }
 
-    async function populateSliderAsync() {
-        await setSliderMaxHeightAndWidthAsync();
+    async function initializeSliderNoButtonAsync() {
+        //#region when total slider quantity less than 2
+        let totalSliderQuantity = slider_noAndPaths.length
 
-        //#region populate "slider no" button
+        if (totalSliderQuantity <= 1) {
+            //#region add "newImage.png" to next button
+            maxSliderQuantity = 1;
+            img_buttonNext.attr("src", image_newImagePath);
+            img_buttonNext.attr("style", image_newImagePath_style);  // set sizes
+            //#endregion
+
+            //#region disable button next with "newImage.png"
+            if (totalSliderQuantity == 0)
+                btn_next.attr("disabled", "");
+            //#endregion
+        }
+        //#endregion
+
+        //#region when total slider quantity more than 1
+        else
+            maxSliderQuantity = totalSliderQuantity;
+        //#endregion
+
+        //#region populate "sliderNo" button
         btn_sliderNo.append(`1/${maxSliderQuantity}`);
         //#endregion
+    }
+
+    async function populateSliderAsync() {
+        await setSliderMaxHeightAndWidthAsync();
 
         //#region initialize "slider_noAndPaths" array
         // get infos from local
@@ -329,6 +387,7 @@ $(function () {
                     //#endregion
 
                     displaySliderByPathAsync();
+                    initializeSliderNoButtonAsync();
 
                     //#region save "slider_noAndPaths" to local
                     localStorage.setItem(
@@ -338,13 +397,16 @@ $(function () {
                 },
                 error: () => {
                     displaySliderByPathAsync(); // for add "noImage" image
+                    initializeSliderNoButtonAsync();
                 }
             })
         //#endregion
 
         //#region when "slider_noAndPaths" exists in local
-        else
+        else {
             await displaySliderByPathAsync();
+            await initializeSliderNoButtonAsync();
+        }
         //#endregion
 
         //#endregion
