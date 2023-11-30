@@ -15,10 +15,9 @@ $(function () {
     const slider_folderPathAfterWwwRoot = "images\\sliders";
     const spn_fileStatusLabel_id = "#spn_fileStatusLabel";
     const spn_fileStatusLabel_color = "#120a8f";
-    let currentSliderNo = 1;
+    let currentSliderNo = 0;
     let slider_selectedFilesInfos = {};
-    let slider_noAndPaths = {};
-    let slider_uploadedSliderQuantity = 0;
+    let slider_noAndPaths = [];
     //#endregion
 
     //#region events
@@ -63,7 +62,7 @@ $(function () {
         //#endregion
 
         //#region hide previous button and show next button
-        if (currentSliderNo == 1)
+        if (currentSliderNo == 0)
             btn_previous.attr("hidden", "")
 
         btn_next.removeAttr("hidden");
@@ -81,7 +80,7 @@ $(function () {
         //#endregion
 
         //#region hide next button and show previous button
-        if (currentSliderNo == maxSliderQuantity)
+        if (currentSliderNo == maxSliderQuantity - 1)
             btn_next.attr("hidden", "")
 
         btn_previous.removeAttr("hidden");
@@ -107,12 +106,21 @@ $(function () {
 
     async function updateSliderNoButtonAsync() {
         btn_sliderNo.empty();
-        btn_sliderNo.append(currentSliderNo + "/" + maxSliderQuantity);
+        btn_sliderNo.append((currentSliderNo + 1) + "/" + maxSliderQuantity);
     }
 
     async function uploadSlidersAsync() {
-        // 1st ajax: delete sliders from db and folder 
-        // 2nd ajax: upload sliders to db and local
+        //#region set data
+        let data = slider_noAndPaths;
+
+        // add selected files paths to "slider_noAndPaths"
+        for (let sliderNo in slider_selectedFilesInfos)
+            data[sliderNo] = slider_selectedFilesInfos[sliderNo]
+                .name;
+        //#endregion
+
+        // 1st ajax: delete sliders from folder and db
+        // 2nd ajax: upload sliders to folder and db
         $.ajax({
             method: "DELETE",
             url: (baseApiUrl + "/file/slider/delete/multiple" +
@@ -121,14 +129,21 @@ $(function () {
             headers: {
                 "authorization": jwtToken
             },
+            data: JSON.stringify({
+                "FileNamesToBeNotDelete": data
+            }),
             contentType: "application/json",
             dataType: "json",
             success: () => {
-                //#region upload sliders (ajax)
-                let selectedSliderFilesQuantity = Object
+                //#region get total selected file quantity
+                let slider_totalSelectedFilesQuantity = Object
                     .keys(slider_selectedFilesInfos)
                     .length;
 
+                let slider_uploadedSliderQuantity = 0;
+                //#endregion
+
+                //#region upload sliders (ajax)
                 for (let sliderNo in slider_selectedFilesInfos) {
                     //#region upload slider to folder and db (ajax)
                     let sliderInfos = slider_selectedFilesInfos[sliderNo];
@@ -136,18 +151,21 @@ $(function () {
 
                     reader.readAsDataURL(sliderInfos);
                     reader.onload = function (event) {
+                        //#region upload sliders to folder and db (ajax)
                         let dataUrl = event.target.result;
 
+                        // upload slider to folder 
                         $.ajax({
                             method: "POST",
-                            url: baseApiUrl + `/file/slider/upload?language=${language}`,
+                            url: (baseApiUrl + "/file/slider/upload/folder" +
+                                `?language=${language}` +
+                                `&FolderPathAfterWwwroot=${slider_folderPathAfterWwwRoot}`),
                             headers: {
                                 "authorization": jwtToken
                             },
                             contentType: "application/json",
                             dataType: "json",
                             data: JSON.stringify({
-                                "FolderPathAfterWwwroot": slider_folderPathAfterWwwRoot,
                                 "FileName": sliderInfos.name,
                                 "FileContentInBase64Str": dataUrl.replace("data:image/jpeg;base64,", "")   // add only base64 part of dataUrl
                             }),
@@ -156,32 +174,57 @@ $(function () {
                                 slider_noAndPaths[sliderNo] = sliderInfos.name;
                                 //#endregion
 
-                                //#region when all selected sliders uploaded
+                                //#region upload sliders to db (ajax)
                                 slider_uploadedSliderQuantity += 1;
 
-                                if (slider_uploadedSliderQuantity == selectedSliderFilesQuantity) {
-                                    //#region update "sliderNoAndPaths" on local
-                                    localStorage.setItem(
-                                        localKeys_sliderNoAndPaths,
-                                        JSON.stringify(slider_noAndPaths));
-                                    //#endregion
+                                // when all selected sliders uploaded
+                                if (slider_uploadedSliderQuantity == slider_totalSelectedFilesQuantity) {
+                                    $.ajax({
+                                        method: "POST",
+                                        url: baseApiUrl + `/file/slider/upload/db?language=${language}`,
+                                        headers: {
+                                            "authorization": jwtToken
+                                        },
+                                        data: JSON.stringify({
+                                            "fileNames": slider_noAndPaths
+                                        }),
+                                        contentType: "application/json",
+                                        dataType: "json",
+                                        success: () => {
+                                            //#region update "sliderNoAndPaths" on local
+                                            slider_noAndPaths = data;  // update
+                                            slider_selectedFilesInfos = {};  // reset
 
-                                    //#region write success message
-                                    updateResultLabel(
-                                        resultLabeL_id,
-                                        resultLabel_successMessageByLanguages[language],
-                                        resultLabel_successColor);
-                                    //#endregion
+                                            localStorage.setItem(
+                                                localKeys_sliderNoAndPaths,
+                                                JSON.stringify(slider_noAndPaths));
+                                            //#endregion
+
+                                            //#region write success message
+                                            updateResultLabel(
+                                                resultLabeL_id,
+                                                slider_successMessageByLanguages[language],
+                                                resultLabel_successColor);
+                                            //#endregion
+                                        },
+                                        error: () => {
+                                            updateResultLabel(
+                                                resultLabeL_id,
+                                                slider_errorMessagesByLanguages[language]["uploadToDb"],
+                                                resultLabel_errorColor);
+                                        }
+                                    })
                                 }
                                 //#endregion
                             },
                             error: () => {
                                 updateResultLabel(
                                     resultLabeL_id,
-                                    "error occured when some sliders uploading"],
+                                    slider_errorMessagesByLanguages[language]["uploadToFolder"],
                                     resultLabel_successColor);
                             }
                         })
+                        //#endregion
                     }
                     //#endregion
                 }
@@ -190,7 +233,7 @@ $(function () {
             error: () => {
                 updateResultLabel(
                     resultLabeL_id,
-                    "any error occured on server side, please try again later",
+                    "error occured on server side, please try again later",
                     resultLabel_errorColor);
             }
         })
@@ -216,10 +259,12 @@ $(function () {
 
         if (selectedFileInfos == undefined) {
             //#region when slider exists on "slider_noAndPaths"
-            let sliderPath = slider_noAndPaths[currentSliderNo];
+            let fileName = slider_noAndPaths[currentSliderNo];
 
-            if (sliderPath != undefined)
-                img_sliders.attr("src", sliderPath);
+            if (fileName != undefined)
+                img_sliders.attr(
+                    "src",
+                    "/" + slider_folderPathAfterWwwRoot + "//" + fileName);
             //#endregion
 
             //#region when slider not exists on "slider_noAndPaths"
@@ -252,7 +297,7 @@ $(function () {
         btn_sliderNo.append(`1/${maxSliderQuantity}`);
         //#endregion
 
-        //#region initialize "slider_noAndPaths"
+        //#region initialize "slider_noAndPaths" array
         // get infos from local
         let sliderNoAndPathsInLocal = localStorage
             .getItem(localKeys_sliderNoAndPaths);
@@ -271,7 +316,7 @@ $(function () {
                 method: "GET",
                 url: baseApiUrl + `/file/slider/display/all?language=${language}`,
                 headers: {
-                    "Authorization": jwtToken
+                    "authorization": jwtToken
                 },
                 contentType: "application/json",
                 dataType: "json",
@@ -279,7 +324,7 @@ $(function () {
                     //#region populate to "slider_noAndPaths"
                     for (let index in response) {
                         let sliderInfos = response[index];
-                        slider_noAndPaths[sliderInfos["sliderNo"]] = sliderInfos["sliderPath"];
+                        slider_noAndPaths.push(sliderInfos["fileName"]);
                     }
                     //#endregion
 
@@ -291,8 +336,8 @@ $(function () {
                         JSON.stringify(slider_noAndPaths));
                     //#endregion
                 },
-                error: (response) => {
-                    displaySliderByPathAsync();
+                error: () => {
+                    displaySliderByPathAsync(); // for add "noImage" image
                 }
             })
         //#endregion

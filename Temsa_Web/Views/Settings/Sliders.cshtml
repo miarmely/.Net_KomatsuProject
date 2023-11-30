@@ -42,9 +42,19 @@
 
 <script type="module" src="~/js/miar_sliders.js"></script>
 <script>
-    const resultLabel_successMessageByLanguages = {
+    const slider_successMessageByLanguages = {
         "TR": "başarıyla kaydedildi",
         "EN": "save successful"
+    }
+    const slider_errorMessagesByLanguages = {
+        "TR": {
+            "uploadToFolder": "sunucu tarafında hata oluştu, lütfen daha sonra tekrar deneyiniz",
+            "uploadToDb": "veritabanında hata oluştu, lütfen daha sonra tekrar deneyiniz"
+        },
+        "EN": {
+            "uploadToFolder": "error occured on server-side, please try again later",
+            "uploadToDb": "error occured on db, please try again later"
+        }
     }
 </script>
 

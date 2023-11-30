@@ -20,11 +20,11 @@ namespace Presantation.Controllers
 		[HttpPost("slider/upload/folder")]
 		//[Authorization("Admin,Editor,Yönetici,Editör")]
 		public async Task<IActionResult> UploadSliderToFolder(
-			[FromQuery(Name = "language")][Required] string language, // authorization
+			[FromQuery] SliderParametersForUploadToFolder sliderParams,
 			[FromBody] SliderDtoForUploadToFolder sliderDto)
 		{
 			await _manager.FileService
-				.UploadSliderToFolderAsync(sliderDto);
+				.UploadSliderToFolderAsync(sliderParams, sliderDto);
 
 			return NoContent();
 		}

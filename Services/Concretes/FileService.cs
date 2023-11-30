@@ -26,11 +26,12 @@ namespace Services.Concretes
         }
 
         public async Task UploadSliderToFolderAsync(
-            SliderDtoForUploadToFolder sliderDto)
+			SliderParametersForUploadToFolder sliderParams,
+			SliderDtoForUploadToFolder sliderDto)
         {
             #region set paths
             var fullFolderPath = await GetFullFolderPathAsync(
-                sliderDto.FolderPathAfterWwwroot);
+				sliderParams.FolderPathAfterWwwroot);
 
             var fullFilePath = fullFolderPath
                 + @"\"
@@ -80,10 +81,6 @@ namespace Services.Concretes
                 sliderParams.Language, 
                 DbType.String);
 
-            parameters.Add("FolderPathAfterWwwroot",
-                sliderParams.FolderPathAfterWwwroot,
-                DbType.String);
-
             parameters.Add("StatusCode", 
                 0, 
                 DbType.Int16,
@@ -129,10 +126,6 @@ namespace Services.Concretes
 
             parameters.Add("Language", sliderParams.Language, DbType.String);
 			parameters.Add("SliderNo", sliderParams.SliderNo, DbType.Int16);
-
-            parameters.Add("FolderPathAfterWwwroot",
-				sliderParams.FolderPathAfterWwwroot,
-                DbType.String);
             
             parameters.Add("StatusCode", 
                 null, 
