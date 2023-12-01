@@ -18,6 +18,9 @@ $(function () {
     const image_noImagePath = "/images/noImage.png";
     const image_newImagePath = "/images/newImage.png";
     const image_newImagePath_style = "max-width:45px; max-height:45px";
+    const inpt_selectedFile = $("#inpt_selectedFile");
+    const nextButton_bgColor_enabled = "darkBlue";
+    const nextButton_bgColor_disabled = "darkGrey";
     let currentSliderNo = 0;
     let maxSliderQuantity;  // associated with "slider_noAndPaths" length
     let slider_selectedFilesInfos = {};
@@ -39,7 +42,7 @@ $(function () {
             inpt_chooseFile.val("");
             updateResultLabel(
                 resultLabeL_id,
-                "sadece resim tipindeki dosyaları seçebilirsiniz.",
+                errorMessagesByLanguages[language]["invalidFileType"],
                 resultLabel_errorColor);
 
             return;
@@ -48,7 +51,7 @@ $(function () {
 
         //#region active next button with "NoImage.png"
         if (currentSliderNo == maxSliderQuantity - 1)
-            btn_next.removeAttr("disabled");
+            await enableOrDisableNextButtonAsync(false);
         //#endregion
 
         //#region display slider by dataUrl
@@ -58,7 +61,9 @@ $(function () {
     })
     btn_previous.click(async () => {
         //#region update slider no button
+        resultLabel.empty();
         currentSliderNo -= 1;
+
         await updateSliderNoButtonAsync();
         //#endregion
 
@@ -66,7 +71,7 @@ $(function () {
         if (currentSliderNo == 0)
             btn_previous.attr("hidden", "")
 
-        btn_next.removeAttr("disabled");
+        await enableOrDisableNextButtonAsync(false);
         //#endregion
 
         //#region add "next.png" to next button
@@ -84,11 +89,13 @@ $(function () {
     })
     btn_next.click(async () => {
         //#region when clicked to next button with "noImage.png"
+        resultLabel.empty();
+
         if (img_buttonNext.attr("src") == image_newImagePath) {
             maxSliderQuantity += 1;
 
             // disable next button with "noImage.png"
-            btn_next.attr("disabled", "");
+            await enableOrDisableNextButtonAsync(true);
         }
         //#endregion
 
@@ -112,14 +119,22 @@ $(function () {
 
             // disable button next with "newImage.png"
             if (img_sliders.attr("src") == image_noImagePath)
-                btn_next.attr("disabled", "");
+                await enableOrDisableNextButtonAsync(true);
         }
         //#endregion
     })
     $("#btn_save").click(async () => {
-        //#region any slider not selected
-        if (Object.keys(slider_selectedFilesInfos).length == 0)
+        //#region any slider not selected (error)
+        resultLabel.empty();
+
+        if (Object.keys(slider_selectedFilesInfos).length == 0) {
+            updateResultLabel(
+                resultLabeL_id,
+                errorMessagesByLanguages[language]["noAnyChanges"],
+                resultLabel_errorColor);
+
             return;
+        }
         //#endregion
 
         await uploadSlidersAsync();
@@ -216,7 +231,7 @@ $(function () {
                             dataType: "json",
                             data: JSON.stringify({
                                 "FileName": sliderInfos.name,
-                                "FileContentInBase64Str": dataUrl.replace("data:image/jpeg;base64,", "")   // add only base64 part of dataUrl
+                                "FileContentInBase64Str": dataUrl.replace(`data:${sliderInfos.type};base64,`, "")   // add only base64 part of dataUrl
                             }),
                             success: () => {
                                 //#region update to "slider_noAndPaths"
@@ -252,7 +267,7 @@ $(function () {
                                             //#region write success message
                                             updateResultLabel(
                                                 resultLabeL_id,
-                                                successMessageByLanguages[language],
+                                                successMessagesByLanguages[language]["successfullSave"],
                                                 resultLabel_successColor);
                                             //#endregion
                                         },
@@ -270,7 +285,7 @@ $(function () {
                                 updateResultLabel(
                                     resultLabeL_id,
                                     errorMessagesByLanguages[language]["uploadToFolder"],
-                                    resultLabel_successColor);
+                                    resultLabel_errorColor);
                             }
                         })
                         //#endregion
@@ -282,7 +297,7 @@ $(function () {
             error: () => {
                 updateResultLabel(
                     resultLabeL_id,
-                    "error occured on server side, please try again later",
+                    errorMessagesByLanguages[language]["deleteFromFolderAndDb"],
                     resultLabel_errorColor);
             }
         })
@@ -294,10 +309,15 @@ $(function () {
 
         fileReader.readAsDataURL(selectedFileInfos);
         fileReader.onload = function (event) {
+            // add src to slider <img>
             var dataUrl = event.target.result;
             img_sliders.attr("src", dataUrl);
 
-            $(spn_fileStatusLabel_id).empty(); // reset "image loading..." message
+            // write file name to "inpt_selectedFile"
+            inpt_selectedFile.val(selectedFileInfos.name);
+
+            // reset "image loading..." message
+            $(spn_fileStatusLabel_id).empty(); 
         };
         //#endregion
     }
@@ -312,15 +332,26 @@ $(function () {
             //#region when slider exists on "slider_noAndPaths"
             let fileName = slider_noAndPaths[currentSliderNo];
 
-            if (fileName != undefined)
+            if (fileName != undefined) {
+                // add src to slider <img>
                 img_sliders.attr(
                     "src",
                     "/" + slider_folderPathAfterWwwRoot + "//" + fileName);
+
+                // write file name to "inpt_selectedFile"
+                inpt_selectedFile.val(fileName);
+            }
+                
             //#endregion
 
             //#region when slider not exists on "slider_noAndPaths"
-            else
-                img_sliders.attr("src", image_noImagePath)
+            else {
+                img_sliders.attr("src", image_noImagePath);
+
+                // add message to "inpt_selectedFile"
+                inpt_selectedFile.val(
+                    errorMessagesByLanguages[language]["imageNotSelected"]);
+            }
             //#endregion
         }
         //#endregion
@@ -331,7 +362,7 @@ $(function () {
             img_sliders.removeAttr("src");  // until slider loads
             updateResultLabel(
                 spn_fileStatusLabel_id,
-                "resim yükleniyor...",
+                successMessagesByLanguages[language]["imageLoading"],
                 spn_fileStatusLabel_color
             );
             //#endregion
@@ -354,7 +385,7 @@ $(function () {
 
             //#region disable button next with "newImage.png"
             if (totalSliderQuantity == 0)
-                btn_next.attr("disabled", "");
+                await enableOrDisableNextButtonAsync(true);
             //#endregion
         }
         //#endregion
@@ -366,6 +397,22 @@ $(function () {
 
         //#region populate "sliderNo" button
         btn_sliderNo.append(`1/${maxSliderQuantity}`);
+        //#endregion
+    }
+
+    async function enableOrDisableNextButtonAsync(doDisabled) {
+        //#region do disabled next button
+        if (doDisabled) {
+            btn_next.attr("disabled", "");
+            btn_next.css("background-color", nextButton_bgColor_disabled);
+        }
+        //#endregion
+
+        //#region active next button
+        else {
+            btn_next.removeAttr("disabled");
+            btn_next.css("background-color", nextButton_bgColor_enabled);
+        }
         //#endregion
     }
 
@@ -432,13 +479,13 @@ $(function () {
         $("#header_tableTitle").append(
             tableTitleByLanguages[language]);
 
-        // add choose file label name
-        $("#lbl_chooseFile").append(
-            chooseFileLabelNameByLanguages[language]);
+        // add choose file button name
+        $("#btn_chooseFile").append(
+            chooseFileButton_nameByLanguages[language]);
 
         // add save button name
         $("#btn_save").append(
-            saveButtonNameByLanguages[language]);
+            saveButton_nameByLanguages[language]);
 
         // add remove button name
         $("#btn_remove").append(

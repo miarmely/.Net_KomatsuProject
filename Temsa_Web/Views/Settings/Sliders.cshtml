@@ -25,7 +25,6 @@
                             @*<label id="lbl_chooseFile" for="inpt_chooseFile" class="form-label" style="float:left"></label>*@
                             <div>
                                 <button id="btn_chooseFile" class="btn btn-danger" style="background-color: goldenrod">
-                                    Resim Seç
                                 </button>
                                 <input id="inpt_selectedFile" type="text" style="width:50%" disabled>
                                 <button id="btn_remove" class="btn btn-danger">
@@ -39,7 +38,8 @@
                             <span id="spn_resultLabel"></span>
                         </div>
                         <div style="text-align:center; margin-top:30px">
-                            <button id="btn_save" class="btn btn-danger" style="background-color: darkblue; font-size:17px;"></button>
+                            <button id="btn_save" class="btn btn-danger" style="background-color: darkblue; font-size:17px;">
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -50,35 +50,49 @@
 
 <script type="module" src="~/js/miar_sliders.js"></script>
 <script>
-    const successMessageByLanguages = {
-        "TR": "başarıyla kaydedildi",
-        "EN": "save successful"
-    }
-    const errorMessagesByLanguages = {
-        "TR": {
-            "uploadToFolder": "sunucu tarafında hata oluştu, lütfen daha sonra tekrar deneyiniz",
-            "uploadToDb": "veritabanında hata oluştu, lütfen daha sonra tekrar deneyiniz"
-        },
-        "EN": {
-            "uploadToFolder": "error occured on server-side, please try again later",
-            "uploadToDb": "error occured on db, please try again later"
-        }
-    };
     const tableTitleByLanguages = {
         "TR": "SLİDERLAR",
         "EN":"SLIDERS"
     };
-    const chooseFileLabelNameByLanguages = {
-        "TR": "Resim Seç",
-        "EN": "Choose File"
-    };
-    const saveButtonNameByLanguages = {
-        "TR": "Kaydet",
-        "EN": "Save"
-    };
     const removeButtonNameByLanguages = {
         "TR": "Kaldır",
         "EN": "Remove"
+    }
+    const saveButton_nameByLanguages = {
+        "TR": "Kaydet",
+        "EN": "Save"
+    };
+    const chooseFileButton_nameByLanguages = {
+        "TR": "Resim Seç",
+        "EN": "Choose File"
+    };
+    const successMessagesByLanguages = {
+        "TR": {
+            "successfullSave": "başarıyla kaydedildi",
+            "imageLoading": "resim yükleniyor...",
+        },
+        "EN": {
+            "successfullSave": "save successful",
+            "imageLoading": "image loading..."
+        }
+    }
+    const errorMessagesByLanguages = {
+        "TR": {
+            "noAnyChanges" : "herhangi bir değişiklik yapılmadı",
+            "imageNotSelected": "herhangi bir resim seçilmedi",
+            "deleteFromFolderAndDb" : "sunucu tarafında bir hata oluştu, lütfen daha sonra tekrar deneyiniz",
+            "uploadToFolder": "sunucu tarafında hata oluştu, lütfen daha sonra tekrar deneyiniz",
+            "uploadToDb": "veritabanında hata oluştu, lütfen daha sonra tekrar deneyiniz",
+            "invalidFileType": "sadece resim tipindeki dosyaları seçebilirsiniz."
+        },
+        "EN": {
+            "noAnyChanges" : "no any changes were made",
+            "imageNotSelected": "any image not selected",
+            "deleteFromFolderAndDb" : "error occured on server-side, please try again later",
+            "uploadToFolder": "error occured on server-side, please try again later",
+            "uploadToDb": "error occured on db, please try again later",
+            "invalidFileType": "you can only choose files which type is image."
+        }
     }
 </script>
 
