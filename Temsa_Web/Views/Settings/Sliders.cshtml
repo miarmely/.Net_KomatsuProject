@@ -2,9 +2,7 @@
 	<div class="row">
         <div class="col-sm-12">
             <section class="panel">
-                <header class="panel-heading">
-                    SLIDERS
-                </header>
+                <header id="header_tableTitle" class="panel-heading"></header>
                 <div class="panel-body" style="text-align:center">
                     <div id="div_sliders">
                         <img id="img_sliders"/>
@@ -12,26 +10,36 @@
                             <span id="spn_fileStatusLabel"></span>
                         </div>
                         <div style="margin-top:30px;">
-                            <button id="btn_previous" hidden>
+                            <button id="btn_previous" style="background-color: darkblue" hidden>
                                 <img src="~/images/prev.png" alt="previous"/>
                             </button>
-                            <button id="btn_sliderNo" style="margin-left:15px; margin-right:15px"; disabled></button>
-                            <button id="btn_next">
+                            <button id="btn_sliderNo" style="margin-left:15px; margin-right:15px; background-color: darkblue; color:white" disabled>
+                            </button>
+                            <button id="btn_next" style="background-color: darkblue">
                                 <img id="img_buttonNext" src="~/images/next.png" alt="next"/>
                             </button>
                         </div>
                     </div>
-                    <div class="mb-3" style="margin-top:50px">
+                    <div class="mb-3" style="margin-top:30px">
                         <div>
-                            <label for="inpt_chooseFile" class="form-label" style="float:left">Choose Picture</label>
-                            <input id="inpt_chooseFile" type="file" class="form-control" accept="image/*"/>
+                            @*<label id="lbl_chooseFile" for="inpt_chooseFile" class="form-label" style="float:left"></label>*@
+                            <div>
+                                <button id="btn_chooseFile" class="btn btn-danger" style="background-color: goldenrod">
+                                    Resim Seç
+                                </button>
+                                <input id="inpt_selectedFile" type="text" style="width:50%" disabled>
+                                <button id="btn_remove" class="btn btn-danger">
+                                </button>
+                            </div>
+                            <div hidden>
+                                <input hidden id="inpt_chooseFile" type="file" accept="image/*"/>
+                            </div>
+                        </div>
+                        <div style="margin-top:60px">
+                            <span id="spn_resultLabel"></span>
                         </div>
                         <div style="text-align:center; margin-top:30px">
-                            <button id="btn_save" class="btn btn-danger" style="background-color: darkblue">Save</button>
-                            <button id="btn_remove" class="btn btn-danger">Remove</button>
-                        </div>
-                        <div style="margin-top:50px">
-                            <span id="spn_resultLabel"></span>
+                            <button id="btn_save" class="btn btn-danger" style="background-color: darkblue; font-size:17px;"></button>
                         </div>
                     </div>
                 </div>
@@ -42,11 +50,11 @@
 
 <script type="module" src="~/js/miar_sliders.js"></script>
 <script>
-    const slider_successMessageByLanguages = {
+    const successMessageByLanguages = {
         "TR": "başarıyla kaydedildi",
         "EN": "save successful"
     }
-    const slider_errorMessagesByLanguages = {
+    const errorMessagesByLanguages = {
         "TR": {
             "uploadToFolder": "sunucu tarafında hata oluştu, lütfen daha sonra tekrar deneyiniz",
             "uploadToDb": "veritabanında hata oluştu, lütfen daha sonra tekrar deneyiniz"
@@ -55,6 +63,22 @@
             "uploadToFolder": "error occured on server-side, please try again later",
             "uploadToDb": "error occured on db, please try again later"
         }
+    };
+    const tableTitleByLanguages = {
+        "TR": "SLİDERLAR",
+        "EN":"SLIDERS"
+    };
+    const chooseFileLabelNameByLanguages = {
+        "TR": "Resim Seç",
+        "EN": "Choose File"
+    };
+    const saveButtonNameByLanguages = {
+        "TR": "Kaydet",
+        "EN": "Save"
+    };
+    const removeButtonNameByLanguages = {
+        "TR": "Kaldır",
+        "EN": "Remove"
     }
 </script>
 

@@ -77,36 +77,28 @@
       "PackagePath": "staticwebassets\\images\\EN.png"
     },
     {
-      "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\images\\Sliders\\IMG_2307.JPG",
-      "PackagePath": "staticwebassets\\images\\Sliders\\IMG_2307.JPG"
-    },
-    {
-      "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\images\\Sliders\\img3.wallspic.com-assassins_creed_3-black-logo-assassins_creed_brotherhood-assassins_creed_origins-2560x1600.jpg",
-      "PackagePath": "staticwebassets\\images\\Sliders\\img3.wallspic.com-assassins_creed_3-black-logo-assassins_creed_brotherhood-assassins_creed_origins-2560x1600.jpg"
-    },
-    {
       "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\images\\Sliders\\panther_predator_big_cat_125419_2560x1600.jpg",
       "PackagePath": "staticwebassets\\images\\Sliders\\panther_predator_big_cat_125419_2560x1600.jpg"
+    },
+    {
+      "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\images\\Sliders\\wallpaper_1.jpg",
+      "PackagePath": "staticwebassets\\images\\Sliders\\wallpaper_1.jpg"
     },
     {
       "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\images\\Sliders\\wallpaper_2.jpg",
       "PackagePath": "staticwebassets\\images\\Sliders\\wallpaper_2.jpg"
     },
     {
-      "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\images\\Sliders\\wallpaper_3.jpg",
-      "PackagePath": "staticwebassets\\images\\Sliders\\wallpaper_3.jpg"
-    },
-    {
-      "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\images\\Sliders\\wallpaper_5.jpg",
-      "PackagePath": "staticwebassets\\images\\Sliders\\wallpaper_5.jpg"
-    },
-    {
-      "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\images\\Sliders\\wallpaper_6.jpg",
-      "PackagePath": "staticwebassets\\images\\Sliders\\wallpaper_6.jpg"
+      "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\images\\Sliders\\wallpaper_4.jpg",
+      "PackagePath": "staticwebassets\\images\\Sliders\\wallpaper_4.jpg"
     },
     {
       "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\images\\TR.png",
       "PackagePath": "staticwebassets\\images\\TR.png"
+    },
+    {
+      "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\images\\chooseImage.png",
+      "PackagePath": "staticwebassets\\images\\chooseImage.png"
     },
     {
       "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\images\\close.png",

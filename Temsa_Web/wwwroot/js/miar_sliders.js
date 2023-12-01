@@ -28,14 +28,6 @@ $(function () {
     $(window).resize(async () => {
         await setSliderMaxHeightAndWidthAsync();
     })
-    $("#btn_save").click(async () => {
-        //#region any slider not selected
-        if (Object.keys(slider_selectedFilesInfos).length == 0)
-            return;
-        //#endregion
-
-        await uploadSlidersAsync();
-    })
     inpt_chooseFile.change(async (event) => {
         //#region get selected file
         resultLabel.empty();  // reset resultLabel
@@ -124,16 +116,39 @@ $(function () {
         }
         //#endregion
     })
+    $("#btn_save").click(async () => {
+        //#region any slider not selected
+        if (Object.keys(slider_selectedFilesInfos).length == 0)
+            return;
+        //#endregion
+
+        await uploadSlidersAsync();
+    })
+    $("#div_sidebarMenuButton").click(async () => {
+        await setSliderMaxHeightAndWidthAsync();
+    })
+    $("#btn_chooseFile").click(() =>
+        inpt_chooseFile.trigger("click")
+    );
     //#endregion
 
     //#region functions
     async function setSliderMaxHeightAndWidthAsync() {
         //#region set max width and height of slider
-        const divWidth = $(".panel-body")[0].clientWidth - 40;  // 40: i choosed as trying
-        const divHeight = $("#container")[0].clientHeight / 2;
+        let sliderMaxWidth = $(".panel-body")[0].clientWidth - 40;  // 40: i choosed as trying
+        const sliderMaxHeight = window.innerHeight / 2.5;
+        //#endregion
 
-        img_sliders.css("max-width", divWidth);
-        img_sliders.css("max-height", divHeight);
+        //#region when siderbar menu opened
+        const classWhenSidebarMenuOpened = "nav-collapse";
+
+        if ($("#sidebar").attr("class") == classWhenSidebarMenuOpened)
+            sliderMaxWidth -= 240;  // 240: sidebarMenu width
+        //#endregion
+
+        //#region change max sizes of slider
+        img_sliders.css("max-width", sliderMaxWidth);
+        img_sliders.css("max-height", sliderMaxHeight);
         //#endregion
     }
 
@@ -237,14 +252,14 @@ $(function () {
                                             //#region write success message
                                             updateResultLabel(
                                                 resultLabeL_id,
-                                                slider_successMessageByLanguages[language],
+                                                successMessageByLanguages[language],
                                                 resultLabel_successColor);
                                             //#endregion
                                         },
                                         error: () => {
                                             updateResultLabel(
                                                 resultLabeL_id,
-                                                slider_errorMessagesByLanguages[language]["uploadToDb"],
+                                                errorMessagesByLanguages[language]["uploadToDb"],
                                                 resultLabel_errorColor);
                                         }
                                     })
@@ -254,7 +269,7 @@ $(function () {
                             error: () => {
                                 updateResultLabel(
                                     resultLabeL_id,
-                                    slider_errorMessagesByLanguages[language]["uploadToFolder"],
+                                    errorMessagesByLanguages[language]["uploadToFolder"],
                                     resultLabel_successColor);
                             }
                         })
@@ -288,6 +303,8 @@ $(function () {
     }
 
     async function displaySliderByPathAsync() {
+        await setSliderMaxHeightAndWidthAsync();
+
         //#region when slider to be display hasn't been changed previously
         let selectedFileInfos = slider_selectedFilesInfos[currentSliderNo];
 
@@ -353,8 +370,6 @@ $(function () {
     }
 
     async function populateSliderAsync() {
-        await setSliderMaxHeightAndWidthAsync();
-
         //#region initialize "slider_noAndPaths" array
         // get infos from local
         let sliderNoAndPathsInLocal = localStorage
@@ -411,8 +426,27 @@ $(function () {
 
         //#endregion
     }
+
+    async function populateHtmlAsync() {
+        // add table title
+        $("#header_tableTitle").append(
+            tableTitleByLanguages[language]);
+
+        // add choose file label name
+        $("#lbl_chooseFile").append(
+            chooseFileLabelNameByLanguages[language]);
+
+        // add save button name
+        $("#btn_save").append(
+            saveButtonNameByLanguages[language]);
+
+        // add remove button name
+        $("#btn_remove").append(
+            removeButtonNameByLanguages[language]);
+    }
     //#endregion
 
+    populateHtmlAsync();
     populateSliderAsync();
 })
 
