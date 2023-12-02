@@ -34,5 +34,10 @@ namespace Repositories.Concretes
         public async Task TruncateAllSlidersAsync() =>
             await base
                 .TruncateTableAsync(Configs.DbSettings.TableNames.Sliders);
+
+        public async Task DeleteOneSliderAsync(DynamicParameters parameters) =>
+            await base.QuerySingleOrDefaultAsync<int>(
+                Configs.DbSettings.ProcedureNames.Slider_DeleteOneBySliderNo,
+                parameters);
     }
 }

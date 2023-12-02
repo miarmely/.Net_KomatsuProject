@@ -1,6 +1,6 @@
 {
   "Version": 1,
-  "Hash": "BTVjrys8SLEny4/aNA/BLhmfCiInJPDIcvul6/ylDtU=",
+  "Hash": "yVESB2doQWKiPWIQ6+EfNdTD1tOZGYgykGg19oOk/1w=",
   "Source": "Temsa_Web",
   "BasePath": "_content/Temsa_Web",
   "Mode": "Default",
@@ -544,12 +544,12 @@
       "OriginalItemSpec": "wwwroot\\images\\search-icon.png"
     },
     {
-      "Identity": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\images\\Sliders\\NvEE6FC.jpg",
+      "Identity": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\images\\Sliders\\HD405-8EO.jpg",
       "SourceId": "Temsa_Web",
       "SourceType": "Discovered",
       "ContentRoot": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\",
       "BasePath": "_content/Temsa_Web",
-      "RelativePath": "images/Sliders/NvEE6FC.jpg",
+      "RelativePath": "images/Sliders/HD405-8EO.jpg",
       "AssetKind": "All",
       "AssetMode": "All",
       "AssetRole": "Primary",
@@ -558,41 +558,7 @@
       "AssetTraitValue": "",
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
-      "OriginalItemSpec": "wwwroot\\images\\Sliders\\NvEE6FC.jpg"
-    },
-    {
-      "Identity": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\images\\Sliders\\panther_predator_big_cat_125419_2560x1600.jpg",
-      "SourceId": "Temsa_Web",
-      "SourceType": "Discovered",
-      "ContentRoot": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\",
-      "BasePath": "_content/Temsa_Web",
-      "RelativePath": "images/Sliders/panther_predator_big_cat_125419_2560x1600.jpg",
-      "AssetKind": "All",
-      "AssetMode": "All",
-      "AssetRole": "Primary",
-      "RelatedAsset": "",
-      "AssetTraitName": "",
-      "AssetTraitValue": "",
-      "CopyToOutputDirectory": "Never",
-      "CopyToPublishDirectory": "PreserveNewest",
-      "OriginalItemSpec": "wwwroot\\images\\Sliders\\panther_predator_big_cat_125419_2560x1600.jpg"
-    },
-    {
-      "Identity": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\images\\Sliders\\wallpaper_4.jpg",
-      "SourceId": "Temsa_Web",
-      "SourceType": "Discovered",
-      "ContentRoot": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\",
-      "BasePath": "_content/Temsa_Web",
-      "RelativePath": "images/Sliders/wallpaper_4.jpg",
-      "AssetKind": "All",
-      "AssetMode": "All",
-      "AssetRole": "Primary",
-      "RelatedAsset": "",
-      "AssetTraitName": "",
-      "AssetTraitValue": "",
-      "CopyToOutputDirectory": "Never",
-      "CopyToPublishDirectory": "PreserveNewest",
-      "OriginalItemSpec": "wwwroot\\images\\Sliders\\wallpaper_4.jpg"
+      "OriginalItemSpec": "wwwroot\\images\\Sliders\\HD405-8EO.jpg"
     },
     {
       "Identity": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\images\\TR.png",

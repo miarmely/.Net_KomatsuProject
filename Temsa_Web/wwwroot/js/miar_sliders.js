@@ -1,4 +1,4 @@
-﻿import { updateResultLabel } from "./miar_tools.js";
+﻿import { removeElementFromArrayByIndexAsync, updateResultLabel } from "./miar_tools.js";
 
 
 $(function () {
@@ -84,7 +84,7 @@ $(function () {
 
         //#region display image
         inpt_chooseFile.val(""); // reset choose file input
-        await displaySliderByPathAsync();
+        await displaySliderAsync();
         //#endregion
     })
     btn_next.click(async () => {
@@ -108,7 +108,7 @@ $(function () {
         btn_previous.removeAttr("hidden");  // show previous button
         inpt_chooseFile.val(""); // reset choose file input
 
-        await displaySliderByPathAsync();
+        await displaySliderAsync();
         //#endregion
 
         //#region add "newImage.png" to next button
@@ -123,6 +123,32 @@ $(function () {
         }
         //#endregion
     })
+    $("#btn_remove").click(async () => {
+        //#region remove slider from "sliderNoAndPaths" array
+        slider_noAndPaths = await removeElementFromArrayByIndexAsync(
+            slider_noAndPaths,
+            currentSliderNo);
+        //#endregion
+
+        //#region remove slider from "slider_selectedFilesInfos" object
+        // delete current slider
+        delete slider_selectedFilesInfos[currentSliderNo];
+
+        //#region reduce object keys by one 
+        let sliderNo;
+
+        for (sliderNo in slider_selectedFilesInfos)
+            // when sliderNo is bigger than currentSliderNo
+            if (sliderNo > currentSliderNo)
+                slider_selectedFilesInfos[sliderNo - 1] = slider_selectedFilesInfos[sliderNo];
+        //#endregion
+
+        // delete last element after reduce process
+        delete slider_selectedFilesInfos[sliderNo];
+        //#endregion
+
+        await displaySliderAsync();
+    });
     $("#btn_save").click(async () => {
         //#region any slider not selected (error)
         resultLabel.empty();
@@ -317,12 +343,12 @@ $(function () {
             inpt_selectedFile.val(selectedFileInfos.name);
 
             // reset "image loading..." message
-            $(spn_fileStatusLabel_id).empty(); 
+            $(spn_fileStatusLabel_id).empty();
         };
         //#endregion
     }
 
-    async function displaySliderByPathAsync() {
+    async function displaySliderAsync() {
         await setSliderMaxHeightAndWidthAsync();
 
         //#region when slider to be display hasn't been changed previously
@@ -341,7 +367,7 @@ $(function () {
                 // write file name to "inpt_selectedFile"
                 inpt_selectedFile.val(fileName);
             }
-                
+
             //#endregion
 
             //#region when slider not exists on "slider_noAndPaths"
@@ -448,7 +474,7 @@ $(function () {
                     }
                     //#endregion
 
-                    displaySliderByPathAsync();
+                    displaySliderAsync();
                     initializeSliderNoButtonAsync();
 
                     //#region save "slider_noAndPaths" to local
@@ -458,7 +484,7 @@ $(function () {
                     //#endregion
                 },
                 error: () => {
-                    displaySliderByPathAsync(); // for add "noImage" image
+                    displaySliderAsync(); // for add "noImage" image
                     initializeSliderNoButtonAsync();
                 }
             })
@@ -466,7 +492,7 @@ $(function () {
 
         //#region when "slider_noAndPaths" exists in local
         else {
-            await displaySliderByPathAsync();
+            await displaySliderAsync();
             await initializeSliderNoButtonAsync();
         }
         //#endregion

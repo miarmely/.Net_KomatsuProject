@@ -24,7 +24,8 @@
 		string Machine_GetAllHandStatus,
 		string Slider_Create,
 		string Slider_DisplayAll,
-		string Slider_DisplaySliderPathBySliderNo);
+		string Slider_DisplaySliderPathBySliderNo,
+		string Slider_DeleteOneBySliderNo);
 
     public record TableNames(
 		string Language,

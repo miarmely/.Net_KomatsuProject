@@ -10,7 +10,7 @@ namespace Services.Contracts
 		Task UploadSlidersToDbAsync(SliderDtoForUploadToDb sliderDto);
 
 		Task UploadSliderToFolderAsync(
-            SliderParametersForUploadToFolder sliderParams,
+			SliderParametersForUploadToFolder sliderParams,
             SliderDtoForUploadToFolder sliderDto);
 
 		Task<IEnumerable<SliderView>> GetAllSlidersAsync(
@@ -20,7 +20,12 @@ namespace Services.Contracts
             SliderParametersForDisplayOne sliderParams);
 
         Task DeleteMultipleSliderAsync(
-			SliderParametersForDelete sliderParams,
+			SliderParametersForDeleteMultiple sliderParams,
 			SliderDtoForDelete sliderDto);
-    }
+
+		Task DeleteOneSliderAsync(
+			string language,
+			string folderPathAfterWwwroot,
+			string fileName);
+	}
 }

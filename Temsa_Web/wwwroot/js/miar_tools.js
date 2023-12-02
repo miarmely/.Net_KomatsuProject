@@ -393,6 +393,28 @@ export async function populateSelectAsync(select, options, optionToBeDisplay = n
     //#endregion
 }
 
+export async function removeElementFromArrayByIndexAsync(array, elementIndex) {
+    //#region remove element
+    let shiftedArray = array;
+    delete array[elementIndex];
+    //#endregion
+
+    //#region shift the array to left
+    let index;
+
+    for (index = elementIndex; index < shiftedArray.length - 1; index++) {
+        shiftedArray[index] = shiftedArray[index + 1];
+    }
+    //#endregion
+
+    //#region remove last element if shift process occured
+    if (index != elementIndex)
+        shiftedArray.pop();
+    //#endregion
+
+    return shiftedArray;
+}
+
 async function addEntitiesToTableAsync(
     response,
     language,

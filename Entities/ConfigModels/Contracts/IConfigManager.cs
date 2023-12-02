@@ -7,6 +7,6 @@
 		MailSettingsConfig MailSettings { get; }
 		DbSettingsConfig DbSettings { get; }
 		LoginSettingsConfig LoginSettings { get; }
-		ErrorMessagesConfig ErrorMessages { get; }
+		ErrorDetailsConfig ErrorDetails { get; }
 	}
 }

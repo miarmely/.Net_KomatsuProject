@@ -52,8 +52,8 @@ namespace Temsa_Api.Extensions
             services.Configure<LoginSettingsConfig>(configuration
 				.GetSection(nameof(LoginSettingsConfig)));
 
-			services.Configure<ErrorMessagesConfig>(configuration
-				.GetSection(nameof(ErrorMessagesConfig)));
+			services.Configure<ErrorDetailsConfig>(configuration
+				.GetSection(nameof(ErrorDetailsConfig)));
         }
 				
 		public static void ConfigureJwt(
