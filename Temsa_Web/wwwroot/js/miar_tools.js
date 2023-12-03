@@ -393,26 +393,20 @@ export async function populateSelectAsync(select, options, optionToBeDisplay = n
     //#endregion
 }
 
-export async function removeElementFromArrayByIndexAsync(array, elementIndex) {
-    //#region remove element
-    let shiftedArray = array;
-    delete array[elementIndex];
-    //#endregion
-
-    //#region shift the array to left
-    let index;
-
-    for (index = elementIndex; index < shiftedArray.length - 1; index++) {
-        shiftedArray[index] = shiftedArray[index + 1];
+export async function setDisabledOfButtonAsync(doDisabled, button, bgColor) {
+    //#region disable the button
+    if (doDisabled) {
+        button.attr("disabled", "");
+        button.css("background-color", bgColor);
     }
     //#endregion
 
-    //#region remove last element if shift process occured
-    if (index != elementIndex)
-        shiftedArray.pop();
+    //#region active the button
+    else {
+        button.removeAttr("disabled");
+        button.css("background-color", bgColor);
+    }
     //#endregion
-
-    return shiftedArray;
 }
 
 async function addEntitiesToTableAsync(

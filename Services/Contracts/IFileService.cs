@@ -11,7 +11,7 @@ namespace Services.Contracts
 
 		Task UploadSliderToFolderAsync(
 			SliderParametersForUploadToFolder sliderParams,
-            SliderDtoForUploadToFolder sliderDto);
+			SliderDtoForUploadToFolder sliderDto);
 
 		Task<IEnumerable<SliderView>> GetAllSlidersAsync(
             SliderParamatersForDisplayAll sliderParams);
@@ -21,7 +21,7 @@ namespace Services.Contracts
 
         Task DeleteMultipleSliderAsync(
 			SliderParametersForDeleteMultiple sliderParams,
-			SliderDtoForDelete sliderDto);
+			SliderDtoForDeleteMultiple sliderDto);
 
 		Task DeleteOneSliderAsync(
 			string language,

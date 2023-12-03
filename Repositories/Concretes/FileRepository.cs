@@ -31,10 +31,11 @@ namespace Repositories.Concretes
                         .Slider_DisplaySliderPathBySliderNo,
                     parameters);
 
-        public async Task TruncateAllSlidersAsync() =>
-            await base
-                .TruncateTableAsync(Configs.DbSettings.TableNames.Sliders);
-
+        public async Task DeleteMultipleSliderAsync(DynamicParameters parameters) =>
+            await base.QuerySingleOrDefaultAsync<int>(
+               base.Configs.DbSettings.ProcedureNames.Slider_DeleteMultipleByFileNames,
+               parameters);
+                
         public async Task DeleteOneSliderAsync(DynamicParameters parameters) =>
             await base.QuerySingleOrDefaultAsync<int>(
                 Configs.DbSettings.ProcedureNames.Slider_DeleteOneBySliderNo,

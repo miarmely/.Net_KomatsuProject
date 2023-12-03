@@ -25,7 +25,8 @@
 		string Slider_Create,
 		string Slider_DisplayAll,
 		string Slider_DisplaySliderPathBySliderNo,
-		string Slider_DeleteOneBySliderNo);
+		string Slider_DeleteOneBySliderNo,
+		string Slider_DeleteMultipleByFileNames);
 
     public record TableNames(
 		string Language,

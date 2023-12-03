@@ -1,4 +1,4 @@
-﻿import { removeElementFromArrayByIndexAsync, updateResultLabel } from "./miar_tools.js";
+﻿import { setDisabledOfButtonAsync, updateResultLabel } from "./miar_tools.js";
 
 
 $(function () {
@@ -21,10 +21,12 @@ $(function () {
     const inpt_selectedFile = $("#inpt_selectedFile");
     const nextButton_bgColor_enabled = "darkBlue";
     const nextButton_bgColor_disabled = "darkGrey";
+    const btn_chooseFile = $("#btn_chooseFile");
     let currentSliderNo = 0;
     let maxSliderQuantity;  // associated with "slider_noAndPaths" length
     let slider_selectedFilesInfos = {};
     let slider_noAndPaths = [];
+    let buttonThatTriggeringToChooseFileInput = "";
     //#endregion
 
     //#region events
@@ -37,8 +39,15 @@ $(function () {
         let selectedFileInfos = event.target.files[0];
         //#endregion
 
-        //#region when selected file not image
-        if (!selectedFileInfos.type.startsWith("image/")) {
+        //#region control the selected file (errors)
+
+        //#region when any file not selected (return)
+        if (selectedFileInfos == undefined)
+            return;
+        //#endregion
+
+        //#region when selected file type not image (error)
+        else if (!selectedFileInfos.type.startsWith("image/")) {
             inpt_chooseFile.val("");
             updateResultLabel(
                 resultLabeL_id,
@@ -49,29 +58,76 @@ $(function () {
         }
         //#endregion
 
-        //#region active next button with "NoImage.png"
-        if (currentSliderNo == maxSliderQuantity - 1)
-            await enableOrDisableNextButtonAsync(false);
+        //#region when same image already added previously (error)
+
+        //#region when exists in "slider_noAndPaths" (error)
+        let result = slider_noAndPaths.findIndex(p => p == selectedFileInfos.name);
+
+        if (result != -1) {
+            updateResultLabel(
+                resultLabeL_id,
+                errorMessagesByLanguages[language]["imageConflicted"],
+                resultLabel_errorColor);
+
+            return;
+        }
         //#endregion
 
-        //#region display slider by dataUrl
-        slider_selectedFilesInfos[currentSliderNo] = selectedFileInfos // save selectedFile
+        //#region when exists in "slider_selectedFilesInfos" (error)
+        for (let sliderNo in slider_selectedFilesInfos) {
+            let fileName = slider_selectedFilesInfos[sliderNo];
+
+            // when conflicted
+            if (fileName == selectedFileInfos.name) {
+                updateResultLabel(
+                    resultLabeL_id,
+                    errorMessagesByLanguages[language]["imageConflicted"],
+                    resultLabel_errorColor);
+
+                return;
+            }
+        }
+        //#endregion
+
+        //#endregion
+
+        //#endregion
+
+        //#region when clicked to "btn_next"
+        if (buttonThatTriggeringToChooseFileInput == btn_next.attr("id")) {
+            currentSliderNo += 1;
+            maxSliderQuantity += 1;
+        }
+        //#endregion
+
+        //#region update "slider_selectedFilesInfos"
+        slider_selectedFilesInfos[currentSliderNo] = selectedFileInfos
+        //#endregion
+
+        //#region display slider and show previous button
         await displaySliderByDataUrlAsync(selectedFileInfos);
+        btn_previous.removeAttr("hidden");
+        //#endregion
+    })
+    inpt_chooseFile.click(async (event, idOfButtonThatDoTrigger) => {
+        //#region save button name that last trigerring to "inpt_chooseFile.click()"
+        buttonThatTriggeringToChooseFileInput = idOfButtonThatDoTrigger;
         //#endregion
     })
     btn_previous.click(async () => {
-        //#region update slider no button
+        //#region before start
         resultLabel.empty();
         currentSliderNo -= 1;
-
-        await updateSliderNoButtonAsync();
         //#endregion
 
         //#region hide previous button and active next button
         if (currentSliderNo == 0)
             btn_previous.attr("hidden", "")
 
-        await enableOrDisableNextButtonAsync(false);
+        await setDisabledOfButtonAsync(
+            false,
+            btn_next,
+            nextButton_bgColor_enabled);
         //#endregion
 
         //#region add "next.png" to next button
@@ -82,84 +138,95 @@ $(function () {
         }
         //#endregion
 
-        //#region display image
-        inpt_chooseFile.val(""); // reset choose file input
         await displaySliderAsync();
-        //#endregion
     })
     btn_next.click(async () => {
-        //#region when clicked to next button with "noImage.png"
-        resultLabel.empty();
+        //#region before start
+        resultLabel.empty();  // reset 
+        inpt_chooseFile.val("");  // reset
+        //#endregion
 
+        //#region when clicked to next button with "newImage.png"
         if (img_buttonNext.attr("src") == image_newImagePath) {
-            maxSliderQuantity += 1;
-
-            // disable next button with "noImage.png"
-            await enableOrDisableNextButtonAsync(true);
+            //#region do trigger to "inpt_chooseFile.click()"
+            inpt_chooseFile.trigger(
+                "click",
+                [btn_next.attr("id")]);
+            //#endregion
         }
         //#endregion
 
-        //#region update "sliderNo" button
-        currentSliderNo += 1;
-        await updateSliderNoButtonAsync();
-        //#endregion
+        //#region when clicked to normal next button
+        else {
+            // display new slider
+            currentSliderNo += 1;
+            await displaySliderAsync();
 
-        //#region display slider
-        btn_previous.removeAttr("hidden");  // show previous button
-        inpt_chooseFile.val(""); // reset choose file input
-
-        await displaySliderAsync();
-        //#endregion
-
-        //#region add "newImage.png" to next button
-        if (currentSliderNo == maxSliderQuantity - 1) {
-            // add "newImage.png" to button next
-            img_buttonNext.attr("src", image_newImagePath);
-            img_buttonNext.attr("style", image_newImagePath_style);  // set sizes
-
-            // disable button next with "newImage.png"
-            if (img_sliders.attr("src") == image_noImagePath)
-                await enableOrDisableNextButtonAsync(true);
+            // show previous button
+            btn_previous.removeAttr("hidden");
         }
         //#endregion
     })
+    btn_chooseFile.click(() => {
+        //#region before start
+        resultLabel.empty();  // reset
+        inpt_chooseFile.val("");  // reset
+        //#endregion
+
+        //#region do trigger to "inpt_chooseFile.click()"
+        inpt_chooseFile.trigger(
+            "click",
+            [btn_chooseFile.attr("id")]);
+        //#endregion
+    });
     $("#btn_remove").click(async () => {
-        //#region remove slider from "sliderNoAndPaths" array
-        slider_noAndPaths = await removeElementFromArrayByIndexAsync(
-            slider_noAndPaths,
-            currentSliderNo);
+        //#region before start
+        resultLabel.empty();
+        inpt_chooseFile.val("")  // reset
         //#endregion
 
-        //#region remove slider from "slider_selectedFilesInfos" object
-        // delete current slider
+        //#region update "sliderNoAndPaths" and "slider_selectedFilesInfos"
+        slider_noAndPaths[currentSliderNo] = undefined;
         delete slider_selectedFilesInfos[currentSliderNo];
-
-        //#region reduce object keys by one 
-        let sliderNo;
-
-        for (sliderNo in slider_selectedFilesInfos)
-            // when sliderNo is bigger than currentSliderNo
-            if (sliderNo > currentSliderNo)
-                slider_selectedFilesInfos[sliderNo - 1] = slider_selectedFilesInfos[sliderNo];
         //#endregion
 
-        // delete last element after reduce process
-        delete slider_selectedFilesInfos[sliderNo];
+        //#region when last slider removed
+        if (currentSliderNo == maxSliderQuantity - 1) {
+            slider_noAndPaths.pop();
+
+            //#region update "currentSliderNo" and "maxSliderQuantity"
+            if (currentSliderNo != 0) {
+                currentSliderNo -= 1
+                maxSliderQuantity -= 1;
+            }
+            //#endregion
+
+            //#region hide previous button
+            if (currentSliderNo == 0)
+                btn_previous.attr("hidden", "")
+            //#endregion
+        }
         //#endregion
 
         await displaySliderAsync();
     });
     $("#btn_save").click(async () => {
-        //#region any slider not selected (error)
+        //#region before start
         resultLabel.empty();
+        //#endregion
 
-        if (Object.keys(slider_selectedFilesInfos).length == 0) {
-            updateResultLabel(
-                resultLabeL_id,
-                errorMessagesByLanguages[language]["noAnyChanges"],
-                resultLabel_errorColor);
+        //#region when images not added to some pages (error)
+        for (let sliderNo = 0; sliderNo < maxSliderQuantity; sliderNo += 1) {
+            // when slider not exists in "slider_noAndPaths" and "slider_selectedFilesInfos"
+            if (slider_noAndPaths[sliderNo] == undefined
+                && slider_selectedFilesInfos[sliderNo] == undefined) {
+                    updateResultLabel(
+                        resultLabeL_id,
+                        errorMessagesByLanguages[language]["noImage"],
+                        resultLabel_errorColor);
 
-            return;
+                    return;
+            }
         }
         //#endregion
 
@@ -168,9 +235,6 @@ $(function () {
     $("#div_sidebarMenuButton").click(async () => {
         await setSliderMaxHeightAndWidthAsync();
     })
-    $("#btn_chooseFile").click(() =>
-        inpt_chooseFile.trigger("click")
-    );
     //#endregion
 
     //#region functions
@@ -210,7 +274,8 @@ $(function () {
         //#endregion
 
         // 1st ajax: delete sliders from folder and db
-        // 2nd ajax: upload sliders to folder and db
+        // 2nd ajax: upload sliders to folder
+        // 3nd ajax: upload sliders to db
         $.ajax({
             method: "DELETE",
             url: (baseApiUrl + "/file/slider/delete/multiple" +
@@ -233,89 +298,112 @@ $(function () {
                 let slider_uploadedSliderQuantity = 0;
                 //#endregion
 
-                //#region upload sliders (ajax)
-                for (let sliderNo in slider_selectedFilesInfos) {
-                    //#region upload slider to folder and db (ajax)
-                    let sliderInfos = slider_selectedFilesInfos[sliderNo];
-                    let reader = new FileReader();
+                //#region when any file selected (ajax)
+                if (Object.keys(slider_selectedFilesInfos).length != 0) {
+                    //#region upload selected sliders (ajax)
+                    let selectedFileNames = [];
 
-                    reader.readAsDataURL(sliderInfos);
-                    reader.onload = function (event) {
-                        //#region upload sliders to folder and db (ajax)
-                        let dataUrl = event.target.result;
+                    for (let sliderNo in slider_selectedFilesInfos) {
+                        //#region add fileName to "selectedFileNames" array
+                        let sliderInfos = slider_selectedFilesInfos[sliderNo];
+                        selectedFileNames.push(sliderInfos.name);
+                        //#endregion
 
-                        // upload slider to folder 
-                        $.ajax({
-                            method: "POST",
-                            url: (baseApiUrl + "/file/slider/upload/folder" +
-                                `?language=${language}` +
-                                `&FolderPathAfterWwwroot=${slider_folderPathAfterWwwRoot}`),
-                            headers: {
-                                "authorization": jwtToken
-                            },
-                            contentType: "application/json",
-                            dataType: "json",
-                            data: JSON.stringify({
-                                "FileName": sliderInfos.name,
-                                "FileContentInBase64Str": dataUrl.replace(`data:${sliderInfos.type};base64,`, "")   // add only base64 part of dataUrl
-                            }),
-                            success: () => {
-                                //#region update to "slider_noAndPaths"
-                                slider_noAndPaths[sliderNo] = sliderInfos.name;
-                                //#endregion
+                        //#region upload slider to folder and db (2nd ajax)
+                        let reader = new FileReader();
 
-                                //#region upload sliders to db (ajax)
-                                slider_uploadedSliderQuantity += 1;
+                        reader.readAsDataURL(sliderInfos);
+                        reader.onload = function (event) {
+                            //#region upload sliders to folder and db (3th ajax)
+                            let dataUrl = event.target.result;
 
-                                // when all selected sliders uploaded
-                                if (slider_uploadedSliderQuantity == slider_totalSelectedFilesQuantity) {
-                                    $.ajax({
-                                        method: "POST",
-                                        url: baseApiUrl + `/file/slider/upload/db?language=${language}`,
-                                        headers: {
-                                            "authorization": jwtToken
-                                        },
-                                        data: JSON.stringify({
-                                            "fileNames": slider_noAndPaths
-                                        }),
-                                        contentType: "application/json",
-                                        dataType: "json",
-                                        success: () => {
-                                            //#region update "sliderNoAndPaths" on local
-                                            slider_noAndPaths = data;  // update
-                                            slider_selectedFilesInfos = {};  // reset
+                            // upload slider to folder 
+                            $.ajax({
+                                method: "POST",
+                                url: (baseApiUrl + "/file/slider/upload/folder" +
+                                    `?language=${language}` +
+                                    `&FolderPathAfterWwwroot=${slider_folderPathAfterWwwRoot}`),
+                                headers: {
+                                    "authorization": jwtToken
+                                },
+                                contentType: "application/json",
+                                dataType: "json",
+                                data: JSON.stringify({
+                                    "FileName": sliderInfos.name,
+                                    "FileContentInBase64Str": dataUrl.replace(`data:${sliderInfos.type};base64,`, "")   // add only base64 part of dataUrl
+                                }),
+                                success: () => {
+                                    //#region upload selected sliders to db (3th ajax)
+                                    slider_uploadedSliderQuantity += 1;
 
-                                            localStorage.setItem(
-                                                localKeys_sliderNoAndPaths,
-                                                JSON.stringify(slider_noAndPaths));
-                                            //#endregion
+                                    // when all selected sliders uploaded
+                                    if (slider_uploadedSliderQuantity == slider_totalSelectedFilesQuantity) {
+                                        $.ajax({
+                                            method: "POST",
+                                            url: baseApiUrl + `/file/slider/upload/db?language=${language}`,
+                                            headers: {
+                                                "authorization": jwtToken
+                                            },
+                                            data: JSON.stringify({
+                                                "fileNames": selectedFileNames
+                                            }),
+                                            contentType: "application/json",
+                                            dataType: "json",
+                                            success: () => {
+                                                //#region update "sliderNoAndPaths" on local
+                                                slider_noAndPaths = data;  // update
+                                                slider_selectedFilesInfos = {};  // reset
 
-                                            //#region write success message
-                                            updateResultLabel(
-                                                resultLabeL_id,
-                                                successMessagesByLanguages[language]["successfullSave"],
-                                                resultLabel_successColor);
-                                            //#endregion
-                                        },
-                                        error: () => {
-                                            updateResultLabel(
-                                                resultLabeL_id,
-                                                errorMessagesByLanguages[language]["uploadToDb"],
-                                                resultLabel_errorColor);
-                                        }
-                                    })
+                                                localStorage.setItem(
+                                                    localKeys_sliderNoAndPaths,
+                                                    JSON.stringify(slider_noAndPaths));
+                                                //#endregion
+
+                                                //#region write success message
+                                                updateResultLabel(
+                                                    resultLabeL_id,
+                                                    successMessagesByLanguages[language]["successfullSave"],
+                                                    resultLabel_successColor);
+                                                //#endregion
+                                            },
+                                            error: () => {
+                                                updateResultLabel(
+                                                    resultLabeL_id,
+                                                    errorMessagesByLanguages[language]["uploadToDb"],
+                                                    resultLabel_errorColor);
+                                            }
+                                        })
+                                    }
+                                    //#endregion
+                                },
+                                error: () => {
+                                    updateResultLabel(
+                                        resultLabeL_id,
+                                        errorMessagesByLanguages[language]["uploadToFolder"],
+                                        resultLabel_errorColor);
                                 }
-                                //#endregion
-                            },
-                            error: () => {
-                                updateResultLabel(
-                                    resultLabeL_id,
-                                    errorMessagesByLanguages[language]["uploadToFolder"],
-                                    resultLabel_errorColor);
-                            }
-                        })
+                            })
+                            //#endregion
+                        }
                         //#endregion
                     }
+                    //#endregion
+                }
+                //#endregion
+
+                //#region when any file not selected
+                else {
+                    //#region update "sliderNoAndPaths" on local
+                    localStorage.setItem(
+                        localKeys_sliderNoAndPaths,
+                        JSON.stringify(slider_noAndPaths));
+                    //#endregion
+
+                    //#region write success message
+                    updateResultLabel(
+                        resultLabeL_id,
+                        successMessagesByLanguages[language]["successfullSave"],
+                        resultLabel_successColor);
                     //#endregion
                 }
                 //#endregion
@@ -344,14 +432,32 @@ $(function () {
 
             // reset "image loading..." message
             $(spn_fileStatusLabel_id).empty();
+
+            updateSliderNoButtonAsync();
+            controlNextButtonAsync();
         };
         //#endregion
     }
 
     async function displaySliderAsync() {
+        //#region before start
+        // reset selected file input
+        inpt_selectedFile.val("");
+
+        // remove old slider
+        img_sliders.removeAttr("src");
+
+        // write "image loading..." message 
+        updateResultLabel(
+            spn_fileStatusLabel_id,
+            successMessagesByLanguages[language]["imageLoading"],
+            spn_fileStatusLabel_color
+        );
+        //#endregion
+
         await setSliderMaxHeightAndWidthAsync();
 
-        //#region when slider to be display hasn't been changed previously
+        //#region when slider not exists on "slider_selectedFilesInfos"
         let selectedFileInfos = slider_selectedFilesInfos[currentSliderNo];
 
         if (selectedFileInfos == undefined) {
@@ -367,10 +473,9 @@ $(function () {
                 // write file name to "inpt_selectedFile"
                 inpt_selectedFile.val(fileName);
             }
-
             //#endregion
 
-            //#region when slider not exists on "slider_noAndPaths"
+            //#region when slider exists on "slider_noAndPaths"
             else {
                 img_sliders.attr("src", image_noImagePath);
 
@@ -379,66 +484,56 @@ $(function () {
                     errorMessagesByLanguages[language]["imageNotSelected"]);
             }
             //#endregion
+
+            //#region reset "fileStatusLabel"
+            $(spn_fileStatusLabel_id).empty();
+            //#endregion
+
+            await updateSliderNoButtonAsync();
+            await controlNextButtonAsync();
         }
         //#endregion
 
-        //#region when slider to be display has been changed previously
-        else {
-            //#region remove image and add "image loading..." message 
-            img_sliders.removeAttr("src");  // until slider loads
-            updateResultLabel(
-                spn_fileStatusLabel_id,
-                successMessagesByLanguages[language]["imageLoading"],
-                spn_fileStatusLabel_color
-            );
-            //#endregion
-
+        //#region when slider exists on "slider_selectedFilesInfos"
+        else
             await displaySliderByDataUrlAsync(selectedFileInfos);
-        }
         //#endregion
     }
 
-    async function initializeSliderNoButtonAsync() {
-        //#region when total slider quantity less than 2
-        let totalSliderQuantity = slider_noAndPaths.length
-
-        if (totalSliderQuantity <= 1) {
-            //#region add "newImage.png" to next button
-            maxSliderQuantity = 1;
-            img_buttonNext.attr("src", image_newImagePath);
+    async function controlNextButtonAsync() {
+        //#region add "newImage.png" to next button
+        if (currentSliderNo == maxSliderQuantity - 1) {
+            //#region add "newImage.png" to button next
+            img_buttonNext.attr("src", image_newImagePath);  // add image
             img_buttonNext.attr("style", image_newImagePath_style);  // set sizes
             //#endregion
 
-            //#region disable button next with "newImage.png"
-            if (totalSliderQuantity == 0)
-                await enableOrDisableNextButtonAsync(true);
+            //#region when slider to be displayed is "NoImage.png"
+            if (img_sliders.attr("src") == image_noImagePath)
+                // disable button next
+                await setDisabledOfButtonAsync(
+                    true,
+                    btn_next,
+                    nextButton_bgColor_disabled);
+            //#endregion
+
+            //#region when slider to be displayed isn't "NoImage.png"
+            else
+                // enable button next
+                await setDisabledOfButtonAsync(
+                    false,
+                    btn_next,
+                    nextButton_bgColor_enabled);
             //#endregion
         }
         //#endregion
-
-        //#region when total slider quantity more than 1
-        else
-            maxSliderQuantity = totalSliderQuantity;
-        //#endregion
-
-        //#region populate "sliderNo" button
-        btn_sliderNo.append(`1/${maxSliderQuantity}`);
-        //#endregion
     }
 
-    async function enableOrDisableNextButtonAsync(doDisabled) {
-        //#region do disabled next button
-        if (doDisabled) {
-            btn_next.attr("disabled", "");
-            btn_next.css("background-color", nextButton_bgColor_disabled);
-        }
-        //#endregion
-
-        //#region active next button
-        else {
-            btn_next.removeAttr("disabled");
-            btn_next.css("background-color", nextButton_bgColor_enabled);
-        }
+    async function initializeMaxSliderQuantityAsync() {
+        //#region initialize "maxSliderQuantity"
+        maxSliderQuantity = slider_noAndPaths.length <= 1 ?
+            1 :
+            slider_noAndPaths.length
         //#endregion
     }
 
@@ -474,8 +569,8 @@ $(function () {
                     }
                     //#endregion
 
+                    initializeMaxSliderQuantityAsync();
                     displaySliderAsync();
-                    initializeSliderNoButtonAsync();
 
                     //#region save "slider_noAndPaths" to local
                     localStorage.setItem(
@@ -484,16 +579,16 @@ $(function () {
                     //#endregion
                 },
                 error: () => {
+                    initializeMaxSliderQuantityAsync();
                     displaySliderAsync(); // for add "noImage" image
-                    initializeSliderNoButtonAsync();
                 }
             })
         //#endregion
 
         //#region when "slider_noAndPaths" exists in local
         else {
+            initializeMaxSliderQuantityAsync();
             await displaySliderAsync();
-            await initializeSliderNoButtonAsync();
         }
         //#endregion
 

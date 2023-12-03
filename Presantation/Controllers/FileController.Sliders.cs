@@ -65,7 +65,7 @@ namespace Presantation.Controllers
 		//[Authorization("Admin,Editor,Yönetici,Editör")]
 		public async Task<IActionResult> DeleteMultipleSlider(
 			[FromQuery] SliderParametersForDeleteMultiple sliderParams,
-			[FromBody] SliderDtoForDelete sliderDto)
+			[FromBody] SliderDtoForDeleteMultiple sliderDto)
 		{
 			await _manager.FileService.DeleteMultipleSliderAsync(
 				sliderParams,

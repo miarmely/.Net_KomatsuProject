@@ -152,7 +152,7 @@ namespace Services.Concretes
 
 		public async Task DeleteMultipleSliderAsync(
 			SliderParametersForDeleteMultiple sliderParams,
-			SliderDtoForDelete sliderDto)
+			SliderDtoForDeleteMultiple sliderDto)
 		{
 			#region delete from folder
 			await DeleteMultipleFileOnFolderAsync(
@@ -161,9 +161,18 @@ namespace Services.Concretes
 				sliderDto.FileNamesToBeNotDelete);
 			#endregion
 
-			#region truncate slider table
+			#region set parameters
+			var parameters = new DynamicParameters();
+			
+			parameters.Add(
+				"FileNamesToBeNotDeletedInString",
+				sliderDto.ToString(),
+				DbType.String);
+			#endregion
+
+			#region delete from db
 			await _manager.FileRepository
-				.TruncateAllSlidersAsync();
+				.DeleteMultipleSliderAsync(parameters);
 			#endregion
 		}
 

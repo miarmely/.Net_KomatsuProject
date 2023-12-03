@@ -73,10 +73,6 @@ namespace Repositories.Concretes
             #endregion
         }
 
-        public async Task TruncateTableAsync(string tableName) =>
-            await QueryAsync<int>($@"
-                TRUNCATE TABLE {tableName}");
-
 
         #region private
 
