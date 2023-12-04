@@ -61,7 +61,8 @@ $(function () {
         //#region when same image already added previously (error)
 
         //#region when exists in "slider_noAndPaths" (error)
-        let result = slider_noAndPaths.findIndex(p => p == selectedFileInfos.name);
+        let result = slider_noAndPaths
+            .findIndex(p => p == selectedFileInfos.name);
 
         if (result != -1) {
             updateResultLabel(
@@ -75,10 +76,10 @@ $(function () {
 
         //#region when exists in "slider_selectedFilesInfos" (error)
         for (let sliderNo in slider_selectedFilesInfos) {
-            let fileName = slider_selectedFilesInfos[sliderNo];
+            let sliderInfos = slider_selectedFilesInfos[sliderNo];
 
             // when conflicted
-            if (fileName == selectedFileInfos.name) {
+            if (sliderInfos.name == selectedFileInfos.name) {
                 updateResultLabel(
                     resultLabeL_id,
                     errorMessagesByLanguages[language]["imageConflicted"],
@@ -216,18 +217,21 @@ $(function () {
         //#endregion
 
         //#region when images not added to some pages (error)
-        for (let sliderNo = 0; sliderNo < maxSliderQuantity; sliderNo += 1) {
-            // when slider not exists in "slider_noAndPaths" and "slider_selectedFilesInfos"
-            if (slider_noAndPaths[sliderNo] == undefined
-                && slider_selectedFilesInfos[sliderNo] == undefined) {
+        if (maxSliderQuantity > 1)
+            //#region control the each slider page
+            for (let sliderNo = 0; sliderNo < maxSliderQuantity; sliderNo += 1) {
+                if (slider_noAndPaths[sliderNo] == undefined  // when not exists in "slider_noAndPaths" 
+                    && slider_selectedFilesInfos[sliderNo] == undefined)  // when not exists in "slider_selectedFilesInfos"
+                {
                     updateResultLabel(
                         resultLabeL_id,
                         errorMessagesByLanguages[language]["noImage"],
                         resultLabel_errorColor);
 
                     return;
+                }
             }
-        }
+            //#endregion
         //#endregion
 
         await uploadSlidersAsync();
