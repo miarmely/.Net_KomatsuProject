@@ -1,30 +1,25 @@
-﻿using Entities.DtoModels.SliderDtos;
-using Entities.QueryParameters;
-using Entities.ViewModels;
-
-
-namespace Services.Contracts
+﻿namespace Services.Contracts
 {
     public interface IFileService
     {
-		Task UploadSlidersToDbAsync(SliderDtoForUploadToDb sliderDto);
+		Task UploadFileToFolderAsync(
+			string folderPath,
+			string fileName,
+			string fileContentInBase64Str);
 
-		Task UploadSliderToFolderAsync(
-			SliderParametersForUploadToFolder sliderParams,
-			SliderDtoForUploadToFolder sliderDto);
-
-		Task<IEnumerable<SliderView>> GetAllSlidersAsync(
-            SliderParamatersForDisplayAll sliderParams);
-
-        Task<string> GetSliderPathBySliderNoAsync(
-            SliderParametersForDisplayOne sliderParams);
-
-        Task DeleteMultipleSliderAsync(
-			SliderParametersForDeleteMultiple sliderParams,
-			SliderDtoForDeleteMultiple sliderDto);
-
-		Task DeleteOneSliderAsync(
+		Task<string[]> GetFullFilePathsOnDirectoryAsync(
 			string language,
+			string folderPathAfterWwwroot);
+
+		Task<string> GetFullFolderPathAsync(
+			string folderPathAfterWwwroot);
+
+		Task DeleteMultipleFileOnFolderAsync(
+			string language,
+			string folderPathAfterWwwroot,
+			List<string> FileNamesToBeNotDelete);
+
+		Task DeleteFileOnFolderByPathAsync(
 			string folderPathAfterWwwroot,
 			string fileName);
 	}

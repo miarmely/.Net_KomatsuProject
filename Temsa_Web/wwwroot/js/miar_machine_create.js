@@ -1,13 +1,13 @@
 ﻿import {
     changed_descriptionInput, clicked_descriptionDropdownButton,
-    clicked_descriptionDropdownItem, populateElementByAjaxOrLocalAsync,
+    clicked_descriptionDropdownItem, displayImageByDataUrlAsync, isFileTypeInvalidAsync, populateElementByAjaxOrLocalAsync,
     populateSelectAsync, updateResultLabel
 } from "./miar_tools.js"
 
 
 $(function () {
     //#region variables
-    const resultLabelId = "#p_resultLabel";
+    const resultLabel_id = "#p_resultLabel";
     const description_inputId = "#inpt_description";
     const description_buttonId = "#btn_description";
     const description_unsavedColor = "red";
@@ -18,18 +18,31 @@ $(function () {
     const ul_description_id = "ul_description";
     const div_form = $("#div_form");
     const inpt_description_id = "inpt_description";
+    const img_machine = $("#img_machine");
+    const inpt_image_id = "#inpt_image";
+    const spn_fileStatusLabel = $("#spn_fileStatusLabel");
+    const folderPathAfterWwwroot = "images\\machines";
+    let selectedFileInfos;
     //#endregion
 
     //#region events
     $("form").submit(event => {
-        //#region reset resultLabel
+        //#region before start
         event.preventDefault();
-        $(resultLabelId).empty();
+        $(resultLabel_id).empty();
+        //#endregion
+
+        //#region set data
+        let imageContentInBase64Str = img_machine
+            .attr("src")
+            .replace(`data:${selectedFileInfos.type};base64,`, "");
         //#endregion
 
         $.ajax({
             method: "POST",
-            url: baseApiUrl + `/machine/create?language=${language}`,
+            url: (baseApiUrl + "/machine/create" +
+                `?language=${language}` + 
+                `&folderPathAfterWwwroot=${folderPathAfterWwwroot}`),
             headers: { "Authorization": jwtToken },
             data: JSON.stringify({
                 "MainCategoryName": $("#slct_mainCategory").val(),
@@ -41,13 +54,15 @@ $(function () {
                 "HandStatus": $("input[name = handStatus]:checked").val(),
                 "DescriptionInTR": sessionStorage.getItem(description_baseKeyForSession + "-TR"),
                 "DescriptionInEN": sessionStorage.getItem(description_baseKeyForSession + "-EN"),
-                "ImagePath": "",
-                "PdfPath": "",
+                "ImageName": selectedFileInfos.name,
+                "ImageContentInBase64Str": imageContentInBase64Str,
+                "PdfName": "",
+                "PdfContentInBase64Str": ""
             }),
             contentType: "application/json",
             dataType: "json",
             beforeSend: () => {
-                $(resultLabelId).empty();  // reset resultLabel
+                $(resultLabel_id).empty();  // reset resultLabel
 
                 //#region when any description of langauges not entered (throw)
                 let allLanguages = JSON.parse(
@@ -66,7 +81,7 @@ $(function () {
                     if (descriptionInSession == null
                         || descriptionInSession == "") {
                         updateResultLabel(
-                            resultLabelId,
+                            resultLabel_id,
                             `"${languageInDb}" ${description_missingLanguageErrorByLanguages[language]}`,
                             resultLabel_errorColor,
                             "30px");
@@ -78,11 +93,14 @@ $(function () {
                 //#endregion
             },
             success: () => {
-                $("form")[0].reset();  // reset form
+                //#region resets
+                $("form")[0].reset();
+                img_machine.removeAttr("src");
+                //#endregion
 
                 //#region write successfull message to resultLabel
                 updateResultLabel(
-                    resultLabelId,
+                    resultLabel_id,
                     resultLabel_successMessageByLanguages[language],
                     resultLabel_successColor,
                     "30px");
@@ -104,7 +122,7 @@ $(function () {
             error: (response) => {
                 //#region write error message to resultLabel
                 updateResultLabel(
-                    resultLabelId,
+                    resultLabel_id,
                     JSON.parse(response.responseText).errorMessage,
                     resultLabel_errorColor,
                     "30px");
@@ -150,13 +168,95 @@ $(function () {
                 description_savedColor);
         //#endregion
     })
+    $(window).resize(async () => {
+        await setMachineImageSizeAsync();
+    })
+
+    async function change_imageInputAsync(event) {
+        //#region control the selected file (error)
+
+        //#region when any file not selected
+        selectedFileInfos = event.target.files[0];
+
+        if (selectedFileInfos == undefined) {
+            //#region remove current image
+            img_machine.removeAttr("src");
+            return;
+            //#endregion
+        }
+        //#endregion
+
+        //#region when file type is not image (error)
+        if (await isFileTypeInvalidAsync(
+            selectedFileInfos,
+            "image",
+            $(inpt_image))) {
+            //#region write error message
+            updateResultLabel(
+                "#" + spn_fileStatusLabel.attr("id"),
+                partnerErrorMessagesByLanguages[language]["invalidFileType"],
+                resultLabel_errorColor);
+            //#endregion
+
+            return;
+        }
+        //#endregion
+
+        //#endregion
+
+        await setMachineImageSizeAsync();
+
+        //#region display machine image
+        await displayImageByDataUrlAsync(
+                selectedFileInfos,
+                img_machine,
+                spn_fileStatusLabel)
+        //#endregion
+    }
+    async function click_imageInputAsync() {
+        // reset file status label
+        spn_fileStatusLabel.empty();
+    }
     //#endregion
 
     //#region functions
+    async function setMachineImageSizeAsync() {
+        //#region set max width
+        let panelBodyWidth = $(".panel-body").prop("clientWidth");
+
+        img_machine.css(
+            "max-width",
+            panelBodyWidth - (panelBodyWidth * (60 / 100)));
+        //#endregion
+    }
+
     async function populateForm() {
         //#region add table title
         $(".panel-heading").append(
             tableTitleByLanguages[language]);
+        //#endregion
+
+        //#region add image and event
+        div_form.append(
+            `<div class="form-group">
+                <label class="col-sm-3 control-label" style="text-align">
+                    ${formLabelNamesByLanguages[language].image}
+                </label>
+                <div class="col-sm-6">
+                <div>
+                    <input id="${inpt_image_id.substring(1)}" type="file" class="form-control" accept="image/*" required>
+                    <span id="span_help_image" class="help-block"></span>
+                </div>
+            </div>`
+        );
+
+        //#region initialize change event
+        $(inpt_image_id).change(async (event) =>
+            await change_imageInputAsync(event));
+        $(inpt_image_id).click(async () =>
+            await click_imageInputAsync());
+        //#endregion
+
         //#endregion
 
         //#region add mainCategory and subcategory
@@ -309,20 +409,6 @@ $(function () {
                                 ${handStatus.radio2}
                         </label>
                     </div>
-                </div>
-            </div>`
-        );
-        //#endregion
-
-        //#region add image
-        div_form.append(
-            `<div class="form-group">
-                <label class="col-sm-3 control-label">
-                    ${formLabelNamesByLanguages[language].image}
-                </label>
-                <div class="col-sm-6">
-                    <input id="inpt_image" type="file" class="form-control" required>
-                    <span id="span_help_image" class="help-block"></span>
                 </div>
             </div>`
         );

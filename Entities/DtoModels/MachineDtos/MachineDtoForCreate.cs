@@ -12,6 +12,8 @@
         public string? DescriptionInTR { get; init; }
         public string? DescriptionInEN { get; init; }
         public string? ImageName { get; init; }
+        public string? ImageContentInBase64Str { get; init; }
         public string? PdfName { get; init; }
-    }
+		public string? PdfContentInBase64Str { get; init; }
+	}
 }

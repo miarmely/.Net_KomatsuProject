@@ -1,4 +1,7 @@
-﻿import { displayImageByDataUrlAsync, displayImageByNormalUrlAsync, setDisabledOfButtonAsync, updateResultLabel } from "./miar_tools.js";
+﻿import {
+    isFileTypeInvalidAsync, displayImageByDataUrlAsync, displayImageByNormalUrlAsync,
+    setDisabledOfButtonAsync, updateResultLabel
+} from "./miar_tools.js";
 
 
 $(function () {
@@ -46,11 +49,11 @@ $(function () {
         //#endregion
 
         //#region when selected file type not image (error)
-        else if (!selectedFileInfos.type.startsWith("image/")) {
-            inpt_chooseFile.val("");
+        if (await isFileTypeInvalidAsync(selectedFileInfos, "image", inpt_chooseFile)) {
+            // write error
             updateResultLabel(
                 resultLabeL_id,
-                errorMessagesByLanguages[language]["invalidFileType"],
+                partnerErrorMessagesByLanguages[language]["invalidFileType"],
                 resultLabel_errorColor);
 
             return;
@@ -108,8 +111,8 @@ $(function () {
         await displayImageByDataUrlAsync(
             selectedFileInfos,
             img_sliders,
-            inpt_selectedFile,
             $(spn_fileStatusLabel_id),
+            inpt_selectedFile,
             () => {
                 updateSliderNoButtonAsync();
                 controlNextButtonAsync();
@@ -290,7 +293,7 @@ $(function () {
         // 3nd ajax: upload sliders to db
         $.ajax({
             method: "DELETE",
-            url: (baseApiUrl + "/file/slider/delete/multiple" +
+            url: (baseApiUrl + "/slider/delete/multiple" +
                 `?language=${language}` +
                 `&folderPathAfterWwwroot=${slider_folderPathAfterWwwroot}`),
             headers: {
@@ -332,7 +335,7 @@ $(function () {
                             // upload slider to folder 
                             $.ajax({
                                 method: "POST",
-                                url: (baseApiUrl + "/file/slider/upload/folder" +
+                                url: (baseApiUrl + "/slider/upload/folder" +
                                     `?language=${language}` +
                                     `&FolderPathAfterWwwroot=${slider_folderPathAfterWwwroot}`),
                                 headers: {
@@ -348,11 +351,11 @@ $(function () {
                                     //#region upload selected sliders to db (3th ajax)
                                     slider_uploadedSliderQuantity += 1;
 
-                                    // when all selected sliders uploaded
+                                    // when all selected sliders uploaded (3th ajax)
                                     if (slider_uploadedSliderQuantity == slider_totalSelectedFilesQuantity) {
                                         $.ajax({
                                             method: "POST",
-                                            url: baseApiUrl + `/file/slider/upload/db?language=${language}`,
+                                            url: baseApiUrl + `/slider/upload/db?language=${language}`,
                                             headers: {
                                                 "authorization": jwtToken
                                             },
@@ -476,8 +479,8 @@ $(function () {
             await displayImageByDataUrlAsync(
                 selectedFileInfos,
                 img_sliders,
-                inpt_selectedFile,
                 $(spn_fileStatusLabel_id),
+                inpt_selectedFile,
                 () => {
                     updateSliderNoButtonAsync();
                     controlNextButtonAsync();
@@ -541,7 +544,7 @@ $(function () {
         if (sliderNoAndPathsInLocal == null)
             $.ajax({
                 method: "GET",
-                url: baseApiUrl + `/file/slider/display/all?language=${language}`,
+                url: baseApiUrl + `/slider/display/all?language=${language}`,
                 headers: {
                     "authorization": jwtToken
                 },

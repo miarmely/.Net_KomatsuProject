@@ -11,24 +11,28 @@ namespace Services.Concretes
 		private readonly Lazy<IMailService> _mailService;
 		private readonly Lazy<IMachineService> _machineService;
 		private readonly Lazy<IFileService> _fileService;
+		private readonly Lazy<ISliderService> _sliderService;
 		
 		public IUserService UserService => _userService.Value;
 		public IMailService MailService => _mailService.Value;
 		public IMachineService MachineService => _machineService.Value;
 		public IFileService FileService => _fileService.Value;
+		public ISliderService SliderService => _sliderService.Value;
        
 		public ServiceManager(IRepositoryManager manager,
-			IConfigManager config,
+			IConfigManager configs,
 			IMapper mapper)
         {
 			_userService = new Lazy<IUserService>(() => 
-				new UserService(manager, config, mapper));
+				new UserService(manager, configs, mapper));
 			_mailService = new Lazy<IMailService>(() =>
-				new MailService(config));
+				new MailService(configs));
 			_machineService = new Lazy<IMachineService>(() => 
-				new MachineService(manager));
+				new MachineService(manager, FileService));
 			_fileService = new Lazy<IFileService>(() => 
-				new FileService(manager, config));
+				new FileService(configs));
+			_sliderService = new Lazy<ISliderService>(() => 
+				new SliderService(manager, configs, FileService));
         }
 	}
 }

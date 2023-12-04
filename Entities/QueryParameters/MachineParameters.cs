@@ -1,4 +1,6 @@
-﻿namespace Entities.QueryParameters
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace Entities.QueryParameters
 {
     public record MachineParametersForUpdate
     {
@@ -13,4 +15,9 @@
        public string Language { get; init; }
        public string? MainCategoryName { get; init; }
     }
+
+
+    public record MachineParametersForCreate(
+        [Required] string Language,
+		[Required] string FolderPathAfterWwwroot);
 }

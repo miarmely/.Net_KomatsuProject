@@ -612,8 +612,8 @@ export async function displayImageByNormalUrlAsync(
     //#region before start
     await beforeDisplayImageAsync(
         imgForAddUrl,
-        inputForAddFileName,
-        fileStatusLabel.attr("id"));
+        "#" + fileStatusLabel.attr("id"),
+        inputForAddFileName);
     //#endregion
 
     //#region display image
@@ -634,14 +634,14 @@ export async function displayImageByNormalUrlAsync(
 export async function displayImageByDataUrlAsync(
     selectedFileInfos,
     imgForAddDataUrl,
-    inputForAddFileName,
     fileStatusLabel,
+    inputForAddFileName = null,
     afterLoad = null) {
     //#region before start
     await beforeDisplayImageAsync(
         imgForAddDataUrl,
-        inputForAddFileName,
-        fileStatusLabel.attr("id"));
+        "#" + fileStatusLabel.attr("id"),
+        inputForAddFileName);
     //#endregion
 
     //#region read file as dataUrl
@@ -659,7 +659,8 @@ export async function displayImageByDataUrlAsync(
         //#endregion
 
         //#region write file name to <input>
-        inputForAddFileName.val(selectedFileInfos.name);
+        if (inputForAddFileName != null)
+            inputForAddFileName.val(selectedFileInfos.name);
         //#endregion
 
         //#region call function after load
@@ -678,20 +679,37 @@ export async function displayImageByDataUrlAsync(
     //#endregion
 }
 
+export async function isFileTypeInvalidAsync(
+    selectedFileInfos,
+    fileType,
+    fileNameInput) {
+    //#region when file type invalid
+    if (!selectedFileInfos.type.startsWith(fileType)) {
+        // reset file name <input>
+        fileNameInput.val("");
+
+        return true;
+    }
+    //#endregion
+
+    return false;
+}
+
 async function beforeDisplayImageAsync(
     imgForAddUrl,
-    inputForAddFileName,
-    fileStatusLabelId) {
+    fileStatusLabelId,
+    inputForAddFileName = null) {
     // remove old image
     imgForAddUrl.removeAttr("src");
 
     // reset file name <input>
-    inputForAddFileName.val("");
+    if (inputForAddFileName != null)
+        inputForAddFileName.val("");
 
     // write "file loading..." message
     updateResultLabel(
         fileStatusLabelId,
-        informationMessagesByLanguages[language]["fileLoading"],
+        partnerInformationMessagesByLanguages[language]["fileLoading"],
         fileStatusLabel_color
     );
 }

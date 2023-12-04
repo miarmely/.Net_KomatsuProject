@@ -1,31 +1,49 @@
-﻿using Dapper;
-using Entities.ConfigModels.Contracts;
-using Entities.DtoModels.SliderDtos;
+﻿using Entities.ConfigModels.Contracts;
 using Entities.Exceptions;
-using Entities.QueryParameters;
-using Entities.ViewModels;
 using Org.BouncyCastle.Utilities.Encoders;
 using Repositories.Contracts;
 using Services.Contracts;
-using System.Data;
 
 
 namespace Services.Concretes
 {
-    public partial class FileService : IFileService
+    public class FileService : IFileService
 	{
-        private readonly IRepositoryManager _manager;
         private readonly IConfigManager _configs;
 
-        public FileService(
-            IRepositoryManager manager,
-            IConfigManager configs)
-        {
-            _manager = manager;
+        public FileService(IConfigManager configs) =>
             _configs = configs;
-        }
 
-        private async Task<string[]> GetFullFilePathsOnDirectoryAsync(
+        public async Task UploadFileToFolderAsync(
+            string folderPath,
+            string fileName,
+            string fileContentInBase64Str)
+        {
+			#region set paths
+			var fullFolderPath = await GetFullFolderPathAsync(folderPath);
+
+			var fullFilePath = fullFolderPath
+				+ @"\"
+				+ fileName;
+			#endregion
+
+			#region upload file to folder
+
+			#region decode file in base64
+			var fileContentInBytes = Base64
+				.Decode(fileContentInBase64Str);
+			#endregion
+
+			#region create file
+			await File.WriteAllBytesAsync(
+				fullFilePath,
+				fileContentInBytes);
+			#endregion
+
+			#endregion
+		}
+
+		public async Task<string[]> GetFullFilePathsOnDirectoryAsync(
             string language,
             string folderPathAfterWwwroot)
         {
@@ -53,7 +71,7 @@ namespace Services.Concretes
             return filePathsInDirectory;
         }
 
-        private async Task<string> GetFullFolderPathAsync(
+		public async Task<string> GetFullFolderPathAsync(
             string folderPathAfterWwwroot) =>
                 Directory
                     .GetCurrentDirectory()
@@ -61,7 +79,7 @@ namespace Services.Concretes
                         "Temsa_Api",
                         $@"Temsa_Web\wwwroot\{folderPathAfterWwwroot}\");
 
-        private async Task DeleteMultipleFileOnFolderAsync(
+		public async Task DeleteMultipleFileOnFolderAsync(
             string language,
             string folderPathAfterWwwroot,
             List<string> FileNamesToBeNotDelete)
@@ -88,7 +106,7 @@ namespace Services.Concretes
             #endregion
         }
 
-        private async Task DeleteFileOnFolderByPathAsync(
+		public async Task DeleteFileOnFolderByPathAsync(
             string folderPathAfterWwwroot,
             string fileName)
         {
@@ -98,5 +116,6 @@ namespace Services.Concretes
 			File.Delete(fullFolderPath + "\\" + fileName);
 			#endregion
 		}
+
 	}
 }

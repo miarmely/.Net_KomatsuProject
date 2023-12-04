@@ -7,7 +7,6 @@ using Microsoft.AspNetCore.Http;
 using Repositories;
 using Repositories.Contracts;
 using Services.Contracts;
-using System;
 using System.Data;
 
 namespace Services.Concretes
@@ -15,17 +14,47 @@ namespace Services.Concretes
     public class MachineService : IMachineService
 	{
 		private readonly IRepositoryManager _manager;
+        private readonly IFileService _fileService;
 
-		public MachineService(IRepositoryManager manager) =>
+		public MachineService(
+            IRepositoryManager manager,
+            IFileService fileService)
+        {
 			_manager = manager;
+            _fileService = fileService;
+		}
+			
 			
 		public async Task CreateMachineAsync(
-            string language, 
-            MachineDtoForCreate machineDto)
+			MachineParametersForCreate machineParams,
+			MachineDtoForCreate machineDto)
 		{
+			#region upload machine image to folder
+			await _fileService.UploadFileToFolderAsync(
+                machineParams.FolderPathAfterWwwroot,
+                machineDto.ImageName,
+                machineDto.ImageContentInBase64Str);
+            #endregion
+
+            #region create machine (throw)
+
             #region set parameters
-            var parameters = new DynamicParameters(machineDto);
-            parameters.Add("Language", language, DbType.String);
+            var parameters = new DynamicParameters(new
+            {
+				machineDto.MainCategoryName,
+		        machineDto.SubCategoryName,
+		        machineDto.Model,
+		        machineDto.BrandName,
+		        machineDto.Stock,
+		        machineDto.Year,
+		        machineDto.HandStatus,
+		        machineDto.DescriptionInTR,
+		        machineDto.DescriptionInEN,
+		        machineDto.ImageName,
+		        machineDto.PdfName
+			});
+			
+            parameters.Add("Language", machineParams.Language, DbType.String);			
             #endregion
 
             #region create machine
@@ -36,10 +65,12 @@ namespace Services.Concretes
             #region when any error occured (throw)
             if (errorDto != null)
 				throw new ErrorWithCodeException(errorDto);
-            #endregion
-        }
+			#endregion
 
-        public async Task<PagingList<MachineView>> GetAllMachinesAsync(
+			#endregion
+		}
+
+		public async Task<PagingList<MachineView>> GetAllMachinesAsync(
           string language,
           PaginationParameters pagingParameters,
           HttpResponse response)
@@ -171,56 +202,6 @@ namespace Services.Concretes
             return machineViewPagingList;
         }
 
-        public async Task UpdateMachineAsync(
-            MachineParametersForUpdate parameters, 
-            MachineDtoForUpdate machineDto)
-        {
-            #region set paramaters
-            var dynamicParameters = new DynamicParameters(machineDto);
-
-            dynamicParameters.AddDynamicParams(parameters);
-            #endregion 
-
-            #region update machine (throw)
-            var errorDto = await _manager.MachineRepository
-                .UpdateMachineAsync(dynamicParameters);
-
-            // when any error occured (throw)
-            if (errorDto != null)
-                throw new ErrorWithCodeException(errorDto);
-            #endregion
-        }
-
-        public async Task DeleteMachineAsync(
-            string language,
-            MachineDtoForDelete machineDto)
-        {
-            #region set parameters
-            var parameters = new DynamicParameters();
-
-            parameters.Add(
-                "MachineIdsInString",
-                string.Join(',', machineDto.MachineIdList),
-                DbType.String);
-
-            parameters.Add(
-                "TotalMachineIdCount",
-                machineDto.MachineIdList.Count(),
-                DbType.Int32);
-
-            parameters.Add("Language", language, DbType.String);
-            #endregion
-
-            #region delete machine (throw)
-            var errorDto = await _manager.MachineRepository
-                .DeleteMachineAsync(parameters);
-            
-            // when any error occured (throw)
-            if (errorDto != null)
-                throw new ErrorWithCodeException(errorDto);
-            #endregion
-        }
-
         public async Task<IEnumerable<string>> GetMainCategoryNamesByLanguageAsync(
             string language)
         {
@@ -278,5 +259,55 @@ namespace Services.Concretes
         public async Task<IEnumerable<string>> GetAllLanguagesAsync() =>
             await _manager.MachineRepository
                 .GetAllLanguagesAsync();
-    }
+
+		public async Task UpdateMachineAsync(
+		  MachineParametersForUpdate parameters,
+		  MachineDtoForUpdate machineDto)
+		{
+			#region set paramaters
+			var dynamicParameters = new DynamicParameters(machineDto);
+
+			dynamicParameters.AddDynamicParams(parameters);
+			#endregion
+
+			#region update machine (throw)
+			var errorDto = await _manager.MachineRepository
+				.UpdateMachineAsync(dynamicParameters);
+
+			// when any error occured (throw)
+			if (errorDto != null)
+				throw new ErrorWithCodeException(errorDto);
+			#endregion
+		}
+
+		public async Task DeleteMachineAsync(
+			string language,
+			MachineDtoForDelete machineDto)
+		{
+			#region set parameters
+			var parameters = new DynamicParameters();
+
+			parameters.Add(
+				"MachineIdsInString",
+				string.Join(',', machineDto.MachineIdList),
+				DbType.String);
+
+			parameters.Add(
+				"TotalMachineIdCount",
+				machineDto.MachineIdList.Count(),
+				DbType.Int32);
+
+			parameters.Add("Language", language, DbType.String);
+			#endregion
+
+			#region delete machine (throw)
+			var errorDto = await _manager.MachineRepository
+				.DeleteMachineAsync(parameters);
+
+			// when any error occured (throw)
+			if (errorDto != null)
+				throw new ErrorWithCodeException(errorDto);
+			#endregion
+		}
+	}
 }
