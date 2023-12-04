@@ -601,4 +601,100 @@ async function hideOrShowPaginationBackAndNextButtonsAsync(paginationInfosInJson
         resolve();
     })
 }
+
+//#region file processes
+export async function displayImageByNormalUrlAsync(
+    folderPathAfterWwwroot,
+    fileName,
+    imgForAddUrl,
+    inputForAddFileName,
+    fileStatusLabel) {
+    //#region before start
+    await beforeDisplayImageAsync(
+        imgForAddUrl,
+        inputForAddFileName,
+        fileStatusLabel.attr("id"));
+    //#endregion
+
+    //#region display image
+    // add src to <img>
+    imgForAddUrl.attr(
+        "src",
+        "/" + folderPathAfterWwwroot + "/" + fileName
+    );
+
+    // write file name to <input>
+    inputForAddFileName.val(fileName);
+
+    // reset file status label
+    fileStatusLabel.empty();
+    //#endregion
+}
+
+export async function displayImageByDataUrlAsync(
+    selectedFileInfos,
+    imgForAddDataUrl,
+    inputForAddFileName,
+    fileStatusLabel,
+    afterLoad = null) {
+    //#region before start
+    await beforeDisplayImageAsync(
+        imgForAddDataUrl,
+        inputForAddFileName,
+        fileStatusLabel.attr("id"));
+    //#endregion
+
+    //#region read file as dataUrl
+    let fileReader = new FileReader();
+    fileReader.readAsDataURL(selectedFileInfos);
+    //#endregion
+
+    //#region when file reading process completed
+
+    //#region when successfull
+    fileReader.onload = function (event) {
+        //#region add dataUrl to src of <img>
+        let dataUrl = event.target.result
+        imgForAddDataUrl.attr("src", dataUrl);
+        //#endregion
+
+        //#region write file name to <input>
+        inputForAddFileName.val(selectedFileInfos.name);
+        //#endregion
+
+        //#region call function after load
+        if (afterLoad != null)
+            afterLoad();
+        //#endregion
+    }
+    //#endregion
+
+    //#region reset "file loading..." message  
+    fileReader.onloadend = function () {  // when successfull or not
+        fileStatusLabel.empty();
+    }
+    //#endregion
+
+    //#endregion
+}
+
+async function beforeDisplayImageAsync(
+    imgForAddUrl,
+    inputForAddFileName,
+    fileStatusLabelId) {
+    // remove old image
+    imgForAddUrl.removeAttr("src");
+
+    // reset file name <input>
+    inputForAddFileName.val("");
+
+    // write "file loading..." message
+    updateResultLabel(
+        fileStatusLabelId,
+        informationMessagesByLanguages[language]["fileLoading"],
+        fileStatusLabel_color
+    );
+}
+//#endregion
+
 //#endregion

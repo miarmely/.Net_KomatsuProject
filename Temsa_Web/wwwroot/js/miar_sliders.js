@@ -1,4 +1,4 @@
-﻿import { setDisabledOfButtonAsync, updateResultLabel } from "./miar_tools.js";
+﻿import { displayImageByDataUrlAsync, displayImageByNormalUrlAsync, setDisabledOfButtonAsync, updateResultLabel } from "./miar_tools.js";
 
 
 $(function () {
@@ -11,9 +11,8 @@ $(function () {
     const inpt_chooseFile = $("#inpt_chooseFile");
     const resultLabeL_id = "#spn_resultLabel";
     const resultLabel = $(resultLabeL_id);
-    const slider_folderPathAfterWwwRoot = "images\\sliders";
+    const slider_folderPathAfterWwwroot = "images\\sliders";
     const spn_fileStatusLabel_id = "#spn_fileStatusLabel";
-    const spn_fileStatusLabel_color = "#120a8f";
     const img_buttonNext = $("#img_buttonNext");
     const image_noImagePath = "/images/noImage.png";
     const image_newImagePath = "/images/newImage.png";
@@ -106,7 +105,16 @@ $(function () {
         //#endregion
 
         //#region display slider and show previous button
-        await displaySliderByDataUrlAsync(selectedFileInfos);
+        await displayImageByDataUrlAsync(
+            selectedFileInfos,
+            img_sliders,
+            inpt_selectedFile,
+            $(spn_fileStatusLabel_id),
+            () => {
+                updateSliderNoButtonAsync();
+                controlNextButtonAsync();
+            });
+
         btn_previous.removeAttr("hidden");
         //#endregion
     })
@@ -284,7 +292,7 @@ $(function () {
             method: "DELETE",
             url: (baseApiUrl + "/file/slider/delete/multiple" +
                 `?language=${language}` +
-                `&folderPathAfterWwwroot=${slider_folderPathAfterWwwRoot}`),
+                `&folderPathAfterWwwroot=${slider_folderPathAfterWwwroot}`),
             headers: {
                 "authorization": jwtToken
             },
@@ -326,7 +334,7 @@ $(function () {
                                 method: "POST",
                                 url: (baseApiUrl + "/file/slider/upload/folder" +
                                     `?language=${language}` +
-                                    `&FolderPathAfterWwwroot=${slider_folderPathAfterWwwRoot}`),
+                                    `&FolderPathAfterWwwroot=${slider_folderPathAfterWwwroot}`),
                                 headers: {
                                     "authorization": jwtToken
                                 },
@@ -421,44 +429,7 @@ $(function () {
         })
     }
 
-    async function displaySliderByDataUrlAsync(selectedFileInfos) {
-        //#region add dataUrl to src of slider <img>
-        let fileReader = new FileReader();
-
-        fileReader.readAsDataURL(selectedFileInfos);
-        fileReader.onload = function (event) {
-            // add src to slider <img>
-            var dataUrl = event.target.result;
-            img_sliders.attr("src", dataUrl);
-
-            // write file name to "inpt_selectedFile"
-            inpt_selectedFile.val(selectedFileInfos.name);
-
-            // reset "image loading..." message
-            $(spn_fileStatusLabel_id).empty();
-
-            updateSliderNoButtonAsync();
-            controlNextButtonAsync();
-        };
-        //#endregion
-    }
-
     async function displaySliderAsync() {
-        //#region before start
-        // reset selected file input
-        inpt_selectedFile.val("");
-
-        // remove old slider
-        img_sliders.removeAttr("src");
-
-        // write "image loading..." message 
-        updateResultLabel(
-            spn_fileStatusLabel_id,
-            successMessagesByLanguages[language]["imageLoading"],
-            spn_fileStatusLabel_color
-        );
-        //#endregion
-
         await setSliderMaxHeightAndWidthAsync();
 
         //#region when slider not exists on "slider_selectedFilesInfos"
@@ -469,17 +440,18 @@ $(function () {
             let fileName = slider_noAndPaths[currentSliderNo];
 
             if (fileName != undefined) {
-                // add src to slider <img>
-                img_sliders.attr(
-                    "src",
-                    "/" + slider_folderPathAfterWwwRoot + "//" + fileName);
-
-                // write file name to "inpt_selectedFile"
-                inpt_selectedFile.val(fileName);
+                //#region display image by normal url
+                await displayImageByNormalUrlAsync(
+                    slider_folderPathAfterWwwroot,
+                    fileName,
+                    img_sliders,
+                    inpt_selectedFile,
+                    $(spn_fileStatusLabel_id));
+                //#endregion
             }
             //#endregion
-
-            //#region when slider exists on "slider_noAndPaths"
+            
+            //#region when slider not exists on "slider_noAndPaths"
             else {
                 img_sliders.attr("src", image_noImagePath);
 
@@ -500,7 +472,17 @@ $(function () {
 
         //#region when slider exists on "slider_selectedFilesInfos"
         else
-            await displaySliderByDataUrlAsync(selectedFileInfos);
+            //#region display image by dataUrl
+            await displayImageByDataUrlAsync(
+                selectedFileInfos,
+                img_sliders,
+                inpt_selectedFile,
+                $(spn_fileStatusLabel_id),
+                () => {
+                    updateSliderNoButtonAsync();
+                    controlNextButtonAsync();
+                });
+            //#endregion display image
         //#endregion
     }
 

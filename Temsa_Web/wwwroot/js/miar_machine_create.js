@@ -16,7 +16,7 @@ $(function () {
     const slct_mainCategory_id = "slct_mainCategory";
     const slct_subCategory_id = "slct_subCategory";
     const ul_description_id = "ul_description";
-    const div_form_id = "#div_form";
+    const div_form = $("#div_form");
     const inpt_description_id = "inpt_description";
     //#endregion
 
@@ -112,7 +112,7 @@ $(function () {
             }
         });
     });
-    $(div_form_id).click(() => {
+    div_form.click(() => {
         //#region when description button or dropdown clicked
         let clickedElement = $(":focus");
 
@@ -139,7 +139,7 @@ $(function () {
 
         //#endregion
     });
-    $(div_form_id).on("input", () => {
+    div_form.on("input", () => {
         //#region when changed description <textarea>
         let inputtedElement = $(":focus");
 
@@ -162,7 +162,7 @@ $(function () {
         //#region add mainCategory and subcategory
 
         //#region add mainCategory label and <select>
-        $(div_form_id).append(
+        div_form.append(
             `<div class="form-group">
                 <label class="col-sm-3 control-label">
                     ${formLabelNamesByLanguages[language].mainCategory}
@@ -177,7 +177,7 @@ $(function () {
         //#endregion
 
         //#region add subCategory label and <select>
-        $(div_form_id).append(
+        div_form.append(
             `<div class="form-group">
                 <label class="col-sm-3 control-label">
                     ${formLabelNamesByLanguages[language].subCategory}
@@ -235,7 +235,7 @@ $(function () {
         //#endregion
 
         //#region add model
-        $(div_form_id).append(
+        div_form.append(
             `<div class="form-group">
                 <label class="col-sm-3 control-label">
                     ${formLabelNamesByLanguages[language].model}
@@ -249,7 +249,7 @@ $(function () {
         //#endregion
 
         //#region add brand
-        $(div_form_id).append(
+        div_form.append(
             `<div class="form-group">
                 <label class="col-sm-3 control-label">
                     ${formLabelNamesByLanguages[language].brand}
@@ -263,7 +263,7 @@ $(function () {
         //#endregion
 
         //#region add year
-        $(div_form_id).append(
+        div_form.append(
             `<div class="form-group">
                 <label class="col-sm-3 control-label">
                     ${formLabelNamesByLanguages[language].year}
@@ -277,7 +277,7 @@ $(function () {
         //#endregion
 
         //#region add stock
-        $(div_form_id).append(
+        div_form.append(
             `<div class="form-group">
                 <label class="col-sm-3 control-label">
                     ${formLabelNamesByLanguages[language].stock}
@@ -293,7 +293,7 @@ $(function () {
         //#region add handStatus
         let handStatus = formLabelNamesByLanguages[language].handStatus;
 
-        $(div_form_id).append(
+        div_form.append(
             `<div class="form-group">
                 <label class="col-sm-3 control-label">
                     ${handStatus.label}
@@ -314,10 +314,38 @@ $(function () {
         );
         //#endregion
 
+        //#region add image
+        div_form.append(
+            `<div class="form-group">
+                <label class="col-sm-3 control-label">
+                    ${formLabelNamesByLanguages[language].image}
+                </label>
+                <div class="col-sm-6">
+                    <input id="inpt_image" type="file" class="form-control" required>
+                    <span id="span_help_image" class="help-block"></span>
+                </div>
+            </div>`
+        );
+        //#endregion
+
+        //#region add pdf
+        div_form.append(
+            `<div class="form-group">
+                <label class="col-sm-3 control-label">
+                    ${formLabelNamesByLanguages[language].pdf}
+                </label>
+                <div class="col-sm-6">
+                    <input id="inpt_pdf" type="file" class="form-control" required>
+                    <span id="span_help_pdf" class="help-block"></span>
+                </div>
+            </div>`
+        );
+        //#endregion
+
         //#region add description
 
         //#region add description <div>
-        $(div_form_id).append(
+        div_form.append(
             `<div class="form-horizontal bucket-form">
                 <div class="form-group">
                     <label class="col-sm-3 control-label">
@@ -366,11 +394,11 @@ $(function () {
         //#endregion
 
         //#region add save button
-        $(div_form_id).append(
+        div_form.append(
             `<div class="form-group">
                 <div class="col-sm-6; text-center">
                     <button id="btn_save" type="submit" class="btn btn-danger" style="background-color: darkblue">
-                        ${updateButtonNameByLanguages[language]}
+                        ${saveButtonNameByLanguages[language]}
                     </button>
                 </div>
                 <div style="text-align:center;">

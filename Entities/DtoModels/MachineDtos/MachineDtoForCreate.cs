@@ -11,7 +11,7 @@
         public string? HandStatus { get; init; }
         public string? DescriptionInTR { get; init; }
         public string? DescriptionInEN { get; init; }
-        public string? ImagePath { get; init; }
-        public string? PdfPath { get; init; }
+        public string? ImageName { get; init; }
+        public string? PdfName { get; init; }
     }
 }
