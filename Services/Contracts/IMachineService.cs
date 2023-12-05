@@ -9,7 +9,7 @@ namespace Services.Contracts
     public interface IMachineService
 	{
 		Task CreateMachineAsync(
-            MachineParametersForCreate machineParams, 
+            MachineParamsForCreate machineParams, 
             MachineDtoForCreate machineDto);
 
 		Task<PagingList<MachineView>> GetAllMachinesAsync(
@@ -26,14 +26,14 @@ namespace Services.Contracts
 		Task<IEnumerable<string>> GetMainCategoryNamesByLanguageAsync(string language);
 
 		Task<IEnumerable<string>> GetSubCategoryNamesOfMainCategoryByLanguageAsync(
-			MachineParametersForDisplaySubCategoryNames machineParameters);
+			MachineParamsForDisplaySubCategoryNames machineParams);
 
 		Task<IEnumerable<string>> GetAllHandStatusByLanguageAsync(string language);
 
         Task<IEnumerable<string>> GetAllLanguagesAsync();
 
         Task UpdateMachineAsync(
-            MachineParametersForUpdate parameters,
+            MachineParamsForUpdate parameters,
             MachineDtoForUpdate machineDto);
 
         Task DeleteMachineAsync(

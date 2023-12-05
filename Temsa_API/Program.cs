@@ -8,7 +8,7 @@ builder.Services.ConfigureAddControllers();
 builder.Services.AddAutoMapper(typeof(Program).Assembly);
 builder.Services.ConfigureAllManagers();
 builder.Services.ConfigureServices();
-builder.Services.ConfigureActionFilters();
+builder.Services.ConfigureServiceFilters();
 builder.Services.ConfigureConfigModels(builder.Configuration);
 builder.Services.ConfigureJwt(builder.Configuration);
 builder.Services.ConfigureCORS();

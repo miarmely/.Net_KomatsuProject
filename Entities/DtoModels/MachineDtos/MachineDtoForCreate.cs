@@ -1,10 +1,12 @@
-﻿namespace Entities.DtoModels.MachineDtos
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace Entities.DtoModels.MachineDtos
 {
     public class MachineDtoForCreate
     {
-        public string? MainCategoryName { get; init; }
+		public string? MainCategoryName { get; init; }
         public string? SubCategoryName { get; init; }
-        public string? Model { get; init; }
+		public string? Model { get; init; }
         public string? BrandName { get; init; }
         public int? Stock { get; init; }
         public int? Year { get; init; }

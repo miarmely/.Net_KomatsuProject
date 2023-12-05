@@ -27,7 +27,7 @@ namespace Temsa_Api.Extensions
 			services.AddSingleton<RepositoryContext>();
         }
 
-		public static void ConfigureActionFilters(this IServiceCollection services)
+		public static void ConfigureServiceFilters(this IServiceCollection services)
 		{
 			services.AddScoped<ValidationUserFormatFilter>();
 			services.AddScoped<ValidationNullArgumentsFilter>();

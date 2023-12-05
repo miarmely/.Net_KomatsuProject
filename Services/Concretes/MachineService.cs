@@ -26,7 +26,7 @@ namespace Services.Concretes
 			
 			
 		public async Task CreateMachineAsync(
-			MachineParametersForCreate machineParams,
+			MachineParamsForCreate machineParams,
 			MachineDtoForCreate machineDto)
 		{
 			#region upload machine image to folder
@@ -44,8 +44,8 @@ namespace Services.Concretes
 				machineDto.MainCategoryName,
 		        machineDto.SubCategoryName,
 		        machineDto.Model,
-		        machineDto.BrandName,
-		        machineDto.Stock,
+				machineDto.BrandName,
+				machineDto.Stock,
 		        machineDto.Year,
 		        machineDto.HandStatus,
 		        machineDto.DescriptionInTR,
@@ -219,20 +219,20 @@ namespace Services.Concretes
             return mainCategoryNames;
         }
 
-        public async Task<IEnumerable<string>> GetSubCategoryNamesOfMainCategoryByLanguageAsync(
-           MachineParametersForDisplaySubCategoryNames machineParameters)
+        public async Task<IEnumerable<string>>GetSubCategoryNamesOfMainCategoryByLanguageAsync(
+           MachineParamsForDisplaySubCategoryNames machineParams)
         {
             #region set parameters
             var parameters = new DynamicParameters();
             
             parameters.Add(
                 "Language", 
-                machineParameters.Language, 
+                machineParams.Language, 
                 DbType.String);
 
             parameters.Add(
                 "MainCategoryName", 
-                machineParameters.MainCategoryName, 
+                machineParams.MainCategoryName, 
                 DbType.String);
 			#endregion
 
@@ -261,7 +261,7 @@ namespace Services.Concretes
                 .GetAllLanguagesAsync();
 
 		public async Task UpdateMachineAsync(
-		  MachineParametersForUpdate parameters,
+		  MachineParamsForUpdate parameters,
 		  MachineDtoForUpdate machineDto)
 		{
 			#region set paramaters

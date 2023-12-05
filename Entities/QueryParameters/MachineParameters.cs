@@ -1,23 +1,26 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Entities.Attributes;
+using System.ComponentModel.DataAnnotations;
+
 
 namespace Entities.QueryParameters
 {
-    public record MachineParametersForUpdate
-    {
-		public Guid Id { get; init; }
-		public string Language { get; init; }
-        public string OldMainCategoryName { get; init; }
-		public string OldSubCategoryName { get; init; }
+	public record MachineParamsForUpdate
+	{
+		[Required][MiarLength(2, 2)] public string Language { get; init; }
+		[Required] public Guid Id { get; init; }
+		[Required] public string OldMainCategoryName { get; init; }
+		[Required] public string OldSubCategoryName { get; init; }
 	}
 
-    public record MachineParametersForDisplaySubCategoryNames
-    {
-       public string Language { get; init; }
-       public string? MainCategoryName { get; init; }
-    }
+	public record MachineParamsForDisplaySubCategoryNames
+	{
+		[Required][MiarLength(2, 2)] public string Language { get; init; }
+		[Required] public string? MainCategoryName { get; init; }
+	}
 
-
-    public record MachineParametersForCreate(
-        [Required] string Language,
-		[Required] string FolderPathAfterWwwroot);
+	public record MachineParamsForCreate
+	{
+		[Required][MiarLength(2, 2)] public string Language { get; init; }
+		[Required] public string FolderPathAfterWwwroot { get; init; }
+	}
 }

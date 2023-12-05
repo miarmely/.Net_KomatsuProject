@@ -1,8 +1,13 @@
-﻿namespace Entities.DtoModels.MachineDtos
+﻿using Entities.Attributes;
+using System.ComponentModel.DataAnnotations;
+using System.Xml.Linq;
+
+namespace Entities.DtoModels.MachineDtos
 {
     public record MachineDtoForDisplay
     {
-        public string? MainCategoryName { get; init; }
+		[Required][MiarLength(2, 2)] public string Language { get; init; }
+		public string? MainCategoryName { get; init; }
         public string? SubCategoryName { get; init; }
         public string? BrandName { get; init; }
         public string? Model { get; init; }

@@ -5,7 +5,7 @@ namespace Entities.ConfigModels
     public partial record ErrorDetailsConfig
 	{
 		public ErrorDetails ISE { get; init; }
-		public ErrorDetails NF_S_FP { get; init; }            
+		public ErrorDetails NF_S_FP { get; init; }
     }
 
     public partial record ErrorDetailsConfig  // functions
