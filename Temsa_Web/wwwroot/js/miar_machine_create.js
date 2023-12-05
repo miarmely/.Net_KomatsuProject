@@ -1,6 +1,6 @@
 ﻿import {
     changed_descriptionInput, clicked_descriptionDropdownButton,
-    clicked_descriptionDropdownItem, displayImageByDataUrlAsync, isFileTypeInvalidAsync, populateElementByAjaxOrLocalAsync,
+    clicked_descriptionDropdownItem, displayImageByDataUrlAsync, getErrorMessageForMachineAsync, isFileTypeInvalidAsync, populateElementByAjaxOrLocalAsync,
     populateSelectAsync, updateResultLabel
 } from "./miar_tools.js"
 
@@ -120,12 +120,16 @@ $(function () {
                 //#endregion
             },
             error: (response) => {
-                //#region write error message to resultLabel
-                updateResultLabel(
-                    resultLabel_id,
-                    JSON.parse(response.responseText).errorMessage,
-                    resultLabel_errorColor,
-                    "30px");
+                //#region write error message to result label
+                getErrorMessageForMachineAsync(response.responseText)
+                    .then((errorMessage) => {
+                        //write error
+                        updateResultLabel(
+                            resultLabel_id,
+                            errorMessage,
+                            resultLabel_errorColor,
+                            "30px");
+                    });
                 //#endregion
             }
         });

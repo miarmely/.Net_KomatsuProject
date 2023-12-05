@@ -832,6 +832,7 @@ $(function () {
         let oldColumnValues = JSON.parse(
             sessionStorage.getItem(rowId));
         let newColumnValues = {};
+
         //#region populate newColumnValues
         for (let elementType in columnNamesByElementTypes)
             for (let index in columnNamesByElementTypes[elementType]) {
@@ -849,10 +850,9 @@ $(function () {
         //#region set data
         var data = {};
 
-        //#region add columns new value to data except description 
+        //#region add new value of columns to data except description 
         for (let columnName in newColumnValues) {
-            data[columnName] = oldColumnValues[columnName]
-                == newColumnValues[columnName] ? // is same old value with new value?
+            data[columnName] = oldColumnValues[columnName] == newColumnValues[columnName] ?
                 null  // that means not changed
                 : newColumnValues[columnName]  // that means changed
         }
@@ -888,8 +888,8 @@ $(function () {
         $.ajax({
             method: "PUT",
             url: url,
-            data: JSON.stringify(data),
             headers: { "Authorization": jwtToken },
+            data: JSON.stringify(data),
             contentType: "application/json",
             dataType: "json",
             success: () => {

@@ -33,7 +33,7 @@ namespace Presantation.Controllers
 
 
 		[HttpGet("display/all")]
-		//[Authorization("Admin,Yönetici,Editor,Editör,User,Kullanıcı")]
+		[Authorization("Admin,Yönetici,Editor,Editör,User,Kullanıcı")]
 		public async Task<IActionResult> GetAllMachines(
 			[FromQuery] LanguageParam languageParam,
 			[FromQuery] PaginationParameters pagingParameters)

@@ -409,6 +409,99 @@ export async function setDisabledOfButtonAsync(doDisabled, button, bgColor) {
     //#endregion
 }
 
+export async function getErrorMessageForMachineAsync(responseText) {
+    //#region set variables
+    let propertyNamesGuideByLanguages = {
+        "TR": {
+            "ImageName": "Resmin Adı",
+            "MainCategoryName": "Ana Kategori",
+            "SubCategoryName": "Alt Kategori",
+            "Model": "Model",
+            "BrandName": "Marka",
+            "Year": "Yıl",
+            "Stock": "Stok Adedi",
+            "HandStatus": "El Durumu",
+            "PdfName": "Pdf'in Adı",
+            "DescriptionInTR": "TR Açıklama",
+            "DescriptionInEN": "EN Açıklama"
+        },
+        "EN": {
+            "ImageName": "name of Image",
+            "MainCategoryName": "Maincategory",
+            "SubCategoryName": "Subcategory",
+            "Model": "Model",
+            "BrandName": "Brand",
+            "Year": "Year",
+            "Stock": "Stock",
+            "HandStatus": "Hand Status",
+            "PdfName": "Name of Pdf",
+            "DescriptionInTR": "TR Description",
+            "DescriptionInEN": "EN Description"
+        }
+    };
+    let errorDetails = JSON.parse(responseText);
+    let errorMessage;
+    //#endregion
+
+    //#region set error message
+
+    //#region when error type is "Format Error"
+    if (formatErrorCodes.findIndex(e =>
+        e == errorDetails["errorCode"]) != -1) {
+        //#region get label name
+        let infosInErrorMessage = JSON.parse(
+            errorDetails["errorMessage"]);
+
+        let labelName = propertyNamesGuideByLanguages
+            [language]
+            [infosInErrorMessage.PropertyName];
+        //#endregion
+
+        //#region add error message
+        switch (errorDetails["errorCode"]) {
+            case "FE-MinL":
+                //#region set minumum length error message
+                errorMessage = language == "TR" ?
+                    `"${labelName}" en az ${infosInErrorMessage.MinLength} karakter uzunluğunda olmalı`  // TR
+                    : `minumum chars length of "${labelName}" must be ${infosInErrorMessage.MinLength}`  // EN
+                //#endregion
+                break;
+            case "FE-MaxL":
+                //#region set max length error message
+                errorMessage = language == "TR" ?
+                    `"${labelName}" en fazla ${infosInErrorMessage.MaxLength} karakter uzunluğunda olmalı`  // TR
+                    : `maximum chars length of "${labelName}" must be ${infosInErrorMessage.MaxLength}`  // EN
+                //#endregion
+                break;
+            case "FE-MinV":
+                //#region set minumum value error message
+                errorMessage = language == "TR" ?
+                    `"${labelName}" en az ${infosInErrorMessage.MinValue} değerinde olmalı`  // TR
+                    : `minumum value of "${labelName}" must be ${infosInErrorMessage.MinValue}`  // EN
+                //#endregion
+                break;
+            case "FE-MaxV":
+                //#region set max value error message
+                errorMessage = language == "TR" ?
+                    `"${labelName}" en fazla ${infosInErrorMessage.MaxValue} değerinde olmalı`  // TR
+                    : `maximum value of "${labelName}" must be ${infosInErrorMessage.MaxValue}`  // EN
+                //#endregion
+                break;
+        }
+        //#endregion
+    }
+    //#endregion
+
+    //#region for other error types
+    else
+        errorMessage = errorDetails.errorMessage;
+    //#endregion
+
+    //#endregion
+
+    return errorMessage;
+}
+
 async function addEntitiesToTableAsync(
     response,
     language,
