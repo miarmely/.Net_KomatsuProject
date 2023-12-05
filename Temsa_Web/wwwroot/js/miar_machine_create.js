@@ -20,6 +20,7 @@ $(function () {
     const inpt_description_id = "inpt_description";
     const img_machine = $("#img_machine");
     const inpt_image_id = "#inpt_image";
+    const inpt_pdf_id = "#inpt_pdf";
     const spn_fileStatusLabel = $("#spn_fileStatusLabel");
     const folderPathAfterWwwroot = "images\\machines";
     let selectedFileInfos;
@@ -41,7 +42,7 @@ $(function () {
         $.ajax({
             method: "POST",
             url: (baseApiUrl + "/machine/create" +
-                `?language=${language}` + 
+                `?language=${language}` +
                 `&folderPathAfterWwwroot=${folderPathAfterWwwroot}`),
             headers: { "Authorization": jwtToken },
             data: JSON.stringify({
@@ -175,52 +176,6 @@ $(function () {
     $(window).resize(async () => {
         await setMachineImageSizeAsync();
     })
-
-    async function change_imageInputAsync(event) {
-        //#region control the selected file (error)
-
-        //#region when any file not selected
-        selectedFileInfos = event.target.files[0];
-
-        if (selectedFileInfos == undefined) {
-            //#region remove current image
-            img_machine.removeAttr("src");
-            return;
-            //#endregion
-        }
-        //#endregion
-
-        //#region when file type is not image (error)
-        if (await isFileTypeInvalidAsync(
-            selectedFileInfos,
-            "image",
-            $(inpt_image))) {
-            //#region write error message
-            updateResultLabel(
-                "#" + spn_fileStatusLabel.attr("id"),
-                partnerErrorMessagesByLanguages[language]["invalidFileType"],
-                resultLabel_errorColor);
-            //#endregion
-
-            return;
-        }
-        //#endregion
-
-        //#endregion
-
-        await setMachineImageSizeAsync();
-
-        //#region display machine image
-        await displayImageByDataUrlAsync(
-                selectedFileInfos,
-                img_machine,
-                spn_fileStatusLabel)
-        //#endregion
-    }
-    async function click_imageInputAsync() {
-        // reset file status label
-        spn_fileStatusLabel.empty();
-    }
     //#endregion
 
     //#region functions
@@ -234,13 +189,13 @@ $(function () {
         //#endregion
     }
 
-    async function populateForm() {
+    async function populateFormAsync() {
         //#region add table title
         $(".panel-heading").append(
             tableTitleByLanguages[language]);
         //#endregion
 
-        //#region add image and event
+        //#region add image
         div_form.append(
             `<div class="form-group">
                 <label class="col-sm-3 control-label" style="text-align">
@@ -249,18 +204,10 @@ $(function () {
                 <div class="col-sm-6">
                 <div>
                     <input id="${inpt_image_id.substring(1)}" type="file" class="form-control" accept="image/*" required>
-                    <span id="span_help_image" class="help-block"></span>
+                    <span id="spn_help_${inpt_image_id.substring(1)}" class="help-block"></span>
                 </div>
             </div>`
         );
-
-        //#region initialize change event
-        $(inpt_image_id).change(async (event) =>
-            await change_imageInputAsync(event));
-        $(inpt_image_id).click(async () =>
-            await click_imageInputAsync());
-        //#endregion
-
         //#endregion
 
         //#region add mainCategory and subcategory
@@ -274,7 +221,7 @@ $(function () {
                 <div class="col-sm-6">
                     <select id="${slct_mainCategory_id}" class="form-control m-bot15">
                     </select>
-                    <span id="span_help_mainCategory" class="help-block"></span>
+                    <span id="spn_help_${slct_mainCategory_id}" class="help-block"></span>
                 </div>
             </div>`
         );
@@ -289,7 +236,7 @@ $(function () {
                 <div class="col-sm-6">
                     <select id="${slct_subCategory_id}" class="form-control m-bot15">
                     </select>
-                    <span id="span_help_subCategory" class="help-block"></span>
+                    <span id="spn_help_${slct_subCategory_id}" class="help-block"></span>
                 </div>
             </div>`
         );
@@ -346,7 +293,7 @@ $(function () {
                 </label>
                 <div class="col-sm-6">
                     <input id="inpt_model" type="text" class="form-control" required>
-                    <span id="span_help_model" class="help-block"></span>
+                    <span id="spn_help_inpt_model" class="help-block"></span>
                 </div>
             </div>`
         );
@@ -360,7 +307,7 @@ $(function () {
                 </label>
                 <div class="col-sm-6">
                     <input id="inpt_brand" type="text" class="form-control" required>
-                    <span id="span_help_brand" class="help-block"></span>
+                    <span id="spn_help_inpt_brand" class="help-block"></span>
                 </div>
             </div>`
         );
@@ -374,7 +321,7 @@ $(function () {
                 </label>
                 <div class="col-sm-6">
                     <input id="inpt_year" type="number" class="form-control" required>
-                    <span id="span_help_year" class="help-block"></span>
+                    <span id="spn_help_inpt_year" class="help-block"></span>
                 </div>
             </div>`
         );
@@ -388,7 +335,7 @@ $(function () {
                 </label>
                 <div class="col-sm-6">
                     <input id="inpt_stock" type="number" class="form-control" required>
-                    <span id="span_help_stock" class="help-block"></span>
+                    <span id="spn_help_inpt_stock" class="help-block"></span>
                 </div>
             </div>`
         );
@@ -425,8 +372,8 @@ $(function () {
                     ${formLabelNamesByLanguages[language].pdf}
                 </label>
                 <div class="col-sm-6">
-                    <input id="inpt_pdf" type="file" class="form-control" required>
-                    <span id="span_help_pdf" class="help-block"></span>
+                    <input id="${inpt_pdf_id.substring(1)}" type="file" class="form-control" required>
+                    <span id="spn_help_${inpt_pdf_id.substring(1)}" class="help-block"></span>
                 </div>
             </div>`
         );
@@ -498,7 +445,84 @@ $(function () {
         );
         //#endregion
     }
+
+    async function addDynamicEventsAsync() {
+        $("input").click((event) => {
+            //#region reset help label of clicked <input>
+            let inpt_id = event.target.id;
+
+            $(`#spn_help_${inpt_id}`).empty();
+            //#endregion
+        })
+        $(inpt_pdf_id).change(async (event) => {
+            //#region when any file not selected (return)
+            let selectedFileInfos = event.target.files[0];
+
+            if (selectedFileInfos == undefined)
+                return;
+            //#endregion
+
+            //#region when file type is not "pdf" (error)
+            if (await isFileTypeInvalidAsync(selectedFileInfos, "application/pdf", $(inpt_pdf_id))) {
+                //#region write error
+                updateResultLabel(
+                    `#spn_help_${inpt_pdf_id.substring(1)}`,
+                    partnerErrorMessagesByLanguages[language]["invalidFileType"],
+                    resultLabel_errorColor,
+                    "10px");
+
+                // reset pdf <input>
+                $(inpt_pdf_id).val("");
+                //#endregion
+
+                return;
+            }
+            //#endregion
+        });
+        $(inpt_image_id).change(async (event) => {
+            //#region control the selected file (error)
+
+            //#region when any file not selected
+            selectedFileInfos = event.target.files[0];
+
+            if (selectedFileInfos == undefined) {
+                //#region remove current image
+                img_machine.removeAttr("src");
+                return;
+                //#endregion
+            }
+            //#endregion
+
+            //#region when file type is not image (error)
+            if (await isFileTypeInvalidAsync(selectedFileInfos, "image", $(inpt_image))) {
+                //#region write error message
+                updateResultLabel(
+                    `#spn_help_${inpt_image_id.substring(1)}`,
+                    partnerErrorMessagesByLanguages[language]["invalidFileType"],
+                    resultLabel_errorColor,
+                    "10px");
+                //#endregion
+
+                return;
+            }
+            //#endregion
+
+            //#endregion
+
+            await setMachineImageSizeAsync();
+
+            //#region display machine image
+            await displayImageByDataUrlAsync(
+                selectedFileInfos,
+                img_machine,
+                spn_fileStatusLabel)
+        //#endregion
+
+        });
+    }
     //#endregion
 
-    populateForm();
+    populateFormAsync().then(async () => {
+        await addDynamicEventsAsync();
+    });
 })

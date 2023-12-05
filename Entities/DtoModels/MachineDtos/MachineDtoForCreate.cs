@@ -13,8 +13,7 @@ namespace Entities.DtoModels.MachineDtos
 		[MiarRange(1900, 2099)] public int Year { get; init; }
 		[MiarRange(1, 32767)] public int Stock { get; init; }
 		[MiarLength(1, 50)] public string HandStatus { get; init; }
-		//[MiarLength(1, 50)] 
-		public string PdfName { get; init; }
+		[MiarLength(1, 50)] public string PdfName { get; init; }
 		[MiarLength(1, 500)] public string DescriptionInTR { get; init; }
 		[MiarLength(1, 500)] public string DescriptionInEN { get; init; }
 		public string ImageContentInBase64Str { get; init; }

@@ -78,7 +78,7 @@ export function updateResultLabel(
     resultLabelId,
     message,
     color,
-    marginT = "30px") {
+    marginT = "0px") {
     //#region reset resultLabel
     let resultLabel = $(resultLabelId);
     resultLabel.empty();
