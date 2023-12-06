@@ -21,6 +21,7 @@ namespace Entities.QueryParameters
 	public record MachineParamsForCreate
 	{
 		[Required][MiarLength(2, 2)] public string Language { get; init; }
-		[Required] public string FolderPathAfterWwwroot { get; init; }
+		[Required] public string ImageFolderPathAfterWwwroot { get; init; }
+		[Required] public string PdfFolderPathAfterWwwroot { get; init; }
 	}
 }

@@ -22,8 +22,10 @@ $(function () {
     const inpt_image_id = "#inpt_image";
     const inpt_pdf_id = "#inpt_pdf";
     const spn_fileStatusLabel = $("#spn_fileStatusLabel");
-    const folderPathAfterWwwroot = "images\\machines";
-    let selectedFileInfos;
+    const imageFolderPathAfterWwwroot = "images\\machines";
+    const pdfFolderPathAfterWwwroot = "images\\pdfs";
+    let selectedImageInfos;
+    let selectedPdfInfos;
     //#endregion
 
     //#region events
@@ -33,107 +35,139 @@ $(function () {
         $(resultLabel_id).empty();
         //#endregion
 
-        //#region set data
-        let imageContentInBase64Str = img_machine
-            .attr("src")
-            .replace(`data:${selectedFileInfos.type};base64,`, "");
-        //#endregion
+        //#region read pdf and save machine (ajax)
+        let fileReader = new FileReader();
 
-        $.ajax({
-            method: "POST",
-            url: (baseApiUrl + "/machine/create" +
-                `?language=${language}` +
-                `&folderPathAfterWwwroot=${folderPathAfterWwwroot}`),
-            headers: { "Authorization": jwtToken },
-            data: JSON.stringify({
-                "MainCategoryName": $("#slct_mainCategory").val(),
-                "SubCategoryName": $("#slct_subCategory").val(),
-                "Model": $("#inpt_model").val(),
-                "BrandName": $("#inpt_brand").val(),
-                "Stock": $("#inpt_stock").val(),
-                "Year": $("#inpt_year").val(),
-                "HandStatus": $("input[name = handStatus]:checked").val(),
-                "DescriptionInTR": sessionStorage.getItem(description_baseKeyForSession + "-TR"),
-                "DescriptionInEN": sessionStorage.getItem(description_baseKeyForSession + "-EN"),
-                "ImageName": selectedFileInfos.name,
-                "ImageContentInBase64Str": imageContentInBase64Str,
-                "PdfName": "",
-                "PdfContentInBase64Str": ""
-            }),
-            contentType: "application/json",
-            dataType: "json",
-            beforeSend: () => {
-                $(resultLabel_id).empty();  // reset resultLabel
+        fileReader.readAsDataURL(selectedPdfInfos);
+        fileReader.onloadend = function (event) {
+            //#region when pdf read with successfull (ajax)
+            if (fileReader.readyState == fileReader.DONE) {
+                //#region get pdf content in base64 string
+                let dataUrl = event.target.result;
+                let pdfContentInBase64Str = dataUrl
+                    .replace(`data:${selectedPdfInfos.type};base64,`, "")
+                //#endregion
 
-                //#region when any description of langauges not entered (throw)
-                let allLanguages = JSON.parse(
-                    localStorage.getItem(localKeys_allLanguages))
-                [language];
+                //#region get image content in base64 string
+                let imageContentInBase64Str = img_machine
+                    .attr("src")
+                    .replace(`data:${selectedImageInfos.type};base64,`, "");
+                //#endregion
 
-                for (let index in allLanguages) {
-                    //#region get description by language in session
-                    let languageInDb = allLanguages[index];
+                $.ajax({
+                    method: "POST",
+                    url: (baseApiUrl + "/machine/create" +
+                        `?language=${language}` +
+                        `&imageFolderPathAfterWwwroot=${imageFolderPathAfterWwwroot}` +
+                        `&pdfFolderPathAfterWwwroot=${pdfFolderPathAfterWwwroot}`),
+                    headers: { "Authorization": jwtToken },
+                    data: JSON.stringify({
+                        "MainCategoryName": $("#slct_mainCategory").val(),
+                        "SubCategoryName": $("#slct_subCategory").val(),
+                        "Model": $("#inpt_model").val(),
+                        "BrandName": $("#inpt_brand").val(),
+                        "Stock": $("#inpt_stock").val(),
+                        "Year": $("#inpt_year").val(),
+                        "HandStatus": $("input[name = handStatus]:checked").val(),
+                        "DescriptionInTR": sessionStorage.getItem(description_baseKeyForSession + "-TR"),
+                        "DescriptionInEN": sessionStorage.getItem(description_baseKeyForSession + "-EN"),
+                        "ImageName": selectedImageInfos.name,
+                        "ImageContentInBase64Str": imageContentInBase64Str,
+                        "PdfName": selectedPdfInfos.name,
+                        "PdfContentInBase64Str": pdfContentInBase64Str
+                    }),
+                    contentType: "application/json",
+                    dataType: "json",
+                    beforeSend: () => {
+                        $(resultLabel_id).empty();  // reset resultLabel
 
-                    let descriptionInSession = sessionStorage
-                        .getItem(description_baseKeyForSession + '-' + languageInDb);
-                    //#endregion
+                        //#region when any description of langauges not entered (throw)
+                        let allLanguages = JSON.parse(
+                            localStorage.getItem(localKeys_allLanguages))
+                        [language];
 
-                    //#region write error (throw)
-                    if (descriptionInSession == null
-                        || descriptionInSession == "") {
+                        for (let index in allLanguages) {
+                            //#region get description by language in session
+                            let languageInDb = allLanguages[index];
+
+                            let descriptionInSession = sessionStorage
+                                .getItem(description_baseKeyForSession + '-' + languageInDb);
+                            //#endregion
+
+                            //#region write error (throw)
+                            if (descriptionInSession == null
+                                || descriptionInSession == "") {
+                                updateResultLabel(
+                                    resultLabel_id,
+                                    `"${languageInDb}" ${errorMessagesByLanguages[language]["descriptionNotEntered"]}`,
+                                    resultLabel_errorColor,
+                                    "30px");
+
+                                return false;
+                            }
+                            //#endregion
+                        }
+                        //#endregion
+                    },
+                    success: () => {
+                        //#region resets
+                        $("form")[0].reset();
+                        img_machine.removeAttr("src");
+                        //#endregion
+
+                        //#region write successfull message to resultLabel
                         updateResultLabel(
                             resultLabel_id,
-                            `"${languageInDb}" ${description_missingLanguageErrorByLanguages[language]}`,
-                            resultLabel_errorColor,
+                            successMessagesByLanguages[language]["saveSuccessful"],
+                            resultLabel_successColor,
                             "30px");
+                        //#endregion
 
-                        return false;
+                        //#region remove descriptions in session
+                        let allLanguages = JSON.parse(
+                            localStorage.getItem(localKeys_allLanguages))
+                        [language];
+
+                        for (let index in allLanguages) {
+                            let languageInLocal = allLanguages[index];
+
+                            sessionStorage.removeItem(
+                                description_baseKeyForSession + "-" + languageInLocal);
+                        }
+                        //#endregion
+                    },
+                    error: (response) => {
+                        //#region write error message to result label
+                        getErrorMessageForMachineAsync(response.responseText)
+                            .then((errorMessage) => {
+                                //write error
+                                updateResultLabel(
+                                    resultLabel_id,
+                                    errorMessage,
+                                    resultLabel_errorColor,
+                                    "30px");
+                            });
+                        //#endregion
                     }
-                    //#endregion
-                }
-                //#endregion
-            },
-            success: () => {
-                //#region resets
-                $("form")[0].reset();
-                img_machine.removeAttr("src");
-                //#endregion
+                });
+            }
+            //#endregion
 
-                //#region write successfull message to resultLabel
+            //#region when any error occured in pdf reading
+            else {
+                //#region write error
                 updateResultLabel(
                     resultLabel_id,
-                    resultLabel_successMessageByLanguages[language],
-                    resultLabel_successColor,
+                    errorMessagesByLanguages[language]["pdfReadingError"],
+                    resultLabel_errorColor,
                     "30px");
                 //#endregion
 
-                //#region remove descriptions in session
-                let allLanguages = JSON.parse(
-                    localStorage.getItem(localKeys_allLanguages))
-                [language];
-
-                for (let index in allLanguages) {
-                    let languageInLocal = allLanguages[index];
-
-                    sessionStorage.removeItem(
-                        description_baseKeyForSession + "-" + languageInLocal);
-                }
-                //#endregion
-            },
-            error: (response) => {
-                //#region write error message to result label
-                getErrorMessageForMachineAsync(response.responseText)
-                    .then((errorMessage) => {
-                        //write error
-                        updateResultLabel(
-                            resultLabel_id,
-                            errorMessage,
-                            resultLabel_errorColor,
-                            "30px");
-                    });
-                //#endregion
+                return;
             }
-        });
+            //#endregion
+        }
+        //#endregion
     });
     div_form.click(() => {
         //#region when description button or dropdown clicked
@@ -372,7 +406,7 @@ $(function () {
                     ${formLabelNamesByLanguages[language].pdf}
                 </label>
                 <div class="col-sm-6">
-                    <input id="${inpt_pdf_id.substring(1)}" type="file" class="form-control" required>
+                    <input id="${inpt_pdf_id.substring(1)}" type="file" class="form-control" accept="application/pdf" required>
                     <span id="spn_help_${inpt_pdf_id.substring(1)}" class="help-block"></span>
                 </div>
             </div>`
@@ -456,15 +490,15 @@ $(function () {
         })
         $(inpt_pdf_id).change(async (event) => {
             //#region when any file not selected (return)
-            let selectedFileInfos = event.target.files[0];
+            selectedPdfInfos = event.target.files[0];
 
-            if (selectedFileInfos == undefined)
+            if (selectedPdfInfos == undefined)
                 return;
             //#endregion
 
             //#region when file type is not "pdf" (error)
-            if (await isFileTypeInvalidAsync(selectedFileInfos, "application/pdf", $(inpt_pdf_id))) {
-                //#region write error
+            if (await isFileTypeInvalidAsync(selectedPdfInfos, "application/pdf", $(inpt_pdf_id))) {
+                // write error
                 updateResultLabel(
                     `#spn_help_${inpt_pdf_id.substring(1)}`,
                     partnerErrorMessagesByLanguages[language]["invalidFileType"],
@@ -473,8 +507,6 @@ $(function () {
 
                 // reset pdf <input>
                 $(inpt_pdf_id).val("");
-                //#endregion
-
                 return;
             }
             //#endregion
@@ -483,9 +515,9 @@ $(function () {
             //#region control the selected file (error)
 
             //#region when any file not selected
-            selectedFileInfos = event.target.files[0];
+            selectedImageInfos = event.target.files[0];
 
-            if (selectedFileInfos == undefined) {
+            if (selectedImageInfos == undefined) {
                 //#region remove current image
                 img_machine.removeAttr("src");
                 return;
@@ -494,7 +526,7 @@ $(function () {
             //#endregion
 
             //#region when file type is not image (error)
-            if (await isFileTypeInvalidAsync(selectedFileInfos, "image", $(inpt_image))) {
+            if (await isFileTypeInvalidAsync(selectedImageInfos, "image", $(inpt_image))) {
                 //#region write error message
                 updateResultLabel(
                     `#spn_help_${inpt_image_id.substring(1)}`,
@@ -513,7 +545,7 @@ $(function () {
 
             //#region display machine image
             await displayImageByDataUrlAsync(
-                selectedFileInfos,
+                selectedImageInfos,
                 img_machine,
                 spn_fileStatusLabel)
         //#endregion
@@ -522,7 +554,8 @@ $(function () {
     }
     //#endregion
 
-    populateFormAsync().then(async () => {
-        await addDynamicEventsAsync();
-    });
+    populateFormAsync()
+        .then(async () => {
+            await addDynamicEventsAsync();
+        });
 })

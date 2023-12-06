@@ -24,16 +24,22 @@ namespace Services.Concretes
             _fileService = fileService;
 		}
 			
-			
 		public async Task CreateMachineAsync(
 			MachineParamsForCreate machineParams,
 			MachineDtoForCreate machineDto)
 		{
 			#region upload machine image to folder
 			await _fileService.UploadFileToFolderAsync(
-                machineParams.FolderPathAfterWwwroot,
+                machineParams.ImageFolderPathAfterWwwroot,
                 machineDto.ImageName,
                 machineDto.ImageContentInBase64Str);
+			#endregion
+
+			#region upload pdf to folder
+			await _fileService.UploadFileToFolderAsync(
+                machineParams.PdfFolderPathAfterWwwroot,
+                machineDto.PdfName,
+                machineDto.PdfContentInBase64Str);
             #endregion
 
             #region create machine (throw)
