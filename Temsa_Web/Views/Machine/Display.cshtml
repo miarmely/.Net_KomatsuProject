@@ -3,14 +3,10 @@
 
 <div class="table-agile-info">
     <div class="panel panel-default">
-        @*table title*@
         <div class="panel-heading">
         </div>
-        @*/table title*@
 
-        @*table menubar*@
         <div class="row w3-res-tb">
-            @*menubar options*@
             <div class="col-sm-5 m-b-xs">
 				<select id="slct_tableMenubar" class="input-sm form-control w-sm inline v-middle">
 				</select>
@@ -18,7 +14,6 @@
                 </button>                
             </div>
             <div class="col-sm-4">
-            @*/menubar options*@
             </div>
 			@*search bar*@
 			@*<div class="col-sm-3">
@@ -33,14 +28,12 @@
 			</div>*@
 			@*/search bar*@
 		</div>
-		@*/table menubar*@
 
-        @*/data*@
         <div class="table-responsive">
             <table id="tbl_machine" class="table table-striped b-t b-light">
                 <thead>
                     <tr>
-                        <th style="width:20px;">
+                        <th style="width:20px">
                             <label class="i-checks m-b-rowNone">
 								<input id="box_all" type="checkbox"><i></i>
                             </label>
@@ -51,13 +44,11 @@
                 </tbody>
             </table>
         </div>
-        @*/data*@
 
-        @*/navigation*@
         <footer class="panel-footer">
             <div class="row">
                 <div class="col-sm-5 text-left">
-                    <small id="lbl_entityQuantity" class="text-muted inline m-t-sm m-b-s">
+                    <small id="small_entityQuantity" class="text-muted inline m-t-sm m-b-s">
 					</small>
                 </div>
                 <div class="col-sm-7 text-right text-center-xs">                
@@ -66,7 +57,6 @@
                 </div>
             </div>
         </footer>
-        @*/navigation*@
     </div>
 </div>
 
@@ -78,6 +68,7 @@
     };
     const columnNamesByLanguages = {
         "TR": {
+            "image": "Resim",
             "mainCategory": "Ana Kategori",
             "subCategory": "Alt Kategori",
             "model": "Model",
@@ -87,11 +78,13 @@
             "rented": "Kiralık",
             "sold": "Satılık",
             "year": "Yıl",
-            "descriptions": "Açıklama",
             "createdAt": "Kayıt Tarihi",
+            "pdf": "PDF",
+            "descriptions": "Açıklama",
             "processes": "İşlemler",
         },
         "EN": {
+            "image": "Image",
             "mainCategory": "Maincategory",
             "subCategory": "Subcategory",
             "model": "Model",
@@ -101,12 +94,13 @@
             "rented": "Rent",
             "sold": "Sold",
             "year": "Year",
-            "descriptions": "Description",
             "createdAt": "Registration Date",
+            "pdf": "PDF",
+            "descriptions": "Description",
             "processes": "Processes",
         },    
     };
-    const entityQuantityMessageByLanguages = {
+    const entityQuantity_messageByLanguages = {
         "TR": "makine gösteriliyor",
         "EN": "machine displaying"
     };

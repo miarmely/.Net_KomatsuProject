@@ -1,8 +1,10 @@
 ﻿import {
-    entityCountOnTable, changeDescriptionButtonColor, clicked_descriptionDropdownButton,
-    clicked_descriptionDropdownItem, description_currentColor, getDescriptionKeyForSession,
-    paginationInfosInJson, populateTable, updateResultLabel, setDisabledOfOtherUpdateButtonsAsync,
-    updateErrorRow, populateElementByAjaxOrLocalAsync, resetErrorRow, setDescriptionLanguage
+    changeDescriptionButtonColor, clicked_descriptionDropdownButton,
+    clicked_descriptionDropdownItem, description_currentColor,
+    getDescriptionKeyForSession, updateResultLabel, updateErrorRow,
+    setDisabledOfOtherUpdateButtonsAsync, populateElementByAjaxOrLocalAsync,
+    resetErrorRow, setDescriptionLanguage, getDateTimeInString,
+    addPaginationButtonsAsync, controlPaginationBackAndNextButtonsAsync
 } from "./miar_tools.js";
 
 $(function () {
@@ -10,8 +12,6 @@ $(function () {
     const pageNumber = 1;
     const pageSize = 7;
     const paginationButtonQuantity = 5;
-    const routeForDisplay = "machine/display/all"
-    const entityType = "machine"
     const nameOfPaginationHeader = "Machine-Pagination";
     const errorMessageColor = "rgb(255, 75, 75)";
     const description_baseKeyForSession = "Machine-Display-Description";
@@ -19,34 +19,26 @@ $(function () {
     const description_savedColor = "lightgreen";
     const description_inputId = "#inpt_descriptions";
     const description_buttonId = "#btn_description";
-    const propertyNamesToBeShowOnTable = [
-        "mainCategoryName",
-        "subCategoryName",
-        "model",
-        "brandName",
-        "handStatus",
-        "stock",
-        "rented",
-        "sold",
-        "year",
-        "descriptions",
-        "createdAt"
-    ]
     const table_body = $("#tbl_machine tbody");
     const table_head = $("#tbl_machine thead tr");
     const ul_pagination = $("#ul_pagination");
     const th_descriptions_id = "#th_descriptions";
     const updateButtonId = "#btn_update";
-    const entityQuantity_id = "#lbl_entityQuantity"
-    const lbl_entityQuantity = $(entityQuantity_id);
-    const entityQuantity_message = entityQuantityMessageByLanguages[language];
+    const entityQuantity_id = "#small_entityQuantity";
+    const entityQuantity_color = "#7A7A7A";
     const updateButtonName = updateButtonNameByLanguages[language];
     const description_baseButtonName = description_baseButtonNameByLanguages[language];
     const ul_description_id = "#ul_description";
+    const path_pdfs = "images/pdfs";
+    const path_machines = "images/machines";
+    const machineImages_maxWidth = "200";
+    const machineImages_maxHeight = "200";
+    let paginationInfos = {};
+    let machineCountOnTable;
     //#endregion
 
     //#region events
-    ul_pagination.click(() => {
+    ul_pagination.click(async () => {
         //#region do unchecked "box_all"
         if ($("#box_all").is(":checked"))
             $("#box_all").prop("checked", false);
@@ -58,68 +50,37 @@ $(function () {
         switch (clickedButton.attr("id")) {
             //#region open previous page if previous page exists
             case "a_paginationBack":
-                if (paginationInfosInJson.HasPrevious)
-                    populateTable(
-                        entityType,
-                        routeForDisplay,
-                        language,
-                        paginationInfosInJson.CurrentPageNo - 1,
+                if (paginationInfos.HasPrevious)
+                    await populateTableAsync(
+                        paginationInfos.CurrentPageNo - 1,
                         pageSize,
-                        table_body,
-                        propertyNamesToBeShowOnTable,
-                        updateButtonName,
-                        nameOfPaginationHeader,
-                        lbl_entityQuantity,
-                        ul_pagination,
-                        errorMessageColor,
-                        paginationButtonQuantity,
-                        entityQuantity_message,
-                        true)
+                        true);
+
                 break;
             //#endregion
 
             //#region open next page if next page exists
             case "a_paginationNext":
-                if (paginationInfosInJson.HasNext)
-                    populateTable(
-                        entityType,
-                        routeForDisplay,
-                        language,
-                        paginationInfosInJson.CurrentPageNo + 1,
+                if (paginationInfos.HasNext)
+                    await populateTableAsync(
+                        paginationInfos.CurrentPageNo + 1,
                         pageSize,
-                        table_body,
-                        propertyNamesToBeShowOnTable,
-                        updateButtonName,
-                        nameOfPaginationHeader,
-                        lbl_entityQuantity,
-                        ul_pagination,
-                        errorMessageColor,
-                        paginationButtonQuantity,
-                        entityQuantity_message,
-                        true)
+                        true);
+
                 break;
             //#endregion
 
             //#region open page that matched with clicked button number
             default:
+                //#region populate table
                 let pageNo = clickedButton.prop("innerText");
 
-                populateTable(
-                    entityType,
-                    routeForDisplay,
-                    language,
+                await populateTableAsync(
                     pageNo,
                     pageSize,
-                    table_body,
-                    propertyNamesToBeShowOnTable,
-                    updateButtonName,
-                    nameOfPaginationHeader,
-                    lbl_entityQuantity,
-                    ul_pagination,
-                    errorMessageColor,
-                    paginationButtonQuantity,
-                    entityQuantity_message,
-                    true)
+                    true);
+                //#endregion
+
                 break;
             //#endregion
         }
@@ -130,7 +91,7 @@ $(function () {
         let isBoxAllChecked = $("#box_all").is(":checked");
 
         await new Promise(resolve => {
-            for (let rowNo = 1; rowNo <= entityCountOnTable; rowNo += 1) {
+            for (let rowNo = 1; rowNo <= machineCountOnTable; rowNo += 1) {
                 var checkBoxInRow = $(`#tr_row${rowNo} #td_checkBox input`);
 
                 //#region do checked of checkbox
@@ -470,7 +431,7 @@ $(function () {
             let machineIdList = [];
 
             //#region set machineIdList
-            for (let rowNo = 1; rowNo <= entityCountOnTable; rowNo += 1) {
+            for (let rowNo = 1; rowNo <= machineCountOnTable; rowNo += 1) {
                 //#region set variables
                 let checkBox = $(`#tr_row${rowNo} #td_checkBox input`);
                 let row = $(`#tr_row${rowNo}`);
@@ -517,48 +478,18 @@ $(function () {
             contentType: "application/json",
             dataType: "json",
             success: () => {
-                let currentPageNo = paginationInfosInJson.CurrentPageNo;
+                let currentPageNo = paginationInfos.CurrentPageNo;
 
                 //#region when all machines on page deleted
-                if (machineIdList.length == paginationInfosInJson.CurrentPageCount) {
+                if (machineIdList.length == paginationInfos.CurrentPageCount) {
                     //#region when next page exists
-                    if (paginationInfosInJson.HasNext)
-                        populateTable(
-                            entityType,
-                            routeForDisplay,
-                            language,
-                            currentPageNo,
-                            pageSize,
-                            table_body,
-                            propertyNamesToBeShowOnTable,
-                            updateButtonName,
-                            nameOfPaginationHeader,
-                            lbl_entityQuantity,
-                            ul_pagination,
-                            errorMessageColor,
-                            paginationButtonQuantity,
-                            entityQuantity_message,
-                            true);  // refresh current page
+                    if (paginationInfos.HasNext)
+                        populateTableAsync(currentPageNo, pageSize, true);  // refresh current page
                     //#endregion
 
                     //#region when previous page exists
-                    else if (paginationInfosInJson.HasPrevious)
-                        populateTable(
-                            entityType,
-                            routeForDisplay,
-                            language,
-                            currentPageNo - 1,
-                            pageSize,
-                            table_body,
-                            propertyNamesToBeShowOnTable,
-                            updateButtonName,
-                            nameOfPaginationHeader,
-                            lbl_entityQuantity,
-                            ul_pagination,
-                            errorMessageColor,
-                            paginationButtonQuantity,
-                            entityQuantity_message,
-                            true);
+                    else if (paginationInfos.HasPrevious)
+                        populateTableAsync(currentPageNo - 1, pageSize, true);
                     //#endregion
 
                     //#region when any machines not found
@@ -576,22 +507,7 @@ $(function () {
 
                 //#region when some machines on page deleted
                 else
-                    populateTable(
-                        entityType,
-                        routeForDisplay,
-                        language,
-                        currentPageNo,
-                        pageSize,
-                        table_body,
-                        propertyNamesToBeShowOnTable,
-                        updateButtonName,
-                        nameOfPaginationHeader,
-                        lbl_entityQuantity,
-                        ul_pagination,
-                        errorMessageColor,
-                        paginationButtonQuantity,
-                        entityQuantity_message,
-                        true);  // refresh current page
+                    populateTableAsync(currentPageNo, pageSize, true);  // refresh current page
                 //#endregion
 
                 //#region do unchecked "box_all"
@@ -869,8 +785,8 @@ $(function () {
             //#region add description to data
             data[`DescriptionIn${descriptionLanguage}`] =
                 oldDescriptionByLanguage == newDescriptionByLanguage ?  // is description changed ?
-                null
-                : newDescriptionByLanguage;
+                    null
+                    : newDescriptionByLanguage;
             //#endregion
         }
         //#endregion
@@ -901,7 +817,7 @@ $(function () {
                 // get all languages
                 let allLanguages = JSON.parse(
                     localStorage.getItem(localKeys_allLanguages))
-                    [language];
+                [language];
 
                 // add descriptions
                 for (var index in allLanguages) {
@@ -953,73 +869,182 @@ $(function () {
     }
 
     async function populateHtmlAsync() {
-        await new Promise(resolve => {
-            //#region add table title
-            $(".panel-heading").append(
-                tableTitleByLanguages[language]);
-            //#endregion
+        //#region add table title
+        $(".panel-heading").append(
+            tableTitleByLanguages[language]);
+        //#endregion
 
-            //#region add table menubars
-            let tableMenubarOptions = tableMenubar_optionsByLanguages[language];
+        //#region add table menubars
+        let tableMenubarOptions = tableMenubar_optionsByLanguages[language];
 
-            for (let index = 0; index < tableMenubarOptions.length; index += 1) {
-                let tableMenubarOption = tableMenubarOptions[index];
+        for (let index = 0; index < tableMenubarOptions.length; index += 1) {
+            let tableMenubarOption = tableMenubarOptions[index];
 
-                $("#slct_tableMenubar").append(
-                    `<option value="${index}">
-                        ${tableMenubarOption}
-                     </option>`
-                )
-            }
-            //#endregion
+            $("#slct_tableMenubar").append(
+                `<option value="${index}">
+                    ${tableMenubarOption}
+                    </option>`
+            )
+        }
+        //#endregion
 
-            //#region add apply button name
-            $("#btn_apply").append(
-                tableMenubar_applyButtonName[language])
-            //#endregion
+        //#region add apply button name
+        $("#btn_apply").append(
+            tableMenubar_applyButtonName[language])
+        //#endregion
 
-            //#region add column names
-            // add column names
-            for (let column in columnNamesByLanguages[language]) {
-                let columnName = columnNamesByLanguages[language][column];
+        //#region add column heads
+        // add column heads
+        for (let column in columnNamesByLanguages[language]) {
+            let columnNameByLanguage = columnNamesByLanguages[language][column];
 
-                table_head.append(
-                    `<th id="th_${column}">${columnName}</th>`
-                );
-            }
-
-            // add blank column to end
             table_head.append(
-                `<th style="width:30px"></th>`
+                `<th id="th_${column}" style="text-align:center">${columnNameByLanguage}</th>`
             );
+        }
+
+        // add blank column to end
+        table_head.append(
+            `<th style="width:30px"></th>`
+        );
+        //#endregion
+
+        //#region add entity quantity message
+        $(entityQuantity_id).append(
+            `<b>0</b> ${entityQuantity_messageByLanguages[language]}`
+        );
+        //#endregion
+    }
+
+    async function addMachinesToTableAsync(response) {
+        //#region add machines to table
+        let rowNo = 1;
+
+        for (let index in response) {
+            //#region add machines
+            let machineView = response[index];
+            let rowId = `tr_row${rowNo}`
+
+            table_body.append(
+                `<tr id= "${rowId}" class= ${machineView.id} style="text-align:center">
+                    <td id="td_checkBox">
+				        <label class="i-checks m-b-none">
+					        <input type="checkbox"><i></i>
+				        </label>
+			        </td>
+                    <td id="td_image">
+                        <img src="/${path_machines}/${machineView.imageName}" 
+                             alt="${machineView.imageName}" 
+                             style="max-width:${machineImages_maxWidth}px; max-height:${machineImages_maxHeight}px">
+                    </td>
+                    <td id="td_mainCategory">${machineView.mainCategoryName}</td>
+                    <td id="td_subCategory">${machineView.subCategoryName}</td>
+                    <td id="td_model">${machineView.brandName}</td>
+                    <td id="td_brand">${machineView.model}</td>
+                    <td id="td_handStatus">${machineView.handStatus}</td>
+                    <td id="td_stock">${machineView.stock}</td>
+                    <td id="td_rented">${machineView.rented}</td>
+                    <td id="td_sold">${machineView.sold}</td>
+                    <td id="td_year">${machineView.year}</td>
+                    <td id="td_registrationDate">${getDateTimeInString(machineView.createdAt)}</td >
+                    <td id="td_pdf">
+                        <a href="/${path_pdfs}/${machineView.pdfName}" 
+                           target="_blank">PDF</a>
+                    </td>
+                    <td id="td_description">
+                        <textarea style="min-width:500px;  max-width:650px;  min-height:${machineImages_maxHeight - 100}px;  max-height: ${machineImages_maxHeight * 1.5}px" disabled>${machineView.descriptions[language]}</textarea>
+                    </td>
+                    <td id="td_processes">
+                        <button id="btn_update" ui-toggle-class="">
+					        <i class="fa fa-pencil text-info">${updateButtonName}</i>
+				        </button>
+                    </td>
+                    <td style="width:30px"></td>
+                </tr>
+                <tr hidden></tr>
+			    <tr id="${rowId}_error">
+		            <td id="td_error" colspan=16 hidden>
+                    </td>
+			    </tr>`
+            );
+
+            rowNo += 1;
             //#endregion
 
-            //#region add entity quantity message
-            $("#lbl_entityQuantity").append(
-                `<b>0</b> ${entityQuantityMessageByLanguages[language]}`
-            );
+            //#region add descriptions of machines to session
+            sessionStorage.setItem(
+                rowId,
+                JSON.stringify({
+                    "descriptions": machineView.descriptions
+                }));
             //#endregion
+        }
+        //#endregion
+    }
 
-            resolve();
-        })
+    async function populateTableAsync(pageNumber, pageSize, refreshPaginationButtons) {
+        $.ajax({
+            method: "GET",
+            url: (baseApiUrl + "/machine/display/all" +
+                `?language=${language}` +
+                `&pageNumber=${pageNumber}` +
+                `&pageSize=${pageSize}`),
+            headers: { "Authorization": jwtToken },
+            contentType: "application/json",
+            dataType: "json",
+            beforeSend: () => {
+                //#region reset table if not empty
+                if (table_body.children("tr").length != 0)
+                    table_body.empty();
+                //#endregion
+            },
+            success: (response, status, xhr) => {
+                //#region populate table
+                addMachinesToTableAsync(response)
+                    .then(async () => {
+                        //#region get pagination infos from headers
+                        paginationInfos = JSON.parse(
+                            xhr.getResponseHeader(nameOfPaginationHeader));
+                        //#endregion
+
+                        //#region update entity count label
+                        if (response.length != 0) {  // if any machine exists
+                            machineCountOnTable = paginationInfos.CurrentPageCount;
+
+                            updateResultLabel(
+                                entityQuantity_id,
+                                `<b>${machineCountOnTable}/${pageSize}</b> ${entityQuantity_messageByLanguages[language]}`,
+                                entityQuantity_color
+                            )
+                        }
+                        //#endregion
+
+                        //#region add pagination buttons
+                        if (refreshPaginationButtons)
+                            addPaginationButtonsAsync(
+                                paginationInfos,
+                                paginationButtonQuantity,
+                                ul_pagination);
+                        //#endregion
+
+                        await controlPaginationBackAndNextButtonsAsync(paginationInfos);
+                    });
+                //#endregion
+            },
+            error: (response) => {
+                //#region write error to entity quantity label
+                updateResultLabel(
+                    entityQuantity_id,
+                    JSON.parse(response.responseText).errorMessage,
+                    errorMessageColor);
+                //#endregion
+            },
+        });
     }
     //#endregion
 
-    populateHtmlAsync();
-    populateTable(
-        entityType,
-        routeForDisplay,
-        language,
-        pageNumber,
-        pageSize,
-        table_body,
-        propertyNamesToBeShowOnTable,
-        updateButtonName,
-        nameOfPaginationHeader,
-        lbl_entityQuantity,
-        ul_pagination,
-        errorMessageColor,
-        paginationButtonQuantity,
-        entityQuantity_message,
-        true)
+    populateHtmlAsync()
+        .then(async () =>
+            await populateTableAsync(pageNumber, pageSize, true)
+        );
 })

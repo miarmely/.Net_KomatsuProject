@@ -9,12 +9,21 @@ License URL: http://creativecommons.org/licenses/by/3.0/
 /* xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx */
 
 li.dropdown - item > a:hover {
-    background - color: lightgrey;
+    background-color: lightgrey;
+}
+
+/*--- put column values to middle of <td> ---*/
+#tbl_machine tbody td {
+    vertical-align: middle
 }
 
 /* xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx */
 
-    h4, h5, h6, h1, h2, h3 {margin: 0;}
+
+
+h4, h5, h6, h1, h2, h3 {
+    margin: 0;
+}
 ul, ol {margin: 0;}
 p {margin: 0;}
 

@@ -269,9 +269,7 @@ export async function populateTable(
                     ul_pagination);
             //#endregion
 
-            hideOrShowPaginationBackAndNextButtonsAsync(paginationInfosInJson);
-
-
+            controlPaginationBackAndNextButtonsAsync(paginationInfosInJson);
         },
         error: (response) => {
             //#region write error to resultLabel
@@ -411,7 +409,7 @@ export async function setDisabledOfButtonAsync(doDisabled, button, bgColor) {
 
 export async function getErrorMessageForMachineAsync(responseText) {
     //#region set variables
-    let propertyNamesGuideByLanguages = {
+    const propertyNamesGuideByLanguages = {
         "TR": {
             "ImageName": "Resmin Adı",
             "MainCategoryName": "Ana Kategori",
@@ -453,8 +451,8 @@ export async function getErrorMessageForMachineAsync(responseText) {
             errorDetails["errorMessage"]);
 
         let labelName = propertyNamesGuideByLanguages
-            [language]
-            [infosInErrorMessage.PropertyName];
+        [language]
+        [infosInErrorMessage.PropertyName];
         //#endregion
 
         //#region add error message
@@ -500,6 +498,77 @@ export async function getErrorMessageForMachineAsync(responseText) {
     //#endregion
 
     return errorMessage;
+}
+
+export async function addPaginationButtonsAsync(
+    paginationInfosInJson,
+    paginationButtonQuantity,
+    ul_pagination) {
+    //#region set buttonQauntity for pagination
+    let buttonQuantity =
+        paginationInfosInJson.TotalPage < paginationButtonQuantity ?
+            paginationInfosInJson.TotalPage
+            : paginationButtonQuantity
+    //#endregion
+
+    //#region reset paginationButtons if exists
+    if (ul_pagination.children("li").length != 0)
+        ul_pagination.empty()
+    //#endregion
+
+    //#region add paginationBack button
+    ul_pagination.append(
+        `<li>
+		<a id="a_paginationBack" href="#" hidden>
+			<i class="fa fa-chevron-left"></i>
+		</a>
+	</li>`);
+    //#endregion
+
+    //#region add pagination buttons
+    for (let pageNo = 1; pageNo <= buttonQuantity; pageNo += 1)
+        ul_pagination.append(
+            `<li>
+			<a href="#"> 
+				${pageNo}
+			</a>
+		</li> `
+        );
+    //#endregion
+
+    //#region add paginationNext button
+    ul_pagination.append(
+        `<li>
+		<a id="a_paginationNext" href="#" hidden>
+			<i class="fa fa-chevron-right"></i>
+		</a>
+	</li>`);
+    //#endregion
+}
+
+export async function controlPaginationBackAndNextButtonsAsync(paginationInfosInJson) {
+    // when total page count more than 1
+    if (paginationInfosInJson.TotalPage > 1) {
+        //#region for paginationBack button
+        // hide
+        if (paginationInfosInJson.CurrentPageNo == 1)
+            $("#a_paginationBack").attr("hidden", "");
+
+        // show
+        else
+            $("#a_paginationBack").removeAttr("hidden");
+        //#endregion
+
+        //#region for paginationNext button
+        // hide
+        if (paginationInfosInJson.CurrentPageNo == paginationInfosInJson.TotalPage)
+            $("#a_paginationNext").attr("hidden", "");
+
+        // show
+        else
+            $("#a_paginationNext").removeAttr("hidden");
+        //#endregion
+    }
 }
 
 async function addEntitiesToTableAsync(
@@ -579,13 +648,13 @@ async function addEntitiesToTableAsync(
             //#region add update button to row
             row.append(
                 `<td id="td_processes">
-				<button id="btn_update" ui-toggle-class="">
-					<i class="fa fa-pencil text-info">
-						${updateButtonName}
-					</i>
-				</button>
-			</td>
-            <td style="width:30px;"></td>`
+				    <button id="btn_update" ui-toggle-class="">
+					    <i class="fa fa-pencil text-info">
+						    ${updateButtonName}
+					    </i>
+				    </button>
+			    </td>
+                <td style="width:30px;"></td>`
             );
             //#endregion
 
@@ -593,9 +662,8 @@ async function addEntitiesToTableAsync(
             tableBody.append(
                 `<tr hidden></tr>
 			    <tr id="tr_row${rowNo}_error">
-		            <td id="td_error"
-                        colspan=${columnQuantityOnTable} 
-                        hidden></td>
+		            <td id="td_error" colspan=${columnQuantityOnTable} hidden>
+                    </td>
 			    </tr>`
             );
             //#endregion
@@ -617,83 +685,6 @@ async function addEntitiesToTableAsync(
     })
 }
 
-async function addPaginationButtonsAsync(
-    paginationInfosInJson,
-    paginationButtonQuantity,
-    ul_pagination) {
-    await new Promise(resolve => {
-        //#region set buttonQauntity for pagination
-        let buttonQuantity =
-            paginationInfosInJson.TotalPage < paginationButtonQuantity ?
-                paginationInfosInJson.TotalPage
-                : paginationButtonQuantity
-        //#endregion
-
-        //#region reset paginationButtons if exists
-        if (ul_pagination.children("li").length != 0)
-            ul_pagination.empty()
-        //#endregion
-
-        //#region add paginationBack button
-        ul_pagination.append(
-            `<li>
-			<a id="a_paginationBack" href="#" hidden>
-				<i class="fa fa-chevron-left"></i>
-			</a>
-		</li>`);
-        //#endregion
-
-        //#region add pagination buttons
-        for (let pageNo = 1; pageNo <= buttonQuantity; pageNo += 1)
-            ul_pagination.append(
-                `<li>
-				<a href="#"> 
-					${pageNo}
-				</a>
-			</li> `
-            );
-        //#endregion
-
-        //#region add paginationNext button
-        ul_pagination.append(
-            `<li>
-			<a id="a_paginationNext" href="#" hidden>
-				<i class="fa fa-chevron-right"></i>
-			</a>
-		</li>`);
-        //#endregion
-
-        resolve();
-    })
-}
-
-async function hideOrShowPaginationBackAndNextButtonsAsync(paginationInfosInJson) {
-    await new Promise(resolve => {
-        if (paginationInfosInJson.TotalPage > 1) {
-            //#region for paginationBack button
-            // hide
-            if (paginationInfosInJson.CurrentPageNo == 1)
-                $("#a_paginationBack").attr("hidden", "");
-
-            // show
-            else
-                $("#a_paginationBack").removeAttr("hidden");
-            //#endregion
-
-            //#region for paginationNext button
-            // hide
-            if (paginationInfosInJson.CurrentPageNo == paginationInfosInJson.TotalPage)
-                $("#a_paginationNext").attr("hidden", "");
-
-            // show
-            else
-                $("#a_paginationNext").removeAttr("hidden");
-            //#endregion
-        }
-
-        resolve();
-    })
-}
 
 //#region file processes
 export async function displayImageByNormalUrlAsync(
