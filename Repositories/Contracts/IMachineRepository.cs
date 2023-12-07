@@ -22,5 +22,7 @@ namespace Repositories.Contracts
             DynamicParameters parameters);
 		Task<IEnumerable<string>> GetAllHandStatusByLanguageAsync(
 			DynamicParameters parameters);
-    }
+        Task SeparateValuesNotExistsOnTableAsync(
+            DynamicParameters parameters);
+	}
 }

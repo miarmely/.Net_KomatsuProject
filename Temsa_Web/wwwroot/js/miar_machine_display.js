@@ -29,7 +29,7 @@ $(function () {
     const updateButtonName = updateButtonNameByLanguages[language];
     const description_baseButtonName = description_baseButtonNameByLanguages[language];
     const ul_description_id = "#ul_description";
-    const path_pdfs = "images/pdfs";
+    const path_pdfs = "pdfs";
     const path_machineImages = "images/machines";
     const machineImages_maxWidth = "200";
     const machineImages_maxHeight = "200";
@@ -879,7 +879,7 @@ $(function () {
         let rowNo = 1;
 
         for (let index in response) {
-            //#region add machines
+            //#region add machines to table
             let machineView = response[index];
             let rowId = `tr_row${rowNo}`
 

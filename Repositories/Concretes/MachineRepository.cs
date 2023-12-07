@@ -62,9 +62,16 @@ namespace Repositories.Concretes
                 base.Configs.DbSettings.ProcedureNames.Machine_Update,
                 parameters);
 
-        public async Task<ErrorDto?> DeleteMachineAsync(DynamicParameters parameters) =>
-            await base.QuerySingleOrDefaultAsync<ErrorDto>(
-                base.Configs.DbSettings.ProcedureNames.Machine_Delete,
-                parameters);
-    }
+        public async Task<ErrorDto?> DeleteMachineAsync(DynamicParameters parameters)
+            => await base.QuerySingleOrDefaultAsync<ErrorDto>(
+                    base.Configs.DbSettings.ProcedureNames.Machine_Delete,
+                    parameters);
+
+        public async Task SeparateValuesNotExistsOnTableAsync(
+            DynamicParameters parameters) =>
+                await base.QuerySingleOrDefaultAsync<int>(
+                    base.Configs.DbSettings.ProcedureNames
+                        .Machine_SeparateTheValuesNotExistsOnTable,
+                    parameters);
+	}
 }

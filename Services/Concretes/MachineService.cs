@@ -351,7 +351,7 @@ namespace Services.Concretes
 			MachineParamsForDelete machineParams,
 			IEnumerable<MachineDtoForDelete> machineDtos)
 		{
-			#region delete machine (throw)
+			#region delete machine(throw)
 
 			#region set parameters
 			var machineIds = machineDtos.Select(dto => dto.MachineId);
@@ -381,50 +381,135 @@ namespace Services.Concretes
 
 			#endregion
 
-			#region delete machine images and pdfs (throw)
-			foreach (var machineDto in machineDtos)
+			#region delete machine image on folder (throw)
+
+			#region set parameters
+			parameters = new DynamicParameters();
+			var imageNames = machineDtos.Select(m => m.ImageName);
+
+			parameters.Add("ColumnName", 
+				"ImageName", 
+				DbType.String);
+
+			parameters.Add("ValuesInString",
+				string.Join(",", imageNames),
+				DbType.String);
+
+			parameters.Add("ValuesNotExistsOnTableInString",
+				"",
+				DbType.String,
+				ParameterDirection.Output);
+			#endregion
+
+			#region get image names that not using by other machines
+			await _manager.MachineRepository
+				.SeparateValuesNotExistsOnTableAsync(parameters);
+
+			var imageNamesNotExistsOnTableInString = parameters
+				.Get<string>("ValuesNotExistsOnTableInString");
+
+			// our purpose, dont delete image on folder when image using from other
+			// machines so we get only image names that not using from other
+			// machines for only delete its
+			#endregion
+
+			#region delete images (throw)
+			if (imageNamesNotExistsOnTableInString != null)
 			{
-				#region delete machine image (throw)
-				try
-				{
-					#region delete
-					await _fileService.DeleteFileOnFolderByPathAsync(
-						machineParams.ImageFolderPathAfterWwwroot,
-						machineDto.ImageName);
-					#endregion
-				}
-				catch (Exception ex)
-				{
-					#region when any error occured (throw)
-					throw new ErrorWithCodeException(
-						_configs.ErrorDetails.ToErrorDto(
-							machineParams.Language,
-							_configs.ErrorDetails.FiE_D_I));
-					#endregion
-				}
+				#region add image names in string to array
+				var imageNamesNotExistsOnTable = imageNamesNotExistsOnTableInString
+					.Split(',');
 				#endregion
 
-				#region delete pdf (throw)
-				try
+				#region delete images (throw)
+				foreach (var imageName in imageNamesNotExistsOnTable)
 				{
-					#region delete
-					await _fileService.DeleteFileOnFolderByPathAsync(
-						machineParams.PdfFolderPathAfterWwwroot,
-						machineDto.PdfName);
-					#endregion
+					try
+					{
+						#region delete image
+						await _fileService.DeleteFileOnFolderByPathAsync(
+							machineParams.ImageFolderPathAfterWwwroot,
+							imageName);
+						#endregion
+					}
+					catch (Exception ex)
+					{
+						#region when any error occured (throw)
+						throw new ErrorWithCodeException(
+							_configs.ErrorDetails.ToErrorDto(
+								machineParams.Language,
+								_configs.ErrorDetails.FiE_D_I));
+						#endregion
+					}
 				}
-				catch (Exception ex)
-				{
-					#region when any error occured (throw)
-					throw new ErrorWithCodeException(
-						_configs.ErrorDetails.ToErrorDto(
-							machineParams.Language,
-							_configs.ErrorDetails.FiE_D_P));
-					#endregion
-				}
-
 				#endregion
 			}
+
+			#endregion
+
+			#endregion
+
+			#region delete PDFs on folder (throw)
+
+			#region set parameters
+			parameters = new DynamicParameters();
+			var pdfNames = machineDtos.Select(m => m.PdfName);
+
+			parameters.Add("ColumnName",
+				"PdfName",
+				DbType.String);
+
+			parameters.Add("ValuesInString",
+				string.Join(",", pdfNames),
+				DbType.String);
+
+			parameters.Add("ValuesNotExistsOnTableInString",
+				"",
+				DbType.String,
+				ParameterDirection.Output);
+			#endregion
+
+			#region get PDF names that not used by other machines
+			await _manager.MachineRepository
+				.SeparateValuesNotExistsOnTableAsync(parameters);
+
+			var pdfNamesNotExistsOnTableInString = parameters
+				.Get<string>("ValuesNotExistsOnTableInString");
+			#endregion
+
+			#region delete PDFs (throw)
+			if (pdfNamesNotExistsOnTableInString != null)
+			{
+				#region add pdf names in string to array
+				var pdfNamesNotExistsOnTable = pdfNamesNotExistsOnTableInString
+					.Split(',');
+				#endregion
+
+				#region delete PDFs (throw)
+				foreach (var pdfName in pdfNamesNotExistsOnTable)
+				{
+					try
+					{
+						#region delete PDF
+						await _fileService.DeleteFileOnFolderByPathAsync(
+							machineParams.PdfFolderPathAfterWwwroot,
+							pdfName);
+						#endregion
+					}
+					catch (Exception ex)
+					{
+						#region when any error occured (throw)
+						throw new ErrorWithCodeException(
+							_configs.ErrorDetails.ToErrorDto(
+								machineParams.Language,
+								_configs.ErrorDetails.FiE_D_P));
+						#endregion
+					}
+				}
+				#endregion
+			}
+			#endregion
+
 			#endregion
 		}
 
