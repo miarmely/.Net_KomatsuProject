@@ -1,7 +1,11 @@
-﻿namespace Entities.DtoModels.MachineDtos
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace Entities.DtoModels.MachineDtos
 {
     public record MachineDtoForDelete
     {
-        public IEnumerable<Guid> MachineIdList { get; init; }
+        [Required] public Guid MachineId { get; init; }
+        [Required] public string ImageName { get; init; }
+		[Required] public string PdfName { get; init; }
     }
 }

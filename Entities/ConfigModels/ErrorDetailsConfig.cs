@@ -6,11 +6,15 @@ namespace Entities.ConfigModels
 	{
 		public ErrorDetails ISE { get; init; }
 		public ErrorDetails NF_S_FP { get; init; }
+		public ErrorDetails FiE_U_I { get; init; }
+		public ErrorDetails FiE_D_I { get; init; }
+		public ErrorDetails FiE_U_P { get; init; }
+		public ErrorDetails FiE_D_P { get; init; }
     }
 
     public partial record ErrorDetailsConfig  // functions
     {
-		public ErrorDto ConvertToErrorDto(
+		public ErrorDto ToErrorDto(
 			string language,
 			ErrorDetails errorDetails)
 		{
@@ -30,7 +34,6 @@ namespace Entities.ConfigModels
 				ErrorMessage = errorMessage
 			};
 		}
-
 	}
 
 	public record ErrorDetails

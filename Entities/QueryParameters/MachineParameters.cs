@@ -24,4 +24,11 @@ namespace Entities.QueryParameters
 		[Required] public string ImageFolderPathAfterWwwroot { get; init; }
 		[Required] public string PdfFolderPathAfterWwwroot { get; init; }
 	}
+
+	public record MachineParamsForDelete
+	{
+		[Required][MiarLength(2, 2)] public string Language { get; init; }
+		[Required] public string ImageFolderPathAfterWwwroot { get; init; }
+		[Required] public string PdfFolderPathAfterWwwroot { get; init; }
+	}
 }

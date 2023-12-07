@@ -19,7 +19,8 @@ namespace Services.Concretes
 		public IFileService FileService => _fileService.Value;
 		public ISliderService SliderService => _sliderService.Value;
        
-		public ServiceManager(IRepositoryManager manager,
+		public ServiceManager(
+			IRepositoryManager manager,
 			IConfigManager configs,
 			IMapper mapper)
         {
@@ -28,7 +29,7 @@ namespace Services.Concretes
 			_mailService = new Lazy<IMailService>(() =>
 				new MailService(configs));
 			_machineService = new Lazy<IMachineService>(() => 
-				new MachineService(manager, FileService));
+				new MachineService(manager, FileService, configs));
 			_fileService = new Lazy<IFileService>(() => 
 				new FileService(configs));
 			_sliderService = new Lazy<ISliderService>(() => 

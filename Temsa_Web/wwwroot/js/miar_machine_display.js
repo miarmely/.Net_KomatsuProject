@@ -30,7 +30,7 @@ $(function () {
     const description_baseButtonName = description_baseButtonNameByLanguages[language];
     const ul_description_id = "#ul_description";
     const path_pdfs = "images/pdfs";
-    const path_machines = "images/machines";
+    const path_machineImages = "images/machines";
     const machineImages_maxWidth = "200";
     const machineImages_maxHeight = "200";
     let paginationInfos = {};
@@ -426,62 +426,69 @@ $(function () {
     }
 
     async function deleteSelectedMachinesAsync() {
-        //#region set machineIdList
-        let machineIdList = await new Promise(resolve => {
-            let machineIdList = [];
+        //#region set data
+        let machineInfos = [];
 
-            //#region set machineIdList
-            for (let rowNo = 1; rowNo <= machineCountOnTable; rowNo += 1) {
-                //#region set variables
-                let checkBox = $(`#tr_row${rowNo} #td_checkBox input`);
-                let row = $(`#tr_row${rowNo}`);
-                //#endregion 
+        //#region populate "machineInfos" array
+        for (let rowNo = 1; rowNo <= machineCountOnTable; rowNo += 1) {
+            //#region set variables
+            let checkBox = $(`#tr_row${rowNo} #td_checkBox input`);
+            let row = $(`#tr_row${rowNo}`);
+            //#endregion
 
-                //#region add machineId to machineIdList if checked
-                if (checkBox.is(":checked")) {
-                    //#region when update process continuing
-                    if (row.children("td>input").length != 0)  // when any <input> exists
-                        click_cancelButton(rowNo);  // cancel update process
-                    //#endregion
+            //#region add machine infos to "machineInfos" if checked
+            if (checkBox.is(":checked")) {
+                //#region when update process continuing
+                if (row.children("td>input").length != 0)  // when any <input> exists
+                    await clicked_cancelButtonAsync(rowNo);  // cancel update process
+                //#endregion
 
-                    //#region add machineId
-                    let machineId = row.attr("class");
-                    machineIdList.push(machineId);
-                    //#endregion
-                }
+                //#region get machine id, image name and pdf name
+                let machineId = row.attr("class");
+
+                let imageName = row.children("#td_image")
+                    .children("img")
+                    .attr("alt");
+
+                let pdfName = row.children("#td_pdf")
+                    .children("a")
+                    .attr("title");
+                //#endregion
+
+                //#region populate "machineInfos"
+                machineInfos.push({
+                    "MachineId": machineId,
+                    "ImageName": imageName,
+                    "PdfName": pdfName,
+                });
                 //#endregion
             }
             //#endregion
+        }
+        //#endregion
 
-            //#region when any machine not select
-            if (machineIdList.length == 0)
-                return;
-            //#endregion
+        //#region when any machine not select
+        if (machineInfos.length == 0)
+            return;
+        //#endregion
 
-            //#region save machineIdList to session
-            window.sessionStorage.setItem(
-                "DeletedMachineIdList",
-                JSON.stringify(machineIdList));
-            //#endregion
-
-            resolve(machineIdList);
-        })
         //#endregion
 
         $.ajax({
             method: "DELETE",
-            url: `https://localhost:7091/api/services/machine/delete?language=${language}`,
+            url: (baseApiUrl + "/machine/delete" +
+                `?language=${language}` +
+                `&imageFolderPathAfterWwwroot=${path_machineImages}` +
+                `&pdfFolderPathAfterWwwroot=${path_pdfs}`),
             headers: { "Authorization": jwtToken },
-            data: JSON.stringify({
-                "MachineIdList": machineIdList
-            }),
+            data: JSON.stringify(machineInfos),
             contentType: "application/json",
             dataType: "json",
             success: () => {
+                //#region when all machines on page deleted
                 let currentPageNo = paginationInfos.CurrentPageNo;
 
-                //#region when all machines on page deleted
-                if (machineIdList.length == paginationInfos.CurrentPageCount) {
+                if (machineInfos.length == paginationInfos.CurrentPageCount) {
                     //#region when next page exists
                     if (paginationInfos.HasNext)
                         populateTableAsync(currentPageNo, pageSize, true);  // refresh current page
@@ -515,7 +522,6 @@ $(function () {
                 //#endregion
 
                 removeDescriptionButtonOnColumn();
-
             },
             error: (response) => {
                 //#region write error to entity quantity label
@@ -868,54 +874,6 @@ $(function () {
         setDescriptionLanguage(language);
     }
 
-    async function populateHtmlAsync() {
-        //#region add table title
-        $(".panel-heading").append(
-            tableTitleByLanguages[language]);
-        //#endregion
-
-        //#region add table menubars
-        let tableMenubarOptions = tableMenubar_optionsByLanguages[language];
-
-        for (let index = 0; index < tableMenubarOptions.length; index += 1) {
-            let tableMenubarOption = tableMenubarOptions[index];
-
-            $("#slct_tableMenubar").append(
-                `<option value="${index}">
-                    ${tableMenubarOption}
-                    </option>`
-            )
-        }
-        //#endregion
-
-        //#region add apply button name
-        $("#btn_apply").append(
-            tableMenubar_applyButtonName[language])
-        //#endregion
-
-        //#region add column heads
-        // add column heads
-        for (let column in columnNamesByLanguages[language]) {
-            let columnNameByLanguage = columnNamesByLanguages[language][column];
-
-            table_head.append(
-                `<th id="th_${column}" style="text-align:center">${columnNameByLanguage}</th>`
-            );
-        }
-
-        // add blank column to end
-        table_head.append(
-            `<th style="width:30px"></th>`
-        );
-        //#endregion
-
-        //#region add entity quantity message
-        $(entityQuantity_id).append(
-            `<b>0</b> ${entityQuantity_messageByLanguages[language]}`
-        );
-        //#endregion
-    }
-
     async function addMachinesToTableAsync(response) {
         //#region add machines to table
         let rowNo = 1;
@@ -933,7 +891,7 @@ $(function () {
 				        </label>
 			        </td>
                     <td id="td_image">
-                        <img src="/${path_machines}/${machineView.imageName}" 
+                        <img src="/${path_machineImages}/${machineView.imageName}" 
                              alt="${machineView.imageName}" 
                              style="max-width:${machineImages_maxWidth}px; max-height:${machineImages_maxHeight}px">
                     </td>
@@ -947,12 +905,13 @@ $(function () {
                     <td id="td_sold">${machineView.sold}</td>
                     <td id="td_year">${machineView.year}</td>
                     <td id="td_registrationDate">${getDateTimeInString(machineView.createdAt)}</td >
-                    <td id="td_pdf">
-                        <a href="/${path_pdfs}/${machineView.pdfName}" 
-                           target="_blank">PDF</a>
-                    </td>
                     <td id="td_description">
                         <textarea style="min-width:500px;  max-width:650px;  min-height:${machineImages_maxHeight - 100}px;  max-height: ${machineImages_maxHeight * 1.5}px" disabled>${machineView.descriptions[language]}</textarea>
+                    </td>
+                    <td id="td_pdf">
+                        <a href="/${path_pdfs}/${machineView.pdfName}"
+                           title="${machineView.pdfName}" 
+                           target="_blank">PDF</a>
                     </td>
                     <td id="td_processes">
                         <button id="btn_update" ui-toggle-class="">
@@ -1040,6 +999,54 @@ $(function () {
                 //#endregion
             },
         });
+    }
+
+    async function populateHtmlAsync() {
+        //#region add table title
+        $(".panel-heading").append(
+            tableTitleByLanguages[language]);
+        //#endregion
+
+        //#region add table menubars
+        let tableMenubarOptions = tableMenubar_optionsByLanguages[language];
+
+        for (let index = 0; index < tableMenubarOptions.length; index += 1) {
+            let tableMenubarOption = tableMenubarOptions[index];
+
+            $("#slct_tableMenubar").append(
+                `<option value="${index}">
+                    ${tableMenubarOption}
+                    </option>`
+            )
+        }
+        //#endregion
+
+        //#region add apply button name
+        $("#btn_apply").append(
+            tableMenubar_applyButtonName[language])
+        //#endregion
+
+        //#region add column heads
+        // add column heads
+        for (let column in columnNamesByLanguages[language]) {
+            let columnNameByLanguage = columnNamesByLanguages[language][column];
+
+            table_head.append(
+                `<th id="th_${column}" style="text-align:center">${columnNameByLanguage}</th>`
+            );
+        }
+
+        // add blank column to end
+        table_head.append(
+            `<th style="width:30px"></th>`
+        );
+        //#endregion
+
+        //#region add entity quantity message
+        $(entityQuantity_id).append(
+            `<b>0</b> ${entityQuantity_messageByLanguages[language]}`
+        );
+        //#endregion
     }
     //#endregion
 

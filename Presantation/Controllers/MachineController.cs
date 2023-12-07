@@ -128,12 +128,12 @@ namespace Presantation.Controllers
 		[Authorization("Admin,Yönetici")]
 		[ValidationNullArguments]
 		public async Task<IActionResult> DeleteMachines(
-			[FromQuery] LanguageParam languageParam,
-			[FromBody] MachineDtoForDelete machineDto)
+			[FromQuery] MachineParamsForDelete machineParams,
+			[FromBody] IEnumerable<MachineDtoForDelete> machineDtos)
 		{
 			await _manager.MachineService.DeleteMachineAsync(
-				languageParam.Language,
-				machineDto);
+				machineParams,
+				machineDtos);	
 
 			return NoContent();
 		}

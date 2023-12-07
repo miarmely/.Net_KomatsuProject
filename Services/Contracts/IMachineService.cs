@@ -6,11 +6,11 @@ using Repositories;
 
 namespace Services.Contracts
 {
-    public interface IMachineService
+	public interface IMachineService
 	{
 		Task CreateMachineAsync(
-            MachineParamsForCreate machineParams, 
-            MachineDtoForCreate machineDto);
+			MachineParamsForCreate machineParams,
+			MachineDtoForCreate machineDto);
 
 		Task<PagingList<MachineView>> GetAllMachinesAsync(
 			string language,
@@ -30,14 +30,14 @@ namespace Services.Contracts
 
 		Task<IEnumerable<string>> GetAllHandStatusByLanguageAsync(string language);
 
-        Task<IEnumerable<string>> GetAllLanguagesAsync();
+		Task<IEnumerable<string>> GetAllLanguagesAsync();
 
-        Task UpdateMachineAsync(
-            MachineParamsForUpdate parameters,
-            MachineDtoForUpdate machineDto);
+		Task UpdateMachineAsync(
+			MachineParamsForUpdate parameters,
+			MachineDtoForUpdate machineDto);
 
-        Task DeleteMachineAsync(
-            string language,
-            MachineDtoForDelete machineDto);
-    }
+		Task DeleteMachineAsync(
+			MachineParamsForDelete machineParams,
+			IEnumerable<MachineDtoForDelete> machineDtos);
+	}
 }

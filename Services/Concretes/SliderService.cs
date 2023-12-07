@@ -188,7 +188,7 @@ namespace Services.Concretes
 			{
 				#region when any error occured (throw)
 				throw new ErrorWithCodeException(
-					_configs.ErrorDetails.ConvertToErrorDto(
+					_configs.ErrorDetails.ToErrorDto(
 						language,
 						_configs.ErrorDetails.NF_S_FP));
 				#endregion
