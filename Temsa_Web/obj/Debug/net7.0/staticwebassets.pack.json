@@ -89,10 +89,6 @@
       "PackagePath": "staticwebassets\\images\\close.png"
     },
     {
-      "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\images\\machines\\HD785-8_Walkaround_01.png",
-      "PackagePath": "staticwebassets\\images\\machines\\HD785-8_Walkaround_01.png"
-    },
-    {
       "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\images\\machines\\pw160.jpg",
       "PackagePath": "staticwebassets\\images\\machines\\pw160.jpg"
     },
@@ -123,10 +119,6 @@
     {
       "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\images\\pass.png",
       "PackagePath": "staticwebassets\\images\\pass.png"
-    },
-    {
-      "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\images\\pdfs\\MachineDetails.pdf",
-      "PackagePath": "staticwebassets\\images\\pdfs\\MachineDetails.pdf"
     },
     {
       "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\images\\prev.png",
@@ -487,6 +479,10 @@
     {
       "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\lib\\jquery\\dist\\jquery.min.map",
       "PackagePath": "staticwebassets\\lib\\jquery\\dist\\jquery.min.map"
+    },
+    {
+      "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\pdfs\\MachineDetails.pdf",
+      "PackagePath": "staticwebassets\\pdfs\\MachineDetails.pdf"
     },
     {
       "Id": "obj\\Debug\\net7.0\\staticwebassets\\msbuild.Temsa_Web.Microsoft.AspNetCore.StaticWebAssets.props",

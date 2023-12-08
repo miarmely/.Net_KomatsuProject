@@ -337,7 +337,7 @@ export async function populateElementByAjaxOrLocalAsync(
             success: (response) => {
                 func_populate(response);
 
-                //#region add data to local
+                //#region save data to local
 
                 //#region initialize "dataInLocal"
                 if (dataInLocal == null)  // when any data not exists

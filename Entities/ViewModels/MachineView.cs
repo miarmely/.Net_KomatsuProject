@@ -1,6 +1,4 @@
-﻿using System.Diagnostics.SymbolStore;
-
-namespace Entities.ViewModels
+﻿namespace Entities.ViewModels
 {
     public record MachineView
     {

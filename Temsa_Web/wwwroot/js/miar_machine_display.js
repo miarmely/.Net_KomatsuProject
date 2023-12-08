@@ -26,18 +26,109 @@ $(function () {
     const updateButtonId = "#btn_update";
     const entityQuantity_id = "#small_entityQuantity";
     const entityQuantity_color = "#7A7A7A";
-    const updateButtonName = updateButtonNameByLanguages[language];
-    const description_baseButtonName = description_baseButtonNameByLanguages[language];
     const ul_description_id = "#ul_description";
     const path_pdfs = "pdfs";
     const path_machineImages = "images/machines";
-    const machineImages_maxWidth = "200";
-    const machineImages_maxHeight = "200";
+    const machineImage_maxWidth = "200";
+    const machineImage_maxHeight = "200";
+    const description_textAreaStyle = `min-width: 500px; 
+                                        max-width: 650px;
+                                        min-height: ${machineImage_maxHeight - 100}px; 
+                                        max-height: ${machineImage_maxHeight * 1.3}px`
+    const columnNames = Object.keys(columnNamesByLanguages[language]);
     let paginationInfos = {};
     let machineCountOnTable;
     //#endregion
 
     //#region events
+    $("#box_all").click(async () => {
+        //#region do checked/unchecked all checkbox
+        let isBoxAllChecked = $("#box_all").is(":checked");
+
+        await new Promise(resolve => {
+            for (let rowNo = 1; rowNo <= machineCountOnTable; rowNo += 1) {
+                var checkBoxInRow = $(`#tr_row${rowNo} #td_checkBox input`);
+
+                //#region do checked of checkbox
+                if (isBoxAllChecked
+                    && !checkBoxInRow.is(":checked")) // if not checked
+                    checkBoxInRow.prop("checked", true);
+                //#endregion
+
+                //#region do unchecked of checkbox
+                else if (!isBoxAllChecked
+                    && checkBoxInRow.is(":checked")) // if checked
+                    checkBoxInRow.prop("checked", false);
+                //#endregion
+            }
+
+            resolve();
+        })
+        //#endregion
+    })
+    $("#btn_apply").click(async () => {
+        let slct_tableMenubar = $("#slct_tableMenubar");
+
+        switch (slct_tableMenubar.val()) {
+            //#region delete selected values
+            case "0":
+                await deleteSelectedMachinesAsync();
+                break;
+            //#endregion 
+        }
+    });
+    $("tbody").click(async () => {
+        //#region when update, save or delete button clicked
+        let clickedElement = $(":focus");
+        let row = clickedElement.closest("tr");
+
+        switch (clickedElement.attr("id")) {
+            case "btn_update":
+                //await clicked_updateButtonAsync(row);
+                break;
+            case "btn_save":
+                await clicked_saveButtonAsync(row);
+                break;
+            case "btn_cancel":
+                await clicked_cancelButtonAsync(row);
+                break;
+        }
+        //#endregion
+    })
+    $("tbody").on("input", () => {  // control input changing states
+        let inputtedElement = $(":focus");
+        let descriptionInputIdWithoutDash = description_inputId.substring(1);
+
+        //#region when description input changed
+        if (inputtedElement.attr("id") == descriptionInputIdWithoutDash
+            && description_currentColor == description_savedColor)
+            changeDescriptionButtonColor(description_buttonId, description_unsavedColor);
+        //#endregion
+    })
+    $(table_head).click(() => {
+        //#region when clicked to description dropdown
+        let clickedElement = $(":focus");
+
+        if (clickedElement.attr("class") == "a_description")
+            clicked_descriptionDropdownItem(
+                $(":focus"),
+                description_inputId,
+                description_buttonId,
+                description_baseButtonNameByLanguages[language],
+                description_unsavedColor,
+                description_baseKeyForSession);
+        //#endregion
+
+        //#region when clicked to description button
+        else if (clickedElement.attr("id")
+            == description_buttonId.substring(1))  // #btn_description => btn_description
+            clicked_descriptionDropdownButton(
+                description_inputId,
+                description_buttonId,
+                description_baseKeyForSession,
+                description_savedColor);
+        //#endregion
+    });
     ul_pagination.click(async () => {
         //#region do unchecked "box_all"
         if ($("#box_all").is(":checked"))
@@ -86,94 +177,328 @@ $(function () {
         }
         //#endregion 
     });
-    $("#box_all").click(async () => {
-        //#region do checked/unchecked all checkbox
-        let isBoxAllChecked = $("#box_all").is(":checked");
+    async function addEventsAsDynamicAsync() {
+        $(updateButtonId).click(async () => {
+            //#region set variables
+            let row = $(updateButtonId).closest("tr");
+            let oldColumnValues = {};
+            //#endregion
 
-        await new Promise(resolve => {
-            for (let rowNo = 1; rowNo <= machineCountOnTable; rowNo += 1) {
-                var checkBoxInRow = $(`#tr_row${rowNo} #td_checkBox input`);
+            //#region add <input>s, <select>s and <button>s to columns 
+            for (let index in columnNames) {
+                let columnName = columnNames[index];
+                let td = row.children(`#td_${columnName}`);
 
-                //#region do checked of checkbox
-                if (isBoxAllChecked
-                    && !checkBoxInRow.is(":checked")) // if not checked
-                    checkBoxInRow.prop("checked", true);
-                //#endregion
+                switch (columnName) {
+                    case "image":
+                        //#region add machine image <button>
+                        // save old value
+                        oldColumnValues[columnName] = td
+                            .children("img")
+                            .attr("alt");
 
-                //#region do unchecked of checkbox
-                else if (!isBoxAllChecked
-                    && checkBoxInRow.is(":checked")) // if checked
-                    checkBoxInRow.prop("checked", false);
-                //#endregion
+                        // add <button>
+                        td.empty();
+                        td.append(
+                            `<button id="btn_${columnName}" type="button">
+                                <img src= "/${path_machineImages}/${oldColumnValues[columnName]}"
+                                     style= "max-width: ${machineImage_maxWidth}px; max-height: ${machineImage_maxHeight-20}px">
+                                <span style="color:black">${machineImageButtonNameByLanguages[language]}</span>
+                            </button`);
+                        //#endregion
+                        break;
+                    case "mainCategory":
+                        //#region add main category <select>
+                        // save old value
+                        oldColumnValues[columnName] = td.text();
+
+                        // add <select>
+                        td.empty();
+                        td.append(
+                            `<select id="slct_${columnName}">
+                            </select`);
+
+                        // populate <select>
+                        await populateElementByAjaxOrLocalAsync(
+                            localKeys_allMainCategories,
+                             `/machine/display/mainCategory?language=${language}`,
+                            (mainCategoryNames) => {
+                                //#region add main category names to <select>
+                                for (let index in mainCategoryNames) {
+                                    let mainCategoryName = mainCategoryNames[index];
+
+                                    $(`#slct_${columnName}`).append(
+                                        `<option>${mainCategoryName}</option>`
+                                    )
+                                }
+                                //#endregion
+                            }
+                        )
+                        //#endregion
+                        break;
+                    case "subCategory":
+                        //#region add sub category <select>
+                        // save old value
+                        oldColumnValues[columnName] = td.text();
+
+                        // add <select>
+                        td.empty();
+                        td.append(
+                            `<select id="slct_${columnName}">
+                            </select`);
+
+                        // populate <select>
+                        await populateElementByAjaxOrLocalAsync(
+                            localKeys_allSubCategories,
+                            `/machine/display/subCategory?language=${language}&mainCategoryName=${oldColumnValues["mainCategory"]}`,
+                            (subCategoryNames) => {
+                                //#region add sub category names to <select>
+                                for (let index in subCategoryNames) {
+                                    let subCategoryName = subCategoryNames[index];
+
+                                    $(`#slct_${columnName}`).append(
+                                        `<option>${subCategoryName}</option>`
+                                    )
+                                }
+                                //#endregion
+                            }
+                        )
+                        //#endregion
+                        break;
+                    case "model":
+                        //#region add model <input>
+                        // save old value
+                        oldColumnValues[columnName] = td.text()
+
+                        // add <input>
+                        td.empty();
+                        td.append(
+                            `<input id="inpt_${columnName}" 
+                                    type="text"
+                                    value= ${oldColumnValues[columnName]}>`);
+                        //#endregion
+                        break;
+                    case "brand":
+                        //#region add brand <input>
+                        // save old value
+                        oldColumnValues[columnName] = td.text()
+
+                        // add <input>
+                        td.empty();
+                        td.append(
+                            `<input id="inpt_${columnName}" 
+                                    type="text" 
+                                    value= ${oldColumnValues[columnName]}>`);
+                        //#endregion
+                        break;
+                    case "handStatus":
+                        //#region add handStatus <select>
+                        // save old value
+                        oldColumnValues[columnName] = td.text()
+
+                        // add <select>
+                        td.empty();
+                        td.append(
+                            `<select id="slct_${columnName}">
+                            </select>`);
+
+                        // populate <select>
+                        await populateElementByAjaxOrLocalAsync(
+                            localKeys_handStatuses,
+                             `/machine/display/handStatus?language=${language}`,
+                            (handStatuses) => {
+                                //#region add hand statuses to <select>
+                                for (let index in handStatuses) {
+                                    let handStatus = handStatuses[index];
+
+                                    $(`#slct_${columnName}`).append(
+                                        `<option>${handStatus}</option>`
+                                    );
+                                }
+                                //#endregion
+                            }
+                        )
+                        //#endregion
+                        break;
+                    case "stock":
+                        //#region add stock <input>
+                        // save old value
+                        oldColumnValues[columnName] = td.text()
+
+                        // add <input>
+                        td.empty();
+                        td.append(
+                            `<input id="inpt_${columnName}" 
+                                    type= "number"
+                                    min= 1
+                                    max= 32000
+                                    value= ${oldColumnValues[columnName]}>`);
+                        //#endregion
+                        break;
+                    case "rented":
+                        //#region add rented <input>
+                        // save old value
+                        oldColumnValues[columnName] = td.text()
+
+                        // add <input>
+                        td.empty();
+                        td.append(
+                            `<input id="inpt_${columnName}" 
+                                    type="number" 
+                                    min= 1
+                                    max= 32000
+                                    value= ${oldColumnValues[columnName]}>`);
+                        //#endregion
+                        break;
+                    case "sold":
+                        //#region add sold <input>
+                        // save old value
+                        oldColumnValues[columnName] = td.text()
+
+                        // add <input>
+                        td.empty();
+                        td.append(
+                            `<input id="inpt_${columnName}" 
+                                    type= "number" 
+                                    min= 1
+                                    max= 32000
+                                    value= ${oldColumnValues[columnName]}>`);
+                        //#endregion
+                        break;
+                    case "year":
+                        //#region add year <input>
+                        // save old value
+                        oldColumnValues[columnName] = td.text()
+
+                        // add <input>
+                        td.empty();
+                        td.append(
+                            `<input id="inpt_${columnName}" 
+                                    type="number" 
+                                    min=1900
+                                    max=2099
+                                    value= ${oldColumnValues[columnName]}>`);
+                        //#endregion
+                        break;
+                    case "descriptions":
+                        //#region save descriptions to different place in session
+                        let rowInfosInSession = sessionStorage
+                            .getItem(row.attr("id"));
+
+                        // add descriptions to object
+                        let descriptionByLanguages = rowInfosInSession[columnName];
+                        let dataForAddSession = {}
+                        dataForAddSession[columnName] = descriptionByLanguages;
+
+                        // save descriptions to session
+                        sessionStorage.setItem(
+                            sessionKeys_descriptionsOnDisplayPage,
+                            JSON.stringify(dataForAddSession));
+                        //#endregion
+
+                        //#region add description <textarea>        
+                        // save old value by language
+                        oldColumnValues[columnName] = descriptionByLanguages;
+                        
+                        // add <textarea>
+                        td.empty();
+                        td.append(
+                            `<textarea id= "txt_${columnName}" 
+                                       style= "${description_textAreaStyle}">${oldColumnValues[columnName][language]}</textarea>`);
+                        //#endregion
+
+                        //#region add description dropdown
+
+                        //#region create dropdown
+                        let th_descriptions = $(`#th_${columnName}`);
+
+                        th.empty();
+                        th_descriptions.append(
+                            `<div class="btn-group">
+                                <button id= "btn_${columnName}" 
+                                        type=" button" 
+                                        style= "background-color: darkblue;  color: red"
+                                        class= "btn btn-danger"> <b>${description_baseButtonNameByLanguages[language]} (${language})</b></button>
+
+                                <button id="btn_${columnName}_dropdown"  
+                                        type="button"  
+                                        style="background-color: darkblue" 
+                                        class="btn btn-danger dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> <span class="caret"></span> </button>
+
+                                <div class="dropdown-menu">
+                                    <div class="col-xs-1" style="padding:0px">
+                                        <ul id="ul_${columnName}" style="list-style-type:none">
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>`
+                        );
+                        //#endregion
+
+                        //#region add languages to description dropdown
+                        await populateElementByAjaxOrLocalAsync(
+                            localKeys_allLanguages,
+                            "/machine/display/language",
+                            (languages) => {
+                                //#region populate dropdown
+                                for (let index in languages) {
+                                    //#region add languages
+                                    let languageInDb = languages[index];
+
+                                    $(ul_description_id).append(
+                                        `<li class="dropdown-item">
+                                            <a href="#" 
+                                               style="padding: 3px 75px;  color: black" ${languageInDb}</a>
+                                         </li>`
+                                    );
+                                    //#endregion
+                                }
+                                //#endregion
+                            }
+                        )
+                        //#endregion
+
+                        //#endregion
+
+                        break;
+                    case "pdf":
+                        //#region add pdf <button>
+                        // save old value
+                        oldColumnValues[columnName] = td
+                            .children("a")
+                            .attr("title");
+
+                        // add <button>
+                        td.empty();
+                        td.append(
+                            `<button id= "btn_${columnName}" 
+                                     type= "button">${pdfButtonNameByLanguages[language]}</button`);
+                        //#endregion
+                        break;
+                    case "processes":
+                        //#region add "save" and "cancel" buttons
+                        // remove 'update' button
+                        td_processes.empty();
+                        
+                        // add buttons
+                        td_processes.append(
+                            `<button id="btn_save" class="active" ui-toggle-class="">
+                                <i class="fa fa-check text-success" style="width:15px">
+                                </i>
+                            </button>
+                             <button id="btn_cancel" class="active" ui-toggle-class="">
+                                <i class="fa fa-times text-danger" style="width:15px">
+                                </i>
+                            </button>`
+                        );
+                        //#endregion
+                        break;
+                }
             }
+            //#endregion
 
-            resolve();
         })
-        //#endregion
-    })
-    $("#btn_apply").click(async () => {
-        let slct_tableMenubar = $("#slct_tableMenubar");
-
-        switch (slct_tableMenubar.val()) {
-            //#region delete selected values
-            case "0":
-                await deleteSelectedMachinesAsync();
-                break;
-            //#endregion 
-        }
-    });
-    $(table_head).click(() => {
-        //#region when clicked to description dropdown
-        let clickedElement = $(":focus");
-
-        if (clickedElement.attr("class") == "a_description")
-            clicked_descriptionDropdownItem(
-                $(":focus"),
-                description_inputId,
-                description_buttonId,
-                description_baseButtonName,
-                description_unsavedColor,
-                description_baseKeyForSession);
-        //#endregion
-
-        //#region when clicked to description button
-        else if (clickedElement.attr("id")
-            == description_buttonId.substring(1))  // #btn_description => btn_description
-            clicked_descriptionDropdownButton(
-                description_inputId,
-                description_buttonId,
-                description_baseKeyForSession,
-                description_savedColor);
-        //#endregion
-    });
-    $("tbody").click(async () => {
-        //#region when update, save or delete button clicked
-        let clickedElement = $(":focus");
-        let row = clickedElement.closest("tr");
-
-        switch (clickedElement.attr("id")) {
-            case "btn_update":
-                await clicked_updateButtonAsync(row);
-                break;
-            case "btn_save":
-                await clicked_saveButtonAsync(row);
-                break;
-            case "btn_cancel":
-                await clicked_cancelButtonAsync(row);
-                break;
-        }
-        //#endregion
-    })
-    $("tbody").on("input", () => {  // control input changing states
-        let inputtedElement = $(":focus");
-        let descriptionInputIdWithoutDash = description_inputId.substring(1);
-
-        //#region when description input changed
-        if (inputtedElement.attr("id") == descriptionInputIdWithoutDash
-            && description_currentColor == description_savedColor)
-            changeDescriptionButtonColor(description_buttonId, description_unsavedColor);
-        //#endregion
-    })
+    };
     //#endregion events
 
     //#region functions
@@ -201,7 +526,7 @@ $(function () {
         td_processes.append(
             `<button id="btn_update" class="active" ui-toggle-class="">
 			    <i class="fa fa-pencil text-info">
-                    ${updateButtonName}
+                    ${updateButtonNameByLanguages[language]}
 			    </i>
 		    </button>`);
         //#endregion
@@ -209,7 +534,9 @@ $(function () {
 
     function removeDescriptionButtonOnColumn() {
         $(th_descriptions_id).empty();
-        $(th_descriptions_id).text(description_baseButtonName);
+
+        $(th_descriptions_id).text(
+            description_baseButtonNameByLanguages[language]);
     }
 
     async function populateMainCategoryNameSelectAsync(tableDatasForAddSelect, columnValues) {
@@ -541,13 +868,13 @@ $(function () {
         //#region set "tableDatasForAddInput"
         let tableDatasForAddInput = {}
         let tableDatasForAddInputGuide = {
-            "brandName": "text",
+            "brand": "text",
             "model": "text",
             "stock": "number",
             "rented": "number",
             "sold": "number",
             "year": "number",
-            "descriptions": "text"
+            "description": "text"
         }
 
         // populate "tableDatasForAddInput"
@@ -562,8 +889,8 @@ $(function () {
         let rowInfosInSession = JSON.parse(
             sessionStorage.getItem(rowId));
         let tableDatasForAddSelect = {
-            "mainCategoryName": row.children("#td_mainCategoryName"),
-            "subCategoryName": row.children("#td_subCategoryName"),
+            "mainCategoryName": row.children("#td_mainCategory"),
+            "subCategoryName": row.children("#td_subCategory"),
             "handStatus": row.children("#td_handStatus"),
         };
         //#endregion
@@ -598,7 +925,7 @@ $(function () {
         }
         //#endregion
 
-        setDisabledOfOtherUpdateButtonsAsync(rowId, pageSize, updateButtonId, true);
+        await setDisabledOfOtherUpdateButtonsAsync(rowId, pageSize, updateButtonId, true);
 
         //#region add <input> to columns
         for (let columnName in tableDatasForAddInput) {
@@ -636,7 +963,7 @@ $(function () {
         $(th_descriptions_id).append(
             `<div class="btn-group">
                 <button id="${descriptionButtonIdWithoutDash}"  type="button"  style="background-color: darkblue;  color: red" class="btn btn-danger">
-                    <b>${description_baseButtonName} (${language})</b>
+                    <b>${description_baseButtonNameByLanguages[language]} (${language})</b>
                 </button>
 
                 <button id="btn_descriptionDropdown"  type="button"  style="background-color: darkblue" class="btn btn-danger dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -713,12 +1040,14 @@ $(function () {
         //#region add buttons
         td_processes.append(
             `<button id="btn_save" class="active" ui-toggle-class="">
-            <i class="fa fa-check text-success" style="width:15px">
-                    
-            </i>
-        <button id="btn_cancel" class="active" ui-toggle-class="">
-            <i class="fa fa-times text-danger" style="width:15px">
-            </i>`
+                <i class="fa fa-check text-success" style="width:15px">
+                </i>
+            </button>
+             <button id="btn_cancel" class="active" ui-toggle-class="">
+                <i class="fa fa-times text-danger" style="width:15px">
+                </i>
+            </button>`
+
         );
         //#endregion
 
@@ -879,43 +1208,43 @@ $(function () {
         let rowNo = 1;
 
         for (let index in response) {
-            //#region add machines to table
+            //#region add machine infos to table
             let machineView = response[index];
             let rowId = `tr_row${rowNo}`
 
             table_body.append(
                 `<tr id= "${rowId}" class= ${machineView.id} style="text-align:center">
-                    <td id="td_checkBox">
+                    <td id="td_checkbox}">
 				        <label class="i-checks m-b-none">
 					        <input type="checkbox"><i></i>
 				        </label>
 			        </td>
-                    <td id="td_image">
+                    <td id="td_${columnNames[0]}">
                         <img src="/${path_machineImages}/${machineView.imageName}" 
                              alt="${machineView.imageName}" 
-                             style="max-width:${machineImages_maxWidth}px; max-height:${machineImages_maxHeight}px">
+                             style="max-width:${machineImage_maxWidth}px; max-height:${machineImage_maxHeight}px">
                     </td>
-                    <td id="td_mainCategory">${machineView.mainCategoryName}</td>
-                    <td id="td_subCategory">${machineView.subCategoryName}</td>
-                    <td id="td_model">${machineView.brandName}</td>
-                    <td id="td_brand">${machineView.model}</td>
-                    <td id="td_handStatus">${machineView.handStatus}</td>
-                    <td id="td_stock">${machineView.stock}</td>
-                    <td id="td_rented">${machineView.rented}</td>
-                    <td id="td_sold">${machineView.sold}</td>
-                    <td id="td_year">${machineView.year}</td>
-                    <td id="td_registrationDate">${getDateTimeInString(machineView.createdAt)}</td >
-                    <td id="td_description">
-                        <textarea style="min-width:500px;  max-width:650px;  min-height:${machineImages_maxHeight - 100}px;  max-height: ${machineImages_maxHeight * 1.5}px" disabled>${machineView.descriptions[language]}</textarea>
+                    <td id="td_${columnNames[1]}">${machineView.mainCategoryName}</td>
+                    <td id="td_${columnNames[2]}">${machineView.subCategoryName}</td>
+                    <td id="td_${columnNames[3]}">${machineView.brandName}</td>
+                    <td id="td_${columnNames[4]}">${machineView.model}</td>
+                    <td id="td_${columnNames[5]}">${machineView.handStatus}</td>
+                    <td id="td_${columnNames[6]}">${machineView.stock}</td>
+                    <td id="td_${columnNames[7]}">${machineView.rented}</td>
+                    <td id="td_${columnNames[8]}">${machineView.sold}</td>
+                    <td id="td_${columnNames[9]}">${machineView.year}</td>
+                    <td id="td_${columnNames[10]}">${getDateTimeInString(machineView.createdAt)}</td >
+                    <td id="td_${columnNames[11]}">
+                        <textarea style="${description_textAreaStyle}" disabled>${machineView.descriptions[language]}</textarea>
                     </td>
-                    <td id="td_pdf">
+                    <td id="td_${columnNames[12]}">
                         <a href="/${path_pdfs}/${machineView.pdfName}"
                            title="${machineView.pdfName}" 
                            target="_blank">PDF</a>
                     </td>
-                    <td id="td_processes">
+                    <td id="td_${columnNames[13]}">
                         <button id="btn_update" ui-toggle-class="">
-					        <i class="fa fa-pencil text-info">${updateButtonName}</i>
+					        <i class="fa fa-pencil text-info">${updateButtonNameByLanguages[language]}</i>
 				        </button>
                     </td>
                     <td style="width:30px"></td>
@@ -930,13 +1259,15 @@ $(function () {
             rowNo += 1;
             //#endregion
 
-            //#region add descriptions of machines to session
+            //#region save descriptions to session
             sessionStorage.setItem(
                 rowId,
                 JSON.stringify({
                     "descriptions": machineView.descriptions
                 }));
             //#endregion
+
+            await addEventsAsDynamicAsync();
         }
         //#endregion
     }

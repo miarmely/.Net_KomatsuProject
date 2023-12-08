@@ -38,10 +38,11 @@ namespace Presantation.Controllers
 			[FromQuery] LanguageParam languageParam,
 			[FromQuery] PaginationParameters pagingParameters)
 		{
-			var machines = await _manager.MachineService.GetAllMachinesAsync(
-				languageParam.Language, 
-				pagingParameters, 
-				Response);
+			var machines = await _manager.MachineService
+				.GetAllMachinesAsync(
+					languageParam.Language, 
+					pagingParameters, 
+					Response);
 
 			return Ok(machines);
 		}
@@ -53,11 +54,12 @@ namespace Presantation.Controllers
 			[FromQuery] PaginationParameters pagingParameters,
 			[FromQuery] MachineDtoForDisplay machineDto)
 		{
-			var machines = await _manager.MachineService.GetMachinesByConditionAsync(
-				machineDto.Language,
-				pagingParameters,
-				machineDto,
-				Response);
+			var machines = await _manager.MachineService
+				.GetMachinesByConditionAsync(
+					machineDto.Language,
+					pagingParameters,
+					machineDto,
+					Response);
 
 			return Ok(machines);
 		}
@@ -114,7 +116,7 @@ namespace Presantation.Controllers
 		[Authorization("Admin,Yönetici,Editor,Editör")]
 		[ValidationNullArguments]
 		public async Task<IActionResult> UpdateMachine(
-			[FromQuery][Required] MachineParamsForUpdate machineParams,
+			[FromQuery] MachineParamsForUpdate machineParams,
 			[FromBody] MachineDtoForUpdate machineDto)
 		{
 			await _manager.MachineService
