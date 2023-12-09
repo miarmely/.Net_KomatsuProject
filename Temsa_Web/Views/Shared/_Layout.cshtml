@@ -22,8 +22,6 @@
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 		<meta name="keywords" content="Komatsu Admin Panel"/>
 		<script type="application/x-javascript"> addEventListener("load", function() { setTimeout(hideURLbar, 0); }, false); function hideURLbar(){ window.scrollTo(0,1); } </script>
-
-		<!-- bootstrap-css -->
 		<link rel="stylesheet" href="~/css/bootstrap.min.css" >
 		<!-- //bootstrap-css -->
 		<!-- Custom CSS -->
@@ -102,9 +100,13 @@
 			<!-- sidebar menu end -->
 			<!-- main content start -->
 			<section id="main-content">
+				<span id="spn_eventManager"></span>
+				
+				@*main content*@
 				<section class="wrapper">
 					@RenderBody()
 				</section>
+				@*/main content*@
 
 				<!-- footer -->
 				<div class="footer">
@@ -125,8 +127,6 @@
 		<script src="~/js/scripts.js"></script>
 		<script src="~/js/jquery.slimscroll.js"></script>
 		<script src="~/js/jquery.nicescroll.js"></script>
-		@*<script src="~/js/jquery.fileupload.js"></script>*@
-		<!--[if lte IE 8]><script language="javascript" type="text/javascript" src="~/js/flot-chart/excanvas.min.js"></script><![endif]-->
 		<script src="~/js/jquery.scrollTo.js"></script>
 
 		<script>
@@ -349,13 +349,16 @@
 					"invalidFileType": "invalid file type"
 				}
 			}
-			const fileStatusLabel_color = "#120a8f";
+			const fileStatusLabel_color = "#F1AC00";
 			const formatErrorCodes = [
 				"FE-MinL", 
 				"FE-MaxL", 
 				"FE-MinV", 
 				"FE-MaxV"
 			]
+			const spn_eventManager = $("#spn_eventManager");
+			const inpt_fileChooser = $("#inpt_fileChooser");
+			const button_disabledColor = "DarkGrey";
 		</script>
 	</body>
 </html>

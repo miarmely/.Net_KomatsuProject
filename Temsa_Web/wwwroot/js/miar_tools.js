@@ -7,6 +7,123 @@ export let entityCountOnTable;
 //#endregion
 
 //#region export functions
+
+//#region file processes
+export async function displayImageByNormalUrlAsync(
+    folderPathAfterWwwroot,
+    fileName,
+    imgForAddUrl,
+    inputForAddFileName,
+    fileStatusLabel) {
+    //#region before start
+    await beforeDisplayImageAsync(
+        imgForAddUrl,
+        "#" + fileStatusLabel.attr("id"),
+        inputForAddFileName);
+    //#endregion
+
+    //#region display image
+    // add src to <img>
+    imgForAddUrl.attr(
+        "src",
+        "/" + folderPathAfterWwwroot + "/" + fileName
+    );
+
+    // write file name to <input>
+    inputForAddFileName.val(fileName);
+
+    // reset file status label
+    fileStatusLabel.empty();
+    //#endregion
+}
+
+export async function displayImageByDataUrlAsync(
+    selectedFileInfos,
+    imgForAddDataUrl,
+    fileStatusLabel,
+    inputForAddFileName = null,
+    afterLoad = null) {
+    //#region before start
+    let fileStatusLabel_oldMessage = fileStatusLabel.text();
+    let fileStatusLabel_oldStyle = fileStatusLabel.attr("style");
+
+    await beforeDisplayImageAsync(
+        imgForAddDataUrl,
+        "#" + fileStatusLabel.attr("id"),
+        inputForAddFileName);
+    //#endregion
+
+    //#region read file as dataUrl
+    let fileReader = new FileReader();
+    fileReader.readAsDataURL(selectedFileInfos);
+    //#endregion
+
+    //#region when reading completed
+    fileReader.onloadend = function (event) {
+        //#region when successfull
+        if (fileReader.readyState == fileReader.DONE) {
+            //#region add dataUrl to src of <img>
+            let dataUrl = event.target.result
+            imgForAddDataUrl.attr("src", dataUrl);
+            //#endregion
+
+            //#region write file name to <input>
+            if (inputForAddFileName != null)
+                inputForAddFileName.val(selectedFileInfos.name);
+            //#endregion
+
+            //#region call function after load
+            if (afterLoad != null)
+                afterLoad();
+            //#endregion
+        }
+        //#endregion
+
+        //#region reset "file loading..." message  
+        fileStatusLabel.empty();
+        fileStatusLabel.attr("style", fileStatusLabel_oldStyle);
+        fileStatusLabel.append(fileStatusLabel_oldMessage);
+        //#endregion
+    }
+    //#endregion
+}
+
+export async function isFileTypeInvalidAsync(
+    selectedFileInfos,
+    fileType,
+    fileNameInput) {
+    //#region when file type invalid
+    if (!selectedFileInfos.type.startsWith(fileType)) {
+        // reset file name <input>
+        fileNameInput.val("");
+
+        return true;
+    }
+    //#endregion
+
+    return false;
+}
+
+async function beforeDisplayImageAsync(
+    imgForAddUrl,
+    fileStatusLabelId,
+    inputForAddFileName = null) {
+    // remove old image
+    imgForAddUrl.removeAttr("src");
+
+    // reset file name <input>
+    if (inputForAddFileName != null)
+        inputForAddFileName.val("");
+
+    // write "file loading..." message
+    updateResultLabel(
+        fileStatusLabelId,
+        partnerInformationMessagesByLanguages[language]["fileLoading"],
+        fileStatusLabel_color
+    );
+}
+//#endregion
+
 export function setDescriptionLanguage(newLanguage) {
     description_language = newLanguage;
 }
@@ -407,6 +524,28 @@ export async function setDisabledOfButtonAsync(doDisabled, button, bgColor) {
     //#endregion
 }
 
+export async function setDisabledOfButtonsAsync(doDisabled, buttonIds, bgColor) {
+    //#region disable/enable multiple button
+    for (let index in buttonIds) {
+        //#region disable the button
+        let button = $(buttonIds[index]);
+
+        if (doDisabled) {
+            button.attr("disabled", "");
+            button.css("background-color", bgColor);
+        }
+        //#endregion
+
+        //#region active the button
+        else {
+            button.removeAttr("disabled");
+            button.css("background-color", bgColor);
+        }
+        //#endregion
+    }
+    //#endregion
+}
+
 export async function getErrorMessageForMachineAsync(responseText) {
     //#region set variables
     const propertyNamesGuideByLanguages = {
@@ -684,119 +823,4 @@ async function addEntitiesToTableAsync(
         resolve();
     })
 }
-
-
-//#region file processes
-export async function displayImageByNormalUrlAsync(
-    folderPathAfterWwwroot,
-    fileName,
-    imgForAddUrl,
-    inputForAddFileName,
-    fileStatusLabel) {
-    //#region before start
-    await beforeDisplayImageAsync(
-        imgForAddUrl,
-        "#" + fileStatusLabel.attr("id"),
-        inputForAddFileName);
-    //#endregion
-
-    //#region display image
-    // add src to <img>
-    imgForAddUrl.attr(
-        "src",
-        "/" + folderPathAfterWwwroot + "/" + fileName
-    );
-
-    // write file name to <input>
-    inputForAddFileName.val(fileName);
-
-    // reset file status label
-    fileStatusLabel.empty();
-    //#endregion
-}
-
-export async function displayImageByDataUrlAsync(
-    selectedFileInfos,
-    imgForAddDataUrl,
-    fileStatusLabel,
-    inputForAddFileName = null,
-    afterLoad = null) {
-    //#region before start
-    await beforeDisplayImageAsync(
-        imgForAddDataUrl,
-        "#" + fileStatusLabel.attr("id"),
-        inputForAddFileName);
-    //#endregion
-
-    //#region read file as dataUrl
-    let fileReader = new FileReader();
-    fileReader.readAsDataURL(selectedFileInfos);
-    //#endregion
-
-    //#region when file reading process completed
-
-    //#region when successfull
-    fileReader.onload = function (event) {
-        //#region add dataUrl to src of <img>
-        let dataUrl = event.target.result
-        imgForAddDataUrl.attr("src", dataUrl);
-        //#endregion
-
-        //#region write file name to <input>
-        if (inputForAddFileName != null)
-            inputForAddFileName.val(selectedFileInfos.name);
-        //#endregion
-
-        //#region call function after load
-        if (afterLoad != null)
-            afterLoad();
-        //#endregion
-    }
-    //#endregion
-
-    //#region reset "file loading..." message  
-    fileReader.onloadend = function () {  // when successfull or not
-        fileStatusLabel.empty();
-    }
-    //#endregion
-
-    //#endregion
-}
-
-export async function isFileTypeInvalidAsync(
-    selectedFileInfos,
-    fileType,
-    fileNameInput) {
-    //#region when file type invalid
-    if (!selectedFileInfos.type.startsWith(fileType)) {
-        // reset file name <input>
-        fileNameInput.val("");
-
-        return true;
-    }
-    //#endregion
-
-    return false;
-}
-
-async function beforeDisplayImageAsync(
-    imgForAddUrl,
-    fileStatusLabelId,
-    inputForAddFileName = null) {
-    // remove old image
-    imgForAddUrl.removeAttr("src");
-
-    // reset file name <input>
-    if (inputForAddFileName != null)
-        inputForAddFileName.val("");
-
-    // write "file loading..." message
-    updateResultLabel(
-        fileStatusLabelId,
-        partnerInformationMessagesByLanguages[language]["fileLoading"],
-        fileStatusLabel_color
-    );
-}
-//#endregion
-
 //#endregion
