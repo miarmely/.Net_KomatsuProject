@@ -20,6 +20,11 @@ namespace Entities.Attributes
 			object? value,
 			ValidationContext validationContext)
 		{
+			#region when value null then don't look
+			if (value == null)
+				return null;
+			#endregion
+
 			#region when value less than min value (throw)
 			if ((int)value < _minValue)
 				throw new ErrorWithCodeException(

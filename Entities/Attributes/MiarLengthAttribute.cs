@@ -20,9 +20,14 @@ namespace Entities.Attributes
 			object? value,
 			ValidationContext validationContext)
 		{
-			var valueInString = value.ToString();
+			#region when value null then don't look
+			if (value == null)
+				return null;
+			#endregion
 
 			#region when value smaller than min length (throw)
+			var valueInString = value.ToString();
+
 			if (valueInString.Length < _minLength)
 				throw new ErrorWithCodeException(
 					400,

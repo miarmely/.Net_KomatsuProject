@@ -1,7 +1,4 @@
 ﻿//#region export variables
-export let description_currentColor;
-export let description_infoInSession;
-export let description_language = language;
 export let paginationInfosInJson;
 export let entityCountOnTable;
 //#endregion
@@ -124,13 +121,93 @@ async function beforeDisplayImageAsync(
 }
 //#endregion
 
-export function setDescriptionLanguage(newLanguage) {
-    description_language = newLanguage;
+//#region descriptions
+export let descriptions_currentColor;
+export let descriptions_language = language;
+
+export async function setDescriptionsLanguageAsync(newLanguage) {
+    descriptions_language = newLanguage;
 }
 
-export function getDescriptionKeyForSession(descriptionBaseKeyForSession) {
-    return descriptionBaseKeyForSession + '-' + description_language;
+export async function getDescriptionKeyForSessionAsync(descriptionBaseKeyForSession) {
+    return descriptionBaseKeyForSession + '-' + descriptions_language;
 }
+
+export async function changeDescriptionsButtonColorAsync(descriptionsButton, color) {
+    descriptionsButton.css("color", color);
+    descriptions_currentColor = color;
+}
+
+export async function click_descriptionDropdownItemAsync(
+    clickedElement,
+    descriptionsTextarea,
+    descriptionsButton) {
+    //#region change descriptions <button> color as "unsaved_color"
+    descriptionsTextarea.val("");
+
+    await changeDescriptionsButtonColorAsync(
+        descriptionsButton,
+        descriptions_unsavedColor);
+    //#endregion
+
+    //#region change descriptions <button> name
+    descriptions_language = clickedElement.prop("innerText");
+
+    descriptionsButton.empty();
+    descriptionsButton.append(
+        `<b>${description_baseButtonNameByLanguages[language]} (${descriptions_language})</b>`);
+    //#endregion
+
+    //#region populate descriptions in session to <textarea>
+    // get descriptions from session
+    let descriptionsInSession = JSON.parse(sessionStorage
+        .getItem(sessionKeys_descriptionsOnDisplayPage));
+
+    // when any description is exists in session
+    if (descriptionsInSession != null  // when any descriptions exists in session
+        && descriptionsInSession[descriptions_language] != undefined)  // when descriptions in selected language 
+        //#region add description in session to <textarea>
+        descriptionsTextarea.val(
+            descriptionsInSession[descriptions_language]);
+        //#endregion
+    //#endregion
+}
+
+export async function click_descriptionsButtonAsync(descriptionsTextArea, descriptionsButton) {
+    //#region get descriptions in session 
+    let descriptionsInSession = JSON.parse(sessionStorage
+        .getItem(sessionKeys_descriptionsOnDisplayPage));
+    //#endregion
+
+    //#region save updated descriptions to session
+    descriptionsInSession[descriptions_language] = descriptionsTextArea.val();
+
+    sessionStorage.setItem(
+        sessionKeys_descriptionsOnDisplayPage,
+        JSON.stringify(descriptionsInSession));
+    //#endregion
+
+    //#region change description button color to "saved color"
+    await changeDescriptionsButtonColorAsync(
+        descriptionsButton,
+        descriptions_savedColor);
+    //#endregion
+}
+
+export async function change_descriptionsTextareaAsync(descriptionsButton) {
+    //#region initialize descriptions current color if not initialized
+    if (descriptions_currentColor == null)
+        descriptions_currentColor = descriptions_unsavedColor;
+    //#endregion
+
+    //#region change descriptions <button> color as "unsaved color"
+    if (descriptions_currentColor == descriptions_savedColor)
+        await changeDescriptionsButtonColorAsync(
+            descriptionsButton,
+            descriptions_unsavedColor);
+    //#endregion
+}
+//#endregion
 
 export function getDateTimeInString(dateTime) {
     //#region set year
@@ -186,11 +263,6 @@ export function getTokenInSession() {
     return sessionStorage.getItem("token");
 }
 
-export function changeDescriptionButtonColor(descriptionButtonId, color) {
-    $(descriptionButtonId).css("color", color);
-    description_currentColor = color;
-}
-
 export function updateResultLabel(
     resultLabelId,
     message,
@@ -239,77 +311,6 @@ export function updateErrorRow(
     //#endregion
 }
 
-export function clicked_descriptionDropdownItem(
-    clickedElement,
-    decriptionInputId,
-    descriptionButtonId,
-    baseDescriptionButtonName,
-    descriptionUnsavedColor,
-    descriptionBaseKeyForSession) {
-    //#region set variables
-    let inpt_descriptions = $(decriptionInputId);
-    let btn_description = $(descriptionButtonId)
-    description_language = clickedElement.prop("innerText");
-    //#endregion
-
-    //#region reset
-    // <input>
-    inpt_descriptions.val("");
-
-    // button color
-    btn_description.css("color", descriptionUnsavedColor);
-    description_currentColor = descriptionUnsavedColor;
-    //#endregion
-
-    //#region change description button name
-    btn_description.empty();
-    btn_description.append(
-        `<b>
-            ${baseDescriptionButtonName} (${description_language})
-        </b>`);
-    //#endregion
-
-    //#region populate description <input> with in session value
-    description_infoInSession = sessionStorage.getItem(
-        getDescriptionKeyForSession(descriptionBaseKeyForSession));
-
-    // when any info is exists on session
-    if (description_infoInSession != null)
-        inpt_descriptions.val(description_infoInSession);
-    //#endregion
-}
-
-export function clicked_descriptionDropdownButton(
-    descriptionInputId,
-    descriptionButtonId,
-    descriptionBaseKeyForSession,
-    descriptionSavedColor) {
-    //#region add description informations to session
-    sessionStorage.setItem(
-        getDescriptionKeyForSession(descriptionBaseKeyForSession),
-        $(descriptionInputId).val());
-    //#endregion
-
-    //#region change description button color to "saved color"
-    changeDescriptionButtonColor(descriptionButtonId, descriptionSavedColor);
-    //#endregion
-}
-
-export function changed_descriptionInput(
-    descriptionButtonId,
-    descriptionUnsavedColor,
-    descriptionSavedColor) {
-    //#region initialize description current color if empty 
-    if (description_currentColor == undefined)
-        description_currentColor = descriptionUnsavedColor;
-    //#endregion
-
-    //#region change description color to "unsaved color"
-    if (description_currentColor == descriptionSavedColor)
-        changeDescriptionButtonColor(descriptionButtonId, descriptionUnsavedColor);
-    //#endregion
-}
-
 export function resetErrorRow(rowId) {
     //#region hide and reset <td> of error
     var td_error = $(`#${rowId}_error`)
@@ -338,7 +339,7 @@ export async function populateTable(
     refreshPaginationButtons) {
 
     //#region set variables
-    description_language = language; // set page language as default 
+    descriptions_language = language; // set page language as default 
 
     let url = `${baseApiUrl}/${specialUrl}` +
         `?language=${language}` +
@@ -399,35 +400,30 @@ export async function populateTable(
     });
 }
 
-export async function setDisabledOfOtherUpdateButtonsAsync(rowId, pageSize, updateButtonId, doDisabled) {
-    await new Promise(resolve => {
-        let btn_update = $(updateButtonId);
+export async function setDisabledOfOtherUpdateButtonsAsync(rowId, pageSize, doDisabled) {
+    //#region disable/enable other update buttons
+    for (var rowNo = 1; rowNo <= pageSize; rowNo += 1) {
+        let rowIdInLoop = `#tr_row${rowNo}`;
 
-        //#region disable/enable other update buttons
-        for (var rowNo = 1; rowNo <= pageSize; rowNo += 1) {
-            let rowIdInLoop = `#tr_row${rowNo}`;
+        //#region disable/enable update button
+        if (rowIdInLoop != rowId) {
+            // get update button
+            let btn_update = $(rowIdInLoop)
+                .children("#td_processes")
+                .children("button")  // update button
 
-            //#region disable/enable update button
-            if (rowIdInLoop != rowId) {
-                // get update button
-                let btn_update = $(rowIdInLoop)
-                    .children("#td_processes")
-                    .children("button")  //#update button
+            // when disabled wanted
+            if (doDisabled)
+                btn_update.attr("disabled", "");
 
-                // when disabled wanted
-                if (doDisabled)
-                    btn_update.attr("disabled", "");
-
-                // when enabled wanted
-                else
-                    btn_update.removeAttr("disabled");
-            }
-            //#endregion
+            // when enabled wanted
+            else
+                btn_update.removeAttr("disabled");
         }
         //#endregion
+    }
+    //#endregion
 
-        resolve();
-    })
 }
 
 export async function populateElementByAjaxOrLocalAsync(

@@ -1,4 +1,4 @@
-﻿import { displayImageByDataUrlAsync, populateElementByAjaxOrLocalAsync } from "./miar_tools.js"
+﻿import { populateElementByAjaxOrLocalAsync } from "./miar_tools.js"
 import { updateDefaultFlagAndLanguage, populateLanguageDropdown, clicked_languageDropdown } from "./miar_header.js";
 
 

@@ -1,6 +1,7 @@
 ﻿import {
-    changed_descriptionInput, clicked_descriptionDropdownButton,
-    clicked_descriptionDropdownItem, displayImageByDataUrlAsync, getErrorMessageForMachineAsync, isFileTypeInvalidAsync, populateElementByAjaxOrLocalAsync,
+    change_descriptionsTextareaAsync, click_descriptionDropdownItemAsync,
+    click_descriptionsButtonAsync, displayImageByDataUrlAsync, getErrorMessageForMachineAsync,
+    isFileTypeInvalidAsync, populateElementByAjaxOrLocalAsync,
     populateSelectAsync, updateResultLabel
 } from "./miar_tools.js"
 
@@ -8,16 +9,13 @@
 $(function () {
     //#region variables
     const resultLabel_id = "#p_resultLabel";
-    const description_inputId = "#inpt_description";
     const description_buttonId = "#btn_description";
-    const description_unsavedColor = "red";
-    const description_savedColor = "lightgreen";
     const description_baseKeyForSession = "Machine-Create-Description";
     const slct_mainCategory_id = "slct_mainCategory";
     const slct_subCategory_id = "slct_subCategory";
     const ul_description_id = "ul_description";
     const div_form = $("#div_form");
-    const inpt_description_id = "inpt_description";
+    const txt_description_id = "txt_description";
     const img_machine = $("#img_machine");
     const inpt_image_id = "#inpt_image";
     const inpt_pdf_id = "#inpt_pdf";
@@ -169,42 +167,35 @@ $(function () {
         }
         //#endregion
     });
-    div_form.click(() => {
+    div_form.click(async () => {
         //#region when description button or dropdown clicked
         let clickedElement = $(":focus");
 
         //#region when clicked languages in description dropdown
         if (clickedElement.attr("class") == "a_description")
-            clicked_descriptionDropdownItem(
-                $(":focus"),
-                description_inputId,
-                description_buttonId,
-                description_buttonNameByLanguages[language],
-                description_unsavedColor,
-                description_baseKeyForSession);
+            await click_descriptionDropdownItemAsync(
+                clickedElement,
+                $("#" + txt_description_id),
+                $(description_buttonId));
         //#endregion
 
         //#region when description button clicked
         else if (clickedElement.attr("id")
             == description_buttonId.substring(1))  // #btn_description => btn_description
-            clicked_descriptionDropdownButton(
-                description_inputId,
-                description_buttonId,
-                description_baseKeyForSession,
-                description_savedColor);
+            await click_descriptionsButtonAsync(
+                $("#" + txt_description_id),
+                $(description_buttonId));
         //#endregion
 
         //#endregion
     });
-    div_form.on("input", () => {
+    div_form.on("input", async () => {
         //#region when changed description <textarea>
         let inputtedElement = $(":focus");
 
-        if (inputtedElement.attr("id") == inpt_description_id)
-            changed_descriptionInput(
-                description_buttonId,
-                description_unsavedColor,
-                description_savedColor);
+        if (inputtedElement.attr("id") == txt_description_id)
+            await change_descriptionsTextareaAsync(
+                $(description_buttonId));
         //#endregion
     })
     $(window).resize(async () => {
@@ -423,7 +414,7 @@ $(function () {
                         <div class="input-group m-bot15">
                             <div class="input-group-btn">
                                 <button id="btn_description" style="background-color:darkblue; color:red" tabindex="-1" class="btn btn-info" type="button">
-                                    ${description_buttonNameByLanguages[language]} (${language})
+                                    ${description_baseButtonNameByLanguages[language]} (${language})
                                 </button>
                                 <button tabindex="-1" style="background-color: darkblue;" data-toggle="dropdown" class="btn btn-info dropdown-toggle" type="button">
                                     <span class="caret"></span>
@@ -434,7 +425,7 @@ $(function () {
                         </div>
                     </label>
                     <div class="col-sm-6">
-                        <textarea id="${inpt_description_id}" style="resize:none" type="text" class="form-control" rows="10"></textarea>
+                        <textarea id="${txt_description_id}" style="resize:none" type="text" class="form-control" rows="10"></textarea>
                     </div>
                 </div>
             </div`
