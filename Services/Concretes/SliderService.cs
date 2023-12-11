@@ -1,6 +1,7 @@
 ﻿using Dapper;
 using Entities.ConfigModels.Contracts;
 using Entities.DtoModels.SliderDtos;
+using Entities.Enums;
 using Entities.Exceptions;
 using Entities.QueryParameters;
 using Entities.ViewModels;
@@ -33,9 +34,11 @@ namespace Services.Concretes
 			SliderParametersForUploadToFolder sliderParams,
 			SliderDtoForUploadToFolder sliderDto) =>
 				await _fileService.UploadFileToFolderAsync(
+					sliderParams.Language,
 					sliderParams.FolderPathAfterWwwroot,
 					sliderDto.FileName,
-					sliderDto.FileContentInBase64Str);
+					sliderDto.FileContentInBase64Str,
+					FileTypes.Slider);
 	
 		public async Task UploadSlidersToDbAsync(SliderDtoForUploadToDb sliderDto)
 		{
@@ -179,21 +182,12 @@ namespace Services.Concretes
 			string fileName)
 		{
 			#region delete from folder
-			try
-			{
-				await _fileService
-					.DeleteFileOnFolderByPathAsync(folderPathAfterWwwroot, fileName);
-			}
-			catch (Exception ex)
-			{
-				#region when any error occured (throw)
-				throw new ErrorWithCodeException(
-					_configs.ErrorDetails.ToErrorDto(
-						language,
-						_configs.ErrorDetails.NF_S_FP));
-				#endregion
-			}
-			#endregion
+			await _fileService.DeleteFileOnFolderByPathAsync(
+				language,
+				folderPathAfterWwwroot,
+				fileName,
+				FileTypes.Slider);
+			#endregion			
 
 			#region delete from db
 			var parameters = new DynamicParameters();

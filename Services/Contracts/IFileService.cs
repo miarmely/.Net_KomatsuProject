@@ -1,11 +1,15 @@
-﻿namespace Services.Contracts
+﻿using Entities.Enums;
+
+namespace Services.Contracts
 {
     public interface IFileService
     {
 		Task UploadFileToFolderAsync(
+			string language,
 			string folderPath,
 			string fileName,
-			string fileContentInBase64Str);
+			string fileContentInBase64Str,
+			FileTypes fileType);
 
 		Task<string[]> GetFullFilePathsOnDirectoryAsync(
 			string language,
@@ -20,7 +24,9 @@
 			List<string> FileNamesToBeNotDelete);
 
 		Task DeleteFileOnFolderByPathAsync(
+			string language,
 			string folderPathAfterWwwroot,
-			string fileName);
+			string fileName,
+			FileTypes fileType);
 	}
 }

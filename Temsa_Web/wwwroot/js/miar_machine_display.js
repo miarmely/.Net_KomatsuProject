@@ -3,7 +3,7 @@
     updateErrorRow, setDisabledOfOtherUpdateButtonsAsync, resetErrorRow,
     populateElementByAjaxOrLocalAsync, setDescriptionsLanguageAsync, getDateTimeInString,
     addPaginationButtonsAsync, controlPaginationBackAndNextButtonsAsync,
-    displayImageByDataUrlAsync, change_descriptionsTextareaAsync, isFileTypeInvalidAsync
+    displayImageByDataUrlAsync, change_descriptionsTextareaAsync, isFileTypeInvalidAsync, isAllObjectValuesNullAsync
 } from "./miar_tools.js";
 
 $(function () {
@@ -562,14 +562,6 @@ $(function () {
             .getItem(rowId));
         //#endregion
 
-        //#region set url
-        let url = baseApiUrl + "/machine/update?" +
-            `language=${language}` +
-            `&id=${machineId}` +
-            `&oldMainCategoryName=${oldColumnValues.mainCategory}` +
-            `&oldSubCategoryName=${oldColumnValues.subCategory}`
-        //#endregion
-
         //#region set data
         let data = {
             "imageName": null,
@@ -577,16 +569,20 @@ $(function () {
             "subCategoryName": null,
             "model": null,
             "brandName": null,
+            "handStatus": null,
+            "pdfName": null,
             "stock": null,
             "rented": null,
             "sold": null,
             "year": null,
-            "handStatus": null,
             "descriptionInTR": null,
             "descriptionInEN": null,
-            "pdfName": null,
             "imageContentInBase64Str": null,
-            "pdfContentInBase64Str": null
+            "pdfContentInBase64Str": null,
+            "imageFolderPathAfterWwwroot": null,
+            "pdfFolderPathAfterWwwroot": null,
+            "oldImageName": null,
+            "oldPdfName": null,
         }
 
         //#region add values on column to data
@@ -603,8 +599,10 @@ $(function () {
 
                     // if image name changed
                     if (imageNameOnButton != oldColumnValues[columnName]) {
-                        // save image name
+                        // save image infos
                         data["imageName"] = imageNameOnButton;
+                        data["imageFolderPathAfterWwwroot"] = path_machineImages;
+                        data["oldImageName"] = oldColumnValues[columnName];
 
                         // save image content in base64 string
                         data["imageContentInBase64Str"] = row
@@ -715,6 +713,19 @@ $(function () {
                         data["year"] = year;
                     //#endregion
                     break;
+                case "pdf":
+                    //#region add pdf name to data if changed
+                    let pdfNameOnButton = $("#" + spn_pdfButton_pdfName_id)
+                        .text();
+
+                    // if pdf name changed
+                    if (pdfNameOnButton != oldColumnValues[columnName]) {
+                        data["pdfName"] = pdfNameOnButton;
+                        data["pdfFolderPathAfterWwwroot"] = path_pdfs;
+                        data["oldPdfName"] = oldColumnValues[columnName];
+                    }
+                    //#endregion
+                    break;
                 case "descriptions":
                     //#region get new descriptions in session
                     let newDescriptionsInSession = JSON.parse(sessionStorage
@@ -738,20 +749,34 @@ $(function () {
                     //#endregion
 
                     break;
-                case "pdf":
-                    //#region add pdf name to data if changed
-                    let pdfNameOnButton = $("#" + spn_pdfButton_pdfName_id)
-                        .text();
-
-                    // if pdf name changed
-                    if (pdfNameOnButton != "(" + oldColumnValues[columnName] + ")")
-                        data["pdfName"] = pdfNameOnButton;
-                    //#endregion
-                    break;
             }
             //#endregion
         }
         //#endregion
+
+        //#region when any changes wasn't do (error)
+        if (await isAllObjectValuesNullAsync(data)) {
+            // write error to error row
+            updateErrorRow(
+                `#${rowId}_error`,
+                partnerErrorMessagesByLanguages[language]["nullArguments"],
+                resultLabel_errorColor);
+
+            return;
+        }
+        //#endregion
+
+        //#endregion
+
+        //#region set url
+        let url = baseApiUrl + "/machine/update?" +
+            `language=${language}` +
+            `&id=${machineId}` +
+            `&oldMainCategoryName=${oldColumnValues.mainCategory}` +
+            `&oldSubCategoryName=${oldColumnValues.subCategory}`
+        //#endregion
+
+        //#region update machine
 
         //#region when pdf changed
         if (data["pdfName"] != null) {
@@ -768,7 +793,7 @@ $(function () {
                         .replace(`data:${selectedPdfInfos.type};base64,`, "");
                     //#endregion
 
-                    await updateMachineInfosAsync(url, data, rowId, oldColumnValues);
+                    await updateMachineAsync(url, data, rowId, oldColumnValues);
                 }
                 //#endregion
             }
@@ -777,9 +802,9 @@ $(function () {
 
         //#region when pdf not changed
         else
-            await updateMachineInfosAsync(url, data, rowId, oldColumnValues);
+            await updateMachineAsync(url, data, rowId, oldColumnValues);
         //#endregion
-        
+
         //#endregion
     })
     spn_eventManager.on("click_cancelButton", async () => {
@@ -815,12 +840,10 @@ $(function () {
             <td id="td_${columnNames[9]}">${machineInfosInSession[columnNames[9]]}</td>
             <td id="td_${columnNames[10]}">${machineInfosInSession[columnNames[10]]}</td >
             <td id="td_${columnNames[11]}">
-                <textarea style="${style_descriptionsTextarea}" disabled>${machineInfosInSession[columnNames[11]][language]}</textarea>
+                <a href="/${path_pdfs}/${machineInfosInSession[columnNames[11]]}"  title="${machineInfosInSession[columnNames[11]]}"  target="_blank">PDF</a>
             </td>
             <td id="td_${columnNames[12]}">
-                <a href="/${path_pdfs}/${machineInfosInSession[columnNames[12]]}"
-                    title="${machineInfosInSession[columnNames[12]]}" 
-                    target="_blank">PDF</a>
+                <textarea style="${style_descriptionsTextarea}" disabled>${machineInfosInSession[columnNames[12]][language]}</textarea>
             </td>
             <td id="td_${columnNames[13]}">
                 <button id="btn_update" ui-toggle-class="">
@@ -858,7 +881,7 @@ $(function () {
     })
     spn_eventManager.on("change_chooseFileInput_image", async (event, rowId, selectedFileInfos) => {
         //#region when any file not selected
-        if ($("#" + inpt_chooseImage_id).val() == null)
+        if ($("#" + inpt_chooseImage_id).val() == "")
             return;
         //#endregion
 
@@ -884,23 +907,31 @@ $(function () {
         //#endregion
 
         //#region display image
-        selectedImageInfos = selectedFileInfos;
+        let oldImageName = $("#" + img_imageButton_id)
+            .attr("alt");
 
-        await displayImageByDataUrlAsync(
-            selectedFileInfos,
-            $("#" + img_imageButton_id),
-            $("#" + spn_imageButton_guide_id));
-        //#endregion
+        // when image changed
+        if (oldImageName != selectedFileInfos.name) {
+            //#region display new image
+            selectedImageInfos = selectedFileInfos;
 
-        //#region add image name to "alt" of <img>
-        $("#" + img_imageButton_id).attr(
-            "alt",
-            selectedFileInfos.name);
+            await displayImageByDataUrlAsync(
+                selectedFileInfos,
+                $("#" + img_imageButton_id),
+                $("#" + spn_imageButton_guide_id));
+           //#endregion
+
+            //#region add new image name to "alt" of <img>
+            $("#" + img_imageButton_id).attr(
+                "alt",
+                selectedFileInfos.name);
+            //#endregion
+        }
         //#endregion
     })
     spn_eventManager.on("change_chooseFileInput_pdf", async (event, rowId, selectedFileInfos) => {
         //#region when any pdf not selected
-        if ($("#" + inpt_choosePdf_id).val() == null)
+        if ($("#" + inpt_choosePdf_id).val() == "")
             return;
         //#endregion
 
@@ -925,13 +956,22 @@ $(function () {
         }
         //#endregion
 
-        // save selected file infos
-        selectedPdfInfos = selectedFileInfos;
-
-        // add selected file name to pdf <button>
+        //#region add selected file name to pdf <button>
         let spn_pdfButton_pdfName = $("#" + spn_pdfButton_pdfName_id);
-        spn_pdfButton_pdfName.empty();
-        spn_pdfButton_pdfName.append(selectedFileInfos.name);
+        let oldPdfName = spn_pdfButton_pdfName.prop("innerText");
+
+        // when pdf changed
+        if (oldPdfName != selectedFileInfos.name) {
+            //#region update pdf <button>
+            // save selected file infos
+            selectedPdfInfos = selectedFileInfos;
+
+            // update pdf name on button
+            spn_pdfButton_pdfName.empty();
+            spn_pdfButton_pdfName.append(selectedFileInfos.name);
+            //#endregion
+        }        
+        //#endregion
     })
     spn_eventManager.on("change_descriptionsTextarea", async () => {
         await change_descriptionsTextareaAsync(
@@ -940,7 +980,7 @@ $(function () {
     //#endregion
 
     //#region functions
-    async function updateMachineInfosAsync(url, data, rowId, oldColumnValues) {
+    async function updateMachineAsync(url, data, rowId, oldColumnValues) {
         $.ajax({
             method: "PUT",
             url: url,
@@ -962,7 +1002,23 @@ $(function () {
                 //#region save updated "oldColumnValues" to session
                 sessionStorage.setItem(
                     rowId,
-                    JSON.stringify(oldColumnValues));
+                    JSON.stringify({
+                        "image": data.imageName,
+                        "mainCategory": data.mainCategoryName,
+                        "subCategory": data.subCategoryName,
+                        "model": data.model,
+                        "brandName": data.brandName,
+                        "handStatus": data.handStatus,
+                        "pdf": data.pdfName,
+                        "stock": data.stock,
+                        "rented": data.rented,
+                        "sold": data.sold,
+                        "year": data.year,
+                        "descriptions": {
+                            "TR": data.descriptionInTR,
+                            "EN": data.descriptionInEN
+                        }
+                    }));
                 //#endregion
 
                 spn_eventManager.trigger("click_cancelButton");
@@ -1128,12 +1184,10 @@ $(function () {
                     <td id="td_${columnNames[9]}">${machineView.year}</td>
                     <td id="td_${columnNames[10]}">${getDateTimeInString(machineView.createdAt)}</td >
                     <td id="td_${columnNames[11]}">
-                        <textarea style="${style_descriptionsTextarea}" disabled>${machineView.descriptions[language]}</textarea>
+                        <a href="/${path_pdfs}/${machineView.pdfName}"  title="${machineView.pdfName}"  target="_blank">PDF</a>
                     </td>
                     <td id="td_${columnNames[12]}">
-                        <a href="/${path_pdfs}/${machineView.pdfName}"
-                           title="${machineView.pdfName}" 
-                           target="_blank">PDF</a>
+                        <textarea style="${style_descriptionsTextarea}" disabled>${machineView.descriptions[language]}</textarea>
                     </td>
                     <td id="td_${columnNames[13]}">
                         <button id="btn_update" ui-toggle-class="">

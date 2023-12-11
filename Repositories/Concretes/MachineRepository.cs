@@ -62,7 +62,7 @@ namespace Repositories.Concretes
                 base.Configs.DbSettings.ProcedureNames.Machine_Update,
                 parameters);
 
-        public async Task<ErrorDto?> DeleteMachineAsync(DynamicParameters parameters)
+        public async Task<ErrorDto?> DeleteMachinesAsync(DynamicParameters parameters)
             => await base.QuerySingleOrDefaultAsync<ErrorDto>(
                     base.Configs.DbSettings.ProcedureNames.Machine_Delete,
                     parameters);

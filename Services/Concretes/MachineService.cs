@@ -1,6 +1,8 @@
 ﻿using Dapper;
+using Entities.Attributes;
 using Entities.ConfigModels.Contracts;
 using Entities.DtoModels.MachineDtos;
+using Entities.Enums;
 using Entities.Exceptions;
 using Entities.QueryParameters;
 using Entities.ViewModels;
@@ -13,7 +15,7 @@ using System.Data;
 
 namespace Services.Concretes
 {
-	public class MachineService : IMachineService
+	public partial class MachineService : IMachineService
 	{
 		private readonly IRepositoryManager _manager;
 		private readonly IFileService _fileService;
@@ -33,74 +35,22 @@ namespace Services.Concretes
 			MachineParamsForCreate machineParams,
 			MachineDtoForCreate machineDto)
 		{
-			#region upload machine image to folder (throw)
-			while (true)
-			{
-				try
-				{
-					#region upload
-					await _fileService.UploadFileToFolderAsync(
-						machineParams.ImageFolderPathAfterWwwroot,
-						machineDto.ImageName,
-						machineDto.ImageContentInBase64Str);
-					#endregion
-
-					break;
-				}
-				catch (DirectoryNotFoundException ex)
-				{
-					#region create directory when directory not found
-					var fullFolderPath = await _fileService
-						.GetFullFolderPathAsync(machineParams.ImageFolderPathAfterWwwroot);
-
-					Directory.CreateDirectory(fullFolderPath);
-					#endregion
-				}
-				catch (Exception ex)
-				{
-					#region when other errors occured (throw)
-					throw new ErrorWithCodeException(
-						_configs.ErrorDetails.ToErrorDto(
-							machineParams.Language,
-							_configs.ErrorDetails.FiE_U_I));
-					#endregion
-				}
-			}
+			#region upload machine image to folder
+			await _fileService.UploadFileToFolderAsync(
+				machineParams.Language,
+				machineParams.ImageFolderPathAfterWwwroot,
+				machineDto.ImageName,
+				machineDto.ImageContentInBase64Str,
+				FileTypes.MachineImage);
 			#endregion
 
-			#region upload pdf to folder (throw)
-			while (true)
-			{
-				try
-				{
-					#region upload
-					await _fileService.UploadFileToFolderAsync(
-						machineParams.PdfFolderPathAfterWwwroot,
-						machineDto.PdfName,
-						machineDto.PdfContentInBase64Str);
-					#endregion
-
-					break;
-				}
-				catch (DirectoryNotFoundException ex)
-				{
-					#region create directory when directory not found
-					var fullFolderPath = await _fileService
-						.GetFullFolderPathAsync(machineParams.PdfFolderPathAfterWwwroot);
-
-					Directory.CreateDirectory(fullFolderPath);
-					#endregion
-				}
-				catch (Exception ex)
-				{
-					#region when other errors occured (throw)
-					throw new ErrorWithCodeException(
-						_configs.ErrorDetails.ToErrorDto(
-							machineParams.Language,
-							_configs.ErrorDetails.FiE_U_P));
-					#endregion
-				}
-			}
+			#region upload pdf to folder
+			await _fileService.UploadFileToFolderAsync(
+				machineParams.Language,
+				machineParams.PdfFolderPathAfterWwwroot,
+				machineDto.PdfName,
+				machineDto.PdfContentInBase64Str,
+				FileTypes.PDF);
 			#endregion
 
 			#region create machine (throw)
@@ -328,22 +278,80 @@ namespace Services.Concretes
 				.GetAllLanguagesAsync();
 
 		public async Task UpdateMachineAsync(
-		  MachineParamsForUpdate parameters,
+		  MachineParamsForUpdate machineParams,
 		  MachineDtoForUpdate machineDto)
 		{
-			#region set paramaters
-			var dynamicParameters = new DynamicParameters(machineDto);
+			#region update machine (throw)
 
-			dynamicParameters.AddDynamicParams(parameters);
+			#region set paramaters
+			var parameters = new DynamicParameters(new
+			{
+				machineDto.ImageName,
+				machineDto.MainCategoryName,
+				machineDto.SubCategoryName,
+				machineDto.Model,
+				machineDto.BrandName,
+				machineDto.HandStatus,
+				machineDto.PdfName,
+				machineDto.Stock,
+				machineDto.Rented,
+				machineDto.Sold,
+				machineDto.Year,
+				machineDto.DescriptionInTR,
+				machineDto.DescriptionInEN
+			});
+
+			parameters.AddDynamicParams(machineParams);
 			#endregion
 
-			#region update machine (throw)
+			#region update (throw)
 			var errorDto = await _manager.MachineRepository
-				.UpdateMachineAsync(dynamicParameters);
+				.UpdateMachineAsync(parameters);
 
 			// when any error occured (throw)
 			if (errorDto != null)
 				throw new ErrorWithCodeException(errorDto);
+			#endregion
+
+			#endregion
+
+			#region delete old and upload new image to folder
+			if (machineDto.ImageName != null)
+			{
+				await DeleteFilesFromFolderForMachineAsync(
+					machineParams.Language,
+					machineDto.ImageFolderPathAfterWwwroot,
+					new List<string> { machineDto.OldImageName },
+					"ImageName",
+					FileTypes.MachineImage);
+
+				await _fileService.UploadFileToFolderAsync(
+					machineParams.Language,
+					machineDto.ImageFolderPathAfterWwwroot,
+					machineDto.ImageName,
+					machineDto.ImageContentInBase64Str,
+					FileTypes.MachineImage);
+			}
+			#endregion
+
+			#region delete old and upload new pdf to folder
+			if (machineDto.PdfName != null)
+			{
+				await DeleteFilesFromFolderForMachineAsync(
+					machineParams.Language,
+					machineDto.PdfFolderPathAfterWwwroot,
+					new List<string> { machineDto.OldPdfName },
+					"PdfName",
+					FileTypes.PDF);
+
+				await _fileService.UploadFileToFolderAsync(
+					machineParams.Language,
+					machineDto.PdfFolderPathAfterWwwroot,
+					machineDto.PdfName,
+					machineDto.PdfContentInBase64Str,
+					FileTypes.PDF);
+			}
+				
 			#endregion
 		}
 
@@ -372,7 +380,7 @@ namespace Services.Concretes
 
 			#region delete (throw)
 			var errorDto = await _manager.MachineRepository
-				.DeleteMachineAsync(parameters);
+				.DeleteMachinesAsync(parameters);
 
 			// when any error occured (throw)
 			if (errorDto != null)
@@ -381,137 +389,83 @@ namespace Services.Concretes
 
 			#endregion
 
-			#region delete machine image on folder (throw)
-
-			#region set parameters
-			parameters = new DynamicParameters();
-			var imageNames = machineDtos.Select(m => m.ImageName);
-
-			parameters.Add("ColumnName", 
-				"ImageName", 
-				DbType.String);
-
-			parameters.Add("ValuesInString",
-				string.Join(",", imageNames),
-				DbType.String);
-
-			parameters.Add("ValuesNotExistsOnTableInString",
-				"",
-				DbType.String,
-				ParameterDirection.Output);
+			#region delete machine image on folder
+			await DeleteFilesFromFolderForMachineAsync(
+				machineParams.Language,
+				machineParams.ImageFolderPathAfterWwwroot,
+				machineDtos.Select(m => m.ImageName),
+				"ImageName",
+				FileTypes.MachineImage);
 			#endregion
 
-			#region get image names that not using by other machines
-			await _manager.MachineRepository
-				.SeparateValuesNotExistsOnTableAsync(parameters);
-
-			var imageNamesNotExistsOnTableInString = parameters
-				.Get<string>("ValuesNotExistsOnTableInString");
-
-			// our purpose, dont delete image on folder when image using from other
-			// machines so we get only image names that not using from other
-			// machines for only delete its
-			#endregion
-
-			#region delete images (throw)
-			if (imageNamesNotExistsOnTableInString != null)
-			{
-				#region add image names in string to array
-				var imageNamesNotExistsOnTable = imageNamesNotExistsOnTableInString
-					.Split(',');
-				#endregion
-
-				#region delete images (throw)
-				foreach (var imageName in imageNamesNotExistsOnTable)
-				{
-					try
-					{
-						#region delete image
-						await _fileService.DeleteFileOnFolderByPathAsync(
-							machineParams.ImageFolderPathAfterWwwroot,
-							imageName);
-						#endregion
-					}
-					catch (Exception ex)
-					{
-						#region when any error occured (throw)
-						throw new ErrorWithCodeException(
-							_configs.ErrorDetails.ToErrorDto(
-								machineParams.Language,
-								_configs.ErrorDetails.FiE_D_I));
-						#endregion
-					}
-				}
-				#endregion
-			}
-
-			#endregion
-
-			#endregion
-
-			#region delete PDFs on folder (throw)
-
-			#region set parameters
-			parameters = new DynamicParameters();
-			var pdfNames = machineDtos.Select(m => m.PdfName);
-
-			parameters.Add("ColumnName",
+			#region delete PDFs on folder
+			await DeleteFilesFromFolderForMachineAsync(
+				machineParams.Language,
+				machineParams.PdfFolderPathAfterWwwroot,
+				machineDtos.Select(m => m.PdfName),
 				"PdfName",
-				DbType.String);
-
-			parameters.Add("ValuesInString",
-				string.Join(",", pdfNames),
-				DbType.String);
-
-			parameters.Add("ValuesNotExistsOnTableInString",
-				"",
-				DbType.String,
-				ParameterDirection.Output);
-			#endregion
-
-			#region get PDF names that not used by other machines
-			await _manager.MachineRepository
-				.SeparateValuesNotExistsOnTableAsync(parameters);
-
-			var pdfNamesNotExistsOnTableInString = parameters
-				.Get<string>("ValuesNotExistsOnTableInString");
-			#endregion
-
-			#region delete PDFs (throw)
-			if (pdfNamesNotExistsOnTableInString != null)
-			{
-				#region add pdf names in string to array
-				var pdfNamesNotExistsOnTable = pdfNamesNotExistsOnTableInString
-					.Split(',');
-				#endregion
-
-				#region delete PDFs (throw)
-				foreach (var pdfName in pdfNamesNotExistsOnTable)
-				{
-					try
-					{
-						#region delete PDF
-						await _fileService.DeleteFileOnFolderByPathAsync(
-							machineParams.PdfFolderPathAfterWwwroot,
-							pdfName);
-						#endregion
-					}
-					catch (Exception ex)
-					{
-						#region when any error occured (throw)
-						throw new ErrorWithCodeException(
-							_configs.ErrorDetails.ToErrorDto(
-								machineParams.Language,
-								_configs.ErrorDetails.FiE_D_P));
-						#endregion
-					}
-				}
-				#endregion
-			}
-			#endregion
-
+				FileTypes.PDF);
 			#endregion
 		}
+	}
 
+
+	public partial class MachineService  // private functions
+	{
+		private async Task DeleteFilesFromFolderForMachineAsync(
+			string language,
+			string fileFolderPathAfterWwwroot,
+			IEnumerable<string> fileNames,
+			string columnNameInDb,
+			FileTypes fileType)
+		{
+			#region set parameters
+			var parameters = new DynamicParameters();
+			
+			parameters.Add("ColumnName",
+				columnNameInDb,
+				DbType.String);
+
+			parameters.Add("ValuesInString",
+				string.Join(",", fileNames),
+				DbType.String);
+
+			parameters.Add("ValuesNotExistsOnTableInString",
+				"",
+				DbType.String,
+				ParameterDirection.Output);
+			#endregion
+
+			#region get file names that not using by other machines
+			await _manager.MachineRepository
+				.SeparateValuesNotExistsOnTableAsync(parameters);
+
+			var fileNamesNotExistsOnTableInStr = parameters
+				.Get<string>("ValuesNotExistsOnTableInString");
+
+			// our purpose: dont delete files on folder when file using from other
+			// machines so we get only file names that not using from other
+			// machines for only delete its.
+			#endregion
+
+			#region delete files that not using by other machines (throw)
+			if (fileNamesNotExistsOnTableInStr != null)
+			{
+				#region add image names in string to array
+				var fileNamesNotExistsOnTable = fileNamesNotExistsOnTableInStr
+					.Split(',');
+				#endregion
+
+				#region delete images
+				foreach (var fileName in fileNamesNotExistsOnTable)
+					await _fileService.DeleteFileOnFolderByPathAsync(
+						language,
+						fileFolderPathAfterWwwroot,
+						fileName,
+						fileType);
+				#endregion
+			}
+			#endregion
+		}
 	}
 }

@@ -706,6 +706,27 @@ export async function controlPaginationBackAndNextButtonsAsync(paginationInfosIn
     }
 }
 
+export async function isAllObjectValuesNullAsync(object) {
+    //#region compute total null value quantity
+    let nullCounter = 0
+
+    for (let key in object) {
+        let value = object[key];
+
+        // when data is null
+        if (value == null)
+            nullCounter += 1;
+    }
+    //#endregion
+
+    //#region when all object values is null
+    if (nullCounter == Object.keys(object).length)
+        return true;
+    //#endregion
+
+    return false;
+}
+
 async function addEntitiesToTableAsync(
     response,
     language,

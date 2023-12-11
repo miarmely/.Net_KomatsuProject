@@ -8,7 +8,7 @@ namespace Repositories.Contracts
 	{
 		public Task<ErrorDto?> CreateMachineAsync(DynamicParameters parameters);
         Task<ErrorDto?> UpdateMachineAsync(DynamicParameters parameters);
-        Task<ErrorDto?> DeleteMachineAsync(DynamicParameters parameters);
+        Task<ErrorDto?> DeleteMachinesAsync(DynamicParameters parameters);
         Task<IEnumerable<string>> GetAllLanguagesAsync();
         Task<IEnumerable<MachineView>> GetAllMachinesAsync(
             DynamicParameters parameters,
