@@ -65,8 +65,8 @@ namespace Services.Concretes
 				machineDto.Stock,
 				machineDto.Year,
 				machineDto.HandStatus,
-				machineDto.DescriptionInTR,
-				machineDto.DescriptionInEN,
+				DescriptionInTR = machineDto.Descriptions.TR,
+				DescriptionInEN = machineDto.Descriptions.EN,
 				machineDto.ImageName,
 				machineDto.PdfName
 			});
@@ -297,8 +297,8 @@ namespace Services.Concretes
 				machineDto.Rented,
 				machineDto.Sold,
 				machineDto.Year,
-				machineDto.DescriptionInTR,
-				machineDto.DescriptionInEN
+				DescriptionInTR = machineDto.Descriptions.TR,
+				DescriptionInEN = machineDto.Descriptions.EN
 			});
 
 			parameters.AddDynamicParams(machineParams);

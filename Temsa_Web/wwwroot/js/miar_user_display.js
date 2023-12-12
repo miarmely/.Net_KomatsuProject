@@ -1,6 +1,6 @@
 ﻿import {
     populateTable, paginationInfosInJson, setDisabledOfOtherUpdateButtonsAsync,
-    resetErrorRow, updateResultLabel, entityCountOnTable, updateErrorRow,
+    resetErrorRowAsync, updateResultLabel, entityCountOnTable, updateErrorRow,
     populateElementByAjaxOrLocalAsync, populateSelectAsync
 } from "./miar_tools.js"
 
@@ -491,7 +491,7 @@ $(function () {
                 //#endregion
 
                 removeInputsAndSelects(row, newColumnValues);
-                resetErrorRow(rowId);
+                resetErrorRowAsync(rowId);
                 setDisabledOfOtherUpdateButtonsAsync(rowId, pageSize, updateButtonId, false);
             },
             error: (response) => {
@@ -514,8 +514,8 @@ $(function () {
         //#endregion
 
         removeInputsAndSelects(row, userInfosInSession);
-        resetErrorRow(rowId);
-        setDisabledOfOtherUpdateButtonsAsync(rowId, pageSize, updateButtonId, false);
+        await resetErrorRowAsync(rowId);
+        await setDisabledOfOtherUpdateButtonsAsync(rowId, pageSize, updateButtonId, false);
     }
 
     function removeInputsAndSelects(row, columnNamesAndValues) {

@@ -1,5 +1,5 @@
 ﻿import {
-    populateElementByAjaxOrLocalAsync, populateSelectAsync,updateResultLabel
+    populateElementByAjaxOrLocalAsync, populateSelectAsync, updateResultLabel
 } from "./miar_tools.js";
 
 

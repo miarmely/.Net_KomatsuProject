@@ -1,8 +1,7 @@
 ﻿import {
     change_descriptionsTextareaAsync, click_descriptionDropdownItemAsync,
-    click_descriptionsButtonAsync, displayImageByDataUrlAsync, getErrorMessageForMachineAsync,
-    isFileTypeInvalidAsync, populateElementByAjaxOrLocalAsync,
-    populateSelectAsync, updateResultLabel
+    click_descriptionsButtonAsync, displayImageByDataUrlAsync, populateSelectAsync
+    isFileTypeInvalidAsync, updateResultLabel, populateElementByAjaxOrLocalAsync,
 } from "./miar_tools.js"
 
 
@@ -136,15 +135,11 @@ $(function () {
                     },
                     error: (response) => {
                         //#region write error message to result label
-                        getErrorMessageForMachineAsync(response.responseText)
-                            .then((errorMessage) => {
-                                //write error
-                                updateResultLabel(
-                                    resultLabel_id,
-                                    errorMessage,
-                                    resultLabel_errorColor,
-                                    "30px");
-                            });
+                        updateResultLabel(
+                            resultLabel_id,
+                            JSON.parse(response.responseText).errorMessage,
+                            resultLabel_errorColor,
+                            "30px");
                         //#endregion
                     }
                 });

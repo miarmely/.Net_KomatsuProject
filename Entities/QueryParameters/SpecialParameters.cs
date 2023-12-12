@@ -6,6 +6,8 @@ namespace Entities.QueryParameters
 {
 	public record LanguageParam
 	{
-		[Required][MiarLength(2, 2)] public string Language { get; init; }
+		[Required]
+		[MiarLength(2, 2, "Dil", "Language")]
+		public string Language { get; init; }
 	}
 }

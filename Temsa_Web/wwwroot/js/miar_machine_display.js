@@ -1,9 +1,10 @@
 ﻿import {
     click_descriptionsButtonAsync, click_descriptionDropdownItemAsync, updateResultLabel,
-    updateErrorRow, setDisabledOfOtherUpdateButtonsAsync, resetErrorRow,
+    updateErrorRow, setDisabledOfOtherUpdateButtonsAsync, resetErrorRowAsync,
     populateElementByAjaxOrLocalAsync, setDescriptionsLanguageAsync, getDateTimeInString,
     addPaginationButtonsAsync, controlPaginationBackAndNextButtonsAsync,
-    displayImageByDataUrlAsync, change_descriptionsTextareaAsync, isFileTypeInvalidAsync, isAllObjectValuesNullAsync
+    displayImageByDataUrlAsync, change_descriptionsTextareaAsync, isFileTypeInvalidAsync,
+    isAllObjectValuesNullAsync
 } from "./miar_tools.js";
 
 $(function () {
@@ -521,7 +522,7 @@ $(function () {
                         spn_eventManager.trigger("click_saveButton")
                     )
                     $("#" + btn_cancel_id).click(() =>
-                        spn_eventManager.trigger("click_cancelButton")
+                        spn_eventManager.trigger("click_cancelButton", [row])
                     )
                     //#endregion
                     break;
@@ -575,8 +576,7 @@ $(function () {
             "rented": null,
             "sold": null,
             "year": null,
-            "descriptionInTR": null,
-            "descriptionInEN": null,
+            "descriptions": null,
             "imageContentInBase64Str": null,
             "pdfContentInBase64Str": null,
             "imageFolderPathAfterWwwroot": null,
@@ -611,7 +611,7 @@ $(function () {
                             .attr("src")
                             .replace(`data:${selectedImageInfos.type};base64,`, "");
                     }
-                        
+
                     //#endregion
                     break;
                 case "mainCategory":
@@ -733,17 +733,18 @@ $(function () {
                     //#endregion
 
                     //#region when description in any language changed
-                    if (newDescriptionsInSession != null) {
-                        //#region add TR description to data
-                        if (newDescriptionsInSession["TR"] != undefined  // when "TR" desciption exists
-                            && newDescriptionsInSession["TR"] != oldColumnValues[columnName]["TR"])  // when changed
-                            data["descriptionInTR"] = newDescriptionsInSession["TR"];
+                    if (newDescriptionsInSession["TR"] != oldColumnValues[columnName]["TR"]
+                        || newDescriptionsInSession["EN"] != oldColumnValues[columnName]["EN"]){
+                        //#region when "TR" description changed
+                        data[columnName] = {};
+
+                        if (newDescriptionsInSession["TR"] != oldColumnValues[columnName]["TR"])
+                            data[columnName]["TR"] = newDescriptionsInSession["TR"];
                         //#endregion
 
-                        //#region add EN description to data
-                        if (newDescriptionsInSession["EN"] != undefined  // when "EN" desciption exists
-                            && newDescriptionsInSession["EN"] != oldColumnValues[columnName]["EN"])  // when changed 
-                            data["descriptionInEN"] = newDescriptionsInSession["EN"];
+                        //#region when "EN" description changed
+                        if (newDescriptionsInSession["EN"] != oldColumnValues[columnName]["EN"])
+                            data[columnName]["EN"] = newDescriptionsInSession["EN"];
                         //#endregion
                     }
                     //#endregion
@@ -807,10 +808,10 @@ $(function () {
 
         //#endregion
     })
-    spn_eventManager.on("click_cancelButton", async () => {
-        //#region get machine infos in session
-        let row = $(":focus").closest("tr");
+    spn_eventManager.on("click_cancelButton", async (event, row) => {
+        //#region get machine infos from session
         let rowId = row.attr("id");
+        await resetErrorRowAsync(rowId);
 
         let machineInfosInSession = JSON.parse(sessionStorage
             .getItem(rowId));
@@ -866,7 +867,7 @@ $(function () {
     spn_eventManager.on("click_imageButton", async (event, row) => {
         //#region reset error <td>
         let rowId = row.attr("id");
-        resetErrorRow(rowId);
+        await resetErrorRowAsync(rowId);
         //#endregion
 
         $("#" + inpt_chooseImage_id).trigger("click");
@@ -874,7 +875,7 @@ $(function () {
     spn_eventManager.on("click_pdfButton", async (event, row) => {
         //#region reset error <td>
         let rowId = row.attr("id");
-        resetErrorRow(rowId);
+        await resetErrorRowAsync(rowId);
         //#endregion
 
         $("#" + inpt_choosePdf_id).trigger("click");
@@ -887,7 +888,7 @@ $(function () {
 
         //#region when file types isn't pdf
         let inpt_chooseImage = $("#" + inpt_chooseImage_id)
-        
+
         if (await isFileTypeInvalidAsync(
             selectedFileInfos,
             "image/",
@@ -919,7 +920,7 @@ $(function () {
                 selectedFileInfos,
                 $("#" + img_imageButton_id),
                 $("#" + spn_imageButton_guide_id));
-           //#endregion
+            //#endregion
 
             //#region add new image name to "alt" of <img>
             $("#" + img_imageButton_id).attr(
@@ -937,7 +938,7 @@ $(function () {
 
         //#region when file types isn't pdf
         let inpt_choosePdf = $("#" + inpt_choosePdf_id)
-        
+
         if (await isFileTypeInvalidAsync(
             selectedFileInfos,
             "application/pdf",
@@ -970,7 +971,7 @@ $(function () {
             spn_pdfButton_pdfName.empty();
             spn_pdfButton_pdfName.append(selectedFileInfos.name);
             //#endregion
-        }        
+        }
         //#endregion
     })
     spn_eventManager.on("change_descriptionsTextarea", async () => {
@@ -994,8 +995,27 @@ $(function () {
                     let newColumnValue = data[columnName];
 
                     // when column changed
-                    if (newColumnValue != null)
-                        oldColumnValues[columnName] = newColumnValue;
+                    if (newColumnValue != null) {
+                        //#region when "descriptions" column
+                        if (columnName == "descriptions") {
+                            //#region when "TR" description changed
+                            if (newColumnValue["TR"] != undefined)
+                                oldColumnValues[columnName]["TR"] = newColumnValue["TR"]
+                            //#endregion
+
+                            //#region when "EN" description changed
+                            if (newColumnValue["EN"] != undefined)
+                                oldColumnValues[columnName]["EN"] = newColumnValue["EN"]
+                            //#endregion
+                        }
+                        //#endregion
+
+                        //#region for other columns
+                        else
+                            oldColumnValues[columnName] = newColumnValue;
+                        //#endregion
+                    }
+
                 }
                 //#endregion
 
@@ -1003,25 +1023,22 @@ $(function () {
                 sessionStorage.setItem(
                     rowId,
                     JSON.stringify({
-                        "image": data.imageName,
-                        "mainCategory": data.mainCategoryName,
-                        "subCategory": data.subCategoryName,
-                        "model": data.model,
-                        "brandName": data.brandName,
-                        "handStatus": data.handStatus,
-                        "pdf": data.pdfName,
-                        "stock": data.stock,
-                        "rented": data.rented,
-                        "sold": data.sold,
-                        "year": data.year,
-                        "descriptions": {
-                            "TR": data.descriptionInTR,
-                            "EN": data.descriptionInEN
-                        }
+                        "image": oldColumnValues.image,
+                        "mainCategory": oldColumnValues.mainCategory,
+                        "subCategory": oldColumnValues.subCategory,
+                        "model": oldColumnValues.model,
+                        "brandName": oldColumnValues.brand,
+                        "handStatus": oldColumnValues.handStatus,
+                        "pdf": oldColumnValues.pdf,
+                        "stock": oldColumnValues.stock,
+                        "rented": oldColumnValues.rented,
+                        "sold": oldColumnValues.sold,
+                        "year": oldColumnValues.year,
+                        "descriptions": oldColumnValues.descriptions
                     }));
                 //#endregion
 
-                spn_eventManager.trigger("click_cancelButton");
+                spn_eventManager.trigger("click_cancelButton", [$("#" + rowId)]);
             },
             error: (response) => {
                 //#region write error to error row
