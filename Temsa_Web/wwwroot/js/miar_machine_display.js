@@ -1,7 +1,7 @@
 ﻿import {
-    click_descriptionsButtonAsync, click_descriptionDropdownItemAsync, updateResultLabel,
-    updateErrorRow, setDisabledOfOtherUpdateButtonsAsync, resetErrorRowAsync,
-    populateElementByAjaxOrLocalAsync, setDescriptionsLanguageAsync, getDateTimeInString,
+    click_descriptionsButtonAsync, click_descriptionDropdownItemAsync,
+    updateResultLabel, updateErrorRow, setDisabledOfOtherUpdateButtonsAsync,
+    resetErrorRowAsync, populateElementByAjaxOrLocalAsync, setDescriptionsLanguageAsync, getDateTimeInString,
     addPaginationButtonsAsync, controlPaginationBackAndNextButtonsAsync,
     displayImageByDataUrlAsync, change_descriptionsTextareaAsync, isFileTypeInvalidAsync,
     isAllObjectValuesNullAsync
@@ -63,7 +63,7 @@ $(function () {
 
         await new Promise(resolve => {
             for (let rowNo = 1; rowNo <= machineCountOnTable; rowNo += 1) {
-                var checkBoxInRow = $(`#tr_row${rowNo} #td_checkBox input`);
+                var checkBoxInRow = $(`#tr_row${rowNo} #td_checkbox input`);
 
                 //#region do checked of checkbox
                 if (isBoxAllChecked
@@ -141,13 +141,10 @@ $(function () {
         }
         //#endregion 
     })
-    spn_eventManager.on("click_updateButton", async () => {
-        //#region set variables
-        let row = $("#" + btn_update_id).closest("tr");
-        let oldColumnValues = {};
-        //#endregion
-
+    spn_eventManager.on("click_updateButton", async (_, row) => {
         //#region add <input>s, <select>s and <button>s to columns
+        let oldColumnValues = {};
+
         for (let index in columnNames) {
             let columnName = columnNames[index];
             let td = row.children(`#td_${columnName}`);
@@ -454,9 +451,13 @@ $(function () {
                     $("#" + btn_descriptions_id).click(() =>
                         spn_eventManager.trigger("click_descriptionsButton")
                     );
-                    $("." + a_descriptionsDropdown_class).click(() =>
-                        spn_eventManager.trigger("click_descriptionsDropdownElement")
-                    );
+                    $("." + a_descriptionsDropdown_class).click((event) => {
+                        // for prevent coming to head of web page when clicked to <a>
+                        event.preventDefault();
+
+                        // trigger event
+                        spn_eventManager.trigger("click_descriptionsDropdownItem")
+                    });
                     $("#" + txt_descriptions_id).on("input", () =>
                         spn_eventManager.trigger("change_descriptionsTextarea")
                     );
@@ -545,14 +546,15 @@ $(function () {
     spn_eventManager.on("click_descriptionsButton", async () => {
         await click_descriptionsButtonAsync(
             $("#" + txt_descriptions_id),
-            $("#" + btn_descriptions_id));
+            $("#" + btn_descriptions_id),
+            sessionKeys_descriptionsOnDisplayPage);
     })
-    spn_eventManager.on("click_descriptionsDropdownElement", async () => {
+    spn_eventManager.on("click_descriptionsDropdownItem", async () => {
         await click_descriptionDropdownItemAsync(
             $(":focus"),
             $("#" + txt_descriptions_id),
-            $("#" + btn_descriptions_id)
-        );
+            $("#" + btn_descriptions_id),
+            sessionKeys_descriptionsOnDisplayPage);
     })
     spn_eventManager.on("click_saveButton", async () => {
         //#region set variables
@@ -734,7 +736,7 @@ $(function () {
 
                     //#region when description in any language changed
                     if (newDescriptionsInSession["TR"] != oldColumnValues[columnName]["TR"]
-                        || newDescriptionsInSession["EN"] != oldColumnValues[columnName]["EN"]){
+                        || newDescriptionsInSession["EN"] != oldColumnValues[columnName]["EN"]) {
                         //#region when "TR" description changed
                         data[columnName] = {};
 
@@ -847,7 +849,7 @@ $(function () {
                 <textarea style="${style_descriptionsTextarea}" disabled>${machineInfosInSession[columnNames[12]][language]}</textarea>
             </td>
             <td id="td_${columnNames[13]}">
-                <button id="btn_update" ui-toggle-class="">
+                <button id="${btn_update_id}" ui-toggle-class="">
 					<i class="fa fa-pencil text-info">${updateButtonNameByLanguages[language]}</i>
 				</button>
             </td>
@@ -856,8 +858,8 @@ $(function () {
         //#endregion
 
         //#region declare events again
-        $("#" + btn_update_id).click(() =>
-            spn_eventManager.trigger("click_updateButton"));
+        $(row.find("#" + btn_update_id)).click(() =>
+            spn_eventManager.trigger("click_updateButton", [row]));
         //#endregion
 
         await removeDescriptionButtonOnColumnAsync();
@@ -982,6 +984,21 @@ $(function () {
 
     //#region functions
     async function updateMachineAsync(url, data, rowId, oldColumnValues) {
+        let propertyNamesAndColumnNamesGuide = {
+            "imageName": "image",
+            "mainCategoryName": "mainCategory",
+            "subCategoryName": "subCategory",
+            "model": "model",
+            "brandName": "brand",
+            "handStatus": "handStatus",
+            "pdfName": "pdf",
+            "stock": "stock",
+            "rented": "rented",
+            "sold": "sold",
+            "year": "year",
+            "descriptions": "descriptions"
+        };
+
         $.ajax({
             method: "PUT",
             url: url,
@@ -991,51 +1008,43 @@ $(function () {
             dataType: "json",
             success: () => {
                 //#region update "oldColumnValues" with new column values
-                for (let columnName in data) {
-                    let newColumnValue = data[columnName];
+                for (let propertyName in data) {
+                    let propertyValue = data[propertyName];
 
                     // when column changed
-                    if (newColumnValue != null) {
+                    if (propertyValue != null) {
                         //#region when "descriptions" column
-                        if (columnName == "descriptions") {
+                        if (propertyValue == "descriptions") {
                             //#region when "TR" description changed
                             if (newColumnValue["TR"] != undefined)
-                                oldColumnValues[columnName]["TR"] = newColumnValue["TR"]
+                                oldColumnValues[propertyValue]["TR"] = newColumnValue["TR"]
                             //#endregion
 
                             //#region when "EN" description changed
                             if (newColumnValue["EN"] != undefined)
-                                oldColumnValues[columnName]["EN"] = newColumnValue["EN"]
+                                oldColumnValues[propertyValue]["EN"] = newColumnValue["EN"]
                             //#endregion
                         }
                         //#endregion
 
                         //#region for other columns
-                        else
-                            oldColumnValues[columnName] = newColumnValue;
+                        else {
+                            //#region when property name matched a column
+                            let columnName = propertyNamesAndColumnNamesGuide[propertyName];
+
+                            if (columnName != undefined)
+                                oldColumnValues[columnName] = propertyValue;
+                            //#endregion
+                        }
                         //#endregion
                     }
-
                 }
                 //#endregion
 
                 //#region save updated "oldColumnValues" to session
                 sessionStorage.setItem(
                     rowId,
-                    JSON.stringify({
-                        "image": oldColumnValues.image,
-                        "mainCategory": oldColumnValues.mainCategory,
-                        "subCategory": oldColumnValues.subCategory,
-                        "model": oldColumnValues.model,
-                        "brandName": oldColumnValues.brand,
-                        "handStatus": oldColumnValues.handStatus,
-                        "pdf": oldColumnValues.pdf,
-                        "stock": oldColumnValues.stock,
-                        "rented": oldColumnValues.rented,
-                        "sold": oldColumnValues.sold,
-                        "year": oldColumnValues.year,
-                        "descriptions": oldColumnValues.descriptions
-                    }));
+                    JSON.stringify(oldColumnValues));
                 //#endregion
 
                 spn_eventManager.trigger("click_cancelButton", [$("#" + rowId)]);
@@ -1068,7 +1077,7 @@ $(function () {
         //#region populate "machineInfos" array
         for (let rowNo = 1; rowNo <= machineCountOnTable; rowNo += 1) {
             //#region set variables
-            let checkBox = $(`#tr_row${rowNo} #td_checkBox input`);
+            let checkBox = $(`#tr_row${rowNo} #td_checkbox input`);
             let row = $(`#tr_row${rowNo}`);
             //#endregion
 
@@ -1207,7 +1216,7 @@ $(function () {
                         <textarea style="${style_descriptionsTextarea}" disabled>${machineView.descriptions[language]}</textarea>
                     </td>
                     <td id="td_${columnNames[13]}">
-                        <button id="btn_update" ui-toggle-class="">
+                        <button id="${btn_update_id}" ui-toggle-class="">
 					        <i class="fa fa-pencil text-info">${updateButtonNameByLanguages[language]}</i>
 				        </button>
                     </td>
@@ -1224,8 +1233,11 @@ $(function () {
             //#endregion
 
             //#region declare events
-            $("#" + btn_update_id).click(() =>
-                spn_eventManager.trigger("click_updateButton"));
+            $(`#${rowId} #${btn_update_id}`).click(() =>
+                spn_eventManager.trigger(
+                    "click_updateButton",
+                    [$("#" + rowId)])
+            );
             //#endregion
 
             //#region save descriptions to session

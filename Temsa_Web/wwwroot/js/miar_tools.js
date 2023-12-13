@@ -141,7 +141,8 @@ export async function changeDescriptionsButtonColorAsync(descriptionsButton, col
 export async function click_descriptionDropdownItemAsync(
     clickedElement,
     descriptionsTextarea,
-    descriptionsButton) {
+    descriptionsButton,
+    descriptionsSessionKey) {
     //#region change descriptions <button> color as "unsaved_color"
     descriptionsTextarea.val("");
 
@@ -161,7 +162,7 @@ export async function click_descriptionDropdownItemAsync(
     //#region populate descriptions in session to <textarea>
     // get descriptions from session
     let descriptionsInSession = JSON.parse(sessionStorage
-        .getItem(sessionKeys_descriptionsOnDisplayPage));
+        .getItem(descriptionsSessionKey));
 
     // when any description is exists in session
     if (descriptionsInSession != null  // when any descriptions exists in session
@@ -173,17 +174,24 @@ export async function click_descriptionDropdownItemAsync(
     //#endregion
 }
 
-export async function click_descriptionsButtonAsync(descriptionsTextArea, descriptionsButton) {
+export async function click_descriptionsButtonAsync(
+    descriptionsTextArea,
+    descriptionsButton,
+    descriptionsSessionKey) {
     //#region get descriptions in session 
     let descriptionsInSession = JSON.parse(sessionStorage
-        .getItem(sessionKeys_descriptionsOnDisplayPage));
+        .getItem(descriptionsSessionKey));
+
+    // when any descriptions not exist on session
+    if (descriptionsInSession == null)
+        descriptionsInSession = {}
     //#endregion
 
     //#region save updated descriptions to session
     descriptionsInSession[descriptions_language] = descriptionsTextArea.val();
 
     sessionStorage.setItem(
-        sessionKeys_descriptionsOnDisplayPage,
+        descriptionsSessionKey,
         JSON.stringify(descriptionsInSession));
     //#endregion
 

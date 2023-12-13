@@ -26,7 +26,7 @@ namespace Temsa_Api.Extensions
 					if (contextFeature != null)
 					{
 						#region add default "contentType" and "StatusCode" to response
-						var errorMessage = contextFeature.Error.Message;
+						var exceptionMessage = contextFeature.Error.Message;
 
 						context.Response.ContentType = "application/json";
 						context.Response.StatusCode = 500;
@@ -36,7 +36,7 @@ namespace Temsa_Api.Extensions
 						{
 							#region get errorDto (catch)
 							var errorDto = JsonSerializer
-								.Deserialize<ErrorDto>(errorMessage);
+								.Deserialize<ErrorDto>(exceptionMessage);
 
 							// if error can be deserialize then this error is
 							// expected error. But when error can't be desirealize 
@@ -45,7 +45,7 @@ namespace Temsa_Api.Extensions
 							// without desiralize at "catch"
 							#endregion
 
-							#region create new errorDto when error type is "format error"
+							#region when error type is "format error"
 							if (errorDto.ErrorCode.StartsWith("FE-"))
 							{
 								#region get language from query
@@ -89,7 +89,7 @@ namespace Temsa_Api.Extensions
 								StatusCode = 500,
 								ErrorCode = "ISE",
 								ErrorDescription = "Internal Server Error",
-								ErrorMessage = errorMessage
+								ErrorMessage = exceptionMessage
 							});
 							#endregion
 						}

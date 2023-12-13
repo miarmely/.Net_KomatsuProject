@@ -10,9 +10,9 @@ $(function () {
 
     //#region events
     $("form").submit((event) => {
+        //#region reset resultLabel
         event.preventDefault();
 
-        //#region reset resultLabel
         var resultLabel = $(resultLabelId);
         resultLabel.empty();
         //#endregion

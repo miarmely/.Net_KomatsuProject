@@ -1,26 +1,26 @@
 ﻿import {
     change_descriptionsTextareaAsync, click_descriptionDropdownItemAsync,
-    click_descriptionsButtonAsync, displayImageByDataUrlAsync, populateSelectAsync
-    isFileTypeInvalidAsync, updateResultLabel, populateElementByAjaxOrLocalAsync,
+    click_descriptionsButtonAsync, displayImageByDataUrlAsync, populateSelectAsync,
+    isFileTypeInvalidAsync, updateResultLabel, populateElementByAjaxOrLocalAsync, changeDescriptionsButtonColorAsync,
 } from "./miar_tools.js"
 
 
 $(function () {
     //#region variables
     const resultLabel_id = "#p_resultLabel";
-    const description_buttonId = "#btn_description";
-    const description_baseKeyForSession = "Machine-Create-Description";
+    const btn_descriptions_id = "btn_descriptions";
+    const a_descriptions_class = "a_descriptions";
+    const txt_descriptions_id = "txt_descriptions";
     const slct_mainCategory_id = "slct_mainCategory";
     const slct_subCategory_id = "slct_subCategory";
     const ul_description_id = "ul_description";
     const div_form = $("#div_form");
-    const txt_description_id = "txt_description";
     const img_machine = $("#img_machine");
-    const inpt_image_id = "#inpt_image";
-    const inpt_pdf_id = "#inpt_pdf";
+    const inpt_image_id = "inpt_image";
+    const inpt_pdf_id = "inpt_pdf";
     const spn_fileStatusLabel = $("#spn_fileStatusLabel");
     const imageFolderPathAfterWwwroot = "images\\machines";
-    const pdfFolderPathAfterWwwroot = "images\\pdfs";
+    const pdfFolderPathAfterWwwroot = "pdfs";
     let selectedImageInfos;
     let selectedPdfInfos;
     //#endregion
@@ -30,6 +30,51 @@ $(function () {
         //#region before start
         event.preventDefault();
         $(resultLabel_id).empty();
+        //#endregion
+
+        //#region control the descriptions whether entered (error)
+
+        //#region when any description not entered (error)
+        // get descriptions from session
+        let descriptionsInSession = JSON.parse(sessionStorage
+            .getItem(sessionKeys_descriptionsOnCreatePage));
+
+        // when any description not entered
+        if (descriptionsInSession == null) {
+            updateResultLabel(
+                resultLabel_id,
+                `${errorMessagesByLanguages[language]["descriptionNotEntered"]}`,
+                resultLabel_errorColor,
+                "30px");
+
+            return;
+        }
+        //#endregion
+
+        //#region descriptions in some language not entered (error)
+        // get languages in session
+        let languagesInSession = JSON.parse(
+            localStorage.getItem(localKeys_allLanguages))[language];
+
+        // control description by language
+        for (let index in languagesInSession) {
+            //#region control the descriptions whether some languages entered (error)
+            let languageInSession = languagesInSession[index];
+
+            if (descriptionsInSession[languageInSession] == undefined  // when relevant language not entered
+                || descriptionsInSession[languageInSession] == "") {  // when blank value entered
+                updateResultLabel(
+                    resultLabel_id,
+                    `"${languageInSession}" ${errorMessagesByLanguages[language]["descriptionNotEntered"]}`,
+                    resultLabel_errorColor,
+                    "30px");
+
+                return;
+            }
+            //#endregion
+        }
+        //#endregion
+
         //#endregion
 
         //#region read pdf and save machine (ajax)
@@ -51,6 +96,11 @@ $(function () {
                     .replace(`data:${selectedImageInfos.type};base64,`, "");
                 //#endregion
 
+                //#region get descriptions from session
+                let descriptionsInSession = JSON.parse(sessionStorage
+                    .getItem(sessionKeys_descriptionsOnCreatePage));
+                //#endregion
+
                 $.ajax({
                     method: "POST",
                     url: (baseApiUrl + "/machine/create" +
@@ -59,57 +109,35 @@ $(function () {
                         `&pdfFolderPathAfterWwwroot=${pdfFolderPathAfterWwwroot}`),
                     headers: { "Authorization": jwtToken },
                     data: JSON.stringify({
+                        "ImageName": selectedImageInfos.name,
                         "MainCategoryName": $("#slct_mainCategory").val(),
                         "SubCategoryName": $("#slct_subCategory").val(),
                         "Model": $("#inpt_model").val(),
                         "BrandName": $("#inpt_brand").val(),
+                        "HandStatus": $("input[name = handStatus]:checked").val(),
+                        "PdfName": selectedPdfInfos.name,
                         "Stock": $("#inpt_stock").val(),
                         "Year": $("#inpt_year").val(),
-                        "HandStatus": $("input[name = handStatus]:checked").val(),
-                        "DescriptionInTR": sessionStorage.getItem(description_baseKeyForSession + "-TR"),
-                        "DescriptionInEN": sessionStorage.getItem(description_baseKeyForSession + "-EN"),
-                        "ImageName": selectedImageInfos.name,
+                        "Descriptions": {
+                            "TR": descriptionsInSession.TR,
+                            "EN": descriptionsInSession.EN
+                        },
                         "ImageContentInBase64Str": imageContentInBase64Str,
-                        "PdfName": selectedPdfInfos.name,
                         "PdfContentInBase64Str": pdfContentInBase64Str
                     }),
                     contentType: "application/json",
                     dataType: "json",
-                    beforeSend: () => {
-                        $(resultLabel_id).empty();  // reset resultLabel
-
-                        //#region when any description of langauges not entered (throw)
-                        let allLanguages = JSON.parse(
-                            localStorage.getItem(localKeys_allLanguages))
-                        [language];
-
-                        for (let index in allLanguages) {
-                            //#region get description by language in session
-                            let languageInDb = allLanguages[index];
-
-                            let descriptionInSession = sessionStorage
-                                .getItem(description_baseKeyForSession + '-' + languageInDb);
-                            //#endregion
-
-                            //#region write error (throw)
-                            if (descriptionInSession == null
-                                || descriptionInSession == "") {
-                                updateResultLabel(
-                                    resultLabel_id,
-                                    `"${languageInDb}" ${errorMessagesByLanguages[language]["descriptionNotEntered"]}`,
-                                    resultLabel_errorColor,
-                                    "30px");
-
-                                return false;
-                            }
-                            //#endregion
-                        }
-                        //#endregion
-                    },
                     success: () => {
                         //#region resets
                         $("form")[0].reset();
+
+                        // remove machine image
                         img_machine.removeAttr("src");
+
+                        // change description <button> color
+                        changeDescriptionsButtonColorAsync(
+                            $("#", btn_descriptions_id),
+                            descriptions_unsavedColor);
                         //#endregion
 
                         //#region write successfull message to resultLabel
@@ -121,16 +149,8 @@ $(function () {
                         //#endregion
 
                         //#region remove descriptions in session
-                        let allLanguages = JSON.parse(
-                            localStorage.getItem(localKeys_allLanguages))
-                        [language];
-
-                        for (let index in allLanguages) {
-                            let languageInLocal = allLanguages[index];
-
-                            sessionStorage.removeItem(
-                                description_baseKeyForSession + "-" + languageInLocal);
-                        }
+                        sessionStorage.removeItem(
+                            sessionKeys_descriptionsOnCreatePage);
                         //#endregion
                     },
                     error: (response) => {
@@ -162,39 +182,99 @@ $(function () {
         }
         //#endregion
     });
-    div_form.click(async () => {
-        //#region when description button or dropdown clicked
-        let clickedElement = $(":focus");
-
-        //#region when clicked languages in description dropdown
-        if (clickedElement.attr("class") == "a_description")
-            await click_descriptionDropdownItemAsync(
-                clickedElement,
-                $("#" + txt_description_id),
-                $(description_buttonId));
-        //#endregion
-
-        //#region when description button clicked
-        else if (clickedElement.attr("id")
-            == description_buttonId.substring(1))  // #btn_description => btn_description
-            await click_descriptionsButtonAsync(
-                $("#" + txt_description_id),
-                $(description_buttonId));
-        //#endregion
-
-        //#endregion
-    });
-    div_form.on("input", async () => {
-        //#region when changed description <textarea>
-        let inputtedElement = $(":focus");
-
-        if (inputtedElement.attr("id") == txt_description_id)
-            await change_descriptionsTextareaAsync(
-                $(description_buttonId));
-        //#endregion
-    })
     $(window).resize(async () => {
         await setMachineImageSizeAsync();
+    })
+    spn_eventManager.on("click_descriptionButton", async () => {
+        await click_descriptionsButtonAsync(
+            $("#" + txt_descriptions_id),
+            $("#" + btn_descriptions_id),
+            sessionKeys_descriptionsOnCreatePage);
+    })
+    spn_eventManager.on("click_descriptionDropdownItem", async (_, clickedItem) => {
+        await click_descriptionDropdownItemAsync(
+            clickedItem,
+            $("#" + txt_descriptions_id),
+            $("#" + btn_descriptions_id),
+            sessionKeys_descriptionsOnCreatePage);
+    })
+    spn_eventManager.on("click_input", async (_, clickedInputId) => {
+        //#region reset help label of clicked <input>
+        $(`#spn_help_${clickedInputId}`).empty();
+        //#endregion
+    })
+    spn_eventManager.on("change_descriptionsTextarea", async () => {
+        await change_descriptionsTextareaAsync(
+            $("#" + btn_descriptions_id));
+    })
+    spn_eventManager.on("change_imageInput", async (_, selectedFileInfos) => {
+        //#region control the selected file (error)
+
+        //#region when any file not selected
+        selectedImageInfos = selectedFileInfos;
+
+        // remove current image
+        if (selectedImageInfos == undefined) {
+            img_machine.removeAttr("src");
+            return;
+        }
+        //#endregion
+
+        //#region when file type is not image (error)
+        if (await isFileTypeInvalidAsync(
+            selectedImageInfos,
+            "image",
+            $("#" + inpt_image_id))) {
+            // remove current image
+            img_machine.removeAttr("src");
+
+            // write error
+            updateResultLabel(
+                `#spn_help_${inpt_image_id}`,
+                partnerErrorMessagesByLanguages[language]["invalidFileType"],
+                resultLabel_errorColor,
+                "10px");
+
+            return;
+        }
+        //#endregion
+
+        //#endregion
+
+        await setMachineImageSizeAsync();
+
+        //#region display machine image
+        await displayImageByDataUrlAsync(
+            selectedImageInfos,
+            img_machine,
+            spn_fileStatusLabel)
+        //#endregion
+    })
+    spn_eventManager.on("change_pdfInput", async (_, selectedFileInfos) => {
+        //#region when any file not selected (return)
+        selectedPdfInfos = selectedFileInfos;
+
+        if (selectedPdfInfos == undefined)
+            return;
+        //#endregion
+
+        //#region when file type is not "pdf" (error)
+        if (await isFileTypeInvalidAsync(
+            selectedPdfInfos,
+            "application/pdf",
+            $("#" + inpt_pdf_id))) {
+            // write error
+            updateResultLabel(
+                `#spn_help_${inpt_pdf_id}`,
+                partnerErrorMessagesByLanguages[language]["invalidFileType"],
+                resultLabel_errorColor,
+                "10px");
+
+            // reset pdf <input>
+            $("#" + inpt_pdf_id).val("");
+            return;
+        }
+        //#endregion
     })
     //#endregion
 
@@ -223,11 +303,16 @@ $(function () {
                 </label>
                 <div class="col-sm-6">
                 <div>
-                    <input id="${inpt_image_id.substring(1)}" type="file" class="form-control" accept="image/*" required>
-                    <span id="spn_help_${inpt_image_id.substring(1)}" class="help-block"></span>
+                    <input id="${inpt_image_id}" type="file" class="form-control" accept="image/*" required>
+                    <span id="spn_help_${inpt_image_id}" class="help-block"></span>
                 </div>
             </div>`
         );
+
+        // declare events
+        $("#" + inpt_image_id).change(async (event) =>
+            spn_eventManager.trigger("change_imageInput", [event.target.files[0]])
+        )
         //#endregion
 
         //#region add mainCategory and subcategory
@@ -392,24 +477,29 @@ $(function () {
                     ${formLabelNamesByLanguages[language].pdf}
                 </label>
                 <div class="col-sm-6">
-                    <input id="${inpt_pdf_id.substring(1)}" type="file" class="form-control" accept="application/pdf" required>
-                    <span id="spn_help_${inpt_pdf_id.substring(1)}" class="help-block"></span>
+                    <input id="${inpt_pdf_id}" type="file" class="form-control" accept="application/pdf" required>
+                    <span id="spn_help_${inpt_pdf_id}" class="help-block"></span>
                 </div>
             </div>`
         );
+
+        // declare events
+        $("#" + inpt_pdf_id).change(async (event) =>
+            spn_eventManager.trigger("change_pdfInput", [event.target.files[0]])
+        )
         //#endregion
 
-        //#region add description
+        //#region add descriptions
 
-        //#region add description <div>
+        //#region add descriptions <div>
         div_form.append(
             `<div class="form-horizontal bucket-form">
                 <div class="form-group">
                     <label class="col-sm-3 control-label">
                         <div class="input-group m-bot15">
                             <div class="input-group-btn">
-                                <button id="btn_description" style="background-color:darkblue; color:red" tabindex="-1" class="btn btn-info" type="button">
-                                    ${description_baseButtonNameByLanguages[language]} (${language})
+                                <button id="${btn_descriptions_id}" style="background-color:darkblue; color:red" tabindex="-1" class="btn btn-info" type="button">
+                                    <b>${description_baseButtonNameByLanguages[language]} (${language})</b>
                                 </button>
                                 <button tabindex="-1" style="background-color: darkblue;" data-toggle="dropdown" class="btn btn-info dropdown-toggle" type="button">
                                     <span class="caret"></span>
@@ -420,14 +510,14 @@ $(function () {
                         </div>
                     </label>
                     <div class="col-sm-6">
-                        <textarea id="${txt_description_id}" style="resize:none" type="text" class="form-control" rows="10"></textarea>
+                        <textarea id="${txt_descriptions_id}"  style="resize:none"  type="text"  class="form-control"  rows="10"  required></textarea>
                     </div>
                 </div>
             </div`
         );
         //#endregion
 
-        //#region populate description <ul> with languages
+        //#region populate descriptions <ul> and declare events
         populateElementByAjaxOrLocalAsync(
             localKeys_allLanguages,
             "/machine/display/language",
@@ -438,14 +528,41 @@ $(function () {
 
                     $("#" + ul_description_id).append(
                         `<li>
-                            <a class="a_description" href="#">${languageInData}</a>
+                            <a class="${a_descriptions_class}" href="#">${languageInData}</a>
                         </li>`
                     );
                 }
+                //#endregion
 
+                //#region declare events
+                $("#" + btn_descriptions_id).click(() =>
+                    spn_eventManager.trigger("click_descriptionButton")
+                );
+                $("." + a_descriptions_class).click((event) => {
+                    // for prevent coming to head of web page when clicked to <a>
+                    event.preventDefault();
+
+                    // trigger click event
+                    spn_eventManager.trigger(
+                        "click_descriptionDropdownItem",
+                        [$(":focus")])
+                });
+                $("#" + txt_descriptions_id).on("input", () =>
+                    spn_eventManager.trigger("change_descriptionsTextarea")
+                );
                 //#endregion
             }
         )
+        //#endregion
+
+        //#region add default value to descriptions <text>
+        let descriptionsInSession = JSON.parse(sessionStorage
+            .getItem(sessionKeys_descriptionsOnCreatePage));
+
+        // when description in page language exists on session
+        if (descriptionsInSession != null)
+            $("#" + txt_descriptions_id).val(
+                descriptionsInSession[language]);
         //#endregion
 
         //#endregion
@@ -464,84 +581,14 @@ $(function () {
             </div>`
         );
         //#endregion
-    }
 
-    async function addDynamicEventsAsync() {
-        $("input").click((event) => {
-            //#region reset help label of clicked <input>
-            let inpt_id = event.target.id;
-
-            $(`#spn_help_${inpt_id}`).empty();
-            //#endregion
-        })
-        $(inpt_pdf_id).change(async (event) => {
-            //#region when any file not selected (return)
-            selectedPdfInfos = event.target.files[0];
-
-            if (selectedPdfInfos == undefined)
-                return;
-            //#endregion
-
-            //#region when file type is not "pdf" (error)
-            if (await isFileTypeInvalidAsync(selectedPdfInfos, "application/pdf", $(inpt_pdf_id))) {
-                // write error
-                updateResultLabel(
-                    `#spn_help_${inpt_pdf_id.substring(1)}`,
-                    partnerErrorMessagesByLanguages[language]["invalidFileType"],
-                    resultLabel_errorColor,
-                    "10px");
-
-                // reset pdf <input>
-                $(inpt_pdf_id).val("");
-                return;
-            }
-            //#endregion
-        });
-        $(inpt_image_id).change(async (event) => {
-            //#region control the selected file (error)
-
-            //#region when any file not selected
-            selectedImageInfos = event.target.files[0];
-
-            if (selectedImageInfos == undefined) {
-                //#region remove current image
-                img_machine.removeAttr("src");
-                return;
-                //#endregion
-            }
-            //#endregion
-
-            //#region when file type is not image (error)
-            if (await isFileTypeInvalidAsync(selectedImageInfos, "image", $(inpt_image))) {
-                //#region write error message
-                updateResultLabel(
-                    `#spn_help_${inpt_image_id.substring(1)}`,
-                    partnerErrorMessagesByLanguages[language]["invalidFileType"],
-                    resultLabel_errorColor,
-                    "10px");
-                //#endregion
-
-                return;
-            }
-            //#endregion
-
-            //#endregion
-
-            await setMachineImageSizeAsync();
-
-            //#region display machine image
-            await displayImageByDataUrlAsync(
-                selectedImageInfos,
-                img_machine,
-                spn_fileStatusLabel)
+        //#region declare events
+        $("input").click((event) =>
+            spn_eventManager.trigger("click_input", [event.target.id])
+        )
         //#endregion
-
-        });
     }
     //#endregion
 
-    populateFormAsync()
-        .then(async () => {
-            await addDynamicEventsAsync();
-        });
+    populateFormAsync();
 })
