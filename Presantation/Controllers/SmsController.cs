@@ -11,39 +11,40 @@ namespace Presantation.Controllers
         [HttpPost("send/1_1")]
         public async Task<IActionResult> SendSms_1_1()
         {
-            #region set http client
-            var httpClient = new HttpClient();
-            
-            httpClient.BaseAddress = new Uri("https://localhost:7091");
-            httpClient.DefaultRequestHeaders
-                .Accept
-                .Add(new MediaTypeWithQualityHeaderValue("application/soap+xml"));
+			#region set http client
+			var httpClient = new HttpClient();
+
+            #region populate headers
+            httpClient.DefaultRequestHeaders.Add("Accept", "*/*");
+			httpClient.DefaultRequestHeaders.Host = "www.postaguvercini.com";
+            httpClient.DefaultRequestHeaders.Add(
+                "SOAPAction",
+                "http://83.66.137.24/PgApiWs/SmsInsert_1_N");
+            #endregion
+
             #endregion
 
             #region set string content
-            var contentInXml = @$"
-                <?xml version=""1.0"" encoding=""utf-8""?>
-                <soap12:Envelope xmlns:xsi=""http://www.w3.org/2001/XMLSchema-instance"" 
-                        xmlns:xsd=""http://www.w3.org/2001/XMLSchema"" 
-                        xmlns:soap12=""http://www.w3.org/2003/05/soap-envelope"">
-                  <soap12:Body>
+            var contentInXml = $@"<?xml version=""1.0"" encoding=""utf-8""?>
+                <soap:Envelope xmlns:xsi=""http://www.w3.org/2001/XMLSchema-instance"" xmlns:xsd=""http://www.w3.org/2001/XMLSchema"" xmlns:soap=""http://schemas.xmlsoap.org/soap/envelope/"">
+                  <soap:Body>
                     <SmsInsert_1_N xmlns=""http://83.66.137.24/PgApiWs"">
                       <Username>Marubeni135</Username>
                       <Password>Marubeni246!</Password>
-                      <SendDate>null</SendDate>
-                      <ExpireDate>null</ExpireDate>
+                      <SendDate>{null}</SendDate>
+                      <ExpireDate>{null}</ExpireDate>
                       <Recepients>
-                        <string>+905528093408</string>
+                        <string>05528093408</string>
                       </Recepients>
                       <Message>Deneme</Message>
                     </SmsInsert_1_N>
-                  </soap12:Body>
-                </soap12:Envelope>";
+                  </soap:Body>
+                </soap:Envelope>";
 
             var stringContent = new StringContent(
                 contentInXml,
                 Encoding.UTF8,
-                "application/soap+xml");
+				"text/xml");
             #endregion
 
             #region send sms
