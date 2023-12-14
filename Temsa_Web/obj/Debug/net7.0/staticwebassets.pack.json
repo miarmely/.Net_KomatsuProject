@@ -89,6 +89,10 @@
       "PackagePath": "staticwebassets\\images\\close.png"
     },
     {
+      "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\images\\machines\\PW180-11_Walkaround_02.png",
+      "PackagePath": "staticwebassets\\images\\machines\\PW180-11_Walkaround_02.png"
+    },
+    {
       "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\images\\machines\\d85-exi-1250x835-02.webp",
       "PackagePath": "staticwebassets\\images\\machines\\d85-exi-1250x835-02.webp"
     },
@@ -133,8 +137,16 @@
       "PackagePath": "staticwebassets\\images\\search-icon.png"
     },
     {
+      "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\images\\sliders\\GD675-7_Walkaround_01.png",
+      "PackagePath": "staticwebassets\\images\\sliders\\GD675-7_Walkaround_01.png"
+    },
+    {
       "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\images\\sliders\\HD405-8EO.jpg",
       "PackagePath": "staticwebassets\\images\\sliders\\HD405-8EO.jpg"
+    },
+    {
+      "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\images\\sliders\\PC290LC-11_Walkaround_01.png",
+      "PackagePath": "staticwebassets\\images\\sliders\\PC290LC-11_Walkaround_01.png"
     },
     {
       "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\images\\user.png",
@@ -485,8 +497,8 @@
       "PackagePath": "staticwebassets\\lib\\jquery\\dist\\jquery.min.map"
     },
     {
-      "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\pdfs\\10_hafta_Veri_Iletisimi-BANU.pdf",
-      "PackagePath": "staticwebassets\\pdfs\\10_hafta_Veri_Iletisimi-BANU.pdf"
+      "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\pdfs\\MachineDetails.pdf",
+      "PackagePath": "staticwebassets\\pdfs\\MachineDetails.pdf"
     },
     {
       "Id": "obj\\Debug\\net7.0\\staticwebassets\\msbuild.Temsa_Web.Microsoft.AspNetCore.StaticWebAssets.props",

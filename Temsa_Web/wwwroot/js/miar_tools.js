@@ -555,8 +555,7 @@ export async function addPaginationButtonsAsync(
     paginationButtonQuantity,
     ul_pagination) {
     //#region set buttonQauntity for pagination
-    let buttonQuantity =
-        paginationInfosInJson.TotalPage < paginationButtonQuantity ?
+    let buttonQuantity = paginationInfosInJson.TotalPage < paginationButtonQuantity ?
             paginationInfosInJson.TotalPage
             : paginationButtonQuantity
     //#endregion

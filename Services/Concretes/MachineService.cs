@@ -102,7 +102,7 @@ namespace Services.Concretes
 		{
 			#region set parameters
 			var parameters = new DynamicParameters(pagingParameters);
-
+			
 			parameters.Add("Language", language, DbType.String);
 			parameters.Add("TotalCount", 0, DbType.Int32, ParameterDirection.Output);
 			parameters.Add("StatusCode", "", DbType.Int16, ParameterDirection.Output);

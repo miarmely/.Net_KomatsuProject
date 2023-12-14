@@ -1,6 +1,6 @@
 {
   "Version": 1,
-  "Hash": "fukRaRqrmeV5fCJspa8gmKPoeli6XdbK0LBuZI55dsk=",
+  "Hash": "ufmZkno1/4np3vjR/Q1ElDD47CKzE8gxkxTHsQdNOJo=",
   "Source": "Temsa_Web",
   "BasePath": "_content/Temsa_Web",
   "Mode": "Default",
@@ -408,6 +408,23 @@
       "OriginalItemSpec": "wwwroot\\images\\machines\\d85-exi-1250x835-02.webp"
     },
     {
+      "Identity": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\images\\machines\\PW180-11_Walkaround_02.png",
+      "SourceId": "Temsa_Web",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\",
+      "BasePath": "_content/Temsa_Web",
+      "RelativePath": "images/machines/PW180-11_Walkaround_02.png",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\images\\machines\\PW180-11_Walkaround_02.png"
+    },
+    {
       "Identity": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\images\\mail.png",
       "SourceId": "Temsa_Web",
       "SourceType": "Discovered",
@@ -578,6 +595,23 @@
       "OriginalItemSpec": "wwwroot\\images\\search-icon.png"
     },
     {
+      "Identity": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\images\\sliders\\GD675-7_Walkaround_01.png",
+      "SourceId": "Temsa_Web",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\",
+      "BasePath": "_content/Temsa_Web",
+      "RelativePath": "images/sliders/GD675-7_Walkaround_01.png",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\images\\sliders\\GD675-7_Walkaround_01.png"
+    },
+    {
       "Identity": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\images\\sliders\\HD405-8EO.jpg",
       "SourceId": "Temsa_Web",
       "SourceType": "Discovered",
@@ -593,6 +627,23 @@
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "wwwroot\\images\\sliders\\HD405-8EO.jpg"
+    },
+    {
+      "Identity": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\images\\sliders\\PC290LC-11_Walkaround_01.png",
+      "SourceId": "Temsa_Web",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\",
+      "BasePath": "_content/Temsa_Web",
+      "RelativePath": "images/sliders/PC290LC-11_Walkaround_01.png",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\images\\sliders\\PC290LC-11_Walkaround_01.png"
     },
     {
       "Identity": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\images\\TR.png",
@@ -2091,12 +2142,12 @@
       "OriginalItemSpec": "wwwroot\\lib\\jquery-validation-unobtrusive\\LICENSE.txt"
     },
     {
-      "Identity": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\pdfs\\10_hafta_Veri_Iletisimi-BANU.pdf",
+      "Identity": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\pdfs\\MachineDetails.pdf",
       "SourceId": "Temsa_Web",
       "SourceType": "Discovered",
       "ContentRoot": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\",
       "BasePath": "_content/Temsa_Web",
-      "RelativePath": "pdfs/10_hafta_Veri_Iletisimi-BANU.pdf",
+      "RelativePath": "pdfs/MachineDetails.pdf",
       "AssetKind": "All",
       "AssetMode": "All",
       "AssetRole": "Primary",
@@ -2105,7 +2156,7 @@
       "AssetTraitValue": "",
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
-      "OriginalItemSpec": "wwwroot\\pdfs\\10_hafta_Veri_Iletisimi-BANU.pdf"
+      "OriginalItemSpec": "wwwroot\\pdfs\\MachineDetails.pdf"
     }
   ]
 }

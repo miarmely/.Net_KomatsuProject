@@ -162,7 +162,9 @@ $(function () {
                     td.append(
                         `<button id="${btn_image_id}" type="button">
                             <img id="${img_imageButton_id}"  src="/${path_machineImages}/${oldColumnValues[columnName]}"  alt="${oldColumnValues[columnName]}"  style="max-width: ${machineImage_maxWidth}px; max-height: ${machineImage_maxHeight - 70}px">
-                            <span id="${spn_imageButton_guide_id}"  style="color:black;  font-size:${style_fontSize_chooseFileButtons}">${machineImageButtonNameByLanguages[language]}</span>                           
+                            <div>
+                                <span id="${spn_imageButton_guide_id}"  style="color:black;  font-size:${style_fontSize_chooseFileButtons}">${machineImageButtonNameByLanguages[language]}</span>
+                            </div>
                          </button>
                          <div hidden>
                             <input id="${inpt_chooseImage_id}"  type="file"  accept="image/*"/>
@@ -207,9 +209,19 @@ $(function () {
                             for (let index in mainCategoryNames) {
                                 let mainCategoryName = mainCategoryNames[index];
 
-                                slct_mainCategory.append(
-                                    `<option>${mainCategoryName}</option>`
-                                )
+                                //#region !!!!!!!!!!! disable some maincategory names (TEMPOARARY) !!!!!!!!!!!!!!!!!!
+                                if (mainCategoryName != "Work Machines"
+                                    && mainCategoryName != "İş Makineleri") {
+                                        slct_mainCategory.append(
+                                            `<option style="color: darkgrey"  disabled >${mainCategoryName}</option>`
+                                        );
+                                    }
+                                //#endregion !!!!!!!!!!!!!!!!!!!!!!!!!!
+
+                                else
+                                    slct_mainCategory.append(
+                                        `<option>${mainCategoryName}</option>`
+                                    );
                             }
                             //#endregion
 
