@@ -99,8 +99,7 @@ namespace Temsa_Api.Extensions
 					configure
 						.WithOrigins(
 							"https://localhost:7091", 
-							"https://localhost:7136",
-							"http://127.0.0.1:5500")
+							"https://localhost:7136")
 						.AllowAnyHeader()
 						.AllowAnyMethod()
 						.WithExposedHeaders(

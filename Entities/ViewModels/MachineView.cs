@@ -6,8 +6,8 @@
 		public string ImageName { get; init; }
 		public string MainCategoryName { get; init; }
         public string SubCategoryName { get; init; }
-        public string BrandName { get; init; }
-        public string Model { get; init; }
+		public string Model { get; init; }
+		public string BrandName { get; init; }
 		public string HandStatus { get; init; }
 		public Int16 Stock { get; init; }
         public Int16 Rented { get; init; }

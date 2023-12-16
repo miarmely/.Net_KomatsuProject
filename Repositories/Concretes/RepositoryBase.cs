@@ -1,5 +1,6 @@
 ﻿using Dapper;
 using Entities.ConfigModels.Contracts;
+using Microsoft.Identity.Client;
 using Repositories.Contracts;
 using System.Data;
 
@@ -71,6 +72,17 @@ namespace Repositories.Concretes
                     SplitOn);
             }
             #endregion
+        }
+
+
+        public async Task MuktipleQueryAsync()
+        {
+            using (var connection = _context.CreateSqlConnection())
+            {
+                using(var multi = connection.QueryMultipleAsync())
+
+
+            }
         }
 
 

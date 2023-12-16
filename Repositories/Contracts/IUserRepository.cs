@@ -2,6 +2,7 @@
 using Entities.DtoModels;
 using Entities.ViewModels;
 
+
 namespace Repositories.Contracts
 {
     public interface IUserRepository : IRepositoryBase
@@ -12,23 +13,10 @@ namespace Repositories.Contracts
         Task<IEnumerable<string>> GetAllRolesByLanguageAsync(DynamicParameters parameters);
         Task<ErrorDto?> UpdateUserByTelNoAsync(DynamicParameters parameters);
         Task<ErrorDto> DeleteUsersByTelNoListAsync(DynamicParameters parameters);
-        
 
         Task<IEnumerable<UserView>?> GetAllUsersWithPagingAsync(
             DynamicParameters parameters);
 
-
-  //      Task<List<UserView>> GetUsersByConditionAsync(
-  //          Expression<Func<UserView, bool>> condition);
-
-  //      Task<List<UserView>> GetUsersByConditionAsync(
-  //          PaginationQueryDto paginationQueryDto,
-  //          Expression<Func<UserView, bool>> condition);
-
-		//Task<List<UserView>> GetUsersByConditionAsync<T>(
-  //          PaginationQueryDto paginationQueryDto,
-  //          Expression<Func<UserView, bool>> condition, 
-		//	Expression<Func<UserView, T>> orderBy, 
-		//	bool asAscending = true);		
+        Task<FormView> GetAllFormsOfUserAsync();
 	}
 }

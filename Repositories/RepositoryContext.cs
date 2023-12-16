@@ -17,6 +17,5 @@ namespace Repositories
 
         public IDbConnection CreateSqlConnection() =>
             new SqlConnection(_connectionString);
-
     }
 }

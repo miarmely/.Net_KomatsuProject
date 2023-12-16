@@ -127,5 +127,11 @@ namespace Repositories.Concretes
                 await base.QuerySingleOrDefaultAsync<ErrorDto>(
                     base.Configs.DbSettings.ProcedureNames.User_Delete,
                     parameters);
-    }
+
+		public async Task<FormView> GetAllFormsOfUserAsync()
+		{
+			
+
+		}
+	}
 }

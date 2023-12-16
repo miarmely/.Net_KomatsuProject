@@ -27,7 +27,13 @@
 		string Slider_DisplayAll,
 		string Slider_DisplaySliderPathBySliderNo,
 		string Slider_DeleteOneBySliderNo,
-		string Slider_DeleteMultipleByFileNames);
+		string Slider_DeleteMultipleByFileNames,
+		string User_Form_GeneralCommunication_Create,
+		string User_Form_GeneralCommunication_GetAll,
+		string User_Form_GetOffer_Create,
+		string User_Form_GetOffer_GetAll,
+		string User_Form_Renting_Create,
+		string User_Form_Renting_GetAll);
 
     public record TableNames(
 		string Language,
