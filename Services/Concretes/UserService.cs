@@ -20,326 +20,408 @@ using System.Text;
 
 namespace Services.Concretes
 {
-    public class UserService : IUserService
-    {
-        private readonly IRepositoryManager _manager;
-        private readonly IConfigManager _config;
-        private readonly IMapper _mapper;
+	public class UserService : IUserService
+	{
+		private readonly IRepositoryManager _manager;
+		private readonly IConfigManager _configs;
+		private readonly IMapper _mapper;
 
-        public UserService(IRepositoryManager manager,
-            IConfigManager config,
-            IMapper mapper)
-        {
-            _manager = manager;
-            _config = config;
-            _mapper = mapper;
-        }
+		public UserService(IRepositoryManager manager,
+			IConfigManager config,
+			IMapper mapper)
+		{
+			_manager = manager;
+			_configs = config;
+			_mapper = mapper;
+		}
 
-        public async Task<string> LoginForMobileAsync(string language, UserDtoForLogin userDto)
-        {
-            var userView = await GetUserInfosAsync(language, userDto);
+		public async Task<string> LoginForMobileAsync(string language, UserDtoForLogin userDto)
+		{
+			var userView = await GetUserInfosAsync(language, userDto);
 
-            return await GenerateTokenForUserAsync(userView);
-        }
+			return await GenerateTokenForUserAsync(userView);
+		}
 
-        public async Task<string> LoginForWebAsync(string language, UserDtoForLogin userDto)
-        {
-            var userView = await GetUserInfosAsync(language, userDto);
+		public async Task<string> LoginForWebAsync(string language, UserDtoForLogin userDto)
+		{
+			var userView = await GetUserInfosAsync(language, userDto);
 
-            #region control role (throw)
+			#region control role (throw)
 
-            #region when language TR and user role invalid (throw)
-            if (language.Equals("TR")
-                && !userView.RoleNames.Any(r => _config.LoginSettings
-                    .RolesCanBeLoginInTR
-                    .Contains(r)))
-            {
-                throw new ErrorWithCodeException(
-                    403,
-                    "AE-F",
-                    "Authorization Error - Forbidden",
-                    "yetkiniz yok");
-            }
-            #endregion
+			#region when language TR and user role invalid (throw)
+			if (language.Equals("TR")
+				&& !userView.RoleNames.Any(r => _configs.LoginSettings
+					.RolesCanBeLoginInTR
+					.Contains(r)))
+			{
+				throw new ErrorWithCodeException(
+					403,
+					"AE-F",
+					"Authorization Error - Forbidden",
+					"yetkiniz yok");
+			}
+			#endregion
 
-            #region when language EN and user role invalid (throw)
-            else if (language.Equals("EN")
-                && !userView.RoleNames.Any(r => _config.LoginSettings
-                    .RolesCanBeLoginInEN
-                    .Contains(r)))
-            {
-                throw new ErrorWithCodeException(
-                    403,
-                    "AE-F",
-                    "Authorization Error - Forbidden",
-                    "you don't have permission");
-            }
+			#region when language EN and user role invalid (throw)
+			else if (language.Equals("EN")
+				&& !userView.RoleNames.Any(r => _configs.LoginSettings
+					.RolesCanBeLoginInEN
+					.Contains(r)))
+			{
+				throw new ErrorWithCodeException(
+					403,
+					"AE-F",
+					"Authorization Error - Forbidden",
+					"you don't have permission");
+			}
 
-            #endregion
+			#endregion
 
-            #endregion
+			#endregion
 
-            return await GenerateTokenForUserAsync(userView);
-        }
+			return await GenerateTokenForUserAsync(userView);
+		}
 
-        public async Task RegisterAsync(string language, UserDtoForRegister userDto)
-        {
-            var userDtoForCreate = _mapper.Map<UserDtoForCreate>(userDto);
+		public async Task RegisterAsync(string language, UserDtoForRegister userDto)
+		{
+			var userDtoForCreate = _mapper.Map<UserDtoForCreate>(userDto);
 
-            await CreateUserAsync(language, userDtoForCreate);
-        }
+			await CreateUserAsync(language, userDtoForCreate);
+		}
 
-        public async Task CreateUserAsync(string language, UserDtoForCreate userDto)
-        {
-            #region set parameters
+		public async Task CreateUserAsync(string language, UserDtoForCreate userDto)
+		{
+			#region set parameters
 
-            #region sort roleNames if entered
-            if (userDto.RoleNames != null
-                && userDto.RoleNames.Count() > 1)
-                userDto.RoleNames.Sort();
-            #endregion
+			#region sort roleNames if entered
+			if (userDto.RoleNames != null
+				&& userDto.RoleNames.Count() > 1)
+				userDto.RoleNames.Sort();
+			#endregion
 
-            #region set parameters
-            var userDtoForProc = new UserDtoForCreateProcedure
-            {
-                FirstName = userDto.FirstName,
-                LastName = userDto.LastName,
-                CompanyName = userDto.CompanyName,
-                TelNo = userDto.TelNo,
-                Email = userDto.Email,
-                Password = await ComputeMd5Async(userDto.Password),
-                RoleNames = string.Join(",", userDto.RoleNames) // list to string 
-            };
-            var parameters = new DynamicParameters(userDtoForProc);
+			#region set parameters
+			var userDtoForProc = new UserDtoForCreateProcedure
+			{
+				FirstName = userDto.FirstName,
+				LastName = userDto.LastName,
+				CompanyName = userDto.CompanyName,
+				TelNo = userDto.TelNo,
+				Email = userDto.Email,
+				Password = await ComputeMd5Async(userDto.Password),
+				RoleNames = string.Join(",", userDto.RoleNames) // list to string 
+			};
+			var parameters = new DynamicParameters(userDtoForProc);
 
-            parameters.Add("Language", language, DbType.String);
-            #endregion
+			parameters.Add("Language", language, DbType.String);
+			#endregion
 
-            #endregion
+			#endregion
 
-            #region create user (throw)
-            var errorDto = await _manager.UserRepository
-                .CreateUserAsync(parameters);
+			#region create user (throw)
+			var errorDto = await _manager.UserRepository
+				.CreateUserAsync(parameters);
 
-            // when any error occured
-            if (errorDto != null)
-                throw new ErrorWithCodeException(errorDto);
-            #endregion
-        }
+			// when any error occured
+			if (errorDto != null)
+				throw new ErrorWithCodeException(errorDto);
+			#endregion
+		}
 
-        public async Task<IEnumerable<UserDto>> GetAllUsersWithPagingAsync(
-            PaginationParameters pagingParameters,
-            string language,
-            HttpResponse response)
-        {
-            #region set parameters
-            var parameters = new DynamicParameters(pagingParameters);
+		public async Task<IEnumerable<UserDto>> GetAllUsersWithPagingAsync(
+			PaginationParameters pagingParameters,
+			string language,
+			HttpResponse response)
+		{
+			#region set parameters
+			var parameters = new DynamicParameters(pagingParameters);
 
-            parameters.Add("Language", language, DbType.String);
-            parameters.Add("TotalCount", 0, DbType.Int32, ParameterDirection.Output);
-            #endregion
+			parameters.Add("Language", language, DbType.String);
+			parameters.Add("TotalCount", 0, DbType.Int32, ParameterDirection.Output);
+			#endregion
 
-            #region get userViews
-            var userViews = await _manager.UserRepository
-                .GetAllUsersWithPagingAsync(parameters);
-            #endregion
+			#region get userViews
+			var userViews = await _manager.UserRepository
+				.GetAllUsersWithPagingAsync(parameters);
+			#endregion
 
-            #region when any userView not found (throw)
-            if (userViews.Count() == 0)
-                throw new ErrorWithCodeException(404,
-                    "NF-U",
-                    "Not Found - User");
-            #endregion
+			#region when any userView not found (throw)
+			if (userViews.Count() == 0)
+				throw new ErrorWithCodeException(404,
+					"NF-U",
+					"Not Found - User");
+			#endregion
 
-            #region add pagination infos to headers
+			#region add pagination infos to headers
 
-            #region convert userViews to pagingList
-            var userViewsInPagingList = await PagingList<UserView>.ToPagingListAsync(
-                userViews,
-                parameters.Get<int>("TotalCount"),
-                pagingParameters.PageNumber,
-                pagingParameters.PageSize);
-            #endregion
+			#region convert userViews to pagingList
+			var userViewsInPagingList = await PagingList<UserView>.ToPagingListAsync(
+				userViews,
+				parameters.Get<int>("TotalCount"),
+				pagingParameters.PageNumber,
+				pagingParameters.PageSize);
+			#endregion
 
-            #region add infos to headers
-            response.Headers.Add(
-                "User-Pagination",
-                userViewsInPagingList.GetMetaDataForHeaders());
-            #endregion
+			#region add infos to headers
+			response.Headers.Add(
+				"User-Pagination",
+				userViewsInPagingList.GetMetaDataForHeaders());
+			#endregion
 
-            #endregion
+			#endregion
 
-            return _mapper.Map<IEnumerable<UserDto>>(userViews);
-        }
+			return _mapper.Map<IEnumerable<UserDto>>(userViews);
+		}
 
-        public async Task<IEnumerable<string>> GetAllRolesByLanguageAsync(string language)
-        {
-            #region get roles
-            var parameters = new DynamicParameters();
-            parameters.Add("Language", language, DbType.String);
+		public async Task<IEnumerable<string>> GetAllRolesByLanguageAsync(string language)
+		{
+			#region get roles
+			var parameters = new DynamicParameters();
+			parameters.Add("Language", language, DbType.String);
 
-            return await _manager.UserRepository
-                .GetAllRolesByLanguageAsync(parameters);
-            #endregion
-        }
+			return await _manager.UserRepository
+				.GetAllRolesByLanguageAsync(parameters);
+			#endregion
+		}
 
-        public async Task UpdateUserByTelNoAsync(
-            string language,
-            string telNo,
-            UserDtoForUpdate userDto)
-        {
-            #region set parameters
-            var userDtoForProc = new UserDtoForUpdateProcedure
-            {
-                TelNoForValidation = telNo,
-                FirstName = userDto.FirstName,
-                LastName = userDto.LastName,
-                CompanyName = userDto.CompanyName,
-                TelNo = userDto.TelNo,
-                Email = userDto.Email,
-                #region Password
-                Password = userDto.Password == null ?
-                    null
-                    : await ComputeMd5Async(userDto.Password),
-                #endregion
-                RoleNames = userDto.RoleNames
-            };
-            var parameters = new DynamicParameters(userDtoForProc);
+		public async Task UpdateUserByTelNoAsync(
+			string language,
+			string telNo,
+			UserDtoForUpdate userDto)
+		{
+			#region set parameters
+			var userDtoForProc = new UserDtoForUpdateProcedure
+			{
+				TelNoForValidation = telNo,
+				FirstName = userDto.FirstName,
+				LastName = userDto.LastName,
+				CompanyName = userDto.CompanyName,
+				TelNo = userDto.TelNo,
+				Email = userDto.Email,
+				#region Password
+				Password = userDto.Password == null ?
+					null
+					: await ComputeMd5Async(userDto.Password),
+				#endregion
+				RoleNames = userDto.RoleNames
+			};
+			var parameters = new DynamicParameters(userDtoForProc);
 
-            parameters.Add("Language", language, DbType.String);
-            #endregion
+			parameters.Add("Language", language, DbType.String);
+			#endregion
 
-            #region update user (throw)
-            var errorDto = await _manager.UserRepository
-                .UpdateUserByTelNoAsync(parameters);
+			#region update user (throw)
+			var errorDto = await _manager.UserRepository
+				.UpdateUserByTelNoAsync(parameters);
 
-            // when any error occured
-            if (errorDto != null)
-                throw new ErrorWithCodeException(errorDto);
-            #endregion
-        }
+			// when any error occured
+			if (errorDto != null)
+				throw new ErrorWithCodeException(errorDto);
+			#endregion
+		}
 
-        public async Task DeleteUsersByTelNoListAsync(
-            string language,
-            UserDtoForDelete userDto)
-        {
-            #region set parameters
-            var parameters = new DynamicParameters();
-            parameters.Add("Language", language, DbType.String);
+		public async Task DeleteUsersByTelNoListAsync(
+			string language,
+			UserDtoForDelete userDto)
+		{
+			#region set parameters
+			var parameters = new DynamicParameters();
+			parameters.Add("Language", language, DbType.String);
 
-            parameters.Add(
-                "TelNosInString",
-                string.Join(',', userDto.TelNoList),
-                DbType.String);
+			parameters.Add(
+				"TelNosInString",
+				string.Join(',', userDto.TelNoList),
+				DbType.String);
 
-            parameters.Add(
-                "TotalTelNoCount",
-                userDto.TelNoList.Count(),
-                DbType.Int32);
-            #endregion
+			parameters.Add(
+				"TotalTelNoCount",
+				userDto.TelNoList.Count(),
+				DbType.Int32);
+			#endregion
 
-            #region delete users in list
-            var errorDto = await _manager.UserRepository
-                .DeleteUsersByTelNoListAsync(parameters);
+			#region delete users in list
+			var errorDto = await _manager.UserRepository
+				.DeleteUsersByTelNoListAsync(parameters);
 
-            // when any error occured
-            if (errorDto != null)
-                throw new ErrorWithCodeException(errorDto);
-            #endregion
-        }
+			// when any error occured
+			if (errorDto != null)
+				throw new ErrorWithCodeException(errorDto);
+			#endregion
+		}
+
+		public async Task<FormViewForOneUser> GetAllFormsOfOneUserAsync(
+			FormParamsForGetAllFormsOfOneUser formParams)
+		{
+			#region set parameters and sql command
+			var parameters = new DynamicParameters(formParams);
+			var sqlCommand = $@" 
+                    EXEC {_configs.DbSettings.ProcedureNames
+							.User_Form_GeneralCommunication_GetAllOfOneUserByUserId}
+                        @UserId,
+                        @PageNumber,
+                        @PageSize,
+                        @GetAnsweredForms;
+                                
+                    EXEC {_configs.DbSettings.ProcedureNames
+							.User_Form_GetOffer_GetAllOfOneUserByUserId}
+                        @Language,
+                        @UserId,
+                        @PageNumber,
+                        @PageSize,
+                        @GetAnsweredForms;
+
+                    EXEC {_configs.DbSettings.ProcedureNames
+							.User_Form_Renting_GetAllOfOneUserByUserId}
+                        @Language,
+                        @UserId,
+                        @PageNumber,
+                        @PageSize,
+                        @GetAnsweredForms;";
+			#endregion
+
+			#region get all forms
+			var formView = await _manager.UserRepository
+				.GetAllFormsOfUserAsync(
+					sqlCommand,
+					parameters,
+					async (multiQuery) =>
+					{
+						#region get all forms of user from db
+						var generalCommFormViews = await multiQuery
+							.ReadAsync<GeneralCommFormViewForOneUser>();
+
+						var getOfferFormViews = await multiQuery
+							.ReadAsync<GetOfferFormViewForOneUser>();
+
+						var rentingFormViews = await multiQuery
+							.ReadAsync<RentingFormFormViewForOneUser>();
+						#endregion
+
+						#region initialize formView
+						return new FormViewForOneUser
+						{
+							GeneralCommForms = await PagingList
+								<GeneralCommFormViewForOneUser>
+									.ToPagingListAsync(
+										generalCommFormViews,
+										generalCommFormViews.Count(),
+										formParams.PageNumber,
+										formParams.PageSize),
+
+							GetOfferForms = await PagingList
+								<GetOfferFormViewForOneUser>
+									.ToPagingListAsync(
+										getOfferFormViews,
+										getOfferFormViews.Count(),
+										formParams.PageNumber,
+										formParams.PageSize),
+
+							RentingForms = await PagingList
+								<RentingFormFormViewForOneUser>
+									.ToPagingListAsync(
+										rentingFormViews,
+										rentingFormViews.Count(),
+										formParams.PageNumber,
+										formParams.PageSize),
+						};
+						#endregion
+					});
+			#endregion
+
+			return formView;
+		}
 
 
-        #region private
+		#region private
 
-        private async Task<string> ComputeMd5Async(string input) =>
-            await Task.Run(() =>
-            {
-                using (var md5 = MD5.Create())
-                {
-                    #region do hash to input
-                    var hashInBytes = md5.ComputeHash(Encoding.UTF8
-                        .GetBytes(input));
+		private async Task<string> ComputeMd5Async(string input) =>
+			await Task.Run(() =>
+			{
+				using (var md5 = MD5.Create())
+				{
+					#region do hash to input
+					var hashInBytes = md5.ComputeHash(Encoding.UTF8
+						.GetBytes(input));
 
-                    var hashAsString = Convert.ToBase64String(hashInBytes);
-                    #endregion
+					var hashAsString = Convert.ToBase64String(hashInBytes);
+					#endregion
 
-                    return hashAsString;
-                }
-            });
+					return hashAsString;
+				}
+			});
 
-        private async Task<string> GenerateTokenForUserAsync(UserView userView) =>
-            await Task.Run(() =>
-            {
-                #region set claims
-                var claims = new Collection<Claim>
-                {
-                    new (ClaimTypes.Name, userView.FirstName),
-                    new (ClaimTypes.Surname, userView.LastName),
-                };
+		private async Task<string> GenerateTokenForUserAsync(UserView userView) =>
+			await Task.Run(() =>
+			{
+				#region set claims
+				var claims = new Collection<Claim>
+				{
+					new (ClaimTypes.Name, userView.FirstName),
+					new (ClaimTypes.Surname, userView.LastName),
+				};
 
-                #region add roles of user to claims
-                foreach (var roleName in userView.RoleNames)
-                    claims.Add(new Claim(
-                        ClaimTypes.Role,
-                        roleName));
-                #endregion
+				#region add roles of user to claims
+				foreach (var roleName in userView.RoleNames)
+					claims.Add(new Claim(
+						ClaimTypes.Role,
+						roleName));
+				#endregion
 
-                #endregion
+				#endregion
 
-                #region set signingCredentials
-                var secretKeyInBytes = Encoding.UTF8
-                    .GetBytes(_config.JwtSettings.SecretKey);
+				#region set signingCredentials
+				var secretKeyInBytes = Encoding.UTF8
+					.GetBytes(_configs.JwtSettings.SecretKey);
 
-                var signingCredentials = new SigningCredentials(
-                    new SymmetricSecurityKey(secretKeyInBytes),
-                    SecurityAlgorithms.HmacSha256);
-                #endregion
+				var signingCredentials = new SigningCredentials(
+					new SymmetricSecurityKey(secretKeyInBytes),
+					SecurityAlgorithms.HmacSha256);
+				#endregion
 
-                #region set jwt token
-                var token = new JwtSecurityToken(
-                    issuer: _config.JwtSettings.ValidIssuer,
-                    audience: _config.JwtSettings.ValidAudience,
-                    claims: claims,
-                    expires: DateTime.UtcNow.AddMinutes(_config.JwtSettings.Expires),
-                    signingCredentials: signingCredentials);
-                #endregion
+				#region set jwt token
+				var token = new JwtSecurityToken(
+					issuer: _configs.JwtSettings.ValidIssuer,
+					audience: _configs.JwtSettings.ValidAudience,
+					claims: claims,
+					expires: DateTime.UtcNow.AddMinutes(_configs.JwtSettings.Expires),
+					signingCredentials: signingCredentials);
+				#endregion
 
-                return new JwtSecurityTokenHandler()
-                    .WriteToken(token);
-            });
+				return new JwtSecurityTokenHandler()
+					.WriteToken(token);
+			});
 
-        private async Task<UserView> GetUserInfosAsync(string language, UserDtoForLogin userDto)
-        {
-            #region set paramaters
-            var parameters = new DynamicParameters();
-            var hashedPassword = await ComputeMd5Async(userDto.Password);
+		private async Task<UserView> GetUserInfosAsync(string language, UserDtoForLogin userDto)
+		{
+			#region set paramaters
+			var parameters = new DynamicParameters();
+			var hashedPassword = await ComputeMd5Async(userDto.Password);
 
-            parameters.Add("Language", language, DbType.String);
-            parameters.Add("TelNo", userDto.TelNo, DbType.String);
-            parameters.Add("Password", hashedPassword, DbType.String);
-            parameters.Add("StatusCode", 0, DbType.Int16, ParameterDirection.Output);
-            parameters.Add("ErrorCode", "", DbType.String, ParameterDirection.Output);
-            parameters.Add("ErrorMessage", "", DbType.String, ParameterDirection.Output);
-            parameters.Add("ErrorDescription", "", DbType.String, ParameterDirection.Output);
-            #endregion
+			parameters.Add("Language", language, DbType.String);
+			parameters.Add("TelNo", userDto.TelNo, DbType.String);
+			parameters.Add("Password", hashedPassword, DbType.String);
+			parameters.Add("StatusCode", 0, DbType.Int16, ParameterDirection.Output);
+			parameters.Add("ErrorCode", "", DbType.String, ParameterDirection.Output);
+			parameters.Add("ErrorMessage", "", DbType.String, ParameterDirection.Output);
+			parameters.Add("ErrorDescription", "", DbType.String, ParameterDirection.Output);
+			#endregion
 
-            #region get user view
-            var userView = await _manager.UserRepository
-                .LoginAsync(parameters);
-            #endregion
+			#region get user view
+			var userView = await _manager.UserRepository
+				.LoginAsync(parameters);
+			#endregion
 
-            #region when telNo or password is wrong (throw)
-            if (userView == null)
-                throw new ErrorWithCodeException(
-                    parameters.Get<Int16>("StatusCode"),
-                    parameters.Get<string>("ErrorCode"),
-                    parameters.Get<string>("ErrorDescription"),
-                    parameters.Get<string>("ErrorMessage"));
-            #endregion
+			#region when telNo or password is wrong (throw)
+			if (userView == null)
+				throw new ErrorWithCodeException(
+					parameters.Get<Int16>("StatusCode"),
+					parameters.Get<string>("ErrorCode"),
+					parameters.Get<string>("ErrorDescription"),
+					parameters.Get<string>("ErrorMessage"));
+			#endregion
 
-            return userView;
-        }
+			return userView;
+		}
 
-        #endregion
-    }
+		#endregion
+	}
 }

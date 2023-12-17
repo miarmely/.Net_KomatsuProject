@@ -30,10 +30,13 @@
 		string Slider_DeleteMultipleByFileNames,
 		string User_Form_GeneralCommunication_Create,
 		string User_Form_GeneralCommunication_GetAll,
+		string User_Form_GeneralCommunication_GetAllOfOneUserByUserId,
 		string User_Form_GetOffer_Create,
 		string User_Form_GetOffer_GetAll,
+		string User_Form_GetOffer_GetAllOfOneUserByUserId,
 		string User_Form_Renting_Create,
-		string User_Form_Renting_GetAll);
+		string User_Form_Renting_GetAll,
+		string User_Form_Renting_GetAllOfOneUserByUserId);
 
     public record TableNames(
 		string Language,

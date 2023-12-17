@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Presantation.Attributes;
 using Services.Contracts;
 using System.ComponentModel.DataAnnotations;
+using System.Reflection.Metadata.Ecma335;
 
 namespace Presantation.Controllers
 {
@@ -99,6 +100,17 @@ namespace Presantation.Controllers
                 .GetAllRolesByLanguageAsync(language);
 
             return Ok(roles);
+        }
+
+
+        [HttpGet("form/getAllFormsOfOneUser")]
+        public async Task<IActionResult> GetAllFormsOfOneUser(
+            [FromQuery] FormParamsForGetAllFormsOfOneUser formParams)
+        {
+            var allForms = await _manager.UserService
+                .GetAllFormsOfOneUserAsync(formParams);
+
+            return Ok(allForms);
         }
 
 

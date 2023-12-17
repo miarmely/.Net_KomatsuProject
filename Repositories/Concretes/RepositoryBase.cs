@@ -1,6 +1,5 @@
 ﻿using Dapper;
 using Entities.ConfigModels.Contracts;
-using Microsoft.Identity.Client;
 using Repositories.Contracts;
 using System.Data;
 
@@ -20,19 +19,6 @@ namespace Repositories.Concretes
             _configs = configs;
         }
             
-        public async Task<T> QuerySingleOrDefaultAsync<T>(
-            string procedureName, 
-            DynamicParameters parameters)
-        {
-            #region send query
-            using (var connection = _context.CreateSqlConnection())
-            {
-                return await connection.QuerySingleOrDefaultAsync<T>(
-                    GetCommandDefinitionForProcedures(procedureName, parameters));
-            }
-            #endregion
-        }
-
         public async Task<IEnumerable<T>> QueryAsync<T>(
             string procedureName, 
             DynamicParameters? parameters)
@@ -61,7 +47,7 @@ namespace Repositories.Concretes
             string procedureName,
             DynamicParameters parameters,
             Func<TPart1, TPart2, TResult> map,
-            string SplitOn)
+            string splitOn)
         {
             #region send query
             using (var connection = _context.CreateSqlConnection())
@@ -69,26 +55,45 @@ namespace Repositories.Concretes
                 return await connection.QueryAsync(
                     GetCommandDefinitionForProcedures(procedureName, parameters), 
                     map, 
-                    SplitOn);
+                    splitOn);
             }
             #endregion
         }
 
+		public async Task<T> QuerySingleOrDefaultAsync<T>(
+			string procedureName,
+			DynamicParameters parameters)
+		{
+			#region send query
+			using (var connection = _context.CreateSqlConnection())
+			{
+				return await connection.QuerySingleOrDefaultAsync<T>(
+					GetCommandDefinitionForProcedures(procedureName, parameters));
+			}
+			#endregion
+		}
 
-        public async Task MuktipleQueryAsync()
-        {
-            using (var connection = _context.CreateSqlConnection())
-            {
-                using(var multi = connection.QueryMultipleAsync())
+		public async Task<TResult> MultipleQueryAsync<TResult>(
+			string sqlCommand,
+			DynamicParameters parameters,
+			Func<SqlMapper.GridReader, Task<TResult>> funcAsync)
+		{
+			#region send multiple query
+			using (var connection = _context.CreateSqlConnection())
+			{
+				using (var multi = await connection
+					.QueryMultipleAsync(sqlCommand, parameters))
+				{
+					return await funcAsync(multi);
+				}
+			}
+			#endregion
+		}
 
 
-            }
-        }
+		#region private
 
-
-        #region private
-
-        private CommandDefinition GetCommandDefinitionForProcedures(
+		private CommandDefinition GetCommandDefinitionForProcedures(
             string commandText, 
             DynamicParameters? parameters) =>
                 new CommandDefinition(

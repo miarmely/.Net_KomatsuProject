@@ -17,6 +17,9 @@ namespace Repositories.Contracts
         Task<IEnumerable<UserView>?> GetAllUsersWithPagingAsync(
             DynamicParameters parameters);
 
-        Task<FormView> GetAllFormsOfUserAsync();
+        Task<TResult> GetAllFormsOfUserAsync<TResult>(
+            string sqlCommand,
+			DynamicParameters parameters,
+			Func<SqlMapper.GridReader, Task<TResult>> funcAsync);
 	}
 }

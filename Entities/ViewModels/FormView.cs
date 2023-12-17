@@ -1,53 +1,74 @@
 ﻿namespace Entities.ViewModels
 {
-	public record FormView
+	public record FormViewForOneUser
 	{
-        public GeneralCommunicationForm GeneralCommunicationForm { get; init; }
-        public GetOfferForm GetOfferForm { get; init; }
-        public RentingFormForm RentingFormForm { get; init; }
-    }
+		public IEnumerable<GeneralCommFormViewForOneUser> GeneralCommForms { get; init; }
+		public IEnumerable<GetOfferFormViewForOneUser> GetOfferForms { get; init; }
+		public IEnumerable<RentingFormFormViewForOneUser> RentingForms { get; init; }
+	}
 
-	public record GeneralCommunicationForm(
-		string FirstName,
-		string LastName,
-		string Company,
-		string Phone,
-		string Email,
-		string CityName,
-		string County,
-		string Subject,
-		string Message,
-		DateTime CreatedAt);
+	public record GeneralCommFormViewForOneUser
+	{
+		public string FirstName { get; init; }
+		public string LastName { get; init; }
+		public string Company { get; init; }
+		public string Phone { get; init; }
+		public string Email { get; init; }
+		public string CityName { get; init; }
+		public string County { get; init; }
+		public string Subject { get; init; }
+		public string Message { get; init; }
+		public DateTime CreatedAt { get; init; }
+	}
 
-	public record GetOfferForm(
-		string FirstName,
-		string LastName,
-		string Company,
-		string Phone,
-		string Email,
-		string CityName,
-		string County,
-		string Message,
-		DateTime CreatedAt,
-		string MainCategoryName,
-		string SubCategoryName,
-		string Model,
-		string BrandName,
-		string ImageName);
+	public record GeneralCommFormViewForAllUsers : GeneralCommFormViewForOneUser
+	{
+		public Guid UserId { get; init; }
+	}
 
-	public record RentingFormForm(
-		string FirstName,
-		string LastName,
-		string Company,
-		string Phone,
-		string Email,
-		string CityName,
-		string County,
-		string Message,
-		DateTime CreatedAt,
-		string MainCategoryName,
-		string SubCategoryName,
-		string Model,
-		string BrandName,
-		string ImageName);
+	public record GetOfferFormViewForOneUser
+	{
+		public string FirstName { get; init; }
+		public string LastName { get; init; }
+		public string Company { get; init; }
+		public string Phone { get; init; }
+		public string Email { get; init; }
+		public string CityName { get; init; }
+		public string County { get; init; }
+		public string Message { get; init; }
+		public string MainCategoryName { get; init; }
+		public string SubCategoryName { get; init; }
+		public string Model { get; init; }
+		public string BrandName { get; init; }
+		public string ImageName { get; init; }
+		public DateTime CreatedAt { get; init; }
+	}
+
+	public record GetOfferFormViewForAllUsers : RentingFormFormViewForOneUser
+	{
+		public Guid UserId { get; init; }
+	}
+
+	public record RentingFormFormViewForOneUser
+	{
+		public string FirstName { get; init; }
+		public string LastName { get; init; }
+		public string Company { get; init; }
+		public string Phone { get; init; }
+		public string Email { get; init; }
+		public string CityName { get; init; }
+		public string County { get; init; }
+		public string Message { get; init; }
+		public string MainCategoryName { get; init; }
+		public string SubCategoryName { get; init; }
+		public string Model { get; init; }
+		public string BrandName { get; init; }
+		public string ImageName { get; init; }
+		public DateTime CreatedAt { get; init; }
+	}
+
+	public record RentingFormFormViewForAllUsers : RentingFormFormViewForOneUser
+	{
+		public Guid UserId { get; init; }
+	}
 }
