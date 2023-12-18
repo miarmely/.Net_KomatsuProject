@@ -3,7 +3,7 @@
 
 namespace Entities.DtoModels.MachineDtos
 {
-	public record MachineDtoForDisplay : LanguageParam
+	public record MachineDtoForDisplay : LanguageParams
 	{
 		public string? MainCategoryName { get; init; }
 		public string? SubCategoryName { get; init; }

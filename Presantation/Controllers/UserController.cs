@@ -1,4 +1,5 @@
-﻿using Entities.DtoModels.UserDtos;
+﻿using Entities.DtoModels.FormDtos;
+using Entities.DtoModels.UserDtos;
 using Entities.QueryParameters;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -6,6 +7,7 @@ using Presantation.Attributes;
 using Services.Contracts;
 using System.ComponentModel.DataAnnotations;
 using System.Reflection.Metadata.Ecma335;
+
 
 namespace Presantation.Controllers
 {
@@ -18,7 +20,7 @@ namespace Presantation.Controllers
         public UserController(IServiceManager services) =>
             _manager = services;
        
-        [HttpPost("login/mobil")]
+        [HttpPost("login/mobile")]
         [ValidationUserFormat]
         public async Task<IActionResult> LoginForMobileAsync(
             [FromQuery(Name = "language")][Required] string language,
@@ -78,15 +80,48 @@ namespace Presantation.Controllers
 			return StatusCode(StatusCodes.Status201Created);
 		}
 
+        
+        [HttpPost("create/form/generalCommunication")]
+		[Authorization("User,Kullanıcı")]
+        public async Task<IActionResult> CreateGeneralCommunicationForm(
+            [FromBody] GeneralCommFormDtoForCreate formDto)
+        {
+            await _manager.UserService
+                .CreateGenaralCommFormAsync(HttpContext, formDto);
 
-        [HttpGet("display/all")]
+            return NoContent();
+        }
+
+		[HttpPost("create/form/getOffer")]
+		[Authorization("User,Kullanıcı")]
+		public async Task<IActionResult> CreateGetOfferForm(
+			[FromBody] GetOfferFormDtoForCreate formDto)
+		{
+			await _manager.UserService
+				.CreateGetOfferFormAsync(HttpContext, formDto);
+
+			return NoContent();
+		}
+
+		[HttpPost("create/form/renting")]
+		[Authorization("User,Kullanıcı")]
+		public async Task<IActionResult> CreateRentingForm(
+			[FromBody] RentingFormDtoForCreate formDto)
+		{
+			await _manager.UserService
+				.CreateRentingFormAsync(HttpContext, formDto);
+
+			return NoContent();
+		}
+
+
+		[HttpGet("display/all")]
         [Authorization("Admin,Editor,User,Yönetici,Editör,Kullanıcı")]
         public async Task<IActionResult> GetAllUsersWithPaginationAsync(
-            [FromQuery(Name = "language")][Required] string language,
-            [FromQuery] PaginationParameters pagingParameters)
+            [FromQuery] LanguageAndPagingParams queryParams)
         {
             var entity = await _manager.UserService
-                .GetAllUsersWithPagingAsync(pagingParameters, language, Response);
+                .GetAllUsersWithPagingAsync(queryParams, Response);
 
             return Ok(entity);
         }
@@ -103,7 +138,7 @@ namespace Presantation.Controllers
         }
 
 
-        [HttpGet("form/getAllFormsOfOneUser")]
+        [HttpGet("display/form/oneUser/all")]
         public async Task<IActionResult> GetAllFormsOfOneUser(
             [FromQuery] FormParamsForGetAllFormsOfOneUser formParams)
         {

@@ -2,12 +2,12 @@
 {
 	public record FormViewForOneUser
 	{
-		public IEnumerable<GeneralCommFormViewForOneUser> GeneralCommForms { get; init; }
-		public IEnumerable<GetOfferFormViewForOneUser> GetOfferForms { get; init; }
-		public IEnumerable<RentingFormFormViewForOneUser> RentingForms { get; init; }
+		public IEnumerable<GeneralCommFormViewForDisplayOneUser> GeneralCommForms { get; init; }
+		public IEnumerable<GetOfferFormViewForDisplayOneUser> GetOfferForms { get; init; }
+		public IEnumerable<RentingFormFormViewForDisplayOneUser> RentingForms { get; init; }
 	}
 
-	public record GeneralCommFormViewForOneUser
+	public record GeneralCommFormViewForDisplayOneUser
 	{
 		public string FirstName { get; init; }
 		public string LastName { get; init; }
@@ -21,12 +21,12 @@
 		public DateTime CreatedAt { get; init; }
 	}
 
-	public record GeneralCommFormViewForAllUsers : GeneralCommFormViewForOneUser
+	public record GeneralCommFormViewForDisplayAll : GeneralCommFormViewForDisplayOneUser
 	{
 		public Guid UserId { get; init; }
 	}
 
-	public record GetOfferFormViewForOneUser
+	public record GetOfferFormViewForDisplayOneUser
 	{
 		public string FirstName { get; init; }
 		public string LastName { get; init; }
@@ -44,12 +44,12 @@
 		public DateTime CreatedAt { get; init; }
 	}
 
-	public record GetOfferFormViewForAllUsers : RentingFormFormViewForOneUser
+	public record GetOfferFormViewForDisplayAll : GetOfferFormViewForDisplayOneUser
 	{
 		public Guid UserId { get; init; }
 	}
 
-	public record RentingFormFormViewForOneUser
+	public record RentingFormFormViewForDisplayOneUser
 	{
 		public string FirstName { get; init; }
 		public string LastName { get; init; }
@@ -67,7 +67,7 @@
 		public DateTime CreatedAt { get; init; }
 	}
 
-	public record RentingFormFormViewForAllUsers : RentingFormFormViewForOneUser
+	public record RentingFormFormViewForDisplayAll : RentingFormFormViewForDisplayOneUser
 	{
 		public Guid UserId { get; init; }
 	}

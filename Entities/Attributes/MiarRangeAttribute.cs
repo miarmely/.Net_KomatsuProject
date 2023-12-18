@@ -9,14 +9,14 @@ namespace Entities.Attributes
 	{
 		private readonly int _minValue;
 		private readonly int _maxValue;
-		private readonly string _displayNameInTR;
-		private readonly string _displayNameInEN;
+		private readonly string? _displayNameInTR;
+		private readonly string? _displayNameInEN;
 
 		public MiarRangeAttribute(
-			int minLength,
-			int maxLength,
-			string displayNameInTR,
-			string displayNameInEN)
+			int minLength = -1,
+			int maxLength = -1,
+			string? displayNameInTR = null,
+			string? displayNameInEN = null)
 		{
 			_minValue = minLength;
 			_maxValue = maxLength;
@@ -34,7 +34,8 @@ namespace Entities.Attributes
 			#endregion
 
 			#region when value less than min value (throw)
-			if ((int)value < _minValue)
+			if (_minValue != -1  // when min value control is wanted
+				&& (int)value < _minValue)
 				throw new ErrorWithCodeException(
 					400,
 					"FE-MinV",
@@ -47,7 +48,8 @@ namespace Entities.Attributes
 			#endregion
 
 			#region when max value exceeded (throw)
-			else if ((int)value > _maxValue)
+			else if ( _maxValue != -1  // when max value control is wanted
+				&& (int)value > _maxValue)
 				throw new ErrorWithCodeException(
 					400,
 					"FE-MaxV",

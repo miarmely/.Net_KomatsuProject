@@ -14,12 +14,12 @@ namespace Services.Contracts
 
 		Task<PagingList<MachineView>> GetAllMachinesAsync(
 			string language,
-			PaginationParameters paginationParameters,
+			PaginationParams paginationParameters,
 			HttpResponse response);
 
 		Task<PagingList<MachineView>> GetMachinesByConditionAsync(
 			string language,
-			PaginationParameters paginationParameters,
+			PaginationParams paginationParameters,
 			MachineDtoForDisplay machineDto,
 			HttpResponse response);
 

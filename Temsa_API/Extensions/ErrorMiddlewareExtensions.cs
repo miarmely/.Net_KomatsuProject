@@ -1,9 +1,6 @@
-﻿using Azure.Core.Serialization;
-using Entities.DtoModels;
+﻿using Entities.DtoModels;
 using Microsoft.AspNetCore.Diagnostics;
-using System.IdentityModel.Tokens.Jwt;
 using System.Text.Json;
-using System.Text.Json.Serialization.Metadata;
 
 namespace Temsa_Api.Extensions
 {
@@ -49,9 +46,21 @@ namespace Temsa_Api.Extensions
 							if (errorDto.ErrorCode.StartsWith("FE-"))
 							{
 								#region get language from query
+								// get language
 								var language = context.Request.Query
-									.FirstOrDefault(q => q.Key.Equals("language"))
+									.FirstOrDefault(q => q.Key
+										.ToLower()
+										.Equals("language"))
 									.Value;
+
+								// control language whether found
+								var validLanguages = new List<string> { 
+									"TR", 
+									"EN" };
+
+								language = validLanguages.Contains(language) ?
+									language
+									: "TR"; // when language not valid
 								#endregion
 
 								#region create new errorDto

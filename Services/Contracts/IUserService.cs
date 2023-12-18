@@ -1,7 +1,10 @@
-﻿using Entities.DtoModels.UserDtos;
+﻿using Dapper;
+using Entities.DtoModels.FormDtos;
+using Entities.DtoModels.UserDtos;
 using Entities.QueryParameters;
 using Entities.ViewModels;
 using Microsoft.AspNetCore.Http;
+
 
 namespace Services.Contracts
 {
@@ -14,9 +17,8 @@ namespace Services.Contracts
         Task DeleteUsersByTelNoListAsync(string language, UserDtoForDelete userDto);
         Task<IEnumerable<string>> GetAllRolesByLanguageAsync(string language);
 
-        Task<IEnumerable<UserDto>> GetAllUsersWithPagingAsync(
-            PaginationParameters pagingParameters,
-            string language,
+		Task<IEnumerable<UserDto>> GetAllUsersWithPagingAsync(
+            LanguageAndPagingParams queryParams,
             HttpResponse response);
 
         Task UpdateUserByTelNoAsync(
@@ -26,5 +28,17 @@ namespace Services.Contracts
 
         Task<FormViewForOneUser> GetAllFormsOfOneUserAsync(
             FormParamsForGetAllFormsOfOneUser formParams);
+
+		Task CreateGenaralCommFormAsync(
+		 HttpContext httpContext,
+		 GeneralCommFormDtoForCreate formDto);
+
+		Task CreateGetOfferFormAsync(
+			HttpContext httpContext,
+			GetOfferFormDtoForCreate formDto);
+
+		Task CreateRentingFormAsync(
+			HttpContext httpContext,
+			RentingFormDtoForCreate formDto);
 	}
 }

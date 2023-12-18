@@ -7,7 +7,7 @@ using Repositories.Contracts;
 
 namespace Repositories.Concretes
 {
-	public class UserRepository : RepositoryBase, IUserRepository
+	public partial class UserRepository : RepositoryBase, IUserRepository
 	{
 		public UserRepository(RepositoryContext context, IConfigManager configs)
 			: base(context, configs)
@@ -128,6 +128,25 @@ namespace Repositories.Concretes
 				await base.QuerySingleOrDefaultAsync<ErrorDto>(
 					base.Configs.DbSettings.ProcedureNames.User_Delete,
 					parameters);
+	}
+
+	public partial class UserRepository  // forms
+	{
+		public async Task CreateGeneralCommFormAsync(DynamicParameters parameters)
+			=> await base.QuerySingleOrDefaultAsync<int>(
+					base.Configs.DbSettings.ProcedureNames
+						.User_Form_GeneralCommunication_Create,
+					parameters);
+
+		public async Task CreateGetOfferFormAsync(DynamicParameters parameters) =>
+			await base.QuerySingleOrDefaultAsync<int>(
+				base.Configs.DbSettings.ProcedureNames.User_Form_GetOffer_Create,
+				parameters);
+
+		public async Task CreateRentingFormAsync(DynamicParameters parameters) => 
+			await base.QuerySingleOrDefaultAsync<int>(
+				base.Configs.DbSettings.ProcedureNames.User_Form_Renting_Create,
+				parameters);
 
 		public async Task<TResult> GetAllFormsOfUserAsync<TResult>(
 			string sqlCommand,

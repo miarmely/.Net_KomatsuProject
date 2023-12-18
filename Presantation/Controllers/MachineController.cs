@@ -34,8 +34,8 @@ namespace Presantation.Controllers
 		[HttpGet("display/all")]
 		[Authorization("Admin,Yönetici,Editor,Editör,User,Kullanıcı")]
 		public async Task<IActionResult> GetAllMachines(
-			[FromQuery] LanguageParam languageParam,
-			[FromQuery] PaginationParameters pagingParameters)
+			[FromQuery] LanguageParams languageParam,
+			[FromQuery] PaginationParams pagingParameters)
 		{
 			var machines = await _manager.MachineService
 				.GetAllMachinesAsync(
@@ -50,7 +50,7 @@ namespace Presantation.Controllers
 		[HttpGet("display/condition")]
 		[Authorization("User,Kullanıcı,Editor,Editör,Admin,Yönetici")]
 		public async Task<IActionResult> GetMachinesByCondition(
-			[FromQuery] PaginationParameters pagingParameters,
+			[FromQuery] PaginationParams pagingParameters,
 			[FromQuery] MachineDtoForDisplay machineDto)
 		{
 			var machines = await _manager.MachineService
@@ -67,7 +67,7 @@ namespace Presantation.Controllers
 		[HttpGet("display/mainCategory")]
 		[Authorization("User,Kullanıcı,Editor,Editör,Admin,Yönetici")]
 		public async Task<IActionResult> GetMainCategoryNamesByLanguage(
-		   [FromQuery] LanguageParam languageParam)
+		   [FromQuery] LanguageParams languageParam)
 		{
 			var mainCategoryNames = await _manager.MachineService
 				.GetMainCategoryNamesByLanguageAsync(languageParam.Language);
@@ -91,7 +91,7 @@ namespace Presantation.Controllers
 		[HttpGet("display/handStatus")]
 		[Authorization("Admin,Yönetici,Editor,Editör,User,Kullanıcı")]
 		public async Task<IActionResult> GetAllHandStatusByLanguage(
-			[FromQuery] LanguageParam languageParam)
+			[FromQuery] LanguageParams languageParam)
 		{
 			var handStatuses = await _manager.MachineService
 				.GetAllHandStatusByLanguageAsync(languageParam.Language);

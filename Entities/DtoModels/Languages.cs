@@ -1,4 +1,0 @@
-﻿namespace Entities.DtoModels
-{
-	
-}

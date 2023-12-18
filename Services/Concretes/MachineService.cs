@@ -97,7 +97,7 @@ namespace Services.Concretes
 
 		public async Task<PagingList<MachineView>> GetAllMachinesAsync(
 		  string language,
-		  PaginationParameters pagingParameters,
+		  PaginationParams pagingParameters,
 		  HttpResponse response)
 		{
 			#region set parameters
@@ -176,7 +176,7 @@ namespace Services.Concretes
 
 		public async Task<PagingList<MachineView>> GetMachinesByConditionAsync(
 			string language,
-			PaginationParameters paginationParameters,
+			PaginationParams paginationParameters,
 			MachineDtoForDisplay machineDto,
 			HttpResponse response)
 		{

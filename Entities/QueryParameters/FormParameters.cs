@@ -1,33 +1,23 @@
-﻿namespace Entities.QueryParameters
+﻿using System.ComponentModel.DataAnnotations;
+
+
+namespace Entities.QueryParameters
 {
-	public record FormParamsForGetAllFormsOfOneUser(
-		string Language,
-		Guid UserId,
-		int PageNumber,
-		int PageSize,
-		bool? GetAnsweredForms
-	);
+	public record FormParamsForGetAllFormsOfOneUser : LanguageAndPagingParams
+	{
+		[Required] public Guid UserId { get; init; }
+		public bool? GetAnsweredForms { get; init; }
+	}
 
-	public record GeneralCommFormParamsForGetOneUser(
-		Guid UserId,
-		int PageNumber,
-		int PageSize,
-		bool GetAnsweredForms
-	);
+	public record GeneralCommFormParamsForGetOneUser : PagingParams
+	{
+		[Required] public Guid UserId { get; init; }
+		public bool? GetAnsweredForms { get; init; }
+	}
 
-	public record GetOfferFormParamsForGetOneUser(
-		string Language,
-		Guid UserId,
-		int PageNumber,
-		int PageSize,
-		bool GetAnsweredForms
-	);
+	public record GetOfferFormParamsForGetOneUser : FormParamsForGetAllFormsOfOneUser
+	{}
 
-	public record RentingFormParamsForGetOneUser(
-		string Language,
-		Guid UserId,
-		int PageNumber,
-		int PageSize,
-		bool GetAnsweredForms
-	);
+	public record RentingFormParamsForGetOneUser : FormParamsForGetAllFormsOfOneUser
+	{}
 }
