@@ -141,6 +141,7 @@ namespace Services.Concretes
 		}
 	}
 
+
 	public partial class UserService
 	{
 		public async Task<string> LoginForMobileAsync(
