@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Dapper;
 using Entities.ConfigModels.Contracts;
+using Entities.DtoModels;
 using Entities.DtoModels.FormDtos;
 using Entities.DtoModels.UserDtos;
 using Entities.Exceptions;
@@ -15,6 +16,7 @@ using Services.Contracts;
 using System.Collections.ObjectModel;
 using System.Data;
 using System.IdentityModel.Tokens.Jwt;
+using System.Net.Http;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
@@ -138,6 +140,30 @@ namespace Services.Concretes
 			#endregion
 
 			return new JwtSecurityToken(jwtTokenInStr);
+		}
+
+
+		private async Task<DynamicParameters> GetParametersWithUserIdAsync(
+			HttpContext httpContext)
+		{
+			#region get user id from token
+			var jwtToken = await GetTokenFromHttpContextAsync(httpContext);
+
+			var userIdInStr = jwtToken.Claims
+				.FirstOrDefault(c => c.Type.Equals(ClaimTypes.NameIdentifier))
+				.Value;
+			#endregion
+
+			#region set parameters
+			var parameters = new DynamicParameters();
+
+			parameters.Add(
+				"UserId",
+				new Guid(userIdInStr),
+				DbType.Guid);
+			#endregion
+
+			return parameters;
 		}
 	}
 
@@ -369,28 +395,13 @@ namespace Services.Concretes
 	public partial class UserService  // form services
 	{
 		public async Task CreateGenaralCommFormAsync(
-			HttpContext httpContext,
-			GeneralCommFormDtoForCreate formDto)
+			GeneralCommFormDtoForCreate formDto,
+			HttpContext httpContext)
 		{
 			#region set parameters
-			
-			#region get user id from token
-			var jwtToken = await GetTokenFromHttpContextAsync(httpContext);
+			var parameters = await GetParametersWithUserIdAsync(httpContext);
 
-			var userIdInStr = jwtToken.Claims
-				.FirstOrDefault(c => c.Type.Equals(ClaimTypes.NameIdentifier))
-				.Value;
-			#endregion
-
-			#region set parameters
-			var parameters = new DynamicParameters(formDto);
-
-			parameters.Add(
-				"UserId", 
-				new Guid(userIdInStr), 
-				DbType.Guid);
-			#endregion
-
+			parameters.AddDynamicParams(formDto);
 			#endregion
 
 			await _manager.UserRepository
@@ -398,35 +409,45 @@ namespace Services.Concretes
 		}
 
 		public async Task CreateGetOfferFormAsync(
-			HttpContext httpContext,
-			GetOfferFormDtoForCreate formDto)
+			LanguageParams languageParams,
+			GetOfferFormDtoForCreate formDto,
+			HttpContext httpContext)
 		{
 			#region set parameters
-			var parameters = new DynamicParameters(formDto);
+			var parameters = await GetParametersWithUserIdAsync(httpContext);
 
-			// add user id
-			var jwtToken = await GetTokenFromHttpContextAsync(httpContext);
-			parameters.Add("UserId", jwtToken.Id, DbType.Guid);
+			parameters.AddDynamicParams(formDto);
+			parameters.Add("Language", languageParams.Language, DbType.String);
 			#endregion
 
-			await _manager.UserRepository
-				.CreateGeneralCommFormAsync(parameters);
+			#region create form (throw)
+			var errorDto = await _manager.UserRepository
+				.CreateGetOfferFormAsync(parameters);
+
+			if (errorDto != null)
+				throw new ErrorWithCodeException(errorDto);
+			#endregion
 		}
 
 		public async Task CreateRentingFormAsync(
-			HttpContext httpContext,
-			RentingFormDtoForCreate formDto)
+			LanguageParams languageParams,
+			RentingFormDtoForCreate formDto,
+			HttpContext httpContext)
 		{
 			#region set parameters
-			var parameters = new DynamicParameters(formDto);
+			var parameters = await GetParametersWithUserIdAsync(httpContext);
 
-			// add user id
-			var jwtToken = await GetTokenFromHttpContextAsync(httpContext);
-			parameters.Add("UserId", jwtToken.Id, DbType.Guid);
+			parameters.AddDynamicParams(formDto);
+			parameters.Add("Language", languageParams.Language, DbType.String);
 			#endregion
 
-			await _manager.UserRepository
-				.CreateGeneralCommFormAsync(parameters);
+			#region create form (throw)
+			var errorDto = await _manager.UserRepository
+				.CreateRentingFormAsync(parameters);
+
+			if (errorDto != null)
+				throw new ErrorWithCodeException(errorDto);
+			#endregion
 		}
 
 		public async Task<FormViewForOneUser> GetAllFormsOfOneUserAsync(

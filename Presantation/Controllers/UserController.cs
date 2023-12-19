@@ -87,7 +87,7 @@ namespace Presantation.Controllers
             [FromBody] GeneralCommFormDtoForCreate formDto)
         {
             await _manager.UserService
-                .CreateGenaralCommFormAsync(HttpContext, formDto);
+                .CreateGenaralCommFormAsync(formDto, HttpContext);
 
             return NoContent();
         }
@@ -95,10 +95,11 @@ namespace Presantation.Controllers
 		[HttpPost("create/form/getOffer")]
 		[Authorization("User,Kullanıcı")]
 		public async Task<IActionResult> CreateGetOfferForm(
-			[FromBody] GetOfferFormDtoForCreate formDto)
+            [FromQuery] LanguageParams languageParams,
+            [FromBody] GetOfferFormDtoForCreate formDto)
 		{
 			await _manager.UserService
-				.CreateGetOfferFormAsync(HttpContext, formDto);
+				.CreateGetOfferFormAsync(languageParams, formDto, HttpContext);
 
 			return NoContent();
 		}
@@ -106,10 +107,11 @@ namespace Presantation.Controllers
 		[HttpPost("create/form/renting")]
 		[Authorization("User,Kullanıcı")]
 		public async Task<IActionResult> CreateRentingForm(
+			[FromQuery] LanguageParams languageParams,
 			[FromBody] RentingFormDtoForCreate formDto)
 		{
 			await _manager.UserService
-				.CreateRentingFormAsync(HttpContext, formDto);
+				.CreateRentingFormAsync(languageParams, formDto, HttpContext);
 
 			return NoContent();
 		}

@@ -15,7 +15,7 @@ namespace Entities.DtoModels.FormDtos
 		[MiarLength(1, 100, "İlçe", "County")] public string County { get; init; }
 		[MiarLength(1, 100, "Konu", "Subject")] public string Subject { get; init; }
 		[MiarLength(1, 1000, "Mesaj", "Message")] public string Message { get; init; }
-		public DateTime CreatedAt { get; init; }
+		public DateTime CreatedAt { get; } = DateTime.UtcNow;
 	}
 
 	public class GetOfferFormDtoForCreate
@@ -29,7 +29,7 @@ namespace Entities.DtoModels.FormDtos
 		[MiarLength(1, -1, "Şehir", "City")] public string CityName { get; init; }
 		[MiarLength(1, 100, "İlçe", "County")] public string County { get; init; }
 		[MiarLength(1, 1000, "Mesaj", "Message")] public string Message { get; init; }
-		public DateTime CreatedAt { get; init; }
+		public DateTime CreatedAt { get; } = DateTime.UtcNow;
 	}
 
 	public class RentingFormDtoForCreate : GetOfferFormDtoForCreate

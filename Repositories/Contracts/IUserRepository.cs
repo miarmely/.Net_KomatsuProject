@@ -11,10 +11,10 @@ namespace Repositories.Contracts
         Task<ErrorDto?> CreateUserAsync(DynamicParameters parameters);
         Task<UserView?> GetUserByTelNoAsync(DynamicParameters parameters);
         Task<ErrorDto?> UpdateUserByTelNoAsync(DynamicParameters parameters);
-        Task<ErrorDto> DeleteUsersByTelNoListAsync(DynamicParameters parameters);
+        Task<ErrorDto?> DeleteUsersByTelNoListAsync(DynamicParameters parameters);
 		Task CreateGeneralCommFormAsync(DynamicParameters parameters);
-        Task CreateGetOfferFormAsync(DynamicParameters parameters);
-        Task CreateRentingFormAsync(DynamicParameters parameters);
+        Task<ErrorDto?> CreateGetOfferFormAsync(DynamicParameters parameters);
+        Task<ErrorDto?> CreateRentingFormAsync(DynamicParameters parameters);
 
 		Task<IEnumerable<UserView>?> GetAllUsersWithPagingAsync(
 			DynamicParameters parameters);

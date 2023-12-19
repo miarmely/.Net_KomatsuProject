@@ -30,15 +30,17 @@ namespace Services.Contracts
             FormParamsForGetAllFormsOfOneUser formParams);
 
 		Task CreateGenaralCommFormAsync(
-		 HttpContext httpContext,
-		 GeneralCommFormDtoForCreate formDto);
+			GeneralCommFormDtoForCreate formDto,
+			HttpContext httpContext);
 
 		Task CreateGetOfferFormAsync(
-			HttpContext httpContext,
-			GetOfferFormDtoForCreate formDto);
+			LanguageParams languageParams,
+			GetOfferFormDtoForCreate formDto,
+			HttpContext httpContext);
 
 		Task CreateRentingFormAsync(
-			HttpContext httpContext,
-			RentingFormDtoForCreate formDto);
+			LanguageParams languageParams,
+			RentingFormDtoForCreate formDto,
+			HttpContext httpContext);
 	}
 }
