@@ -25,22 +25,5 @@ namespace Services.Contracts
             string language,
             string telNo,
             UserDtoForUpdate userDto);
-
-        Task<FormViewForOneUser> GetAllFormsOfOneUserAsync(
-            FormParamsForGetAllFormsOfOneUser formParams);
-
-		Task CreateGenaralCommFormAsync(
-			GeneralCommFormDtoForCreate formDto,
-			HttpContext httpContext);
-
-		Task CreateGetOfferFormAsync(
-			LanguageParams languageParams,
-			GetOfferFormDtoForCreate formDto,
-			HttpContext httpContext);
-
-		Task CreateRentingFormAsync(
-			LanguageParams languageParams,
-			RentingFormDtoForCreate formDto,
-			HttpContext httpContext);
 	}
 }

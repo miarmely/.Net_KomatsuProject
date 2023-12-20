@@ -1,12 +1,10 @@
-﻿using Entities.DtoModels.FormDtos;
-using Entities.DtoModels.UserDtos;
+﻿using Entities.DtoModels.UserDtos;
 using Entities.QueryParameters;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Presantation.Attributes;
 using Services.Contracts;
 using System.ComponentModel.DataAnnotations;
-using System.Reflection.Metadata.Ecma335;
 
 
 namespace Presantation.Controllers
@@ -81,42 +79,6 @@ namespace Presantation.Controllers
 		}
 
         
-        [HttpPost("create/form/generalCommunication")]
-		[Authorization("User,Kullanıcı")]
-        public async Task<IActionResult> CreateGeneralCommunicationForm(
-            [FromBody] GeneralCommFormDtoForCreate formDto)
-        {
-            await _manager.UserService
-                .CreateGenaralCommFormAsync(formDto, HttpContext);
-
-            return NoContent();
-        }
-
-		[HttpPost("create/form/getOffer")]
-		[Authorization("User,Kullanıcı")]
-		public async Task<IActionResult> CreateGetOfferForm(
-            [FromQuery] LanguageParams languageParams,
-            [FromBody] GetOfferFormDtoForCreate formDto)
-		{
-			await _manager.UserService
-				.CreateGetOfferFormAsync(languageParams, formDto, HttpContext);
-
-			return NoContent();
-		}
-
-		[HttpPost("create/form/renting")]
-		[Authorization("User,Kullanıcı")]
-		public async Task<IActionResult> CreateRentingForm(
-			[FromQuery] LanguageParams languageParams,
-			[FromBody] RentingFormDtoForCreate formDto)
-		{
-			await _manager.UserService
-				.CreateRentingFormAsync(languageParams, formDto, HttpContext);
-
-			return NoContent();
-		}
-
-
 		[HttpGet("display/all")]
         [Authorization("Admin,Editor,User,Yönetici,Editör,Kullanıcı")]
         public async Task<IActionResult> GetAllUsersWithPaginationAsync(
@@ -137,17 +99,6 @@ namespace Presantation.Controllers
                 .GetAllRolesByLanguageAsync(language);
 
             return Ok(roles);
-        }
-
-
-        [HttpGet("display/form/oneUser/all")]
-        public async Task<IActionResult> GetAllFormsOfOneUser(
-            [FromQuery] FormParamsForGetAllFormsOfOneUser formParams)
-        {
-            var allForms = await _manager.UserService
-                .GetAllFormsOfOneUserAsync(formParams);
-
-            return Ok(allForms);
         }
 
 

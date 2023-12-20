@@ -7,5 +7,6 @@
 		IMachineService MachineService { get; }
 		IFileService FileService { get; }
 		ISliderService SliderService { get; }
+		IFormService FormService { get;  }
 	}
 }
