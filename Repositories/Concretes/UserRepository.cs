@@ -2,8 +2,8 @@
 using Entities.ConfigModels.Contracts;
 using Entities.DtoModels;
 using Entities.ViewModels;
-using Microsoft.Data.SqlClient;
 using Repositories.Contracts;
+
 
 namespace Repositories.Concretes
 {

@@ -23,6 +23,7 @@ namespace Services.Contracts
 			HttpContext httpContext);
 
 		Task<FormViewForOneUser> GetAllFormsOfOneUserAsync(
-			FormParamsForGetAllFormsOfOneUser formParams);
+			FormParamsForGetAllFormsOfOneUser formParams,
+			HttpContext httpContext);
 	}
 }

@@ -37,7 +37,7 @@ namespace Services.Concretes
 			_sliderService = new Lazy<ISliderService>(() => 
 				new SliderService(manager, configs, FileService));
 			_formService = new Lazy<IFormService>(() => 
-				new FormService(manager, configs));
+				new FormService(manager));
         }
 	}
 }

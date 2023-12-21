@@ -166,7 +166,7 @@ namespace Services.Concretes
 			#region add informations to headers
 			response.Headers.Add(
 				"Machine-Pagination",
-				machineViewPagingList.GetMetaDataForHeaders());
+				await machineViewPagingList.GetMetaDataForHeadersAsync());
 			#endregion
 
 			#endregion
@@ -221,7 +221,7 @@ namespace Services.Concretes
 			#region add pagination infos to headers
 			response.Headers.Add(
 				"Machine-Pagination",
-				machineViewPagingList.GetMetaDataForHeaders());
+				await machineViewPagingList.GetMetaDataForHeadersAsync());
 			#endregion
 
 			return machineViewPagingList;

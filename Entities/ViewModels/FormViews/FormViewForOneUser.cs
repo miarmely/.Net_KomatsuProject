@@ -14,11 +14,11 @@ namespace Entities.ViewModels
 
 	public record UnansweredFormViewForOneUser
 	{
-		public IEnumerable<AnsweredGeneralCommFormViewForOneUser> GeneralCommForms
+		public IEnumerable<UnansweredGeneralCommFormViewForOneUser> GeneralCommForms
 		{ get; init; }
 		public IEnumerable<UnansweredGetOfferFormViewForOneUser> GetOfferForms
 		{ get; init; }
-		public IEnumerable<AnsweredRentingFormViewForOneUser> RentingForms
+		public IEnumerable<UnansweredRentingFormViewForOneUser> RentingForms
 		{ get; init; }
 	}
 

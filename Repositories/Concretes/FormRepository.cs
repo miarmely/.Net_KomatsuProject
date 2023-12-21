@@ -1,13 +1,19 @@
 ﻿using Dapper;
+using Entities.ConfigModels.Contracts;
 using Entities.DtoModels;
 using Repositories.Contracts;
 
 
 namespace Repositories.Concretes
 {
-	public class FormRepository :  RepositoryBase, IUserRepository
+	public class FormRepository :  RepositoryBase, IFormRepository
 	{
-		public async Task CreateGeneralCommFormAsync(
+        public FormRepository(
+			RepositoryContext context,
+			IConfigManager configs) : base(context, configs)
+        {}
+
+        public async Task CreateGeneralCommFormAsync(
 			DynamicParameters parameters) =>
 			await base.QuerySingleOrDefaultAsync<int>(
 				base.Configs.DbSettings.ProcedureNames

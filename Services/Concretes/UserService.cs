@@ -270,7 +270,7 @@ namespace Services.Concretes
 			#region add infos to headers
 			response.Headers.Add(
 				"User-Pagination",
-				userViewsInPagingList.GetMetaDataForHeaders());
+				await userViewsInPagingList.GetMetaDataForHeadersAsync());
 			#endregion
 
 			#endregion

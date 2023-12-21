@@ -1,4 +1,6 @@
-﻿using System.Text.Json;
+﻿using Microsoft.AspNetCore.Http;
+using Repositories.Concretes;
+using System.Text.Json;
 
 namespace Repositories
 {
@@ -36,15 +38,32 @@ namespace Repositories
 			AddRange(entity);
 		}
 
-		public async static Task<PagingList<T>> ToPagingListAsync(
+		public static async Task<PagingList<T>> ToPagingListAsync(
 			IEnumerable<T> source,
 			int totalCount,
 			int pageNumber,
-			int pageSize) =>
-				await Task.Run(() =>
-					new PagingList<T>(source, totalCount, pageNumber, pageSize));
+			int pageSize,
+			string? headerKey = null,
+			HttpContext? httpContext = null)
+		{
+			#region when not wanting add to header
+			var pagingList = new PagingList<T>(source, totalCount, pageNumber, pageSize);
+			
+			if (headerKey == null)
+				return pagingList;
+			#endregion
 
-		public string GetMetaDataForHeaders() =>
+			#region when wanting add to header
+			httpContext.Response.Headers.Add(
+				headerKey,
+				await pagingList.GetMetaDataForHeadersAsync());
+			#endregion
+
+			return pagingList;
+		}
+				
+
+		public async Task<string> GetMetaDataForHeadersAsync() =>
 			JsonSerializer.Serialize(new
 			{
 				TotalPage,
