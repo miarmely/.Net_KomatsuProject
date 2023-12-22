@@ -1,11 +1,11 @@
 ﻿using Entities.ViewModels.FormViews;
+using Entities.ViewModels.FormViews.Contracts;
 
 namespace Entities.ViewModels
 {
 	public record AnsweredFormViewForOneUser
 	{
-		public IEnumerable<AnsweredGeneralCommFormViewForOneUser> GeneralCommForms
-		{ get; init; }
+		public IEnumerable<AnsweredGeneralCommFormViewForOneUser> GeneralCommunicationForms { get; init; }
 		public IEnumerable<AnsweredGetOfferFormViewForOneUser> GetOfferForms
 		{ get; init; }
 		public IEnumerable<AnsweredRentingFormViewForOneUser> RentingForms
@@ -14,8 +14,7 @@ namespace Entities.ViewModels
 
 	public record UnansweredFormViewForOneUser
 	{
-		public IEnumerable<UnansweredGeneralCommFormViewForOneUser> GeneralCommForms
-		{ get; init; }
+		public IEnumerable<UnansweredGeneralCommFormViewForOneUser> GeneralCommunicationForms { get; init; }
 		public IEnumerable<UnansweredGetOfferFormViewForOneUser> GetOfferForms
 		{ get; init; }
 		public IEnumerable<UnansweredRentingFormViewForOneUser> RentingForms
@@ -24,8 +23,7 @@ namespace Entities.ViewModels
 
 	public record AllFormViewForOneUser
 	{
-		public IEnumerable<AllGeneralCommFormViewForOneUser> GeneralCommForms
-		{ get; init; }
+		public IEnumerable<AllGeneralCommFormViewForOneUser> GeneralCommunicationForms { get; init; }
 		public IEnumerable<AllGetOfferFormViewForOneUser> GetOfferForms 
 		{ get; init; }
 		public IEnumerable<AllRentingFormViewForOneUser> RentingForms 

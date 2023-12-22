@@ -17,7 +17,7 @@ namespace Presantation.Controllers
 			_manager = manager;
 		
 
-		[HttpPost("create/form/generalCommunication")]
+		[HttpPost("create/generalCommunication")]
 		[Authorization("User,Kullanıcı")]
 		public async Task<IActionResult> CreateGeneralCommunicationForm(
 			[FromBody] GeneralCommFormDtoForCreate formDto)
@@ -28,7 +28,7 @@ namespace Presantation.Controllers
 			return NoContent();
 		}
 
-		[HttpPost("create/form/getOffer")]
+		[HttpPost("create/getOffer")]
 		[Authorization("User,Kullanıcı")]
 		public async Task<IActionResult> CreateGetOfferForm(
 			[FromQuery] LanguageParams languageParams,
@@ -40,7 +40,7 @@ namespace Presantation.Controllers
 			return NoContent();
 		}
 
-		[HttpPost("create/form/renting")]
+		[HttpPost("create/renting")]
 		[Authorization("User,Kullanıcı")]
 		public async Task<IActionResult> CreateRentingForm(
 			[FromQuery] LanguageParams languageParams,
@@ -53,16 +53,14 @@ namespace Presantation.Controllers
 		}
 
 
-		[HttpGet("display/form/oneUser/all")]
+		[HttpGet("display/oneUser/all")]
 		public async Task<IActionResult> GetAllFormsOfOneUser(
 			[FromQuery] FormParamsForGetAllFormsOfOneUser formParams)
 		{
 			var allForms = await _manager.FormService
-				.GetAllFormsOfOneUserAsync(formParams);
+				.GetAllFormsOfOneUserAsync(formParams, HttpContext);
 
 			return Ok(allForms);
 		}
-
-
 	}
 }

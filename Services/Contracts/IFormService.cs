@@ -1,6 +1,5 @@
 ﻿using Entities.DtoModels.FormDtos;
 using Entities.QueryParameters;
-using Entities.ViewModels.FormViews;
 using Microsoft.AspNetCore.Http;
 
 
@@ -22,7 +21,7 @@ namespace Services.Contracts
 			RentingFormDtoForCreate formDto,
 			HttpContext httpContext);
 
-		Task<FormViewForOneUser> GetAllFormsOfOneUserAsync(
+		Task<object> GetAllFormsOfOneUserAsync(
 			FormParamsForGetAllFormsOfOneUser formParams,
 			HttpContext httpContext);
 	}
