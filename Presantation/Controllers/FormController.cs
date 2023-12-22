@@ -68,7 +68,7 @@ namespace Presantation.Controllers
 			[FromQuery] FormParamsForGetGeneralCommFormsOfOneUser formParams)
 		{
 			var allForms = await _manager.FormService
-				.GetGeneralCommFormsOfOneUserAsync(formParams);
+				.GetGeneralCommFormsOfOneUserAsync(formParams, HttpContext);
 
 			return Ok(allForms);
 		}
@@ -78,7 +78,7 @@ namespace Presantation.Controllers
 			[FromQuery] FormParamsForGetGetOfferFormsOfOneUser formParams)
 		{
 			var allForms = await _manager.FormService
-				.GetGetOfferFormsOfOneUserAsync(formParams);
+				.GetGetOfferFormsOfOneUserAsync(formParams, HttpContext);
 
 			return Ok(allForms);
 		}
@@ -88,7 +88,7 @@ namespace Presantation.Controllers
 			[FromQuery] FormParamsForGetRentingFormsOfOneUser formParams)
 		{
 			var allForms = await _manager.FormService
-				.GetRentingFormsOfOneUserAsync(formParams);
+				.GetRentingFormsOfOneUserAsync(formParams, HttpContext);
 
 			return Ok(allForms);
 		}

@@ -8,17 +8,23 @@ namespace Repositories
     {
         public int TotalPage { get; private set; }
         public int TotalCount { get; private set; }
-        public int LastPageCount => (int)TotalCount % PageSize == 0 ?
-            PageSize  // when lastPage full
-            : (int)TotalCount % PageSize;  // when lastPage not full
-		public int CurrentPageCount => CurrentPageNo == TotalPage ?
-            LastPageCount  // when current page is last page
-			: PageSize;  // when not last page
+        public int LastPageCount => TotalCount == 0 ?
+			0  // when any entity not exists
+			: TotalCount % PageSize == 0 ?
+				PageSize  // when lastPage full
+				: TotalCount % PageSize;  // when lastPage not full
+		public int CurrentPageCount => TotalCount == 0 ?
+			0    // when any entity not exists
+			: CurrentPageNo == TotalPage ?
+				LastPageCount  // when current page is last page
+				: PageSize;  // when not last page
 		public int CurrentPageNo { get; private set; }
         public int PageSize { get; private set; }
-        public bool HasPrevious => CurrentPageNo > 1;
-        public bool HasNext => CurrentPageNo < TotalPage;
-    }
+        public bool HasPrevious => TotalCount != 0  // when any entity exists
+			&& CurrentPageNo > 1;
+		public bool HasNext => TotalCount != 0  // when any entity exists
+			&& CurrentPageNo < TotalPage;
+	}
 
 	public partial class PagingList<T>  // functions
     {
@@ -62,7 +68,6 @@ namespace Repositories
 			return pagingList;
 		}
 				
-
 		public async Task<string> GetMetaDataForHeadersAsync() =>
 			JsonSerializer.Serialize(new
 			{

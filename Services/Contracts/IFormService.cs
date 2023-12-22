@@ -1,7 +1,7 @@
 ﻿using Entities.DtoModels.FormDtos;
 using Entities.QueryParameters;
 using Microsoft.AspNetCore.Http;
-
+using Repositories;
 
 namespace Services.Contracts
 {
@@ -26,12 +26,15 @@ namespace Services.Contracts
 			HttpContext httpContext);
 
 		Task<object> GetGeneralCommFormsOfOneUserAsync(
-			FormParamsForGetGeneralCommFormsOfOneUser formParams);
+			FormParamsForGetGeneralCommFormsOfOneUser formParams,
+			HttpContext httpContext);
 
 		Task<object> GetGetOfferFormsOfOneUserAsync(
-			FormParamsForGetGetOfferFormsOfOneUser formParams);
+			FormParamsForGetGetOfferFormsOfOneUser formParams,
+			HttpContext httpContext);
 
 		Task<object> GetRentingFormsOfOneUserAsync(
-			FormParamsForGetRentingFormsOfOneUser formParams);
+			FormParamsForGetRentingFormsOfOneUser formParams,
+			HttpContext httpContext);
 	}
 }

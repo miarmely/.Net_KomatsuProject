@@ -6,4 +6,11 @@
 		PDF,
 		Slider
 	}	
+
+	public enum FormTypes
+	{
+		GeneralCommunication,
+		GetOffer,
+		Renting
+	}
 }
