@@ -15,9 +15,18 @@ namespace Repositories.Contracts
 		Task<ErrorDto?> CreateRentingFormAsync(
 			DynamicParameters parameters);
 
-		Task<TResult> GetAllFormsOfUserAsync<TResult>(
+		Task<TResult> GetAllFormsOfOneUserAsync<TResult>(
 			string sqlCommand,
 			DynamicParameters parameters,
 			Func<SqlMapper.GridReader, Task<TResult>> funcAsync);
+
+		Task<IEnumerable<T>> GetGeneralCommFormsOfOneUserAsync<T>(
+			DynamicParameters parameters);
+
+		Task<IEnumerable<T>> GetGetOfferFormsOfOneUserAsync<T>(
+			DynamicParameters parameters);
+
+		Task<IEnumerable<T>> GetRentingFormsOfOneUserAsync<T>(
+			DynamicParameters parameters);
 	}
 }

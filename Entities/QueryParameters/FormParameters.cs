@@ -9,15 +9,15 @@ namespace Entities.QueryParameters
 		public bool? GetAnsweredForms { get; init; }
 	}
 
-	public record GeneralCommFormParamsForGetOneUser : PagingParams
+	public record FormParamsForGetGeneralCommFormsOfOneUser : PagingParams
 	{
 		[Required] public Guid UserId { get; init; }
 		public bool? GetAnsweredForms { get; init; }
 	}
 
-	public record GetOfferFormParamsForGetOneUser : FormParamsForGetAllFormsOfOneUser
+	public record FormParamsForGetGetOfferFormsOfOneUser : FormParamsForGetAllFormsOfOneUser
 	{}
 
-	public record RentingFormParamsForGetOneUser : FormParamsForGetAllFormsOfOneUser
+	public record FormParamsForGetRentingFormsOfOneUser : FormParamsForGetAllFormsOfOneUser
 	{}
 }

@@ -6,14 +6,14 @@ using Repositories.Contracts;
 
 namespace Repositories.Concretes
 {
-	public class FormRepository :  RepositoryBase, IFormRepository
+	public class FormRepository : RepositoryBase, IFormRepository
 	{
-        public FormRepository(
+		public FormRepository(
 			RepositoryContext context,
 			IConfigManager configs) : base(context, configs)
-        {}
+		{ }
 
-        public async Task CreateGeneralCommFormAsync(
+		public async Task CreateGeneralCommFormAsync(
 			DynamicParameters parameters) =>
 			await base.QuerySingleOrDefaultAsync<int>(
 				base.Configs.DbSettings.ProcedureNames
@@ -32,7 +32,7 @@ namespace Repositories.Concretes
 				base.Configs.DbSettings.ProcedureNames.User_Form_Renting_Create,
 				parameters);
 
-		public async Task<TResult> GetAllFormsOfUserAsync<TResult>(
+		public async Task<TResult> GetAllFormsOfOneUserAsync<TResult>(
 			string sqlCommand,
 			DynamicParameters parameters,
 			Func<SqlMapper.GridReader, Task<TResult>> funcAsync) =>
@@ -40,5 +40,26 @@ namespace Repositories.Concretes
 					sqlCommand,
 					parameters,
 					funcAsync);
+
+		public async Task<IEnumerable<T>> GetGeneralCommFormsOfOneUserAsync<T>(
+			DynamicParameters parameters) =>
+				await base.QueryAsync<T>(
+					base.Configs.DbSettings.ProcedureNames
+						.User_Form_GeneralCommunication_GetAllOfOneUserByUserId,
+					parameters);
+
+		public async Task<IEnumerable<T>> GetGetOfferFormsOfOneUserAsync<T>(
+			DynamicParameters parameters) =>
+				await base.QueryAsync<T>(
+					base.Configs.DbSettings.ProcedureNames
+						.User_Form_GetOffer_GetAllOfOneUserByUserId,
+					parameters);
+
+		public async Task<IEnumerable<T>> GetRentingFormsOfOneUserAsync<T>(
+			DynamicParameters parameters) =>
+				await base.QueryAsync<T>(
+					base.Configs.DbSettings.ProcedureNames
+						.User_Form_Renting_GetAllOfOneUserByUserId,
+					parameters);
 	}
 }

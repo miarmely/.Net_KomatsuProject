@@ -21,8 +21,17 @@ namespace Services.Contracts
 			RentingFormDtoForCreate formDto,
 			HttpContext httpContext);
 
-		Task<object> GetAllFormsOfOneUserAsync(
+		Task<object> GetAllFormTypesOfOneUserAsync(
 			FormParamsForGetAllFormsOfOneUser formParams,
 			HttpContext httpContext);
+
+		Task<object> GetGeneralCommFormsOfOneUserAsync(
+			FormParamsForGetGeneralCommFormsOfOneUser formParams);
+
+		Task<object> GetGetOfferFormsOfOneUserAsync(
+			FormParamsForGetGetOfferFormsOfOneUser formParams);
+
+		Task<object> GetRentingFormsOfOneUserAsync(
+			FormParamsForGetRentingFormsOfOneUser formParams);
 	}
 }

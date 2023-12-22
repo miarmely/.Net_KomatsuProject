@@ -58,7 +58,37 @@ namespace Presantation.Controllers
 			[FromQuery] FormParamsForGetAllFormsOfOneUser formParams)
 		{
 			var allForms = await _manager.FormService
-				.GetAllFormsOfOneUserAsync(formParams, HttpContext);
+				.GetAllFormTypesOfOneUserAsync(formParams, HttpContext);
+
+			return Ok(allForms);
+		}
+
+		[HttpGet("display/oneUser/generalCommunication")]
+		public async Task<IActionResult> GetGeneralCommFormsOfOneUser(
+			[FromQuery] FormParamsForGetGeneralCommFormsOfOneUser formParams)
+		{
+			var allForms = await _manager.FormService
+				.GetGeneralCommFormsOfOneUserAsync(formParams);
+
+			return Ok(allForms);
+		}
+
+		[HttpGet("display/oneUser/getOffer")]
+		public async Task<IActionResult> GetGetOfferFormsOfOneUser(
+			[FromQuery] FormParamsForGetGetOfferFormsOfOneUser formParams)
+		{
+			var allForms = await _manager.FormService
+				.GetGetOfferFormsOfOneUserAsync(formParams);
+
+			return Ok(allForms);
+		}
+
+		[HttpGet("display/oneUser/renting")]
+		public async Task<IActionResult> GetRentingFormsOfOneUser(
+			[FromQuery] FormParamsForGetRentingFormsOfOneUser formParams)
+		{
+			var allForms = await _manager.FormService
+				.GetRentingFormsOfOneUserAsync(formParams);
 
 			return Ok(allForms);
 		}

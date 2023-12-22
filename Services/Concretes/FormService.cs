@@ -122,7 +122,7 @@ namespace Services.Concretes
 			#endregion
 		}
 
-		public async Task<object> GetAllFormsOfOneUserAsync(
+		public async Task<object> GetAllFormTypesOfOneUserAsync(
 			FormParamsForGetAllFormsOfOneUser formParams,
 			HttpContext httpContext)
 		{
@@ -211,7 +211,7 @@ namespace Services.Concretes
 
 							return new AnsweredFormViewForOneUser()
 							{
-								GeneralCommunicationForms =		
+								GeneralCommunicationForms =
 									answeredGCFormPagingList,
 								GetOfferForms = answeredGOFormPagingList,
 								RentingForms = answeredRFormPagingList
@@ -276,7 +276,7 @@ namespace Services.Concretes
 
 							return new UnansweredFormViewForOneUser()
 							{
-								GeneralCommunicationForms = 
+								GeneralCommunicationForms =
 									unansweredGCFormPagingList,
 								GetOfferForms = unansweredGOFormPagingList,
 								RentingForms = unansweredRFormPagingList
@@ -347,6 +347,99 @@ namespace Services.Concretes
 						});
 			#endregion
 			#endregion
+		}
+
+		public async Task<object> GetGeneralCommFormsOfOneUserAsync(
+			FormParamsForGetGeneralCommFormsOfOneUser formParams)
+		{
+			#region get general communication forms of one user
+			var parameters = new DynamicParameters(formParams);
+
+			object formView = formParams.GetAnsweredForms switch
+			{
+				#region when "answered" forms is wanting
+				true => await _manager.FormRepository
+					.GetGeneralCommFormsOfOneUserAsync
+					<AnsweredGeneralCommFormViewForOneUser>(parameters),
+				#endregion
+
+				#region when "unanswered" forms is wanting
+				false => await _manager.FormRepository
+					.GetGeneralCommFormsOfOneUserAsync
+					<UnansweredGeneralCommFormViewForOneUser>(parameters),
+				#endregion
+
+				#region when "answered" and "unanswered" forms is wanting
+				null => await _manager.FormRepository
+					.GetGeneralCommFormsOfOneUserAsync
+					<AllGeneralCommFormViewForOneUser>(parameters)
+				#endregion
+			};
+			#endregion
+
+			return formView;
+		}
+
+		public async Task<object> GetGetOfferFormsOfOneUserAsync(
+			FormParamsForGetGetOfferFormsOfOneUser formParams)
+		{
+			#region get "get offer" forms of one user
+			var parameters = new DynamicParameters(formParams);
+
+			object formView = formParams.GetAnsweredForms switch
+			{
+				#region when "answered" forms is wanting
+				true => await _manager.FormRepository
+					.GetGetOfferFormsOfOneUserAsync
+					<AnsweredGetOfferFormViewForOneUser>(parameters),
+				#endregion
+
+				#region when "unanswered" forms is wanting
+				false => await _manager.FormRepository
+					.GetGetOfferFormsOfOneUserAsync
+					<UnansweredGetOfferFormViewForOneUser>(parameters),
+				#endregion
+
+				#region when "answered" and "unanswered" forms is wanting
+				null => await _manager.FormRepository
+					.GetGetOfferFormsOfOneUserAsync
+					<AllGetOfferFormViewForOneUser>(parameters)
+				#endregion
+			};
+			#endregion
+
+			return formView;
+		}
+
+		public async Task<object> GetRentingFormsOfOneUserAsync(
+			FormParamsForGetRentingFormsOfOneUser formParams)
+		{
+			#region get renting forms of one user
+			var parameters = new DynamicParameters(formParams);
+
+			object formView = formParams.GetAnsweredForms switch
+			{
+				#region when "answered" forms is wanting
+				true => await _manager.FormRepository
+					.GetRentingFormsOfOneUserAsync
+					<AnsweredRentingFormViewForOneUser>(parameters),
+				#endregion
+
+				#region when "unanswered" forms is wanting
+				false => await _manager.FormRepository
+					.GetRentingFormsOfOneUserAsync
+					<UnansweredRentingFormViewForOneUser>(parameters),
+				#endregion
+
+				#region when "answered" and "unanswered" forms is wanting
+				null => await _manager.FormRepository
+					.GetRentingFormsOfOneUserAsync
+					<AllRentingFormViewForOneUser>(parameters)
+				#endregion
+			};
+			#endregion
+
+			return formView;
 		}
 	}
 }
