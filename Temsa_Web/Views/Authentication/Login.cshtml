@@ -43,6 +43,7 @@
 	if(language == null)
 		language = navigator.language == "en-US" ? "EN" : "TR"
 	//#endregion
+
 	const mainTitleByLanguages = {
 		"TR": "GİRİŞ YAP",
 		"EN": "LOGIN"
@@ -64,5 +65,13 @@
 	const loginButtonNameByLanguages = {
 		"TR": "GİRİŞ",
 		"EN": "LOGIN"
+	}
+	const errorMessagesByLanguages = {
+		"TR":{
+			"PhoneOrEmailWrong": "telefon numarası veya şifre yanlış"
+		},
+		"EN":{
+			"PhoneOrEmailWrong": "phone number or password is wrong"
+		}
 	}
 </script>

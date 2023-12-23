@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Dapper;
+using Entities.ConfigModels;
 using Entities.ConfigModels.Contracts;
 using Entities.DtoModels;
 using Entities.DtoModels.FormDtos;
@@ -149,37 +150,17 @@ namespace Services.Concretes
 		{
 			var userView = await LoginAsync(language, userDto);
 
-			#region control role (throw)
-
-			#region when language TR and user role invalid (throw)
-			if (language.Equals("TR")
-				&& !userView.RoleNames.Any(r => _configs.LoginSettings
-					.RolesCanBeLoginInTR
-					.Contains(r)))
+			#region when user role invalid for login to admin panel (throw)
+			if (!userView.RoleNames.Any(r => _configs
+				.LoginSettings
+				.RolesCanBeLoginToAdminPanel
+				.Contains(r)))
 			{
-				throw new ErrorWithCodeException(
-					403,
-					"AE-F",
-					"Authorization Error - Forbidden",
-					"yetkiniz yok");
+				throw new ErrorWithCodeException(ErrorDetailsConfig
+					.ToErrorDto(
+						language,
+						_configs.ErrorDetails.AE_F));
 			}
-			#endregion
-
-			#region when language EN and user role invalid (throw)
-			else if (language.Equals("EN")
-				&& !userView.RoleNames.Any(r => _configs.LoginSettings
-					.RolesCanBeLoginInEN
-					.Contains(r)))
-			{
-				throw new ErrorWithCodeException(
-					403,
-					"AE-F",
-					"Authorization Error - Forbidden",
-					"you don't have permission");
-			}
-
-			#endregion
-
 			#endregion
 
 			return await GenerateTokenForUserAsync(userView);

@@ -145,6 +145,7 @@ namespace Presantation.Attributes.Filters
             {
                 #region control '@'
                 var atIndex = email.IndexOf('@');
+
                 if (atIndex == email.Length - 1 // when '@' in last index.
                     || atIndex == -1)  // when '@' not found
                     return false;

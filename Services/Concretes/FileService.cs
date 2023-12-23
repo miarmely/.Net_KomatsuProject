@@ -1,4 +1,5 @@
-﻿using Entities.ConfigModels.Contracts;
+﻿using Entities.ConfigModels;
+using Entities.ConfigModels.Contracts;
 using Entities.Enums;
 using Entities.Exceptions;
 using Org.BouncyCastle.Utilities.Encoders;
@@ -60,7 +61,7 @@ namespace Services.Concretes
 					#region when other errors occured for "image" file (throw)
 					if (fileType == FileTypes.MachineImage)
 						throw new ErrorWithCodeException(
-							_configs.ErrorDetails.ToErrorDto(
+							ErrorDetailsConfig.ToErrorDto(
 								language,
 								_configs.ErrorDetails.FiE_U_I));
 					#endregion
@@ -68,7 +69,7 @@ namespace Services.Concretes
 					#region when other errors occured for "pdf" file (throw)
 					if (fileType == FileTypes.PDF)
 						throw new ErrorWithCodeException(
-							_configs.ErrorDetails.ToErrorDto(
+							ErrorDetailsConfig.ToErrorDto(
 								language,
 								_configs.ErrorDetails.FiE_U_P));
 					#endregion
@@ -76,7 +77,7 @@ namespace Services.Concretes
 					#region when other errors occured for "slider" file (throw)
 					if (fileType == FileTypes.Slider)
 						throw new ErrorWithCodeException(
-							_configs.ErrorDetails.ToErrorDto(
+							ErrorDetailsConfig.ToErrorDto(
 								language,
 								_configs.ErrorDetails.FiE_U_S));
 					#endregion
@@ -105,7 +106,7 @@ namespace Services.Concretes
 			{
 				#region when directory not found (throw)
 				throw new ErrorWithCodeException(
-					_configs.ErrorDetails.ToErrorDto(
+					ErrorDetailsConfig.ToErrorDto(
 						language,
 						_configs.ErrorDetails.NF_F_D));
 				#endregion
@@ -169,7 +170,7 @@ namespace Services.Concretes
 				#region when any error occured for machine "image" file (throw)
 				if (fileType == FileTypes.MachineImage)
 					throw new ErrorWithCodeException(
-						_configs.ErrorDetails.ToErrorDto(
+						ErrorDetailsConfig.ToErrorDto(
 							language,
 							_configs.ErrorDetails.FiE_D_I));
 				#endregion
@@ -177,7 +178,7 @@ namespace Services.Concretes
 				#region when any error occured for "pdf" file (throw)
 				else if (fileType == FileTypes.PDF)
 					throw new ErrorWithCodeException(
-						_configs.ErrorDetails.ToErrorDto(
+						ErrorDetailsConfig.ToErrorDto(
 							language,
 							_configs.ErrorDetails.FiE_D_P));
 				#endregion
@@ -185,7 +186,7 @@ namespace Services.Concretes
 				#region when any error occured for "slider" file (throw)
 				else if (fileType == FileTypes.Slider)
 					throw new ErrorWithCodeException(
-						_configs.ErrorDetails.ToErrorDto(
+						ErrorDetailsConfig.ToErrorDto(
 							language,
 							_configs.ErrorDetails.FiE_D_S));
 				#endregion

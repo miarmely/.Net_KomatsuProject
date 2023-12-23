@@ -12,11 +12,13 @@ namespace Entities.ConfigModels
 		public ErrorDetails FiE_D_I { get; init; }
 		public ErrorDetails FiE_D_P { get; init; }
 		public ErrorDetails FiE_D_S { get; init; }
+		public ErrorDetails AE_F { get; init; }
+		public ErrorDetails FE_U_E { get; init; }
 	}
 
     public partial record ErrorDetailsConfig  // functions
     {
-		public ErrorDto ToErrorDto(
+		public static ErrorDto ToErrorDto(
 			string language,
 			ErrorDetails errorDetails)
 		{
@@ -46,7 +48,9 @@ namespace Entities.ConfigModels
         public Languages ErrorMessage { get; init; }
     }
 
-    public record Languages(
-        string TR, 
-        string EN);
+    public record Languages
+	{
+		public string TR { get; init; }
+		public string EN { get; init; }
+	}
 }

@@ -34,16 +34,18 @@ namespace Entities.Attributes
 			#endregion
 
 			#region when value less than min value (throw)
+			var first2CharOfDisplayNameInEN = _displayNameInEN.Substring(0, 2);
+
 			if (_minValue != -1  // when min value control is wanted
 				&& (int)value < _minValue)
 				throw new ErrorWithCodeException(
 					400,
-					"FE-MinV",
-					"Format Error - Minimum Value",
+					$"FE-MinV-{first2CharOfDisplayNameInEN}",
+					$"Format Error - Minimum Value - {_displayNameInEN}",
 					JsonSerializer.Serialize(new
 					{
-						TR = $"'{_displayNameInTR}' en az `{_minValue}` değerini alabilir",
-						EN = $"'{_displayNameInEN}' can take min `{_minValue}` value"
+						TR = $"\"{_displayNameInTR}\" en az '{_minValue}' değerini alabilir",
+						EN = $"\"{_displayNameInEN}\" can take min '{_minValue}' value"
 					}));
 			#endregion
 
@@ -52,12 +54,12 @@ namespace Entities.Attributes
 				&& (int)value > _maxValue)
 				throw new ErrorWithCodeException(
 					400,
-					"FE-MaxV",
-					"Format Error - Maximum Value",
+					$"FE-MaxV-{first2CharOfDisplayNameInEN}",
+					$"Format Error - Maximum Value - {_displayNameInEN}",
 					JsonSerializer.Serialize(new
 					{
-						TR = $"'{_displayNameInTR}' en fazla `{_maxValue}` değerini alabilir",
-						EN = $"'{_displayNameInEN}' can take max `{_maxValue}` value"
+						TR = $"\"{_displayNameInTR}\" en fazla '{_maxValue}' değerini alabilir",
+						EN = $"\"{_displayNameInEN}\" can take max '{_maxValue}' value"
 					}));
 			#endregion
 

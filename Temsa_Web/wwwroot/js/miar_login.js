@@ -27,9 +27,9 @@ $(function () {
             }),
             dataType: "json",
             success: (response) => {
+                //#region add token and language to local
                 $("form")[0].reset();  // reset inputs
 
-                //#region add token and language to local
                 let token = response["token"];
                 localStorage.setItem("token", token);
                 localStorage.setItem("language", language);
@@ -44,9 +44,9 @@ $(function () {
                 //#region write error to resultLabel
                 updateResultLabel(
                     resultLabelId,
-                    JSON.parse(response.responseText).errorMessage,
+                    errorMessagesByLanguages[language]["PhoneOrEmailWrong"],
                     errorMessageColor,
-                    "50px")
+                    "30px")
                 //#endregion
             }
         });

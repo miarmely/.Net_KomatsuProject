@@ -42,6 +42,21 @@ namespace Temsa_Api.Extensions
 							// without desiralize at "catch"
 							#endregion
 
+							#region when error occured in "login"
+							var loginPathString = new PathString(
+								"/api/services/user/login");
+
+							// don't return the error details (for security)
+							if (context.Request.Path
+								.StartsWithSegments(loginPathString))
+							{
+								context.Response.StatusCode = 404;
+								
+								await context.Response.CompleteAsync();
+								return;
+							}
+							#endregion
+
 							#region when error type is "format error"
 							if (errorDto.ErrorCode.StartsWith("FE-"))
 							{
@@ -54,9 +69,7 @@ namespace Temsa_Api.Extensions
 									.Value;
 
 								// control language whether found
-								var validLanguages = new List<string> { 
-									"TR", 
-									"EN" };
+								var validLanguages = new List<string> { "TR", "EN" };
 
 								language = validLanguages.Contains(language) ?
 									language
@@ -77,8 +90,7 @@ namespace Temsa_Api.Extensions
 									StatusCode = errorDto.StatusCode,
 									ErrorCode = errorDto.ErrorCode,
 									ErrorDescription = errorDto.ErrorDescription,
-									ErrorMessage = errorMessageByLanguages
-										[language]
+									ErrorMessage = errorMessageByLanguages[language]
 								};
 								#endregion
 							}
