@@ -5,7 +5,7 @@ using Services.Contracts;
 
 namespace Temsa_Web.Controllers
 {
-	[Authorization("User,Editor,Admin,Kullanıcı,Editör,Yönetici")]
+	[Authorization("Editor,Admin,Editör,Yönetici")]
 	public class MachineController : Controller
 	{
 		private readonly IServiceManager _manager;

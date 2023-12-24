@@ -2,13 +2,10 @@
 using Dapper;
 using Entities.ConfigModels;
 using Entities.ConfigModels.Contracts;
-using Entities.DtoModels;
-using Entities.DtoModels.FormDtos;
 using Entities.DtoModels.UserDtos;
 using Entities.Exceptions;
 using Entities.QueryParameters;
 using Entities.ViewModels;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Http;
 using Microsoft.IdentityModel.Tokens;
 using Repositories;
@@ -17,7 +14,6 @@ using Services.Contracts;
 using System.Collections.ObjectModel;
 using System.Data;
 using System.IdentityModel.Tokens.Jwt;
-using System.Net.Http;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
@@ -132,7 +128,6 @@ namespace Services.Concretes
 		}
 	}
 
-
 	public partial class UserService
 	{
 		public async Task<string> LoginForMobileAsync(
@@ -188,7 +183,7 @@ namespace Services.Concretes
 			#endregion
 
 			#region set parameters
-			var userDtoForProc = new UserDtoForCreateProcedure
+			var parameters = new DynamicParameters(new
 			{
 				FirstName = userDto.FirstName,
 				LastName = userDto.LastName,
@@ -197,8 +192,7 @@ namespace Services.Concretes
 				Email = userDto.Email,
 				Password = await ComputeMd5Async(userDto.Password),
 				RoleNames = string.Join(",", userDto.RoleNames) // list to string 
-			};
-			var parameters = new DynamicParameters(userDtoForProc);
+			});
 
 			parameters.Add("Language", language, DbType.String);
 			#endregion
@@ -276,7 +270,7 @@ namespace Services.Concretes
 			UserDtoForUpdate userDto)
 		{
 			#region set parameters
-			var userDtoForProc = new UserDtoForUpdateProcedure
+			var parameters = new DynamicParameters(new
 			{
 				TelNoForValidation = telNo,
 				FirstName = userDto.FirstName,
@@ -290,8 +284,7 @@ namespace Services.Concretes
 					: await ComputeMd5Async(userDto.Password),
 				#endregion
 				RoleNames = userDto.RoleNames
-			};
-			var parameters = new DynamicParameters(userDtoForProc);
+			});
 
 			parameters.Add("Language", language, DbType.String);
 			#endregion

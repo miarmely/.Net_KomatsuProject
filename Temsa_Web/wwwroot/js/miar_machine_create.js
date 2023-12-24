@@ -21,15 +21,20 @@ $(function () {
     const spn_fileStatusLabel = $("#spn_fileStatusLabel");
     const imageFolderPathAfterWwwroot = "images\\machines";
     const pdfFolderPathAfterWwwroot = "pdfs";
+    const img_loading = $("#img_loading");
     let selectedImageInfos;
     let selectedPdfInfos;
     //#endregion
 
     //#region events
     $("form").submit(event => {
-        //#region before start
+        //#region resets
+        // reset result label
         event.preventDefault();
         $(resultLabel_id).empty();
+
+        // display loading gif
+        img_loading.removeAttr("hidden");
         //#endregion
 
         //#region control the descriptions whether entered (error)
@@ -45,7 +50,8 @@ $(function () {
                 resultLabel_id,
                 `${errorMessagesByLanguages[language]["descriptionNotEntered"]}`,
                 resultLabel_errorColor,
-                "30px");
+                "30px",
+                img_loading);
 
             return;
         }
@@ -67,7 +73,8 @@ $(function () {
                     resultLabel_id,
                     `"${languageInSession}" ${errorMessagesByLanguages[language]["descriptionNotEntered"]}`,
                     resultLabel_errorColor,
-                    "30px");
+                    "30px",
+                    img_loading);
 
                 return;
             }
@@ -145,7 +152,8 @@ $(function () {
                             resultLabel_id,
                             successMessagesByLanguages[language]["saveSuccessful"],
                             resultLabel_successColor,
-                            "30px");
+                            "30px",
+                            img_loading);
                         //#endregion
 
                         //#region remove descriptions in session
@@ -159,7 +167,8 @@ $(function () {
                             resultLabel_id,
                             JSON.parse(response.responseText).errorMessage,
                             resultLabel_errorColor,
-                            "30px");
+                            "30px",
+                            img_loading);
                         //#endregion
                     }
                 });
@@ -173,7 +182,8 @@ $(function () {
                     resultLabel_id,
                     errorMessagesByLanguages[language]["pdfReadingError"],
                     resultLabel_errorColor,
-                    "30px");
+                    "30px",
+                    img_loading);
                 //#endregion
 
                 return;
@@ -233,7 +243,8 @@ $(function () {
                 `#spn_help_${inpt_image_id}`,
                 partnerErrorMessagesByLanguages[language]["invalidFileType"],
                 resultLabel_errorColor,
-                "10px");
+                "10px",
+                img_loading);
 
             return;
         }
@@ -268,7 +279,8 @@ $(function () {
                 `#spn_help_${inpt_pdf_id}`,
                 partnerErrorMessagesByLanguages[language]["invalidFileType"],
                 resultLabel_errorColor,
-                "10px");
+                "10px",
+                img_loading);
 
             // reset pdf <input>
             $("#" + inpt_pdf_id).val("");
@@ -425,7 +437,7 @@ $(function () {
                     ${formLabelNamesByLanguages[language].year}
                 </label>
                 <div class="col-sm-6">
-                    <input id="inpt_year" type="number" class="form-control" required>
+                    <input id="inpt_year" type="number" class="form-control" min=1900 max=2099 required>
                     <span id="spn_help_inpt_year" class="help-block"></span>
                 </div>
             </div>`
@@ -439,7 +451,7 @@ $(function () {
                     ${formLabelNamesByLanguages[language].stock}
                 </label>
                 <div class="col-sm-6">
-                    <input id="inpt_stock" type="number" class="form-control" required>
+                    <input id="inpt_stock" type="number" class="form-control" min=1 max=5000 required>
                     <span id="spn_help_inpt_stock" class="help-block"></span>
                 </div>
             </div>`
@@ -574,9 +586,6 @@ $(function () {
                     <button id="btn_save" type="submit" class="btn btn-danger" style="background-color: darkblue">
                         ${saveButtonNameByLanguages[language]}
                     </button>
-                </div>
-                <div style="text-align:center;">
-                    <p id="p_resultLabel"></p>
                 </div>
             </div>`
         );

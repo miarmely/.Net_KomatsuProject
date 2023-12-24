@@ -8,7 +8,7 @@
 $(function () {
     //#region variables
     const pageNumber = 1;
-    const pageSize = 7;
+    const pageSize = 10;
     const paginationButtonQuantity = 5;
     const routeForDisplay = "user/display/all";
     const routeForUpdate = "user/update";
@@ -140,7 +140,7 @@ $(function () {
         }
     });
     $("tbody").click(async () => {
-        //#region when update,save or delete button clicked
+        //#region when update, save or delete button clicked
         let clickedElement = $(":focus");
         let row = clickedElement.closest("tr");
 
@@ -354,7 +354,7 @@ $(function () {
 
         //#endregion
 
-        await setDisabledOfOtherUpdateButtonsAsync(rowId, pageSize, updateButtonId, true);
+        await setDisabledOfOtherUpdateButtonsAsync(rowId, pageSize, true);
 
         //#region add <input> to columns
         for (let columnName in tableDatasForAddInput) {
@@ -492,7 +492,7 @@ $(function () {
 
                 removeInputsAndSelects(row, newColumnValues);
                 resetErrorRowAsync(rowId);
-                setDisabledOfOtherUpdateButtonsAsync(rowId, pageSize, updateButtonId, false);
+                setDisabledOfOtherUpdateButtonsAsync(rowId, pageSize, false);
             },
             error: (response) => {
                 //#region write error to error row
@@ -515,7 +515,7 @@ $(function () {
 
         removeInputsAndSelects(row, userInfosInSession);
         await resetErrorRowAsync(rowId);
-        await setDisabledOfOtherUpdateButtonsAsync(rowId, pageSize, updateButtonId, false);
+        await setDisabledOfOtherUpdateButtonsAsync(rowId, pageSize, false);
     }
 
     function removeInputsAndSelects(row, columnNamesAndValues) {

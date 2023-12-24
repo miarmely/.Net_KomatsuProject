@@ -27,19 +27,10 @@ namespace Temsa_Api.Extensions
 			services.AddSingleton<RepositoryContext>();
         }
 
-		public static void ConfigureServiceFilters(this IServiceCollection services)
-		{
-			services.AddScoped<ValidationUserFormatFilter>();
-			services.AddScoped<ValidationNullArgumentsFilter>();
-		}
-
 		public static void ConfigureConfigModels(
 			this IServiceCollection services, 
 			IConfiguration configuration)
 		{
-			services.Configure<UserSettingsConfig>(configuration
-				.GetSection(nameof(UserSettingsConfig)));
-
 			services.Configure<JwtSettingsConfig>(configuration
 				.GetSection(nameof(JwtSettingsConfig)));
 

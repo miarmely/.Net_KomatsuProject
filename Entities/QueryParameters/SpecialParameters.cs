@@ -7,7 +7,7 @@ namespace Entities.QueryParameters
 	{
 		[Required]
 		[MiarEqual(new object[] {"TR", "EN"}, "Dil", "Language")]
-		public string Language { get; init; }
+		public string? Language { get; init; }
 	}
 
 	public record PagingParams

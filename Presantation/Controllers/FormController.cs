@@ -54,6 +54,7 @@ namespace Presantation.Controllers
 
 
 		[HttpGet("display/oneUser/all")]
+		[Authorization]
 		public async Task<IActionResult> GetAllFormsOfOneUser(
 			[FromQuery] FormParamsForGetAllFormsOfOneUser formParams)
 		{
@@ -63,7 +64,9 @@ namespace Presantation.Controllers
 			return Ok(allForms);
 		}
 
+
 		[HttpGet("display/oneUser/generalCommunication")]
+		[Authorization]
 		public async Task<IActionResult> GetGeneralCommFormsOfOneUser(
 			[FromQuery] FormParamsForGetGeneralCommFormsOfOneUser formParams)
 		{
@@ -73,7 +76,9 @@ namespace Presantation.Controllers
 			return Ok(allForms);
 		}
 
+
 		[HttpGet("display/oneUser/getOffer")]
+		[Authorization]
 		public async Task<IActionResult> GetGetOfferFormsOfOneUser(
 			[FromQuery] FormParamsForGetGetOfferFormsOfOneUser formParams)
 		{
@@ -84,6 +89,7 @@ namespace Presantation.Controllers
 		}
 
 		[HttpGet("display/oneUser/renting")]
+		[Authorization]
 		public async Task<IActionResult> GetRentingFormsOfOneUser(
 			[FromQuery] FormParamsForGetRentingFormsOfOneUser formParams)
 		{

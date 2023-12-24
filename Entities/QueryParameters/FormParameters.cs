@@ -5,13 +5,13 @@ namespace Entities.QueryParameters
 {
 	public record FormParamsForGetAllFormsOfOneUser : LanguageAndPagingParams
 	{
-		[Required] public Guid UserId { get; init; }
+		[Required] public Guid? UserId { get; init; }
 		public bool? GetAnsweredForms { get; init; }
 	}
 
 	public record FormParamsForGetGeneralCommFormsOfOneUser : PagingParams
 	{
-		[Required] public Guid UserId { get; init; }
+		[Required] public Guid? UserId { get; init; }
 		public bool? GetAnsweredForms { get; init; }
 	}
 

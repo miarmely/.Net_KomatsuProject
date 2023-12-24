@@ -6,6 +6,7 @@ using System.Security.Claims;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Entities.ConfigModels.Contracts;
+using Presantation.Attributes;
 
 
 namespace Temsa_Web.Controllers
@@ -50,10 +51,11 @@ namespace Temsa_Web.Controllers
             return RedirectToAction("create", "user");
 		}
 
-        public async Task Logout() =>
+
+		[Authorization("Editor,Admin,Editör,Yönetici")]
+		public async Task Logout() =>
             await HttpContext.SignOutAsync(
                 CookieAuthenticationDefaults.AuthenticationScheme);
-
 
         #region private
 

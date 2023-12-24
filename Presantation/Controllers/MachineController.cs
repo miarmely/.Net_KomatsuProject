@@ -19,7 +19,6 @@ namespace Presantation.Controllers
 
 		[HttpPost("create")]
 		[Authorization("Admin,Yönetici,Editor,Editör")]
-		[ValidationNullArguments]
 		public async Task<IActionResult> CreateMachine(
 			[FromQuery] MachineParamsForCreate machineParams,
 			[FromBody] MachineDtoForCreate machineDto)
@@ -32,7 +31,7 @@ namespace Presantation.Controllers
 
 
 		[HttpGet("display/all")]
-		[Authorization("Admin,Yönetici,Editor,Editör,User,Kullanıcı")]
+		[Authorization]
 		public async Task<IActionResult> GetAllMachines(
 			[FromQuery] LanguageParams languageParam,
 			[FromQuery] PaginationParams pagingParameters)
@@ -48,7 +47,7 @@ namespace Presantation.Controllers
 
 
 		[HttpGet("display/condition")]
-		[Authorization("User,Kullanıcı,Editor,Editör,Admin,Yönetici")]
+		[Authorization]
 		public async Task<IActionResult> GetMachinesByCondition(
 			[FromQuery] PaginationParams pagingParameters,
 			[FromQuery] MachineDtoForDisplay machineDto)
@@ -65,7 +64,7 @@ namespace Presantation.Controllers
 
 
 		[HttpGet("display/mainCategory")]
-		[Authorization("User,Kullanıcı,Editor,Editör,Admin,Yönetici")]
+		[Authorization]
 		public async Task<IActionResult> GetMainCategoryNamesByLanguage(
 		   [FromQuery] LanguageParams languageParam)
 		{
@@ -77,7 +76,7 @@ namespace Presantation.Controllers
 
 
 		[HttpGet("display/subCategory")]
-		[Authorization("User,Kullanıcı,Editor,Editör,Admin,Yönetici")]
+		[Authorization]
 		public async Task<IActionResult> GetSubCategoryNamesOfMainCategoryByLanguage(
 			[FromQuery] MachineParamsForDisplaySubCategoryNames machineParams)
 		{
@@ -89,7 +88,7 @@ namespace Presantation.Controllers
 
 
 		[HttpGet("display/handStatus")]
-		[Authorization("Admin,Yönetici,Editor,Editör,User,Kullanıcı")]
+		[Authorization]
 		public async Task<IActionResult> GetAllHandStatusByLanguage(
 			[FromQuery] LanguageParams languageParam)
 		{
@@ -101,7 +100,7 @@ namespace Presantation.Controllers
 
 
 		[HttpGet("display/language")]
-		[Authorization("User,Kullanıcı,Editor,Editör,Admin,Yönetici")]
+		[Authorization]
 		public async Task<IActionResult> GetAllLanguages()
 		{
 			var languages = await _manager.MachineService
@@ -113,7 +112,6 @@ namespace Presantation.Controllers
 
 		[HttpPut("update")]
 		[Authorization("Admin,Yönetici,Editor,Editör")]
-		[ValidationNullArguments]
 		public async Task<IActionResult> UpdateMachine(
 			[FromQuery] MachineParamsForUpdate machineParams,
 			[FromBody] MachineDtoForUpdate machineDto)
@@ -127,7 +125,6 @@ namespace Presantation.Controllers
 
 		[HttpDelete("delete")]
 		[Authorization("Admin,Yönetici")]
-		[ValidationNullArguments]
 		public async Task<IActionResult> DeleteMachines(
 			[FromQuery] MachineParamsForDelete machineParams,
 			[FromBody] IEnumerable<MachineDtoForDelete> machineDtos)

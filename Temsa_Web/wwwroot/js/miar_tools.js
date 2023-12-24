@@ -275,10 +275,16 @@ export function updateResultLabel(
     resultLabelId,
     message,
     color,
-    marginT = "0px") {
-    //#region reset resultLabel
+    marginT = "0px",
+    loadingImage = null) {
+    //#region resets
+    // reset result label
     let resultLabel = $(resultLabelId);
     resultLabel.empty();
+
+    // hide loading gif
+    if (loadingImage != null)
+        loadingImage.attr("hidden", "");
     //#endregion
 
     //#region change style

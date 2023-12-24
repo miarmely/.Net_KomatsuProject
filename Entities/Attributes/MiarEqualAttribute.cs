@@ -24,7 +24,7 @@ namespace Entities.Attributes
 			object? value, 
 			ValidationContext validationContext)
 		{
-			#region when value is null
+			#region when value is null (return)
 			if (value == null)
 				return null;
 			#endregion
@@ -36,19 +36,21 @@ namespace Entities.Attributes
 				var validValuesInString = string.Join(',', _values);
 				var errorMessage = new
 				{
-					TR = $"'{_displayNameInTR}' geçerli değil." +
+					TR = $"\"{_displayNameInTR}\" geçerli değil." +
 						$" Geçerli değerler: [ {validValuesInString} ]",
 
-					EN = $"'{_displayNameInEN}' not valid." +
+					EN = $"\"{_displayNameInEN}\" not valid." +
 						$" Valid values = [ {validValuesInString} ]"
 				};
 				#endregion
 
 				#region throw error
+				var first2CharOfDisplayNameInEN = _displayNameInEN.Substring(0, 2);
+
 				throw new ErrorWithCodeException(
 					400,
-					"FE-NV-V",
-					$"Format Error - Not Valid - Value",
+					$"FE-NV-{first2CharOfDisplayNameInEN}",
+					$"Format Error - Not Valid - {_displayNameInTR}",
 					JsonSerializer.Serialize(errorMessage));
 				#endregion
 			}

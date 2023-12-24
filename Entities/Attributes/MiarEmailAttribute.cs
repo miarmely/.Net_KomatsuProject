@@ -28,6 +28,11 @@ namespace Entities.Attributes
 			object? value,
 			ValidationContext validationContext)
 		{
+			#region when value is null (return)
+			if (value == null)
+				return null;
+			#endregion
+
 			#region control '@' (throw)
 			var email = value as string;
 			var totalAtQuantity = email.Count(c => c.Equals('@'));

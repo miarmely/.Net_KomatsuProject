@@ -6,15 +6,20 @@ $(function () {
     const resultLabelId = "#p_resultLabel";
     const errorMessageColor = "red";
     const inputPlaceHolders = inputPlaceHoldersByLanguages[language];
+    const img_loading = $("#img_loading");
     //#endregion
 
     //#region events
     $("form").submit((event) => {
-        //#region reset resultLabel
+        //#region resets
         event.preventDefault();
 
+        // reset result label
         var resultLabel = $(resultLabelId);
         resultLabel.empty();
+
+        // show loading gif
+        img_loading.removeAttr("hidden");
         //#endregion
 
         $.ajax({
@@ -28,8 +33,10 @@ $(function () {
             dataType: "json",
             success: (response) => {
                 //#region add token and language to local
-                $("form")[0].reset();  // reset inputs
+                // reset all inputs
+                $("form")[0].reset();
 
+                // save to local
                 let token = response["token"];
                 localStorage.setItem("token", token);
                 localStorage.setItem("language", language);
@@ -40,13 +47,14 @@ $(function () {
                     `?token=${token}`);
                 //#endregion
             },
-            error: (response) => {
+            error: () => {
                 //#region write error to resultLabel
                 updateResultLabel(
                     resultLabelId,
                     errorMessagesByLanguages[language]["PhoneOrEmailWrong"],
                     errorMessageColor,
-                    "30px")
+                    "30px",
+                    img_loading)
                 //#endregion
             }
         });

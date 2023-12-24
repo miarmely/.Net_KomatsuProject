@@ -7,11 +7,15 @@ $(function () {
     //#region variables
     const resultLabel_id = "#p_resultLabel";
     const div_form = $("#div_form");
+    const img_loading = $("#img_loading");
     //#endregion
 
     //#region events
     $("form").submit((event) => {
+        //#region display loading gif
         event.preventDefault();
+        img_loading.removeAttr("hidden");
+        //#endregion
 
         $.ajax({
             method: "POST",
@@ -34,16 +38,16 @@ $(function () {
                 $(resultLabel_id).empty();
             },
             success: () => {
-                // reset inputs
-                $("form")[0].reset();
+                //#region write success message
+                $("form")[0].reset();  // reset inputs
 
-                // write success message
                 updateResultLabel(
                     resultLabel_id,
                     resultLabel_successMessageByLanguages[language],
                     resultLabel_successColor,
-                    "30px"
-                )
+                    "30px",
+                    img_loading);
+                 //#endregion
             },
             error: (response) => {
                 //#region get errorMessage
@@ -57,8 +61,8 @@ $(function () {
                     resultLabel_id,
                     errorMessage,
                     resultLabel_errorColor,
-                    "30px"
-                )
+                    "30px",
+                    img_loading)
                 //#endregion
             }
         });
@@ -123,15 +127,12 @@ $(function () {
         //#region add save button
         div_form.append(
             `<div class="form-group">
-            <div class="col-sm-6; text-center">
-                <button id="btn_save" type="submit" class="btn btn-danger" style="background-color: darkblue">
-                    ${saveButtonNameByLanguages[language]}
-                </button>
-            </div>
-            <div style="text-align:center">
-                <p id="p_resultLabel"></p>
-            </div>
-        </div>`
+                <div class="col-sm-6; text-center">
+                    <button id="btn_save" type="submit" class="btn btn-danger" style="background-color: darkblue">
+                        ${saveButtonNameByLanguages[language]}
+                    </button>
+                </div>
+            </div>`
         )
         //#endregion
     }

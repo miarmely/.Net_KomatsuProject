@@ -27,6 +27,11 @@ namespace Entities.Attributes
 			object? value,
 			ValidationContext validationContext)
 		{
+			#region when value is null (return)
+			if (value == null)
+				return null;
+			#endregion
+
 			#region control left chunk of string (throw)
 			var phoneInStr = value as string;
 

@@ -1,12 +1,11 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Presantation.Attributes;
 using Services.Contracts;
-using System.Security.Claims;
 
 
 namespace Temsa_Web.Controllers
 {
-	[Authorization("User,Editor,Admin,Kullanıcı,Editör,Yönetici")]
+	[Authorization("Editor,Admin,Editör,Yönetici")]
 	public class UserController : Controller
 	{
 		private readonly IServiceManager _manager;

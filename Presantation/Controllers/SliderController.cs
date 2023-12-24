@@ -1,8 +1,10 @@
 ﻿using Entities.DtoModels.SliderDtos;
 using Entities.QueryParameters;
 using Microsoft.AspNetCore.Mvc;
+using Presantation.Attributes;
 using Services.Contracts;
 using System.ComponentModel.DataAnnotations;
+
 
 namespace Presantation.Controllers
 {
@@ -17,7 +19,7 @@ namespace Presantation.Controllers
 
 
 		[HttpPost("upload/folder")]
-		//[Authorization("Admin,Editor,Yönetici,Editör")]
+		[Authorization("Admin,Editor,Yönetici,Editör")]
 		public async Task<IActionResult> UploadSliderToFolder(
 			[FromQuery] SliderParametersForUploadToFolder sliderParams,
 			[FromBody] SliderDtoForUploadToFolder sliderDto)
@@ -30,7 +32,7 @@ namespace Presantation.Controllers
 
 
 		[HttpPost("upload/db")]
-		//[Authorization("Admin,Editor,Yönetici,Editör")]
+		[Authorization("Admin,Editor,Yönetici,Editör")]
 		public async Task<IActionResult> UploadSlidersToDb(
 			[FromQuery(Name = "language")][Required] string language, // authorization
 			[FromBody] SliderDtoForUploadToDb sliderDto)
@@ -43,7 +45,7 @@ namespace Presantation.Controllers
 
 
 		[HttpGet("display/all")]
-		//[Authorization("Admin,Editor,User,Yönetici,Editör,Kullanıcı")]
+		[Authorization]
 		public async Task<IActionResult> GetAllSliders(
 			[FromQuery] SliderParamatersForDisplayAll sliderParams)
 		{
@@ -55,7 +57,7 @@ namespace Presantation.Controllers
 
 
 		[HttpGet("display/one")]
-		//[Authorization("Admin,Editor,User,Yönetici,Editör,Kullanıcı")]
+		[Authorization]
 		public async Task<IActionResult> GetSliderPathBySliderNo(
 			[FromQuery] SliderParametersForDisplayOne sliderParams)
 		{
@@ -70,7 +72,7 @@ namespace Presantation.Controllers
 
 
 		[HttpDelete("delete/multiple")]
-		//[Authorization("Admin,Editor,Yönetici,Editör")]
+		[Authorization("Admin,Editor,Yönetici,Editör")]
 		public async Task<IActionResult> DeleteMultipleSlider(
 			[FromQuery] SliderParametersForDeleteMultiple sliderParams,
 			[FromBody] SliderDtoForDeleteMultiple sliderDto)
@@ -84,7 +86,7 @@ namespace Presantation.Controllers
 
 
 		[HttpDelete("delete/one")]
-		//[Authorization("Admin,Editor,Yönetici,Editör")]
+		[Authorization("Admin,Editor,Yönetici,Editör")]
 		public async Task<IActionResult> DeleteOneSlider(
 			[FromQuery] SliderParametersForDeleteOne sliderParams)
 		{

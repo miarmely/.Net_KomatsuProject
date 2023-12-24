@@ -75,8 +75,8 @@ namespace Entities.Attributes
 					$"Format Error - Maximum Length - {_displayNameInEN}",
 					JsonSerializer.Serialize(new
 					{
-						TR = $"\"{_displayNameInTR}'\" en fazla '{_minLength}' karakterden oluşmalı",
-						EN = $"chars length of \"{_displayNameInEN}\" must be max '{_minLength}'"
+						TR = $"\"{_displayNameInTR}'\" en fazla '{_maxLength}' karakterden oluşmalı",
+						EN = $"chars length of \"{_displayNameInEN}\" must be max '{_maxLength}'"
 					}));
 			#endregion
 

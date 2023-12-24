@@ -12,8 +12,8 @@ $(function () {
     const btn_next = $("#btn_next");
     const btn_sliderNo = $("#btn_sliderNo");
     const inpt_chooseFile = $("#inpt_chooseFile");
-    const resultLabeL_id = "#spn_resultLabel";
-    const resultLabel = $(resultLabeL_id);
+    const resultLabel_id = "#p_resultLabel";
+    const resultLabel = $(resultLabel_id);
     const slider_folderPathAfterWwwroot = "images\\sliders";
     const spn_fileStatusLabel_id = "#spn_fileStatusLabel";
     const img_buttonNext = $("#img_buttonNext");
@@ -24,6 +24,7 @@ $(function () {
     const nextButton_bgColor_enabled = "darkBlue";
     const nextButton_bgColor_disabled = "darkGrey";
     const btn_chooseFile = $("#btn_chooseFile");
+    const img_loading = $("#img_loading");
     let currentSliderNo = 0;
     let maxSliderQuantity;  // associated with "slider_noAndPaths" length
     let slider_selectedFilesInfos = {};
@@ -52,9 +53,11 @@ $(function () {
         if (await isFileTypeInvalidAsync(selectedFileInfos, "image", inpt_chooseFile)) {
             // write error
             updateResultLabel(
-                resultLabeL_id,
+                resultLabel_id,
                 partnerErrorMessagesByLanguages[language]["invalidFileType"],
-                resultLabel_errorColor);
+                resultLabel_errorColor,
+                "0px",
+                img_loading);
 
             return;
         }
@@ -68,9 +71,11 @@ $(function () {
 
         if (result != -1) {
             updateResultLabel(
-                resultLabeL_id,
+                resultLabel_id,
                 errorMessagesByLanguages[language]["imageConflicted"],
-                resultLabel_errorColor);
+                resultLabel_errorColor,
+                "0px",
+                img_loading);
 
             return;
         }
@@ -83,9 +88,11 @@ $(function () {
             // when conflicted
             if (sliderInfos.name == selectedFileInfos.name) {
                 updateResultLabel(
-                    resultLabeL_id,
+                    resultLabel_id,
                     errorMessagesByLanguages[language]["imageConflicted"],
-                    resultLabel_errorColor);
+                    resultLabel_errorColor,
+                    "0px",
+                    img_loading);
 
                 return;
             }
@@ -223,8 +230,12 @@ $(function () {
         await displaySliderAsync();
     });
     $("#btn_save").click(async () => {
-        //#region before start
+        //#region resets
+        // reset result label
         resultLabel.empty();
+
+        // display loading gif
+        img_loading.removeAttr("hidden");
         //#endregion
 
         //#region when images not added to some pages (error)
@@ -235,9 +246,11 @@ $(function () {
                     && slider_selectedFilesInfos[sliderNo] == undefined)  // when not exists in "slider_selectedFilesInfos"
                 {
                     updateResultLabel(
-                        resultLabeL_id,
+                        resultLabel_id,
                         errorMessagesByLanguages[language]["noImage"],
-                        resultLabel_errorColor);
+                        resultLabel_errorColor,
+                        "0px",
+                        img_loading);
 
                     return;
                 }
@@ -376,16 +389,20 @@ $(function () {
 
                                                 //#region write success message
                                                 updateResultLabel(
-                                                    resultLabeL_id,
+                                                    resultLabel_id,
                                                     successMessagesByLanguages[language]["successfullSave"],
-                                                    resultLabel_successColor);
+                                                    resultLabel_successColor,
+                                                    "0px",
+                                                    img_loading);
                                                 //#endregion
                                             },
                                             error: () => {
                                                 updateResultLabel(
-                                                    resultLabeL_id,
+                                                    resultLabel_id,
                                                     errorMessagesByLanguages[language]["uploadToDb"],
-                                                    resultLabel_errorColor);
+                                                    resultLabel_errorColor,
+                                                    "0px",
+                                                    img_loading);
                                             }
                                         })
                                     }
@@ -393,9 +410,11 @@ $(function () {
                                 },
                                 error: () => {
                                     updateResultLabel(
-                                        resultLabeL_id,
+                                        resultLabel_id,
                                         errorMessagesByLanguages[language]["uploadToFolder"],
-                                        resultLabel_errorColor);
+                                        resultLabel_errorColor,
+                                        "0px",
+                                        img_loading);
                                 }
                             })
                             //#endregion
@@ -416,18 +435,22 @@ $(function () {
 
                     //#region write success message
                     updateResultLabel(
-                        resultLabeL_id,
+                        resultLabel_id,
                         successMessagesByLanguages[language]["successfullSave"],
-                        resultLabel_successColor);
+                        resultLabel_successColor,
+                        "0px",
+                        img_loading);
                     //#endregion
                 }
                 //#endregion
             },
             error: () => {
                 updateResultLabel(
-                    resultLabeL_id,
+                    resultLabel_id,
                     errorMessagesByLanguages[language]["deleteFromFolderAndDb"],
-                    resultLabel_errorColor);
+                    resultLabel_errorColor,
+                    "0px",
+                    img_loading);
             }
         })
     }

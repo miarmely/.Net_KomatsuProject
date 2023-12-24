@@ -10,7 +10,7 @@
 $(function () {
     //#region variables
     const pageNumber = 1;
-    const pageSize = 7;
+    const pageSize = 10;
     const paginationButtonQuantity = 5;
     const nameOfPaginationHeader = "Machine-Pagination";
     const errorMessageColor = "rgb(255, 75, 75)";
@@ -142,7 +142,7 @@ $(function () {
         //#endregion 
     })
     spn_eventManager.on("click_updateButton", async (_, row) => {
-        //#region add <input>s, <select>s and <button>s to columns
+        //#region add <input>, <select> and <button> to columns
         let oldColumnValues = {};
 
         for (let index in columnNames) {
@@ -342,7 +342,7 @@ $(function () {
                         `<input id="inpt_${columnName}" 
                                 type= "number"
                                 min= 1
-                                max= 32000
+                                max= 5000
                                 value= ${oldColumnValues[columnName]}>`);
                     //#endregion
                     break;
@@ -357,7 +357,7 @@ $(function () {
                         `<input id="inpt_${columnName}" 
                                 type="number" 
                                 min= 1
-                                max= 32000
+                                max= 5000
                                 value= ${oldColumnValues[columnName]}>`);
                     //#endregion
                     break;
@@ -372,7 +372,7 @@ $(function () {
                         `<input id="inpt_${columnName}" 
                                 type= "number" 
                                 min= 1
-                                max= 32000
+                                max= 5000
                                 value= ${oldColumnValues[columnName]}>`);
                     //#endregion
                     break;
