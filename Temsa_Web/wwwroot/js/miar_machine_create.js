@@ -143,7 +143,7 @@ $(function () {
 
                         // change description <button> color
                         changeDescriptionsButtonColorAsync(
-                            $("#", btn_descriptions_id),
+                            $("#" + btn_descriptions_id),
                             descriptions_unsavedColor);
                         //#endregion
 
