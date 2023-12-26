@@ -1,72 +1,114 @@
 ﻿@{
-	Layout = "_LoginAndRegisterLayout";
+	Layout = "LoginLayout";
 }
 
-<div class="log-w3">
-	<div class="top-nav clearfix">
-		<ul class="nav pull-right top-menu">
-			<li class="dropdown">
-				<a data-toggle="dropdown" class="dropdown-toggle" href="#">
-					<img id="img_displayingFlag" src="">
-					<span id="spn_displayingLanguage" class="username"></span>
-					<b class="caret"></b>
-				</a>
-				<ul id="ul_languages" class="dropdown-menu extended logout">
-				</ul>
-			</li>
-		</ul>
-	</div>
-	<div class="w3layouts-main">
-		<h2 id="h2_mainTitle">
-		</h2>
-		<form>
-			<input id="inpt_telNo" type="text" class="ggg" placeholder="" required>
-			<input id="inpt_password" type="password" class="ggg" placeholder="" required>
-			<!-- <span><input type="checkbox" /> Beni Hatırla</span> -->
-			<h6>
-				<a id="a_iForgotMyPassword" href="#">
-				</a>
-			</h6>		
-			<div class="clearfix"></div>
-			<input type="submit" value="" id="btn_login">
-		</form>
-		<div style="text-align:center">
-			<img id="img_loading" src="~/images/loading.gif" style="width:40px; height:40px" hidden/>
-			<p id="p_resultLabel"></p>
-		</div>
-	</div>
+
+@*langauge dropdown*@
+<div class="top-nav clearfix">
+	<ul class="nav pull-right top-menu" style="margin-top: 15px; margin-right:20px;">
+		<li class="dropdown">
+			<a data-toggle="dropdown" class="dropdown-toggle" href="#">
+				<img id="img_displayingFlag" src="">
+				<span id="spn_displayingLanguage" class="username"></span>
+				<b class="caret"></b>
+			</a>
+			<ul id="ul_languages" class="dropdown-menu extended logout" style="margin-top:20px; font-size:15px">
+			</ul>
+		</li>
+	</ul>
 </div>
 
-<script type="module" src="~/js/miar_login.js"></script>
+@*login *@
+<section class="ftco-section">
+	<div class="container">
+		@*Title*@
+		<div class="row justify-content-center">
+			<div class="col-md-6 text-center mb-5">
+				<h1 class="heading-section">KOMATSU</h1>
+			</div>
+		</div>
+
+		@*form*@
+		<div class="row justify-content-center">
+			<div class="col-md-6 col-lg-5">
+				<div class="login-wrap p-4 p-md-5">
+					@*icon*@
+					<div class="icon d-flex align-items-center justify-content-center">
+						<span class="fa fa-user-o"></span>
+					</div>
+
+					<form action="#" class="login-form" style="margin-top:40px">
+						@*telNo*@
+		      			<div class="form-group">
+		      				<input id="inpt_telNo" type="text" class="form-control rounded-left" placeholder="" required>
+		      			</div>
+
+						@*password*@
+						<div class="form-group d-flex">
+							<input id="inpt_password" type="password" class="form-control rounded-left" placeholder="Password" required>
+						</div>
+
+						<div class="form-group d-md-flex">
+	            			@*remember me*@
+							<div class="w-50">
+	            				<label class="checkbox-wrap checkbox-primary">
+									<span id="spn_rememberMe"></span>
+									<input type="checkbox" checked>
+									<span class="checkmark"></span>
+								</label>
+							</div>
+
+							@*forgot password?*@
+							<div class="w-50 text-md-right">
+								<a id="a_forgotPassword" href="#"></a>
+							</div>
+						</div>
+
+						@*error message*@ 
+						<div style="text-align:center">
+							<img id="img_loading" src="~/images/loading.gif" style="width:40px; height:40px" hidden/>
+							<p id="p_resultLabel"></p>
+						</div>
+
+						@*login button*@
+						<div class="form-group" style="margin-top:20px">
+	            			<button id="btn_login" type="submit" class="btn btn-primary rounded submit p-3 px-5"></button>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+</section>
+
 <script>
 	//#region language
 	let language = localStorage.getItem("language");
 	 
 	// add device language when not exists in local
 	if(language == null)
-		language = navigator.language == "en-US" ? "EN" : "TR"
+		language = navigator.language == "en-US" ? "EN" : "TR"  // look computer language
 	//#endregion
-
-	const mainTitleByLanguages = {
-		"TR": "GİRİŞ YAP",
-		"EN": "LOGIN"
-	}
 	const inputPlaceHoldersByLanguages = {
 		"TR": {
-			"telNo": "TELEFON",
-			"password": "ŞİFRE"
+			"telNo": "Telefon Numarası",
+			"password": "Şifre"
 		},
 		"EN": {
-			"telNo": "TELEPHONE",
-			"password": "PASSWORD"
+			"telNo": "Phone Number",
+			"password": "Password"
 		}
 	}
-	const iForgotMyPasswordByLanguages = {
+	const rememberMeByLanguages = {
+		"TR": "Beni Hatırla",
+		"EN": "Remember Me"
+	};
+	const forgotPasswordByLanguages = {
 		"TR": "Şifremi Unuttum?",
 		"EN": "Forgot Password?"
 	}
 	const loginButtonNameByLanguages = {
-		"TR": "GİRİŞ",
+		"TR": "GİRİŞ YAP",
 		"EN": "LOGIN"
 	}
 	const errorMessagesByLanguages = {

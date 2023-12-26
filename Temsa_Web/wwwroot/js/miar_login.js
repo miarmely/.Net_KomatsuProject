@@ -7,6 +7,7 @@ $(function () {
     const errorMessageColor = "red";
     const inputPlaceHolders = inputPlaceHoldersByLanguages[language];
     const img_loading = $("#img_loading");
+    const spn_rememberMe = $("#spn_rememberMe");
     //#endregion
 
     //#region events
@@ -66,30 +67,26 @@ $(function () {
 
     //#region functions
     async function populateHtmlAsync() {
-        await new Promise(resolve => {
-            //#region populate <form>
-            $("#h2_mainTitle").append(mainTitleByLanguages[language])
-            $("#inpt_telNo").attr("placeholder", inputPlaceHolders.telNo)
-            $("#inpt_password").attr("placeholder", inputPlaceHolders.password)
-            $("#a_iForgotMyPassword").append(iForgotMyPasswordByLanguages[language])
-            $("#btn_login").attr("value", loginButtonNameByLanguages[language]);
-            //#endregion
+        //#region populate <form> elements
+        $("#inpt_telNo").attr("placeholder", inputPlaceHolders.telNo)
+        $("#inpt_password").attr("placeholder", inputPlaceHolders.password)
+        spn_rememberMe.append(rememberMeByLanguages[language]);
+        $("#a_forgotPassword").append(forgotPasswordByLanguages[language])
+        $("#btn_login").append(loginButtonNameByLanguages[language]);
+        //#endregion
 
-            //#region set default flag and language on language dropdown
-            updateDefaultFlagAndLanguage(
-                img_displayingFlag_id,
-                spn_displayingLanguage_id);
-            //#endregion
+        //#region set default flag and language on language dropdown
+        updateDefaultFlagAndLanguage(
+            img_displayingFlag_id,
+            spn_displayingLanguage_id);
+        //#endregion
 
-            //#region add languages to dropdown (static)
-            populateLanguageDropdown(
-                ul_languages_id,
-                ["TR", "EN"]  
-            )
-            //#endregion
-
-            resolve();
-        });
+        //#region add languages to dropdown (static)
+        populateLanguageDropdown(
+            ul_languages_id,
+            ["TR", "EN"]  
+        )
+        //#endregion
     }
     //#endregion
 

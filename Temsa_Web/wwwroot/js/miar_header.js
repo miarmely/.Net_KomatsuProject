@@ -17,7 +17,7 @@ export function populateLanguageDropdown(ul_languages_id, languagesInArray) {
         $("#" + ul_languages_id).append(
             `<li>
                 <a href="#">
-                    <img alt="${language}" src="/images/${language}.png" />
+                    <img alt="${language}" src="/images/${language}.png" style="width:40px; height:40px"/>
                     <b>${language}</b>
                 </a>
             </li>`

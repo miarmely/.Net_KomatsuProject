@@ -1,0 +1,31 @@
+﻿<html lang="en">
+	<head>
+		<title>KOMATSU</title>
+		<meta charset="utf-8"/> 
+		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+		<meta name="keyword" content="komartu, admin panel"/>
+		<meta name="description" content="komatsu admin panel" />
+
+		<link href="https://fonts.googleapis.com/css?family=Lato:300,400,700&display=swap" rel="stylesheet">
+		<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+		<link rel="stylesheet" href="~/css/miar_login.css">
+	</head>
+	<body>
+		<div>
+			@RenderBody()
+		</div>
+
+		<script src="js/jquery.min.js"></script>
+		<script src="js/popper.js"></script>
+		<script src="js/bootstrap.min.js"></script>
+		<script type="module" src="~/js/miar_header.js"> </script>  @*for language dropdown*@
+		<script type="module" src="~/js/miar_login.js"> </script>
+	</body>
+</html>
+
+<script>
+	const baseApiUrl = "https://localhost:7091/api/services";
+	const img_displayingFlag_id = "img_displayingFlag";
+    const spn_displayingLanguage_id = "spn_displayingLanguage";
+	const ul_languages_id = "ul_languages";
+</script>
