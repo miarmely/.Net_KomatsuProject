@@ -61,5 +61,26 @@ namespace Repositories.Concretes
 					base.Configs.DbSettings.ProcedureNames
 						.User_Form_Renting_GetAllOfOneUserByUserId,
 					parameters);
+
+		public async Task<IEnumerable<T>> GetAllGeneralCommFormsAsync<T>(
+			DynamicParameters parameters) =>
+				await base.QueryAsync<T>(
+					base.Configs.DbSettings.ProcedureNames
+						.User_Form_GeneralCommunication_GetAll,
+					parameters);
+
+		public async Task<IEnumerable<T>> GetAllGetOfferFormsAsync<T>(
+			DynamicParameters parameters) =>
+				await base.QueryAsync<T>(
+					base.Configs.DbSettings.ProcedureNames
+						.User_Form_GetOffer_GetAll,
+					parameters);
+
+		public async Task<IEnumerable<T>> GetAllRentingFormsAsync<T>(
+			DynamicParameters parameters) =>
+				await base.QueryAsync<T>(
+					base.Configs.DbSettings.ProcedureNames
+						.User_Form_Renting_GetAll,
+					parameters);
 	}
 }

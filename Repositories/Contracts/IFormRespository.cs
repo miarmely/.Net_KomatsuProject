@@ -28,5 +28,14 @@ namespace Repositories.Contracts
 
 		Task<IEnumerable<T>> GetRentingFormsOfOneUserAsync<T>(
 			DynamicParameters parameters);
+
+		Task<IEnumerable<T>> GetAllGeneralCommFormsAsync<T>(
+			DynamicParameters parameters);
+
+		Task<IEnumerable<T>> GetAllGetOfferFormsAsync<T>(
+			DynamicParameters parameters);
+
+		Task<IEnumerable<T>> GetAllRentingFormsAsync<T>(
+			DynamicParameters parameters);
 	}
 }

@@ -5,9 +5,9 @@ using Presantation.Attributes;
 namespace Temsa_Web.Controllers
 {
 	[Authorization("Editor,Admin,Editör,Yönetici")]
-	public class SettingsController : Controller
+	public class SliderController : Controller
     {
-        public IActionResult Sliders()
+        public IActionResult Index()
         {
             return View();
         }

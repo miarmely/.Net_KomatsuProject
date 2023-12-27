@@ -513,5 +513,20 @@ namespace Services.Concretes
 
 			return pagingList;
 		}
+
+		public async Task<object> GetAllGeneralCommFormsAsync()
+		{
+			return null;
+		}
+
+		public async Task<object> GetAllGetOfferFormsAsync()
+		{
+			return null;
+		}
+
+		public async Task<object> GetAllRentingFormsAsync()
+		{
+			return null;
+		}
 	}
 }

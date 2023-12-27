@@ -28,6 +28,7 @@ namespace Presantation.Controllers
 			return NoContent();
 		}
 
+
 		[HttpPost("create/getOffer")]
 		[Authorization("User,Kullanıcı")]
 		public async Task<IActionResult> CreateGetOfferForm(
@@ -39,6 +40,7 @@ namespace Presantation.Controllers
 
 			return NoContent();
 		}
+
 
 		[HttpPost("create/renting")]
 		[Authorization("User,Kullanıcı")]
@@ -87,6 +89,7 @@ namespace Presantation.Controllers
 
 			return Ok(allForms);
 		}
+
 
 		[HttpGet("display/oneUser/renting")]
 		[Authorization]

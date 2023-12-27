@@ -1,0 +1,99 @@
+﻿<div class="form-w3layouts">
+	<div class="row">
+        <div class="col-sm-12">
+            <section class="panel">
+                <header id="header_tableTitle" class="panel-heading"></header>
+                <div class="panel-body" style="text-align:center">
+                    <div id="div_sliders">
+                        <img id="img_sliders"/>
+                        <div style="margin-top:5px">
+                            <span id="spn_fileStatusLabel"></span>
+                        </div>
+                        <div style="margin-top:30px;">
+                            <button id="btn_previous" style="background-color: darkblue" hidden>
+                                <img src="~/images/prev.png" alt="previous"/>
+                            </button>
+                            <button id="btn_sliderNo" style="margin-left:15px; margin-right:15px; background-color: darkblue; color:white" disabled>
+                            </button>
+                            <button id="btn_next" style="background-color: darkblue">
+                                <img id="img_buttonNext" src="~/images/next.png" alt="next"/>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="mb-3" style="margin-top:30px">
+                        <div>
+                            @*<label id="lbl_chooseFile" for="inpt_chooseFile" class="form-label" style="float:left"></label>*@
+                            <div>
+                                <button id="btn_chooseFile" class="btn btn-danger" style="background-color: goldenrod">
+                                </button>
+                                <input id="inpt_selectedFile" type="text" style="width:50%" disabled>
+                                <button id="btn_remove" class="btn btn-danger">
+                                </button>
+                            </div>
+                            <div hidden>
+                                <input hidden id="inpt_chooseFile" type="file" accept="image/*"/>
+                            </div>
+                        </div>
+                        <div style="text-align:center; margin-top:60px">
+                            <button id="btn_save" class="btn btn-danger" style="background-color: darkblue; font-size:17px;">
+                            </button>
+                        </div>
+                        <div style="margin-top:30px">
+                            <p id="p_resultLabel"></p>
+                            <img id="img_loading" src="~/images/loading.gif" style="width:40px; height:40px" hidden/>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </div>
+</div>
+
+<script type="module" src="~/js/miar_sliders.js"></script>
+<script>
+    const tableTitleByLanguages = {
+        "TR": "SLİDERLAR",
+        "EN":"SLIDERS"
+    };
+    const removeButtonNameByLanguages = {
+        "TR": "Kaldır",
+        "EN": "Remove"
+    }
+    const saveButton_nameByLanguages = {
+        "TR": "Kaydet",
+        "EN": "Save"
+    };
+    const chooseFileButton_nameByLanguages = {
+        "TR": "Resim Seç",
+        "EN": "Choose File"
+    };
+    const successMessagesByLanguages = {
+        "TR": {
+            "successfullSave": "başarıyla kaydedildi",
+        },
+        "EN": {
+            "successfullSave": "save successful",
+        }
+    }
+    const errorMessagesByLanguages = {
+        "TR": {
+            "imageConflicted": "aynı resim daha önceden eklenmiş",
+            "noImage": "bazı sayfalara resim eklenmedi",
+            "imageNotSelected": "herhangi bir resim seçilmedi",
+            "deleteFromFolderAndDb" : "sunucu tarafında bir hata oluştu, lütfen daha sonra tekrar deneyiniz",
+            "uploadToFolder": "sunucu tarafında hata oluştu, lütfen daha sonra tekrar deneyiniz",
+            "uploadToDb": "veritabanında hata oluştu, lütfen daha sonra tekrar deneyiniz",
+        },
+        "EN": {
+            "imageConflicted": "same image already added previously",
+            "noImage": "image not added to some pages",
+            "imageNotSelected": "any image not selected",
+            "deleteFromFolderAndDb" : "error occured on server-side, please try again later",
+            "uploadToFolder": "error occured on server-side, please try again later",
+            "uploadToDb": "error occured on db, please try again later",
+        }
+    }
+</script>
+
+
+
