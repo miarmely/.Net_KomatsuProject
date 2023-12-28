@@ -17,6 +17,7 @@ $(function () {
     const div_form = $("#div_form");
     const img_machine = $("#img_machine");
     const inpt_image_id = "inpt_image";
+    const inpt_video_id = "inpt_video";
     const inpt_pdf_id = "inpt_pdf";
     const spn_fileStatusLabel = $("#spn_fileStatusLabel");
     const imageFolderPathAfterWwwroot = "images\\machines";
@@ -261,6 +262,23 @@ $(function () {
             spn_fileStatusLabel)
         //#endregion
     })
+    spn_eventManager.on("change_videoInput", async (_, selectedFileInfos) => {
+        if (await isFileTypeInvalidAsync(
+            selectedFileInfos,
+            "video/",
+            $('#' + inpt_video_id))) {
+
+            updateResultLabel(
+                "#spn_help_" + inpt_video_id,
+                partnerErrorMessagesByLanguages[language]["invalidFileType"],
+                resultLabel_errorColor,
+                "10px");
+
+            return;
+        }
+
+
+    })
     spn_eventManager.on("change_pdfInput", async (_, selectedFileInfos) => {
         //#region when any file not selected (return)
         selectedPdfInfos = selectedFileInfos;
@@ -307,6 +325,18 @@ $(function () {
             tableTitleByLanguages[language]);
         //#endregion
 
+        //div_form.append(`
+        //    <div style="text-align: center;  margin-bottom: 20px">
+        //        <video  id="vid_machine"
+        //                poster="/images/machines/PC290LC-11_Walkaround_01.png"
+        //                width="500px" 
+        //                height:"500px"
+        //                controls> 
+
+        //        </video>
+        //    </div>
+        //`);
+
         //#region add image
         div_form.append(
             `<div class="form-group">
@@ -322,9 +352,31 @@ $(function () {
         );
 
         // declare events
-        $("#" + inpt_image_id).change(async (event) =>
+        $("#" + inpt_image_id).change((event) =>
             spn_eventManager.trigger("change_imageInput", [event.target.files[0]])
         )
+        //#endregion
+
+        //#region add video
+        div_form.append(
+            `<div class="form-group">
+                <label class="col-sm-3 control-label" style="text-align">${formLabelNamesByLanguages[language].video}</label>
+                <div class="col-sm-6">
+                <div>
+                    <input  id= "${inpt_video_id}" 
+                            type= "file"  
+                            class= "form-control"  
+                            accept= "video/*"  
+                            required />
+                    <span id="spn_help_${inpt_video_id}" class="help-block"></span>
+                </div>
+            </div>`
+        );
+
+
+        $('#' + inpt_video_id).change((event) => {
+            spn_eventManager.trigger("change_videoInput", [event.target.files[0]]);
+        })
         //#endregion
 
         //#region add mainCategory and subcategory

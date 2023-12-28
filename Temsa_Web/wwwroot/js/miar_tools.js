@@ -88,7 +88,8 @@ export async function displayImageByDataUrlAsync(
 export async function isFileTypeInvalidAsync(
     selectedFileInfos,
     fileType,
-    fileNameInput) {
+    fileNameInput) {  // "fileNameInput": for reset it
+
     //#region when file type invalid
     if (!selectedFileInfos.type.startsWith(fileType)) {
         // reset file name <input>
