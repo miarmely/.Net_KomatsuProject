@@ -3,7 +3,7 @@
     updateResultLabel, updateErrorRow, setDisabledOfOtherUpdateButtonsAsync,
     resetErrorRowAsync, populateElementByAjaxOrLocalAsync, setDescriptionsLanguageAsync, getDateTimeInString,
     addPaginationButtonsAsync, controlPaginationBackAndNextButtonsAsync,
-    displayImageByDataUrlAsync, change_descriptionsTextareaAsync, isFileTypeInvalidAsync,
+    displayFileByDataUrlAsync, change_descriptionsTextareaAsync, isFileTypeInvalidAsync,
     isAllObjectValuesNullAsync
 } from "./miar_tools.js";
 
@@ -930,7 +930,7 @@ $(function () {
             //#region display new image
             selectedImageInfos = selectedFileInfos;
 
-            await displayImageByDataUrlAsync(
+            await displayFileByDataUrlAsync(
                 selectedFileInfos,
                 $("#" + img_imageButton_id),
                 $("#" + spn_imageButton_guide_id));

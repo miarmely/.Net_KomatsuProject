@@ -621,6 +621,10 @@
       "PackagePath": "staticwebassets\\pdfs\\MachineDetails.pdf"
     },
     {
+      "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\videos\\machines\\random1.mp4",
+      "PackagePath": "staticwebassets\\videos\\machines\\random1.mp4"
+    },
+    {
       "Id": "obj\\Debug\\net7.0\\staticwebassets\\msbuild.Temsa_Web.Microsoft.AspNetCore.StaticWebAssets.props",
       "PackagePath": "build\\Microsoft.AspNetCore.StaticWebAssets.props"
     },

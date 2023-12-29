@@ -1,6 +1,6 @@
 ﻿import {
     change_descriptionsTextareaAsync, click_descriptionDropdownItemAsync,
-    click_descriptionsButtonAsync, displayImageByDataUrlAsync, populateSelectAsync,
+    click_descriptionsButtonAsync, displayFileByDataUrlAsync, populateSelectAsync,
     isFileTypeInvalidAsync, updateResultLabel, populateElementByAjaxOrLocalAsync, changeDescriptionsButtonColorAsync,
 } from "./miar_tools.js"
 
@@ -15,7 +15,7 @@ $(function () {
     const slct_subCategory_id = "slct_subCategory";
     const ul_description_id = "ul_description";
     const div_form = $("#div_form");
-    const img_machine = $("#img_machine");
+    const div_machineVideo = $("#div_machineVideo");
     const inpt_image_id = "inpt_image";
     const inpt_video_id = "inpt_video";
     const inpt_pdf_id = "inpt_pdf";
@@ -201,7 +201,7 @@ $(function () {
         //#endregion
     });
     $(window).resize(async () => {
-        await setMachineImageSizeAsync();
+        await setMachineVideoSizeAsync();
     })
     spn_eventManager.on("click_descriptionButton", async () => {
         await click_descriptionsButtonAsync(
@@ -230,8 +230,7 @@ $(function () {
 
         //#region when any file not selected
         if (selectedImageInfos == undefined) {
-            // remove current image
-            soc .removeAttr("src");
+            await removePosterOrVideoAsync("poster");
             return;
         }
         //#endregion
@@ -241,8 +240,7 @@ $(function () {
             selectedImageInfos,
             "image",
             $("#" + inpt_image_id))) {
-            // remove current image
-            img_machine.removeAttr("src");
+            await removePosterOrVideoAsync("poster");
 
             // write error
             updateResultLabel(
@@ -251,42 +249,32 @@ $(function () {
                 resultLabel_errorColor,
                 "10px");
 
-            return; 
+            return;
         }
         //#endregion
 
         //#endregion
 
-        await setMachineImageSizeAsync();
-
-        //#region display machine image
-        await displayImageByDataUrlAsync(
+        await displayFileByDataUrlAsync(
             selectedImageInfos,
-            ('#' + vid_machine_id),
+            vid_machine,
             spn_fileStatusLabel,
-            beforeLoad = () => {
-                ('#' + vid_machine_id).attr({
-
-                });
-            }
-
-
-
-        )
-
-        await displayImageByDataUrlAsync(
-            selectedImageInfos,
-            img_machine,
-            spn_fileStatusLabel)
-        //#endregion
+            null,
+            () => {
+                // show video
+                div_machineVideo.removeAttr("hidden");
+            },
+            () => {
+                setMachineVideoSizeAsync();
+            },
+            "poster");
     })
     spn_eventManager.on("change_videoInput", async () => {
         //#region control selected file (error)
 
         //#region when any file not selected (return)
         if (selectedVideoInfos == undefined) {
-            // remove current video
-            src_machine.removeAttr("src");
+            await removePosterOrVideoAsync("video");
             return;
         }
         //#endregion
@@ -296,47 +284,37 @@ $(function () {
             selectedVideoInfos,
             "video/",
             $('#' + inpt_video_id))) {
-            // remove the video
-            src_machine.removeAttr("src");
-
+            await removePosterOrVideoAsync("video");
+            
             // write error
             updateResultLabel(
                 "#spn_help_" + inpt_video_id,
                 partnerErrorMessagesByLanguages[language]["invalidFileType"],
                 resultLabel_errorColor,
                 "10px");
+
             return;
         }
         //#endregion
 
         //#endregion
 
+        await displayFileByDataUrlAsync(
+            selectedVideoInfos,
+            src_machine,
+            spn_fileStatusLabel,
+            null,
+            () => {
+                // show machine video
+                div_form.removeAttr("hidden");
+            },
+            () => {
+                // add video type to <source>
+                src_machine.attr("type", selectedVideoInfos.type);
 
-        var fileReader = new FileReader();
-        fileReader.readAsDataURL(selectedVideoInfos);
-        fileReader.onloadend((event) => {
-            if (fileReader.readyState == DONE) {
-                $("#" + vid_machine_id).attr({
-                    "poster": 
-                });
-
-                //#region upload video to page
-                let dataUrl = event.target.result;
-
-                $("#" + src_machine_id).attr({
-                    "src": dataUrl,
-                    "type": selectedVideoInfos.type;
-                })
-                //#endregion
-            }
-            else {
-
-            }
-        })
-
-        src_machine.attr({o
-
-        })
+                setMachineVideoSizeAsync();
+            },
+            "src");
     })
     spn_eventManager.on("change_pdfInput", async () => {
         //#region when any file not selected (return)
@@ -366,11 +344,37 @@ $(function () {
     //#endregion
 
     //#region functions
-    async function setMachineImageSizeAsync() {
+    async function removePosterOrVideoAsync(which) {
+        //#region remove video or poster on video
+        switch (which) {
+            case "poster":
+                //#region remove poster
+                vid_machine.removeAttr("poster width height");
+
+                // when video isn't exists too
+                if (src_machine.attr("src") == undefined)
+                    div_machineVideo.attr("hidden", "");  // hide <div>
+                //#endregion
+                break;
+            case "video":
+                //#region remove video
+                src_machine.removeAttr("src type");  // remove src and type
+
+                // when image isn't exists
+                if (vid_machine.attr("poster") == undefined)
+                    div_machineVideo.attr("hidden", "");  // hide <div>
+
+                //#endregion
+                break;
+        }
+        //#endregion
+    }
+
+    async function setMachineVideoSizeAsync() {
         //#region set width
         let panelBodyWidth = $(".panel-body").prop("clientWidth");
 
-        img_machine.css(
+        vid_machine.attr(
             "width",
             panelBodyWidth - (panelBodyWidth * (60 / 100)));
         //#endregion

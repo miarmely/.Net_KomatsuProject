@@ -1,5 +1,5 @@
 ﻿import {
-    isFileTypeInvalidAsync, displayImageByDataUrlAsync, displayImageByNormalUrlAsync,
+    isFileTypeInvalidAsync, displayFileByDataUrlAsync, displayImageByNormalUrlAsync,
     setDisabledOfButtonAsync, updateResultLabel
 } from "./miar_tools.js";
 
@@ -115,7 +115,7 @@ $(function () {
         //#endregion
 
         //#region display slider and show previous button
-        await displayImageByDataUrlAsync(
+        await displayFileByDataUrlAsync(
             selectedFileInfos,
             img_sliders,
             $(spn_fileStatusLabel_id),
@@ -499,7 +499,7 @@ $(function () {
         //#region when slider exists on "slider_selectedFilesInfos"
         else
             //#region display image by dataUrl
-            await displayImageByDataUrlAsync(
+            await displayFileByDataUrlAsync(
                 selectedFileInfos,
                 img_sliders,
                 $(spn_fileStatusLabel_id),

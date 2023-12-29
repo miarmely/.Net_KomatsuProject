@@ -13,7 +13,7 @@ export async function displayImageByNormalUrlAsync(
     inputForAddFileName,
     fileStatusLabel) {
     //#region before start
-    await resetBeforeDisplayImageAsync(
+    await resetBeforeAddUrlAsync(
         imgForAddUrl,
         "#" + fileStatusLabel.attr("id"),
         inputForAddFileName);
@@ -34,7 +34,8 @@ export async function displayImageByNormalUrlAsync(
     //#endregion
 }
 
-export async function displayImageByDataUrlAsync(
+
+export async function displayFileByDataUrlAsync(
     selectedFileInfos,
     elementForAddDataUrl,
     fileStatusLabel,
@@ -46,7 +47,7 @@ export async function displayImageByDataUrlAsync(
     let fileStatusLabel_oldMessage = fileStatusLabel.text();
     let fileStatusLabel_oldStyle = fileStatusLabel.attr("style");
 
-    await resetBeforeDisplayImageAsync(
+    await resetBeforeAddUrlAsync(
         elementForAddDataUrl,
         "#" + fileStatusLabel.attr("id"),
         inputForAddFileName);
@@ -66,7 +67,7 @@ export async function displayImageByDataUrlAsync(
                 beforeLoad();
             //#endregion
 
-            //#region add dataUrl to src of <img>
+            //#region add dataUrl to attribute of element
             let dataUrl = event.target.result
             elementForAddDataUrl.attr(attributeName, dataUrl);
             //#endregion
@@ -85,11 +86,32 @@ export async function displayImageByDataUrlAsync(
 
         //#region reset "file loading..." message  
         fileStatusLabel.empty();
+
+        // add previous messages and styles to file status label
         fileStatusLabel.attr("style", fileStatusLabel_oldStyle);
         fileStatusLabel.append(fileStatusLabel_oldMessage);
         //#endregion
     }
     //#endregion
+}
+
+async function resetBeforeAddUrlAsync(
+    elementForAddUrl,
+    fileStatusLabelId,
+    inputForAddFileName = null,
+    attributeName = "src") {
+    // remove old url
+    elementForAddUrl.removeAttr(attributeName);
+
+    // reset file name <input>
+    if (inputForAddFileName != null)
+        inputForAddFileName.val("");
+
+    // write "file loading..." message
+    updateResultLabel(
+        fileStatusLabelId,
+        partnerInformationMessagesByLanguages[language]["fileLoading"],
+        fileStatusLabel_color);
 }
 
 export async function isFileTypeInvalidAsync(
@@ -107,25 +129,6 @@ export async function isFileTypeInvalidAsync(
     //#endregion
 
     return false;
-}
-
-async function resetBeforeDisplayImageAsync(
-    imgForAddUrl,
-    fileStatusLabelId,
-    inputForAddFileName = null) {
-    // remove old image
-    imgForAddUrl.removeAttr("src");
-
-    // reset file name <input>
-    if (inputForAddFileName != null)
-        inputForAddFileName.val("");
-
-    // write "file loading..." message
-    updateResultLabel(
-        fileStatusLabelId,
-        partnerInformationMessagesByLanguages[language]["fileLoading"],
-        fileStatusLabel_color
-    );
 }
 //#endregion
 
