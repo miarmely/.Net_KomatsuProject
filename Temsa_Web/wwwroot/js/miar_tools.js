@@ -13,7 +13,7 @@ export async function displayImageByNormalUrlAsync(
     inputForAddFileName,
     fileStatusLabel) {
     //#region before start
-    await beforeDisplayImageAsync(
+    await resetBeforeDisplayImageAsync(
         imgForAddUrl,
         "#" + fileStatusLabel.attr("id"),
         inputForAddFileName);
@@ -36,16 +36,18 @@ export async function displayImageByNormalUrlAsync(
 
 export async function displayImageByDataUrlAsync(
     selectedFileInfos,
-    imgForAddDataUrl,
+    elementForAddDataUrl,
     fileStatusLabel,
     inputForAddFileName = null,
-    afterLoad = null) {
+    afterLoad = null,
+    beforeLoad = null,
+    attributeName = "src") {
     //#region before start
     let fileStatusLabel_oldMessage = fileStatusLabel.text();
     let fileStatusLabel_oldStyle = fileStatusLabel.attr("style");
 
-    await beforeDisplayImageAsync(
-        imgForAddDataUrl,
+    await resetBeforeDisplayImageAsync(
+        elementForAddDataUrl,
         "#" + fileStatusLabel.attr("id"),
         inputForAddFileName);
     //#endregion
@@ -59,9 +61,14 @@ export async function displayImageByDataUrlAsync(
     fileReader.onloadend = function (event) {
         //#region when successfull
         if (fileReader.readyState == fileReader.DONE) {
+            //#region call function before load
+            if (beforeLoad != null)
+                beforeLoad();
+            //#endregion
+
             //#region add dataUrl to src of <img>
             let dataUrl = event.target.result
-            imgForAddDataUrl.attr("src", dataUrl);
+            elementForAddDataUrl.attr(attributeName, dataUrl);
             //#endregion
 
             //#region write file name to <input>
@@ -102,7 +109,7 @@ export async function isFileTypeInvalidAsync(
     return false;
 }
 
-async function beforeDisplayImageAsync(
+async function resetBeforeDisplayImageAsync(
     imgForAddUrl,
     fileStatusLabelId,
     inputForAddFileName = null) {

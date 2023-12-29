@@ -22,9 +22,15 @@ $(function () {
     const spn_fileStatusLabel = $("#spn_fileStatusLabel");
     const imageFolderPathAfterWwwroot = "images\\machines";
     const pdfFolderPathAfterWwwroot = "pdfs";
+    const path_machineVideoFolderAfterWwwRoot = "videos\\machines";
     const img_loading = $("#img_loading");
+    const vid_machine_id = "vid_machine";
+    const src_machine_id = "src_machine";
+    const vid_machine = $("#" + vid_machine_id);
+    const src_machine = $("#" + src_machine_id);
     let selectedImageInfos;
     let selectedPdfInfos;
+    let selectedVideoInfos;
     //#endregion
 
     //#region events
@@ -99,7 +105,7 @@ $(function () {
                 //#endregion
 
                 //#region get image content in base64 string
-                let imageContentInBase64Str = img_machine
+                let imageContentInBase64Str = src_machine
                     .attr("src")
                     .replace(`data:${selectedImageInfos.type};base64,`, "");
                 //#endregion
@@ -139,8 +145,9 @@ $(function () {
                         //#region resets
                         $("form")[0].reset();
 
-                        // remove machine image
-                        img_machine.removeAttr("src");
+                        // remove machine video
+                        vid_machine.remmoveAttr("poster")
+                        src_machine.removeAttr("src type");  // multiple delete attributes                       
 
                         // change description <button> color
                         changeDescriptionsButtonColorAsync(
@@ -218,15 +225,13 @@ $(function () {
         await change_descriptionsTextareaAsync(
             $("#" + btn_descriptions_id));
     })
-    spn_eventManager.on("change_imageInput", async (_, selectedFileInfos) => {
+    spn_eventManager.on("change_imageInput", async () => {
         //#region control the selected file (error)
 
         //#region when any file not selected
-        selectedImageInfos = selectedFileInfos;
-
-        // remove current image
         if (selectedImageInfos == undefined) {
-            img_machine.removeAttr("src");
+            // remove current image
+            soc .removeAttr("src");
             return;
         }
         //#endregion
@@ -244,10 +249,9 @@ $(function () {
                 `#spn_help_${inpt_image_id}`,
                 partnerErrorMessagesByLanguages[language]["invalidFileType"],
                 resultLabel_errorColor,
-                "10px",
-                img_loading);
+                "10px");
 
-            return;
+            return; 
         }
         //#endregion
 
@@ -258,31 +262,84 @@ $(function () {
         //#region display machine image
         await displayImageByDataUrlAsync(
             selectedImageInfos,
+            ('#' + vid_machine_id),
+            spn_fileStatusLabel,
+            beforeLoad = () => {
+                ('#' + vid_machine_id).attr({
+
+                });
+            }
+
+
+
+        )
+
+        await displayImageByDataUrlAsync(
+            selectedImageInfos,
             img_machine,
             spn_fileStatusLabel)
         //#endregion
     })
-    spn_eventManager.on("change_videoInput", async (_, selectedFileInfos) => {
+    spn_eventManager.on("change_videoInput", async () => {
+        //#region control selected file (error)
+
+        //#region when any file not selected (return)
+        if (selectedVideoInfos == undefined) {
+            // remove current video
+            src_machine.removeAttr("src");
+            return;
+        }
+        //#endregion
+
+        //#region when file type isn't video (error)
         if (await isFileTypeInvalidAsync(
-            selectedFileInfos,
+            selectedVideoInfos,
             "video/",
             $('#' + inpt_video_id))) {
+            // remove the video
+            src_machine.removeAttr("src");
 
+            // write error
             updateResultLabel(
                 "#spn_help_" + inpt_video_id,
                 partnerErrorMessagesByLanguages[language]["invalidFileType"],
                 resultLabel_errorColor,
                 "10px");
-
             return;
         }
+        //#endregion
+
+        //#endregion
 
 
+        var fileReader = new FileReader();
+        fileReader.readAsDataURL(selectedVideoInfos);
+        fileReader.onloadend((event) => {
+            if (fileReader.readyState == DONE) {
+                $("#" + vid_machine_id).attr({
+                    "poster": 
+                });
+
+                //#region upload video to page
+                let dataUrl = event.target.result;
+
+                $("#" + src_machine_id).attr({
+                    "src": dataUrl,
+                    "type": selectedVideoInfos.type;
+                })
+                //#endregion
+            }
+            else {
+
+            }
+        })
+
+        src_machine.attr({o
+
+        })
     })
-    spn_eventManager.on("change_pdfInput", async (_, selectedFileInfos) => {
+    spn_eventManager.on("change_pdfInput", async () => {
         //#region when any file not selected (return)
-        selectedPdfInfos = selectedFileInfos;
-
         if (selectedPdfInfos == undefined)
             return;
         //#endregion
@@ -310,11 +367,11 @@ $(function () {
 
     //#region functions
     async function setMachineImageSizeAsync() {
-        //#region set max width
+        //#region set width
         let panelBodyWidth = $(".panel-body").prop("clientWidth");
 
         img_machine.css(
-            "max-width",
+            "width",
             panelBodyWidth - (panelBodyWidth * (60 / 100)));
         //#endregion
     }
@@ -325,18 +382,6 @@ $(function () {
             tableTitleByLanguages[language]);
         //#endregion
 
-        //div_form.append(`
-        //    <div style="text-align: center;  margin-bottom: 20px">
-        //        <video  id="vid_machine"
-        //                poster="/images/machines/PC290LC-11_Walkaround_01.png"
-        //                width="500px" 
-        //                height:"500px"
-        //                controls> 
-
-        //        </video>
-        //    </div>
-        //`);
-
         //#region add image
         div_form.append(
             `<div class="form-group">
@@ -345,16 +390,19 @@ $(function () {
                 </label>
                 <div class="col-sm-6">
                 <div>
-                    <input id="${inpt_image_id}" type="file" class="form-control" accept="image/*" required>
+                    <input id="${inpt_image_id}"  type="file"  class="form-control"  accept="image/*"  required>
                     <span id="spn_help_${inpt_image_id}" class="help-block"></span>
                 </div>
             </div>`
         );
 
         // declare events
-        $("#" + inpt_image_id).change((event) =>
-            spn_eventManager.trigger("change_imageInput", [event.target.files[0]])
-        )
+        $("#" + inpt_image_id).change((event) => {
+            // save selected file infos
+            selectedImageInfos = event.target.files[0];
+
+            spn_eventManager.trigger("change_imageInput");
+        });
         //#endregion
 
         //#region add video
@@ -373,9 +421,12 @@ $(function () {
             </div>`
         );
 
-
+        // declare events
         $('#' + inpt_video_id).change((event) => {
-            spn_eventManager.trigger("change_videoInput", [event.target.files[0]]);
+            // save selected file infos
+            selectedVideoInfos = event.target.files[0];
+
+            spn_eventManager.trigger("change_videoInput");
         })
         //#endregion
 
@@ -548,9 +599,12 @@ $(function () {
         );
 
         // declare events
-        $("#" + inpt_pdf_id).change(async (event) =>
-            spn_eventManager.trigger("change_pdfInput", [event.target.files[0]])
-        )
+        $("#" + inpt_pdf_id).change(async (event) => {
+            // save file infos
+            selectedPdfInfos = event.target.files[0];
+
+            spn_eventManager.trigger("change_pdfInput");
+        });
         //#endregion
 
         //#region add descriptions
