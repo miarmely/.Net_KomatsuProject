@@ -1,7 +1,7 @@
 ﻿import {
     change_descriptionsTextareaAsync, click_descriptionDropdownItemAsync,
     click_descriptionsButtonAsync, displayFileByDataUrlAsync, populateSelectAsync,
-    isFileTypeInvalidAsync, updateResultLabel, populateElementByAjaxOrLocalAsync, changeDescriptionsButtonColorAsync,
+    isFileTypeInvalidAsync, updateResultLabel, populateElementByAjaxOrLocalAsync, changeDescriptionsButtonColorAsync, displayFileByObjectUrlAsync, removeObjectUrlFromElementAsync,
 } from "./miar_tools.js"
 
 
@@ -15,7 +15,6 @@ $(function () {
     const slct_subCategory_id = "slct_subCategory";
     const ul_description_id = "ul_description";
     const div_form = $("#div_form");
-    const div_machineVideo = $("#div_machineVideo");
     const inpt_image_id = "inpt_image";
     const inpt_video_id = "inpt_video";
     const inpt_pdf_id = "inpt_pdf";
@@ -199,10 +198,14 @@ $(function () {
             //#endregion
         }
         //#endregion
-    });
+    })
     $(window).resize(async () => {
         await setMachineVideoSizeAsync();
     })
+    vid_machine.on("ended", () => {
+        // restart to video when video finished
+        vid_machine.load();
+    });
     spn_eventManager.on("click_descriptionButton", async () => {
         await click_descriptionsButtonAsync(
             $("#" + txt_descriptions_id),
@@ -239,9 +242,10 @@ $(function () {
         if (await isFileTypeInvalidAsync(
             selectedImageInfos,
             "image",
-            $("#" + inpt_image_id))) {
+            $("#" + inpt_image_id))
+        ) {
             await removePosterOrVideoAsync("poster");
-
+            
             // write error
             updateResultLabel(
                 `#spn_help_${inpt_image_id}`,
@@ -255,19 +259,18 @@ $(function () {
 
         //#endregion
 
-        await displayFileByDataUrlAsync(
+        await displayFileByObjectUrlAsync(
             selectedImageInfos,
             vid_machine,
+            "poster",
             spn_fileStatusLabel,
             null,
             () => {
-                // show video
-                div_machineVideo.removeAttr("hidden");
-            },
-            () => {
+                // show video and set video sizes
+                vid_machine.removeAttr("hidden");
                 setMachineVideoSizeAsync();
-            },
-            "poster");
+                vid_machine.load();
+            });
     })
     spn_eventManager.on("change_videoInput", async () => {
         //#region control selected file (error)
@@ -283,9 +286,10 @@ $(function () {
         if (await isFileTypeInvalidAsync(
             selectedVideoInfos,
             "video/",
-            $('#' + inpt_video_id))) {
+            $('#' + inpt_video_id))
+        ) {
             await removePosterOrVideoAsync("video");
-            
+           
             // write error
             updateResultLabel(
                 "#spn_help_" + inpt_video_id,
@@ -299,22 +303,22 @@ $(function () {
 
         //#endregion
 
-        await displayFileByDataUrlAsync(
+        await displayFileByObjectUrlAsync(
             selectedVideoInfos,
             src_machine,
+            "src",
             spn_fileStatusLabel,
-            null,
             () => {
-                // show machine video
-                div_form.removeAttr("hidden");
-            },
-            () => {
-                // add video type to <source>
+                // set type of video <source>
                 src_machine.attr("type", selectedVideoInfos.type);
-
-                setMachineVideoSizeAsync();
             },
-            "src");
+            () => {
+                // show video and set sizes
+                vid_machine.removeAttr("hidden");
+                setMachineVideoSizeAsync();
+                vid_machine.load();
+            }
+        )
     })
     spn_eventManager.on("change_pdfInput", async () => {
         //#region when any file not selected (return)
@@ -348,35 +352,41 @@ $(function () {
         //#region remove video or poster on video
         switch (which) {
             case "poster":
-                //#region remove poster
-                vid_machine.removeAttr("poster width height");
+                await removeObjectUrlFromElementAsync(
+                    vid_machine,
+                    "poster",
+                    () => {
+                        // when video isn't exists too
+                        if (src_machine.attr("src") == undefined)
+                            vid_machine.attr("hidden", "");  // hide <video>
 
-                // when video isn't exists too
-                if (src_machine.attr("src") == undefined)
-                    div_machineVideo.attr("hidden", "");  // hide <div>
-                //#endregion
+                        vid_machine.load();
+                    });
                 break;
             case "video":
-                //#region remove video
-                src_machine.removeAttr("src type");  // remove src and type
+                await removeObjectUrlFromElementAsync(
+                    src_machine,
+                    "src",
+                    () => {
+                        // when image isn't exists
+                        if (vid_machine.attr("poster") == undefined)
+                            vid_machine.attr("hidden", "");  // hide <video>
 
-                // when image isn't exists
-                if (vid_machine.attr("poster") == undefined)
-                    div_machineVideo.attr("hidden", "");  // hide <div>
-
-                //#endregion
+                        vid_machine.load();
+                    });
                 break;
         }
         //#endregion
     }
 
     async function setMachineVideoSizeAsync() {
-        //#region set width
+        //#region set width and height
         let panelBodyWidth = $(".panel-body").prop("clientWidth");
 
-        vid_machine.attr(
-            "width",
-            panelBodyWidth - (panelBodyWidth * (60 / 100)));
+        vid_machine.css({
+            "width": panelBodyWidth - (panelBodyWidth * (60 / 100)),
+            "max-width": panelBodyWidth - (panelBodyWidth * (60 / 100))
+        });
         //#endregion
     }
 

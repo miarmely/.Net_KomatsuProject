@@ -34,7 +34,6 @@ export async function displayImageByNormalUrlAsync(
     //#endregion
 }
 
-
 export async function displayFileByDataUrlAsync(
     selectedFileInfos,
     elementForAddDataUrl,
@@ -95,11 +94,65 @@ export async function displayFileByDataUrlAsync(
     //#endregion
 }
 
-async function resetBeforeAddUrlAsync(
+export async function displayFileByObjectUrlAsync(
+    selectedFileInfos,
     elementForAddUrl,
-    fileStatusLabelId,
-    inputForAddFileName = null,
-    attributeName = "src") {
+    attributeName,
+    fileStatusLabel,
+    beforeDisplay = null,
+    afterDisplay = null
+) {
+    await removeObjectUrlFromElementAsync(elementForAddUrl, attributeName);
+    
+    //#region write "file loading..." message
+    updateResultLabel(
+        '#' + fileStatusLabel.attr("id"),
+        partnerInformationMessagesByLanguages[language]["fileLoading"],
+        fileStatusLabel_color);
+    //#endregion
+
+    //#region add new url to attribute
+    // when any process to be do exists before display
+    if (beforeDisplay != null)
+        beforeDisplay();
+
+    // add object url
+    let newObjectUrl = URL.createObjectURL(selectedFileInfos);
+    elementForAddUrl.attr(attributeName, newObjectUrl);
+
+    // reset file status label
+    fileStatusLabel.empty();
+
+    // when any process to be do exists after display
+    if (afterDisplay != null)
+        afterDisplay();
+    //#endregion
+}
+
+export async function removeObjectUrlFromElementAsync(
+    element,
+    attributeName,
+    afterRemove = null
+) {
+    // revoke url
+    let oldObjectUrl = element.attr(attributeName);
+    URL.revokeObjectURL(oldObjectUrl);
+
+    // remove url from attribute
+    element.removeAttr(attributeName);
+
+    // when any process to be do is exists after remove
+    if (afterRemove != null)
+        afterRemove();
+}
+export
+
+
+    async function resetBeforeAddUrlAsync(
+        elementForAddUrl,
+        fileStatusLabelId,
+        inputForAddFileName = null,
+        attributeName = "src") {
     // remove old url
     elementForAddUrl.removeAttr(attributeName);
 
@@ -573,8 +626,8 @@ export async function addPaginationButtonsAsync(
     ul_pagination) {
     //#region set buttonQauntity for pagination
     let buttonQuantity = paginationInfosInJson.TotalPage < paginationButtonQuantity ?
-            paginationInfosInJson.TotalPage
-            : paginationButtonQuantity
+        paginationInfosInJson.TotalPage
+        : paginationButtonQuantity
     //#endregion
 
     //#region reset paginationButtons if exists
