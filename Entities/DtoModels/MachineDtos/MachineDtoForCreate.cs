@@ -5,8 +5,11 @@ namespace Entities.DtoModels.MachineDtos
 {
 	public record MachineDtoForCreate
 	{
-		[MiarLength(1, 50, "Resim Adı", "Image Name")] 
+		[MiarLength(1, 50, "Resim Adı", "Image Name")]
 		public string ImageName { get; init; }
+
+		[MiarLength(1, 50, "Video Adı", "Video Name")]
+		public string VideoName { get; init; }
 
 		[MiarLength(1, 50, "Ana Kategori", "Main Category")]
 		public string MainCategoryName { get; init; }
@@ -33,6 +36,7 @@ namespace Entities.DtoModels.MachineDtos
 
 		public DescriptionsByLanguages? Descriptions { get; init; }
 		public string ImageContentInBase64Str { get; init; }
+		public string VideoContentInBase64Str { get; init; }
 		public string PdfContentInBase64Str { get; init; }
 	}
 }

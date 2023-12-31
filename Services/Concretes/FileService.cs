@@ -46,9 +46,9 @@ namespace Services.Concretes
 					await File.WriteAllBytesAsync(
 						fullFilePath,
 						fileContentInBytes);
-					#endregion
 
 					break;
+					#endregion
 				}
 				catch (DirectoryNotFoundException ex)
 				{
@@ -64,6 +64,14 @@ namespace Services.Concretes
 							ErrorDetailsConfig.ToErrorDto(
 								language,
 								_configs.ErrorDetails.FiE_U_I));
+					#endregion
+
+					#region when other errors occured for "video" file (throw)
+					if (fileType == FileTypes.MachineVideo)
+						throw new ErrorWithCodeException(
+							ErrorDetailsConfig.ToErrorDto(
+								language,
+								_configs.ErrorDetails.FiE_U_V));
 					#endregion
 
 					#region when other errors occured for "pdf" file (throw)

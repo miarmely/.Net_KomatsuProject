@@ -1,7 +1,9 @@
 ﻿import {
     change_descriptionsTextareaAsync, click_descriptionDropdownItemAsync,
     click_descriptionsButtonAsync, displayFileByDataUrlAsync, populateSelectAsync,
-    isFileTypeInvalidAsync, updateResultLabel, populateElementByAjaxOrLocalAsync, changeDescriptionsButtonColorAsync, displayFileByObjectUrlAsync, removeObjectUrlFromElementAsync,
+    isFileTypeInvalidAsync, updateResultLabel, populateElementByAjaxOrLocalAsync,
+    changeDescriptionsButtonColorAsync, displayFileByObjectUrlAsync,
+    removeObjectUrlFromElementAsync, getBase64StrOfFileAsync,
 } from "./miar_tools.js"
 
 
@@ -19,9 +21,9 @@ $(function () {
     const inpt_video_id = "inpt_video";
     const inpt_pdf_id = "inpt_pdf";
     const spn_fileStatusLabel = $("#spn_fileStatusLabel");
-    const imageFolderPathAfterWwwroot = "images\\machines";
-    const pdfFolderPathAfterWwwroot = "pdfs";
-    const path_machineVideoFolderAfterWwwRoot = "videos\\machines";
+    const path_imageFolderAfterWwwroot = "images\\machines";
+    const path_pdfFolderAfterWwwroot = "pdfs";
+    const path_videoFolderAfterWwwRoot = "videos\\machines";
     const img_loading = $("#img_loading");
     const vid_machine_id = "vid_machine";
     const src_machine_id = "src_machine";
@@ -33,7 +35,7 @@ $(function () {
     //#endregion
 
     //#region events
-    $("form").submit(event => {
+    $("form").submit(async event => {
         //#region resets
         // reset result label
         event.preventDefault();
@@ -90,114 +92,74 @@ $(function () {
 
         //#endregion
 
-        //#region read pdf and save machine (ajax)
-        let fileReader = new FileReader();
+        $.ajax({
+            method: "POST",
+            url: (baseApiUrl + "/machine/create" +
+                `?language=${language}` +
+                `&imageFolderPathAfterWwwroot=${path_imageFolderAfterWwwroot}` +
+                `&videoFolderPathAfterWwwroot=${path_videoFolderAfterWwwRoot}` +
+                `&pdfFolderPathAfterWwwroot=${path_pdfFolderAfterWwwroot}`),
+            headers: { "Authorization": jwtToken },
+            data: JSON.stringify({
+                "ImageName": selectedImageInfos.name,
+                "VideoName": selectedVideoInfos.name,
+                "MainCategoryName": $("#slct_mainCategory").val(),
+                "SubCategoryName": $("#slct_subCategory").val(),
+                "Model": $("#inpt_model").val(),
+                "BrandName": $("#inpt_brand").val(),
+                "HandStatus": $("input[name = handStatus]:checked").val(),
+                "PdfName": selectedPdfInfos.name,
+                "Stock": $("#inpt_stock").val(),
+                "Year": $("#inpt_year").val(),
+                "Descriptions": {
+                    "TR": descriptionsInSession.TR,
+                    "EN": descriptionsInSession.EN
+                },
+                "ImageContentInBase64Str": await getBase64StrOfFileAsync(selectedImageInfos),
+                "VideoContentInBase64Str": await getBase64StrOfFileAsync(selectedVideoInfos),
+                "PdfContentInBase64Str": await getBase64StrOfFileAsync(selectedPdfInfos)
+            }),
+            contentType: "application/json",
+            dataType: "json",
+            success: () => {
+                //#region resets
+                $("form")[0].reset();
 
-        fileReader.readAsDataURL(selectedPdfInfos);
-        fileReader.onloadend = function (event) {
-            //#region when pdf read with successfull (ajax)
-            if (fileReader.readyState == fileReader.DONE) {
-                //#region get pdf content in base64 string
-                let dataUrl = event.target.result;
-                let pdfContentInBase64Str = dataUrl
-                    .replace(`data:${selectedPdfInfos.type};base64,`, "")
+                // remove machine video
+                vid_machine.removeAttr("poster")
+                src_machine.removeAttr("src type");  // multiple delete attributes                       
+
+                // change description <button> color
+                changeDescriptionsButtonColorAsync(
+                    $("#" + btn_descriptions_id),
+                    descriptions_unsavedColor);
                 //#endregion
 
-                //#region get image content in base64 string
-                let imageContentInBase64Str = src_machine
-                    .attr("src")
-                    .replace(`data:${selectedImageInfos.type};base64,`, "");
-                //#endregion
-
-                //#region get descriptions from session
-                let descriptionsInSession = JSON.parse(sessionStorage
-                    .getItem(sessionKeys_descriptionsOnCreatePage));
-                //#endregion
-
-                $.ajax({
-                    method: "POST",
-                    url: (baseApiUrl + "/machine/create" +
-                        `?language=${language}` +
-                        `&imageFolderPathAfterWwwroot=${imageFolderPathAfterWwwroot}` +
-                        `&pdfFolderPathAfterWwwroot=${pdfFolderPathAfterWwwroot}`),
-                    headers: { "Authorization": jwtToken },
-                    data: JSON.stringify({
-                        "ImageName": selectedImageInfos.name,
-                        "MainCategoryName": $("#slct_mainCategory").val(),
-                        "SubCategoryName": $("#slct_subCategory").val(),
-                        "Model": $("#inpt_model").val(),
-                        "BrandName": $("#inpt_brand").val(),
-                        "HandStatus": $("input[name = handStatus]:checked").val(),
-                        "PdfName": selectedPdfInfos.name,
-                        "Stock": $("#inpt_stock").val(),
-                        "Year": $("#inpt_year").val(),
-                        "Descriptions": {
-                            "TR": descriptionsInSession.TR,
-                            "EN": descriptionsInSession.EN
-                        },
-                        "ImageContentInBase64Str": imageContentInBase64Str,
-                        "PdfContentInBase64Str": pdfContentInBase64Str
-                    }),
-                    contentType: "application/json",
-                    dataType: "json",
-                    success: () => {
-                        //#region resets
-                        $("form")[0].reset();
-
-                        // remove machine video
-                        vid_machine.remmoveAttr("poster")
-                        src_machine.removeAttr("src type");  // multiple delete attributes                       
-
-                        // change description <button> color
-                        changeDescriptionsButtonColorAsync(
-                            $("#" + btn_descriptions_id),
-                            descriptions_unsavedColor);
-                        //#endregion
-
-                        //#region write successfull message to resultLabel
-                        updateResultLabel(
-                            resultLabel_id,
-                            successMessagesByLanguages[language]["saveSuccessful"],
-                            resultLabel_successColor,
-                            "30px",
-                            img_loading);
-                        //#endregion
-
-                        //#region remove descriptions in session
-                        sessionStorage.removeItem(
-                            sessionKeys_descriptionsOnCreatePage);
-                        //#endregion
-                    },
-                    error: (response) => {
-                        //#region write error message to result label
-                        updateResultLabel(
-                            resultLabel_id,
-                            JSON.parse(response.responseText).errorMessage,
-                            resultLabel_errorColor,
-                            "30px",
-                            img_loading);
-                        //#endregion
-                    }
-                });
-            }
-            //#endregion
-
-            //#region when any error occured in pdf reading
-            else {
-                //#region write error
+                //#region write successfull message to resultLabel
                 updateResultLabel(
                     resultLabel_id,
-                    errorMessagesByLanguages[language]["pdfReadingError"],
-                    resultLabel_errorColor,
+                    successMessagesByLanguages[language]["saveSuccessful"],
+                    resultLabel_successColor,
                     "30px",
                     img_loading);
                 //#endregion
 
-                return;
+                //#region remove descriptions in session
+                sessionStorage.removeItem(
+                    sessionKeys_descriptionsOnCreatePage);
+                //#endregion
+            },
+            error: (response) => {
+                //#region write error message to result label
+                updateResultLabel(
+                    resultLabel_id,
+                    JSON.parse(response.responseText).errorMessage,
+                    resultLabel_errorColor,
+                    "30px",
+                    img_loading);
+                //#endregion
             }
-            //#endregion
-        }
-        //#endregion
+        });
     })
     $(window).resize(async () => {
         await setMachineVideoSizeAsync();

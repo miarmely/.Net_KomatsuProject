@@ -9,6 +9,7 @@ namespace Entities.ConfigModels
 		public ErrorDetails FiE_U_I { get; init; }
 		public ErrorDetails FiE_U_P { get; init; }
 		public ErrorDetails FiE_U_S { get; init; }
+		public ErrorDetails FiE_U_V { get; init; }
 		public ErrorDetails FiE_D_I { get; init; }
 		public ErrorDetails FiE_D_P { get; init; }
 		public ErrorDetails FiE_D_S { get; init; }

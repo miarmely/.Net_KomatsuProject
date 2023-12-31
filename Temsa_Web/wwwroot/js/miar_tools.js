@@ -94,6 +94,28 @@ export async function displayFileByDataUrlAsync(
     //#endregion
 }
 
+export async function getBase64StrOfFileAsync(selectedFileInfos) {
+    //#region read file
+    let fileReader = new FileReader();
+    fileReader.readAsDataURL(selectedFileInfos);
+    //#endregion
+
+    //#region when reading process finished
+    return new Promise((resolve) => {
+        fileReader.onloadend = () => {
+            //#region when reading process is successful
+            if (fileReader.readyState == fileReader.DONE) {
+                let dataUrl = fileReader.result;
+                let base64Str = dataUrl.substring(dataUrl.indexOf(",") + 1);
+
+                resolve(base64Str);
+            }
+            //#endregion
+        }
+    });
+    //#endregion
+}
+
 export async function displayFileByObjectUrlAsync(
     selectedFileInfos,
     elementForAddUrl,
@@ -145,10 +167,8 @@ export async function removeObjectUrlFromElementAsync(
     if (afterRemove != null)
         afterRemove();
 }
-export
 
-
-    async function resetBeforeAddUrlAsync(
+export async function resetBeforeAddUrlAsync(
         elementForAddUrl,
         fileStatusLabelId,
         inputForAddFileName = null,

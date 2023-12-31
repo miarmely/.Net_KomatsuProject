@@ -91,7 +91,9 @@ namespace Services.Concretes
 			MachineParamsForCreate machineParams,
 			MachineDtoForCreate machineDto)
 		{
-			#region upload machine image to folder
+			#region upload files to folder
+
+			#region machine image 
 			await _fileService.UploadFileToFolderAsync(
 				machineParams.Language,
 				machineParams.ImageFolderPathAfterWwwroot,
@@ -100,13 +102,24 @@ namespace Services.Concretes
 				FileTypes.MachineImage);
 			#endregion
 
-			#region upload pdf to folder
+			#region machine video 
+			await _fileService.UploadFileToFolderAsync(
+				machineParams.Language,
+				machineParams.VideoFolderPathAfterWwwroot,
+				machineDto.VideoName,
+				machineDto.VideoContentInBase64Str,
+				FileTypes.MachineVideo);
+			#endregion,
+
+			#region pdf
 			await _fileService.UploadFileToFolderAsync(
 				machineParams.Language,
 				machineParams.PdfFolderPathAfterWwwroot,
 				machineDto.PdfName,
 				machineDto.PdfContentInBase64Str,
 				FileTypes.PDF);
+			#endregion
+
 			#endregion
 
 			#region create machine (throw)
@@ -121,17 +134,10 @@ namespace Services.Concretes
 				machineDto.Stock,
 				machineDto.Year,
 				machineDto.HandStatus,
-				#region DescriptionInTR
-				DescriptionInTR = machineDto.Descriptions == null ?
-					null
-					: machineDto.Descriptions.TR,
-				#endregion
-				#region DescriptionInEN
-				DescriptionInEN = machineDto.Descriptions == null ?
-					null
-					: machineDto.Descriptions.EN,
-				#endregion
+				DescriptionInTR = machineDto.Descriptions.TR,
+				DescriptionInEN = machineDto.Descriptions.EN,
 				machineDto.ImageName,
+				machineDto.VideoName,
 				machineDto.PdfName
 			});
 

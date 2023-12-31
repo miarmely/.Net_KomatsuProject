@@ -4,7 +4,8 @@
 	{
 		MachineImage,
 		PDF,
-		Slider
+		Slider,
+		MachineVideo
 	}	
 
 	public enum FormTypes
