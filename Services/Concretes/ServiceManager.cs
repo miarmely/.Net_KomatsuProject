@@ -32,7 +32,7 @@ namespace Services.Concretes
 			_mailService = new Lazy<IMailService>(() =>
 				new MailService(configs));
 			_machineService = new Lazy<IMachineService>(() => 
-				new MachineService(manager, FileService, configs));
+				new MachineService(manager, FileService));
 			_fileService = new Lazy<IFileService>(() => 
 				new FileService(configs));
 			_sliderService = new Lazy<ISliderService>(() => 

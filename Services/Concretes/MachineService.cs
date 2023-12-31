@@ -19,18 +19,74 @@ namespace Services.Concretes
 	{
 		private readonly IRepositoryManager _manager;
 		private readonly IFileService _fileService;
-		private readonly IConfigManager _configs;
 
 		public MachineService(
 			IRepositoryManager manager,
-			IFileService fileService,
-			IConfigManager configs)
+			IFileService fileService)
 		{
 			_manager = manager;
 			_fileService = fileService;
-			_configs = configs;
 		}
 
+		private async Task DeleteFilesFromFolderForMachineAsync(
+			string language,
+			string fileFolderPathAfterWwwroot,
+			IEnumerable<string> fileNames,
+			string columnNameInDb,
+			FileTypes fileType)
+		{
+			#region set parameters
+			var parameters = new DynamicParameters();
+
+			parameters.Add("ColumnName",
+				columnNameInDb,
+				DbType.String);
+
+			parameters.Add("ValuesInString",
+				string.Join(",", fileNames),
+				DbType.String);
+
+			parameters.Add("ValuesNotExistsOnTableInString",
+				"",
+				DbType.String,
+				ParameterDirection.Output);
+			#endregion
+
+			#region get file names that not using by other machines
+			await _manager.MachineRepository
+				.SeparateValuesNotExistsOnTableAsync(parameters);
+
+			var fileNamesNotExistsOnTableInStr = parameters
+				.Get<string>("ValuesNotExistsOnTableInString");
+
+			// our purpose: dont delete files on folder when file using from other
+			// machines so we get only file names that not using from other
+			// machines for only delete its.
+			#endregion
+
+			#region delete files that not using by other machines (throw)
+			if (fileNamesNotExistsOnTableInStr != null)
+			{
+				#region add image names in string to array
+				var fileNamesNotExistsOnTable = fileNamesNotExistsOnTableInStr
+					.Split(',');
+				#endregion
+
+				#region delete images
+				foreach (var fileName in fileNamesNotExistsOnTable)
+					await _fileService.DeleteFileOnFolderByPathAsync(
+						language,
+						fileFolderPathAfterWwwroot,
+						fileName,
+						fileType);
+				#endregion
+			}
+			#endregion
+		}
+	}
+
+	public partial class MachineService  // main functions
+	{
 		public async Task CreateMachineAsync(
 			MachineParamsForCreate machineParams,
 			MachineDtoForCreate machineDto)
@@ -102,7 +158,7 @@ namespace Services.Concretes
 		{
 			#region set parameters
 			var parameters = new DynamicParameters(pagingParameters);
-			
+
 			parameters.Add("Language", language, DbType.String);
 			parameters.Add("TotalCount", 0, DbType.Int32, ParameterDirection.Output);
 			parameters.Add("StatusCode", "", DbType.Int16, ParameterDirection.Output);
@@ -225,6 +281,58 @@ namespace Services.Concretes
 			#endregion
 
 			return machineViewPagingList;
+		}
+
+		public async Task<IEnumerable<MachineView>> GetOneMachineByIdAsync(
+			MachineParamsForDisplayOneMachine machineParams)
+		{
+			#region set parameters
+			var parameters = new DynamicParameters(machineParams);
+			parameters.Add("ErrorCode", "", DbType.String, ParameterDirection.Output);
+			parameters.Add("StatusCode", 0, DbType.Int16, ParameterDirection.Output);
+			parameters.Add("ErrorMessage", "", DbType.String, ParameterDirection.Output);
+			parameters.Add("ErrorDescription", "", DbType.String, ParameterDirection.Output);
+			#endregion
+
+			#region get machineView
+			var machineViewDict = new Dictionary<Guid, MachineView>();
+
+			var machineViews = await _manager.MachineRepository
+				.GetOneMachineByIdAsync(
+				parameters,
+				(machinePart, descriptionPart) =>
+				{
+					#region when machine isn't exists in dict
+					if (!machineViewDict.TryGetValue(
+						machinePart.Id,
+						out var machineView))
+					{
+						machineView = machinePart;
+						machineViewDict.Add(machinePart.Id, machineView);
+					}
+					#endregion
+
+					#region add descriptions to machineView in dict
+					machineView.Descriptions.Add(
+						descriptionPart.Language,
+						descriptionPart.Description);
+					#endregion
+
+					return machineView;
+				},
+				"Language");
+			#endregion
+
+			#region when machine not found (error)
+			if (machineViews.Count() == 0)
+				throw new ErrorWithCodeException(
+					parameters.Get<short>("StatusCode"),
+					parameters.Get<string>("ErrorCode"),
+					parameters.Get<string>("ErrorDescription"),
+					parameters.Get<string>("ErrorMessage"));
+			#endregion
+
+			return machineViewDict.Values;
 		}
 
 		public async Task<IEnumerable<string>> GetMainCategoryNamesByLanguageAsync(
@@ -367,7 +475,7 @@ namespace Services.Concretes
 					machineDto.PdfContentInBase64Str,
 					FileTypes.PDF);
 			}
-				
+
 			#endregion
 		}
 
@@ -421,66 +529,6 @@ namespace Services.Concretes
 				machineDtos.Select(m => m.PdfName),
 				"PdfName",
 				FileTypes.PDF);
-			#endregion
-		}
-	}
-
-
-	public partial class MachineService  // private functions
-	{
-		private async Task DeleteFilesFromFolderForMachineAsync(
-			string language,
-			string fileFolderPathAfterWwwroot,
-			IEnumerable<string> fileNames,
-			string columnNameInDb,
-			FileTypes fileType)
-		{
-			#region set parameters
-			var parameters = new DynamicParameters();
-			
-			parameters.Add("ColumnName",
-				columnNameInDb,
-				DbType.String);
-
-			parameters.Add("ValuesInString",
-				string.Join(",", fileNames),
-				DbType.String);
-
-			parameters.Add("ValuesNotExistsOnTableInString",
-				"",
-				DbType.String,
-				ParameterDirection.Output);
-			#endregion
-
-			#region get file names that not using by other machines
-			await _manager.MachineRepository
-				.SeparateValuesNotExistsOnTableAsync(parameters);
-
-			var fileNamesNotExistsOnTableInStr = parameters
-				.Get<string>("ValuesNotExistsOnTableInString");
-
-			// our purpose: dont delete files on folder when file using from other
-			// machines so we get only file names that not using from other
-			// machines for only delete its.
-			#endregion
-
-			#region delete files that not using by other machines (throw)
-			if (fileNamesNotExistsOnTableInStr != null)
-			{
-				#region add image names in string to array
-				var fileNamesNotExistsOnTable = fileNamesNotExistsOnTableInStr
-					.Split(',');
-				#endregion
-
-				#region delete images
-				foreach (var fileName in fileNamesNotExistsOnTable)
-					await _fileService.DeleteFileOnFolderByPathAsync(
-						language,
-						fileFolderPathAfterWwwroot,
-						fileName,
-						fileType);
-				#endregion
-			}
 			#endregion
 		}
 	}

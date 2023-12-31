@@ -1,6 +1,7 @@
 ﻿using Entities.DtoModels.MachineDtos;
 using Entities.QueryParameters;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Identity.Client;
 using Presantation.Attributes;
 using Services.Contracts;
 
@@ -43,6 +44,18 @@ namespace Presantation.Controllers
 					Response);
 
 			return Ok(machines);
+		}
+
+
+		[HttpGet("display/one")]
+		[Authorization]
+		public async Task<IActionResult> GetOneMachineById(
+			[FromQuery] MachineParamsForDisplayOneMachine machineParams)
+		{
+			var machineView = await _manager.MachineService
+				.GetOneMachineByIdAsync(machineParams);
+
+			return Ok(machineView);
 		}
 
 

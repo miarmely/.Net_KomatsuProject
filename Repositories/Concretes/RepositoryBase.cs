@@ -1,8 +1,9 @@
 ﻿using Dapper;
 using Entities.ConfigModels.Contracts;
+using Entities.Exceptions;
 using Repositories.Contracts;
 using System.Data;
-
+using System.Reflection.Metadata.Ecma335;
 
 namespace Repositories.Concretes
 {
@@ -52,13 +53,27 @@ namespace Repositories.Concretes
             #region send query
             using (var connection = _context.CreateSqlConnection())
             {
-                return await connection.QueryAsync(
-                    GetCommandDefinitionForProcedures(procedureName, parameters), 
-                    map, 
-                    splitOn);
-            }
+				try
+				{
+					#region get result
+					var result = await connection.QueryAsync(
+					    GetCommandDefinitionForProcedures(procedureName, parameters),
+					    map,
+					    splitOn);
+					#endregion
+
+					return result;
+				}
+                catch (Exception ex)
+                {
+					// i use try catch because if returned table empty then system
+					// give error about "splitOn" parameter
+
+					return new List<TResult>();  // send empty list
+				}
+			}
             #endregion
-        }
+		}
 
 		public async Task<T> QuerySingleOrDefaultAsync<T>(
 			string procedureName,

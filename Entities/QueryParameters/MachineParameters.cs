@@ -1,5 +1,4 @@
-﻿using Entities.Attributes;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
 
 namespace Entities.QueryParameters
@@ -26,5 +25,11 @@ namespace Entities.QueryParameters
 	{
 		[Required] public string ImageFolderPathAfterWwwroot { get; init; }
 		[Required] public string PdfFolderPathAfterWwwroot { get; init; }
+	}
+
+
+	public record MachineParamsForDisplayOneMachine : LanguageParams
+	{
+		[Required] public Guid MachineId { get; init; }
 	}
 }

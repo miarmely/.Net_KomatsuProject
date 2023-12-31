@@ -17,6 +17,7 @@
 		string Machine_Create,
 		string Machine_DisplayAll,
 		string Machine_DisplayByCondition,
+		string Machine_DisplayOneById,
 		string Machine_Update,
 		string Machine_Delete,
 		string Machine_GetMainCategoryNames,
