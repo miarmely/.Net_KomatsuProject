@@ -1,6 +1,25 @@
 ﻿@model IServiceManager;
 
 
+<style rel="stylesheet">
+    .article{
+        border-style:solid;
+        width: 300px;
+        height: 400px;
+        margin-top: 10px;
+        margin-bottom: 10px;
+        margin-left: 20px; 
+        margin-right: 20px; 
+        float: left
+    }
+
+    .div_article{
+        border-style: solid;
+        border-color: red;
+    }
+</style>
+
+
 <div class="table-agile-info">
     <div class="panel panel-default">
         @*title*@
@@ -30,20 +49,7 @@
 		</div>
 
         @*table*@
-        <div class="table-responsive">
-            <table id="tbl_machine" class="table table-striped b-t b-light">
-                <thead>
-                    <tr>
-                        <th style="width:20px">
-                            <label class="i-checks m-b-rowNone">
-								<input id="box_all" type="checkbox"><i></i>
-                            </label>
-                        </th>
-                    </tr>
-                </thead>
-                <tbody>
-                </tbody>
-            </table>
+        <div id="div_article" class="div_article">
         </div>
         
         @*entity count and pagination buttons*@

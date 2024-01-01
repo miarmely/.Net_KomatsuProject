@@ -63,7 +63,7 @@ $(function() {
     )
     //#endregion
 
-    //#region function
+    //#region functions
     async function populateUserSettingsMenuAsync() {
         // #region add menus of user settings
         let userSettingsMenu = userSettingsMenuByLanguages[language];

@@ -1,16 +1,18 @@
-﻿import {
+﻿import { setArticleStyleAsync, updateStyleOfArticleDivAsync } from "./miar_article.js"
+import {
     click_descriptionsButtonAsync, click_descriptionDropdownItemAsync,
     updateResultLabel, updateErrorRow, setDisabledOfOtherUpdateButtonsAsync,
-    resetErrorRowAsync, populateElementByAjaxOrLocalAsync, setDescriptionsLanguageAsync, getDateTimeInString,
-    addPaginationButtonsAsync, controlPaginationBackAndNextButtonsAsync,
-    displayFileByDataUrlAsync, change_descriptionsTextareaAsync, isFileTypeInvalidAsync,
-    isAllObjectValuesNullAsync
+    resetErrorRowAsync, populateElementByAjaxOrLocalAsync, setDescriptionsLanguageAsync,
+    getDateTimeInString, addPaginationButtonsAsync, controlPaginationBackAndNextButtonsAsync,
+    displayFileByDataUrlAsync, change_descriptionsTextareaAsync,
+    isFileTypeInvalidAsync, isAllObjectValuesNullAsync
 } from "./miar_tools.js";
+
 
 $(function () {
     //#region variables
     const pageNumber = 1;
-    const pageSize = 10;
+    const pageSize = 15;
     const paginationButtonQuantity = 5;
     const nameOfPaginationHeader = "Machine-Pagination";
     const errorMessageColor = "rgb(255, 75, 75)";
@@ -30,8 +32,9 @@ $(function () {
     const ul_pagination = $("#ul_pagination");
     const entityQuantity_id = "#small_entityQuantity";
     const entityQuantity_color = "#7A7A7A";
-    const path_pdfs = "pdfs";
     const path_machineImages = "images/machines";
+    const path_machineVideos = "videos/machines";
+    const path_pdfs = "pdfs";
     const columnNames = Object.keys(columnNamesByLanguages[language]);
     const btn_image_id = "btn_image";
     const btn_pdf_id = "btn_pdf";
@@ -50,13 +53,42 @@ $(function () {
     const slct_mainCategory_id = "slct_mainCategory";
     const slct_subCategory_id = "slct_subCategory";
     const slct_handStatus_id = "slct_handStatus";
+    const div_article = $("#div_article");
+    const style_article = {
+        "width": 300,
+        "height": 400,
+        "marginT": 10,
+        "marginB": 10,
+        "marginR": 20,
+        "marginL": 20,
+        "border": 2
+    }
+    const style_article_video = {
+        "width": style_article.width - (style_article.border * 2),
+        "height": style_article.height / 2,
+    }
     let paginationInfos = {};
     let machineCountOnTable;
     let selectedPdfInfos;
     let selectedImageInfos;
+    let articleIdAndVideoNames = {
+
+    }
+    let mouseLeavedVideos = []
     //#endregion
 
     //#region events
+    $(window).resize(async () => {
+        setTimeout(async () =>
+            await updateStyleOfArticleDivAsync(),
+            300);
+    });
+    $("#div_sidebarMenuButton").click(async () => {
+        // wait 0.3sn until sidebar closed
+        setTimeout(async () => {
+            await updateStyleOfArticleDivAsync()
+        }, 300);
+    });
     $("#box_all").click(async () => {
         //#region do checked/unchecked all checkbox
         let isBoxAllChecked = $("#box_all").is(":checked");
@@ -212,10 +244,10 @@ $(function () {
                                 //#region !!!!!!!!!!! disable some maincategory names (TEMPOARARY) !!!!!!!!!!!!!!!!!!
                                 if (mainCategoryName != "Work Machines"
                                     && mainCategoryName != "İş Makineleri") {
-                                        slct_mainCategory.append(
-                                            `<option style="color: darkgrey"  disabled >${mainCategoryName}</option>`
-                                        );
-                                    }
+                                    slct_mainCategory.append(
+                                        `<option style="color: darkgrey"  disabled >${mainCategoryName}</option>`
+                                    );
+                                }
                                 //#endregion !!!!!!!!!!!!!!!!!!!!!!!!!!
 
                                 else
@@ -894,7 +926,7 @@ $(function () {
 
         $("#" + inpt_choosePdf_id).trigger("click");
     })
-    spn_eventManager.on("change_chooseFileInput_image", async (event, rowId, selectedFileInfos) => {
+    spn_eventManager.on("change_chooseFileInput_image", async (_, rowId, selectedFileInfos) => {
         //#region when any file not selected
         if ($("#" + inpt_chooseImage_id).val() == "")
             return;
@@ -992,9 +1024,71 @@ $(function () {
         await change_descriptionsTextareaAsync(
             $("#" + btn_descriptions_id));
     })
+    spn_eventManager.on("mouseover_articleVideo", async (_, event, articleId) => {
+        //#region control the mouse whether is leaved from <video> each 0.4sn until 2sn
+        setTimeout(() => {
+            if (isArticleIdExistsMouseLeavedVideos(articleId)) return;
+
+            setTimeout(() => {
+                if (isArticleIdExistsMouseLeavedVideos(articleId)) return;
+
+                setTimeout(() => {
+                    if (isArticleIdExistsMouseLeavedVideos(articleId)) return;
+
+                    setTimeout(() => {
+                        if (isArticleIdExistsMouseLeavedVideos(articleId)) return;
+
+                        setTimeout(() => {
+                            if (isArticleIdExistsMouseLeavedVideos(articleId)) return;
+
+                            //#region get video name and extension
+                            let articleVideo = $("#" + articleId)
+                                .find("video");
+
+                            let articleSource = $("#" + articleId)
+                                .find("source");
+
+                            let videoName = articleIdAndVideoNames[articleId];
+                            let videoType = videoName.substring(videoName.lastIndexOf(".") + 1);
+                            //#endregion
+
+                            //#region display machine video
+                            articleVideo.attr({
+                                "controls": " ",
+                                "autoplay": " "
+                            });
+
+                            articleSource.attr({
+                                "src": "/" + path_machineVideos + "/" + articleIdAndVideoNames[articleId],
+                                "type": "video/" + videoType,
+                            })
+
+                            articleVideo.load();
+                            //#endregion
+                        }, 400);
+                    }, 400);
+                }, 400);
+            }, 400);
+        }, 400);
+        //#endregion
+    })
     //#endregion
 
     //#region functions
+    function isArticleIdExistsMouseLeavedVideos(articleId) {
+        //#region when mouse leaved from <video> (return)
+        let indexOfArticleId = mouseLeavedVideos.indexOf(articleId);
+
+        if (indexOfArticleId != -1) {
+            // remove element from array and return
+            mouseLeavedVideos.splice(indexOfArticleId, 1);
+            return true;
+        }
+        //#endregion
+
+        return false;
+    }
+
     async function updateMachineAsync(url, data, rowId, oldColumnValues) {
         let propertyNamesAndColumnNamesGuide = {
             "imageName": "image",
@@ -1192,74 +1286,53 @@ $(function () {
         });
     }
 
-    async function addMachinesToTableAsync(response) {
-        //#region add machines to table
-        let rowNo = 1;
-
+    async function addMachinesToArticlesAsync(response) {
+        //#region add machines to articles
         for (let index in response) {
-            //#region add machine infos to table
-            let machineView = response[index];
-            let rowId = `tr_row${rowNo}`
+            //#region add machines 
+            let machineInfos = response[index];
+            let articleId = "art_machine_" + index;
 
-            table_body.append(
-                `<tr id= "${rowId}" class= ${machineView.id} style="text-align:center">
-                    <td id="td_checkbox">
-				        <label class="i-checks m-b-none">
-					        <input type="checkbox"><i></i>
-				        </label>
-			        </td>
-                    <td id="td_${columnNames[0]}">
-                        <img src="/${path_machineImages}/${machineView.imageName}"  title="${machineView.imageName}"  alt="${machineView.imageName}"  style="max-width:${machineImage_maxWidth}px; max-height:${machineImage_maxHeight}px">
-                    </td>
-                    <td id="td_${columnNames[1]}">${machineView.mainCategoryName}</td>
-                    <td id="td_${columnNames[2]}">${machineView.subCategoryName}</td>
-                    <td id="td_${columnNames[3]}">${machineView.brandName}</td>
-                    <td id="td_${columnNames[4]}">${machineView.model}</td>
-                    <td id="td_${columnNames[5]}">${machineView.handStatus}</td>
-                    <td id="td_${columnNames[6]}">${machineView.stock}</td>
-                    <td id="td_${columnNames[7]}">${machineView.rented}</td>
-                    <td id="td_${columnNames[8]}">${machineView.sold}</td>
-                    <td id="td_${columnNames[9]}">${machineView.year}</td>
-                    <td id="td_${columnNames[10]}">${getDateTimeInString(machineView.createdAt)}</td >
-                    <td id="td_${columnNames[11]}">
-                        <a href="/${path_pdfs}/${machineView.pdfName}"  title="${machineView.pdfName}"  target="_blank">PDF</a>
-                    </td>
-                    <td id="td_${columnNames[12]}">
-                        <textarea style="${style_descriptionsTextarea}" disabled>${machineView.descriptions[language]}</textarea>
-                    </td>
-                    <td id="td_${columnNames[13]}">
-                        <button id="${btn_update_id}" ui-toggle-class="">
-					        <i class="fa fa-pencil text-info">${updateButtonNameByLanguages[language]}</i>
-				        </button>
-                    </td>
-                    <td style="width:30px"></td>
-                </tr>
-                <tr hidden></tr>
-			    <tr id="${rowId}_error">
-		            <td id="td_error" colspan=16 hidden>
-                    </td>
-			    </tr>`
-            );
+            div_article.append(`
+                <article id="${articleId}" class="article">
+                    <div id=${machineInfos.id}"  class="div_video">
+                        <video poster="/${path_machineImages}/${machineInfos.imageName}"  width="${style_article_video.width}"  height="${style_article_video.height}">
+                            <source src="" type=""></source>
+                        </video>
+                    </div>
+                    <div style="text-align:center">
+                        <h2>${machineInfos.model}</h2>
+                        <h3>${machineInfos.mainCategoryName}</h3>
+                        <h4>${machineInfos.subCategoryName}</h4>
+                        <button id="btn_${articleId}" type="button">Detay</button>
+                    </div>
+                </article>
+            `);
 
-            rowNo += 1;
+            // save video names
+            articleIdAndVideoNames[articleId] = machineInfos.videoName;
+            //#endregion
+
+            //#region save descriptions of machine to session
+            sessionStorage.setItem(
+                articleId,
+                JSON.stringify({
+                    "descriptions": machineInfos.descriptions
+                }));
             //#endregion
 
             //#region declare events
-            $(`#${rowId} #${btn_update_id}`).click(() =>
-                spn_eventManager.trigger(
-                    "click_updateButton",
-                    [$("#" + rowId)])
-            );
-            //#endregion
-
-            //#region save descriptions to session
-            sessionStorage.setItem(
-                rowId,
-                JSON.stringify({
-                    "descriptions": machineView.descriptions
-                }));
+            $("#" + articleId).mouseover((event) => {
+                spn_eventManager.trigger("mouseover_articleVideo", [event, articleId]);
+            });
             //#endregion
         }
+        //#endregion
+
+        //#region declare events
+        //$(".article video").mouseover((event) => {
+        //    spn_eventManager.trigger("mouseover_articleVideo", [event]);
+        //});
         //#endregion
     }
 
@@ -1274,14 +1347,12 @@ $(function () {
             contentType: "application/json",
             dataType: "json",
             beforeSend: () => {
-                //#region reset table if not empty
-                if (table_body.children("tr").length != 0)
-                    table_body.empty();
-                //#endregion
+                // reset machine articles
+                div_article.empty();
             },
             success: (response, status, xhr) => {
-                //#region populate table
-                addMachinesToTableAsync(response)
+                //#region add machines to articles
+                addMachinesToArticlesAsync(response)
                     .then(async () => {
                         //#region get pagination infos from headers
                         paginationInfos = JSON.parse(
@@ -1335,11 +1406,9 @@ $(function () {
         for (let index = 0; index < tableMenubarOptions.length; index += 1) {
             let tableMenubarOption = tableMenubarOptions[index];
 
-            $("#slct_tableMenubar").append(
-                `<option value="${index}">
-                    ${tableMenubarOption}
-                    </option>`
-            )
+            $("#slct_tableMenubar").append(`
+                <option value="${index}">${tableMenubarOption}</option>
+            `);
         }
         //#endregion
 
@@ -1348,31 +1417,51 @@ $(function () {
             tableMenubar_applyButtonName[language])
         //#endregion
 
-        //#region add column heads
-        // add column heads
-        for (let column in columnNamesByLanguages[language]) {
-            let columnNameByLanguage = columnNamesByLanguages[language][column];
-
-            table_head.append(
-                `<th id="th_${column}" style="text-align:center">${columnNameByLanguage}</th>`
-            );
-        }
-
-        // add blank column to end
-        table_head.append(
-            `<th style="width:30px"></th>`
-        );
+        //#region add machines article
+        for (let index = 0; index < 15; index += 1)
+            div_article.append(`
+            <article class="article"></article>
+        `);
         //#endregion
+
+        await setArticleStyleAsync(
+            div_article,
+            15,
+            style_article.width,
+            style_article.height,
+            style_article.marginT,
+            style_article.marginB,
+            style_article.marginR,
+            style_article.marginL,
+            sidebar_width);
+
+        await updateStyleOfArticleDivAsync();
+
+        ////#region add column heads
+        //// add column heads
+        //for (let column in columnNamesByLanguages[language]) {
+        //    let columnNameByLanguage = columnNamesByLanguages[language][column];
+
+        //    table_head.append(
+        //        `<th id="th_${column}" style="text-align:center">${columnNameByLanguage}</th>`
+        //    );
+        //}
+
+        //// add blank column to end
+        //table_head.append(
+        //    `<th style="width:30px"></th>`
+        //);
+        ////#endregion
 
         //#region add entity quantity message
         $(entityQuantity_id).append(
             `<b>0</b> ${entityQuantity_messageByLanguages[language]}`
         );
         //#endregion
+
+        await populateTableAsync(pageNumber, pageSize, true);
     }
     //#endregion
 
-    populateHtmlAsync()
-        .then(async () =>
-            await populateTableAsync(pageNumber, pageSize, true));
+    populateHtmlAsync();
 })

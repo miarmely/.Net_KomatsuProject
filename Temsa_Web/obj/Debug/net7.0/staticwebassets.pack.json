@@ -325,6 +325,10 @@
       "PackagePath": "staticwebassets\\js\\lightbox-plus-jquery.min.js"
     },
     {
+      "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\js\\miar_article.js",
+      "PackagePath": "staticwebassets\\js\\miar_article.js"
+    },
+    {
       "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\js\\miar_form.js",
       "PackagePath": "staticwebassets\\js\\miar_form.js"
     },
