@@ -34,6 +34,7 @@ $(function () {
     const entityQuantity_color = "#7A7A7A";
     const path_machineImages = "images/machines";
     const path_machineVideos = "videos/machines";
+    const path_playImage = "images/play.png";
     const path_pdfs = "pdfs";
     const columnNames = Object.keys(columnNamesByLanguages[language]);
     const btn_image_id = "btn_image";
@@ -67,6 +68,10 @@ $(function () {
         "width": style_article.width - (style_article.border * 2),
         "height": style_article.height / 2,
     }
+    const style_article_playImage = {
+        "width": style_article_video.width / 2.5,
+        "height": style_article_video.height / 2
+    }
     let paginationInfos = {};
     let machineCountOnTable;
     let selectedPdfInfos;
@@ -74,7 +79,6 @@ $(function () {
     let articleIdAndVideoNames = {
 
     }
-    let mouseLeavedVideos = []
     //#endregion
 
     //#region events
@@ -1025,52 +1029,53 @@ $(function () {
             $("#" + btn_descriptions_id));
     })
     spn_eventManager.on("mouseover_articleVideo", async (_, event, articleId) => {
-        //#region control the mouse whether is leaved from <video> each 0.4sn until 2sn
-        setTimeout(() => {
-            if (isArticleIdExistsMouseLeavedVideos(articleId)) return;
+        //#region add play icon onto machine image
+        // save article infos
+        let vid_article = $("#" + articleId)
+            .find("video");
 
-            setTimeout(() => {
-                if (isArticleIdExistsMouseLeavedVideos(articleId)) return;
+        let img_play = $("#" + articleId)
+            .find("img");
 
-                setTimeout(() => {
-                    if (isArticleIdExistsMouseLeavedVideos(articleId)) return;
 
-                    setTimeout(() => {
-                        if (isArticleIdExistsMouseLeavedVideos(articleId)) return;
+        vid_article.attr("hidden", "");
+        img_play.removeAttr("hidden");
 
-                        setTimeout(() => {
-                            if (isArticleIdExistsMouseLeavedVideos(articleId)) return;
-
-                            //#region get video name and extension
-                            let articleVideo = $("#" + articleId)
-                                .find("video");
-
-                            let articleSource = $("#" + articleId)
-                                .find("source");
-
-                            let videoName = articleIdAndVideoNames[articleId];
-                            let videoType = videoName.substring(videoName.lastIndexOf(".") + 1);
-                            //#endregion
-
-                            //#region display machine video
-                            articleVideo.attr({
-                                "controls": " ",
-                                "autoplay": " "
-                            });
-
-                            articleSource.attr({
-                                "src": "/" + path_machineVideos + "/" + articleIdAndVideoNames[articleId],
-                                "type": "video/" + videoType,
-                            })
-
-                            articleVideo.load();
-                            //#endregion
-                        }, 400);
-                    }, 400);
-                }, 400);
-            }, 400);
-        }, 400);
+        // add "play.png" to poster
+        //vid_article.attr(
+        //    "poster",
+        //    "/images/play.png");
         //#endregion
+
+
+        ////#region get video name and extension
+        //let vid_article = $("#" + articleId)
+        //    .find("video");
+
+        //let src_article = $("#" + articleId)
+        //    .find("source");
+
+        //let videoName = articleIdAndVideoNames[articleId];
+        //let videoType = videoName.substring(videoName.lastIndexOf(".") + 1);
+        ////#endregion
+
+
+
+        ////#region display machine video
+        //    vid_article.attr({
+        //        "controls": " ",
+        //        "autoplay": " "
+        //    });
+
+        //src_article.attr({
+        //    "src": "/" + path_machineVideos + "/" + articleIdAndVideoNames[articleId],
+        //    "type": "video/" + videoType,
+        //})
+
+        //vid_article.load();
+        ////#endregion
+
+
     })
     //#endregion
 
@@ -1292,11 +1297,14 @@ $(function () {
             //#region add machines 
             let machineInfos = response[index];
             let articleId = "art_machine_" + index;
+            let img_play_marginTB = (style_article_video.height - style_article_playImage.height) / 2;
+            let img_play_marginRL = (style_article_video.width - style_article_playImage.width) / 2;
 
             div_article.append(`
                 <article id="${articleId}" class="article">
-                    <div id=${machineInfos.id}"  class="div_video">
-                        <video poster="/${path_machineImages}/${machineInfos.imageName}"  width="${style_article_video.width}"  height="${style_article_video.height}">
+                    <div id=${machineInfos.id}"  class="div_video"  style="text-align:center">
+                         <img id="img_article" src="/${path_playImage}"  alt="play"  title="play"  style= "width:${style_article_playImage.width}px;  height:${style_article_playImage.height}px;  margin: ${img_play_marginTB}px ${img_play_marginRL}px" hidden/>
+                        <video poster="/${path_machineImages}/${machineInfos.imageName}"  width= ${style_article_video.width}  height= ${style_article_video.height}>
                             <source src="" type=""></source>
                         </video>
                     </div>
@@ -1322,7 +1330,7 @@ $(function () {
             //#endregion
 
             //#region declare events
-            $("#" + articleId).mouseover((event) => {
+            $("#" + articleId + " video").mouseover((event) => {
                 spn_eventManager.trigger("mouseover_articleVideo", [event, articleId]);
             });
             //#endregion
