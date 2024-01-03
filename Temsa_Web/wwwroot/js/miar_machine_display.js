@@ -79,6 +79,7 @@ $(function () {
     let articleIdAndVideoNames = {
 
     }
+    let infosOfLastMouseOveredArticleVideo = {};
     //#endregion
 
     //#region events
@@ -1030,16 +1031,33 @@ $(function () {
     })
     spn_eventManager.on("mouseover_articleVideo", async (_, event, articleId) => {
         //#region add play icon onto machine image
-        // save article infos
-        let vid_article = $("#" + articleId)
-            .find("video");
 
-        let img_play = $("#" + articleId)
-            .find("img");
+        //#region save article video infos
+        let minPageX = event.pageX - event.offsetX;
+        let minPageY = event.pageY - event.offsetY;
 
+        infosOfLastMouseOveredArticleVideo = {
+            "id": articleId,
+            "minPageX": minPageX,
+            "maxPageX": minPageX + style_article_video.width,
+            "minPageY": minPageY,
+            "maxPageY": minPageY + style_article_video.height
+        };
+        //#endregion
 
-        vid_article.attr("hidden", "");
-        img_play.removeAttr("hidden");
+        //#region show "play" image
+        // hide machine image
+        $("#" + articleId)
+            .find("video")
+            .attr("hidden", "");
+
+        // show play video
+        $("#" + articleId)
+            .find("img")
+            .removeAttr("hidden");
+        //#endregion
+
+        //#endregion
 
         // add "play.png" to poster
         //vid_article.attr(
@@ -1074,26 +1092,34 @@ $(function () {
 
         //vid_article.load();
         ////#endregion
+    })
+    spn_eventManager.on("mouseout_articleVideoDiv", async (_, event, articleId) => {
+        //#region when mouse isn't out from article video (return)
+        let currentMouseX = event.pageX;
+        let currentMouseY = event.pageY;
 
+        if (currentMouseX > infosOfLastMouseOveredArticleVideo["minPageX"]
+            && currentMouseX < infosOfLastMouseOveredArticleVideo["maxPageX"]
+            && currentMouseY > infosOfLastMouseOveredArticleVideo["minPageY"]
+            && currentMouseY < infosOfLastMouseOveredArticleVideo["maxPageY"]) {
+            return;
+        }
+        //#endregion
 
+        //#region when mouse is out from article video
+        // reset
+        infosOfLastMouseOveredArticleVideo = {};
+
+        // show machine image
+        $("#" + articleId + " video").removeAttr("hidden");
+
+        // hide play image
+        $("#" + articleId + " img").attr("hidden", "");
+        //#endregion
     })
     //#endregion
 
     //#region functions
-    function isArticleIdExistsMouseLeavedVideos(articleId) {
-        //#region when mouse leaved from <video> (return)
-        let indexOfArticleId = mouseLeavedVideos.indexOf(articleId);
-
-        if (indexOfArticleId != -1) {
-            // remove element from array and return
-            mouseLeavedVideos.splice(indexOfArticleId, 1);
-            return true;
-        }
-        //#endregion
-
-        return false;
-    }
-
     async function updateMachineAsync(url, data, rowId, oldColumnValues) {
         let propertyNamesAndColumnNamesGuide = {
             "imageName": "image",
@@ -1331,16 +1357,18 @@ $(function () {
 
             //#region declare events
             $("#" + articleId + " video").mouseover((event) => {
-                spn_eventManager.trigger("mouseover_articleVideo", [event, articleId]);
+                spn_eventManager.trigger(
+                    "mouseover_articleVideo",
+                    [event, articleId]);
             });
+
+            $("#" + articleId + " .div_video").mouseout((event) => {
+                spn_eventManager.trigger(
+                    "mouseout_articleVideoDiv",
+                    [event, articleId])
+            })
             //#endregion
         }
-        //#endregion
-
-        //#region declare events
-        //$(".article video").mouseover((event) => {
-        //    spn_eventManager.trigger("mouseover_articleVideo", [event]);
-        //});
         //#endregion
     }
 

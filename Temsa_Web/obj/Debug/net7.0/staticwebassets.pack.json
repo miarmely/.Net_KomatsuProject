@@ -249,6 +249,10 @@
       "PackagePath": "staticwebassets\\images\\pdf.png"
     },
     {
+      "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\images\\play.png",
+      "PackagePath": "staticwebassets\\images\\play.png"
+    },
+    {
       "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\images\\prev.png",
       "PackagePath": "staticwebassets\\images\\prev.png"
     },
