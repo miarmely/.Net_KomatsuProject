@@ -4,16 +4,11 @@
 <style rel="stylesheet">
     .article{
         border-style:solid;
-        width: 300px;
-        height: 400px;
-        margin-top: 10px;
-        margin-bottom: 10px;
-        margin-left: 20px; 
-        margin-right: 20px; 
-        float: left
+        float: left;
+        border-radius: 25px;
     }
 
-    .div_article{
+    .div_articles{
         border-style: solid;
         border-color: red;
     }
@@ -49,7 +44,7 @@
 		</div>
 
         @*table*@
-        <div id="div_article" class="div_article">
+        <div id="div_articles" class="div_articles">
         </div>
         
         @*entity count and pagination buttons*@
@@ -139,5 +134,9 @@
     const machineImageButtonNameByLanguages = {
         "TR": "Resim Değiştir",
         "EN": "Change Image"
+    }
+    const playImageAltAndTitleByLanguages = {
+        "TR": "Oynat",
+        "EN": "Play"
     }
 </script>

@@ -1,9 +1,9 @@
-﻿import { setArticleStyleAsync, updateStyleOfArticleDivAsync } from "./miar_article.js"
+﻿import { art_baseId, setArticleStyle, updateStyleOfArticleDivAsync } from "./miar_article.js"
 import {
     click_descriptionsButtonAsync, click_descriptionDropdownItemAsync,
     updateResultLabel, updateErrorRow, setDisabledOfOtherUpdateButtonsAsync,
     resetErrorRowAsync, populateElementByAjaxOrLocalAsync, setDescriptionsLanguageAsync,
-    getDateTimeInString, addPaginationButtonsAsync, controlPaginationBackAndNextButtonsAsync,
+    addPaginationButtonsAsync, controlPaginationBackAndNextButtonsAsync,
     displayFileByDataUrlAsync, change_descriptionsTextareaAsync,
     isFileTypeInvalidAsync, isAllObjectValuesNullAsync
 } from "./miar_tools.js";
@@ -54,29 +54,15 @@ $(function () {
     const slct_mainCategory_id = "slct_mainCategory";
     const slct_subCategory_id = "slct_subCategory";
     const slct_handStatus_id = "slct_handStatus";
-    const div_article = $("#div_article");
-    const style_article = {
-        "width": 300,
-        "height": 400,
-        "marginT": 10,
-        "marginB": 10,
-        "marginR": 20,
-        "marginL": 20,
-        "border": 2
-    }
-    const style_article_video = {
-        "width": style_article.width - (style_article.border * 2),
-        "height": style_article.height / 2,
-    }
-    const style_article_playImage = {
-        "width": style_article_video.width / 2.5,
-        "height": style_article_video.height / 2
-    }
+    const div_articles = $("#div_articles");
     let paginationInfos = {};
-    let machineCountOnTable;
+    let machineCountOnPage;
     let selectedPdfInfos;
     let selectedImageInfos;
     let articleIdAndVideoNames = {
+
+    }
+    let articleInfos = {
 
     }
     let infosOfLastMouseOveredArticleVideo = {};
@@ -85,21 +71,21 @@ $(function () {
     //#region events
     $(window).resize(async () => {
         setTimeout(async () =>
-            await updateStyleOfArticleDivAsync(),
+            await updateStyleOfArticleDivAsync(div_articles, machineCountOnPage),
             300);
     });
     $("#div_sidebarMenuButton").click(async () => {
         // wait 0.3sn until sidebar closed
-        setTimeout(async () => {
-            await updateStyleOfArticleDivAsync()
-        }, 300);
+        setTimeout(async () =>
+            await updateStyleOfArticleDivAsync(div_articles, machineCountOnPage),
+            300);
     });
     $("#box_all").click(async () => {
         //#region do checked/unchecked all checkbox
         let isBoxAllChecked = $("#box_all").is(":checked");
 
         await new Promise(resolve => {
-            for (let rowNo = 1; rowNo <= machineCountOnTable; rowNo += 1) {
+            for (let rowNo = 1; rowNo <= machineCountOnPage; rowNo += 1) {
                 var checkBoxInRow = $(`#tr_row${rowNo} #td_checkbox input`);
 
                 //#region do checked of checkbox
@@ -1094,7 +1080,7 @@ $(function () {
         ////#endregion
     })
     spn_eventManager.on("mouseout_articleVideoDiv", async (_, event, articleId) => {
-        //#region when mouse isn't out from article video (return)
+        //#region when mouse is over article video (return)
         let currentMouseX = event.pageX;
         let currentMouseY = event.pageY;
 
@@ -1212,7 +1198,7 @@ $(function () {
         let machineInfos = [];
 
         //#region populate "machineInfos" array
-        for (let rowNo = 1; rowNo <= machineCountOnTable; rowNo += 1) {
+        for (let rowNo = 1; rowNo <= machineCountOnPage; rowNo += 1) {
             //#region set variables
             let checkBox = $(`#tr_row${rowNo} #td_checkbox input`);
             let row = $(`#tr_row${rowNo}`);
@@ -1320,31 +1306,36 @@ $(function () {
     async function addMachinesToArticlesAsync(response) {
         //#region add machines to articles
         for (let index in response) {
-            //#region add machines 
+            //#region add machines
+
+            //#region save article infos
             let machineInfos = response[index];
-            let articleId = "art_machine_" + index;
-            let img_play_marginTB = (style_article_video.height - style_article_playImage.height) / 2;
-            let img_play_marginRL = (style_article_video.width - style_article_playImage.width) / 2;
+            articleInfos[articleId] = {
+                "machineId": machineInfos.id,
+                "videoName": machineInfos.videoName
+            };
+            //#endregion
 
-            div_article.append(`
-                <article id="${articleId}" class="article">
-                    <div id=${machineInfos.id}"  class="div_video"  style="text-align:center">
-                         <img id="img_article" src="/${path_playImage}"  alt="play"  title="play"  style= "width:${style_article_playImage.width}px;  height:${style_article_playImage.height}px;  margin: ${img_play_marginTB}px ${img_play_marginRL}px" hidden/>
-                        <video poster="/${path_machineImages}/${machineInfos.imageName}"  width= ${style_article_video.width}  height= ${style_article_video.height}>
-                            <source src="" type=""></source>
-                        </video>
-                    </div>
-                    <div style="text-align:center">
-                        <h2>${machineInfos.model}</h2>
-                        <h3>${machineInfos.mainCategoryName}</h3>
-                        <h4>${machineInfos.subCategoryName}</h4>
-                        <button id="btn_${articleId}" type="button">Detay</button>
-                    </div>
-                </article>
-            `);
+            //#region add machine image
+            let art_machine = div_articles.children(art_baseId + index);
 
-            // save video names
-            articleIdAndVideoNames[articleId] = machineInfos.videoName;
+            art_machine
+                .find("video")
+                .attr("poster", "/" + path_machineImages + "/" + machineInfos.imageName);
+            //#endregion
+
+            //#region add machine video
+            let videoType = machineInfos.videoName
+                .subString(machineInfos.videoName.lastIndexOf('.') + 1);
+
+            art_machine
+                .find("source")
+                .attr({
+                    "src": "/" + path_machineVideos + "/" + machineInfos.videoName,
+                    "type": "video/" + videoType,
+                });
+            //#endregion
+
             //#endregion
 
             //#region save descriptions of machine to session
@@ -1384,9 +1375,19 @@ $(function () {
             dataType: "json",
             beforeSend: () => {
                 // reset machine articles
-                div_article.empty();
+                div_articles.empty();
             },
             success: (response, status, xhr) => {
+                setArticleStyle(
+                    div_articles,
+                    response.length,
+                    style_article.width,
+                    style_article.height,
+                    style_article.marginT,
+                    style_article.marginB,
+                    style_article.marginR,
+                    style_article.marginL);
+
                 //#region add machines to articles
                 addMachinesToArticlesAsync(response)
                     .then(async () => {
@@ -1397,11 +1398,11 @@ $(function () {
 
                         //#region update entity count label
                         if (response.length != 0) {  // if any machine exists
-                            machineCountOnTable = paginationInfos.CurrentPageCount;
+                            machineCountOnPage = paginationInfos.CurrentPageCount;
 
                             updateResultLabel(
                                 entityQuantity_id,
-                                `<b>${machineCountOnTable}/${pageSize}</b> ${entityQuantity_messageByLanguages[language]}`,
+                                `<b>${machineCountOnPage}/${pageSize}</b> ${entityQuantity_messageByLanguages[language]}`,
                                 entityQuantity_color
                             )
                         }
@@ -1416,6 +1417,7 @@ $(function () {
                         //#endregion
 
                         await controlPaginationBackAndNextButtonsAsync(paginationInfos);
+                        await updateStyleOfArticleDivAsync(div_articles, machineCountOnPage);
                     });
                 //#endregion
             },
@@ -1455,39 +1457,10 @@ $(function () {
 
         //#region add machines article
         for (let index = 0; index < 15; index += 1)
-            div_article.append(`
+            div_articles.append(`
             <article class="article"></article>
         `);
         //#endregion
-
-        await setArticleStyleAsync(
-            div_article,
-            15,
-            style_article.width,
-            style_article.height,
-            style_article.marginT,
-            style_article.marginB,
-            style_article.marginR,
-            style_article.marginL,
-            sidebar_width);
-
-        await updateStyleOfArticleDivAsync();
-
-        ////#region add column heads
-        //// add column heads
-        //for (let column in columnNamesByLanguages[language]) {
-        //    let columnNameByLanguage = columnNamesByLanguages[language][column];
-
-        //    table_head.append(
-        //        `<th id="th_${column}" style="text-align:center">${columnNameByLanguage}</th>`
-        //    );
-        //}
-
-        //// add blank column to end
-        //table_head.append(
-        //    `<th style="width:30px"></th>`
-        //);
-        ////#endregion
 
         //#region add entity quantity message
         $(entityQuantity_id).append(
