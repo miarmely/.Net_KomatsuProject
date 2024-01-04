@@ -1,10 +1,7 @@
 ﻿//#region variables
-export let articleCountOnPage;
-export const div_video_id = "div_article_video";
-export const div_info_id = "div_article_info"; 
-export const art_baseId = "art_";
 
-//#region styles
+//#region export variables
+export let articleCountOnPage;
 export const style_article = {
     "width": 300,
     "height": 400,
@@ -16,143 +13,237 @@ export const style_article = {
     "paddingB": 10,
     "paddingR": 10,
     "paddingL": 10,
-    "border": 8,
+    "border": 6,
 };
-export const style_div_video_width = style_article.width - (style_article.border * 2);
-export const style_div_video_height = (style_article.height - (style_article.border * 2)) / 2;
-export const style_div_info_width = style_div_video_width;
-export const style_div_info_height = style_div_video_height;
-export const style_vid_width = style_article.width - (style_article.border * 2);
-export const style_vid_height = (style_article.height - (style_article.border * 2)) / 2;
-export const style_img_play_width = style_vid_width / 2.5;
-export const style_img_play_height = style_vid_height / 2;
-export const style_img_play_marginT = (style_vid_height - style_img_play_height) / 2;
-export const style_img_play_marginB = style_img_play_marginT;
-export const style_img_play_marginR = (style_vid_width - style_img_play_width) / 2;
-export const style_img_play_marginL = style_img_play_marginR;
+export const div_article_video_id = "div_article_video";
+export const div_article_image_id = "div_articl_image";
+export const div_article_info_id = "div_article_info";
+export const art_baseId = "art_";
+//#endregion
+
+//#region private variables
+let div_articles;
+
+//#region article elements styles
+
+//#region when article type is "video and text" (VT)
+const style_div_video_marginB_VT = 20;
+const style_div_video_width_VT = style_article.width - (style_article.border * 2) - style_article.paddingR - style_article.paddingL
+const style_div_video_height_VT = (style_article.height - (style_article.border * 2) - style_article.paddingT - style_article.paddingB - style_div_video_marginB_VT) / 2;
+
+const style_div_info_width_VT = style_div_video_width_VT;
+const style_div_info_height_VT = style_div_video_height_VT;
+
+const style_vid_width_VT = style_div_video_width_VT;
+const style_vid_height_VT = style_div_video_height_VT;
+
+const style_img_play_width_VT = style_vid_width_VT / 2.5;
+const style_img_play_height_VT = style_vid_height_VT / 2;
+const style_img_play_marginT_VT = (style_vid_height_VT - style_img_play_height_VT) / 2;
+const style_img_play_marginB_VT = style_img_play_marginT_VT;
+const style_img_play_marginR_VT = (style_vid_width_VT - style_img_play_width_VT) / 2;
+const style_img_play_marginL_VT = style_img_play_marginR_VT;
+//#endregion
+
+//#region when article type is "image and text" (IT)
+const style_div_img_width_IT = style_div_video_width_VT;
+const style_div_img_height_IT = style_div_video_height_VT;
+const style_div_img_marginB_IT = style_div_video_marginB_VT;
+
+const style_div_info_width_IT = style_div_info_width_VT;
+const style_div_info_height_IT = style_div_info_height_VT;
+
+const style_img_width_IT = style_div_video_width_VT;
+const style_img_height_IT = style_div_video_height_VT;
+//#endregion
+
+//#region when article type is only "text" (T)
+const style_div_info_width_T = style_div_info_width_VT;
+const style_div_info_height_T = style_div_info_height_VT;
+//#endregion
+
+//#endregion
+
 //#endregion
 
 //#endregion
 
 //#region functions
-export async function addArticlesAsync(articleType, div_articles, articleCount) {
-    // articleType: "image", "video"
+export async function addArticlesAsync(articleType, _div_articles, articleCount) { // articleType: "imageAndText", "videoAndText", "text"
+    //#region save parameters
+    articleCountOnPage = articleCount;
+    div_articles = _div_articles;
+    //#endregion
 
     //#region add articles
-    articleCountOnPage = articleCount;
-
     for (let index = 0; index < articleCountOnPage; index++) {
-        //#region add article
+        //#region add articles by article type
         let articleId = art_baseId + index;
+        let article;
 
-        //#region when you wanting display video
-        if (articleType == "video")
-            div_articles.append(`
-                <article id="${articleId}"  class="article">
-                    <div id="${div_video_id}">
-                        <img src="/images/play.png"  alt="play"  hidden/>
-                        <video poster="">
-                            <source src="" type=""></source>
-                        </video>
-                    </div>
+        switch (articleType) {
+            case "videoAndText":
+                //#region add article with video and text
+                if (articleType == "videoAndText")
+                    div_articles.append(`
+                        <article id="${articleId}"  class="article">
+                            <div id="${div_article_video_id}">
+                                <img src="/images/play.png"  alt="play" hidden/>
+                                <video poster="" >
+                                    <source src="" type=""></source>
+                                </video>
+                            </div>
 
-                    <div id="${div_info_id}">
-                    </div>
-                </article>
-            `);
+                            <div id="${div_article_info_id}"  style="text-align: center">
+                            </div>
+                        </article>`
+                    );
+                //#endregion
+
+                //#region add styles of article elements
+                // play <img> styles
+                article = $('#' + articleId);
+                article
+                    .find("img")
+                    .css({
+                        "width": style_img_play_width_VT,
+                        "height": style_img_play_height_VT,
+                        "margin-top": style_img_play_marginT_VT,
+                        "margin-bottom": style_img_play_marginB_VT,
+                        "margin-right": style_img_play_marginR_VT,
+                        "margin-left": style_img_play_marginL_VT
+                    });
+
+                // <video> styles
+                article
+                    .find("video")
+                    .css({
+                        "width": style_vid_width_VT,
+                        "height": style_vid_height_VT
+                    });
+
+                // video <div> styles
+                article
+                    .find('#' + div_article_video_id)
+                    .css({
+                        "width": style_div_video_width_VT,
+                        "height": style_div_video_height_VT,
+                        "margin-bottom": style_div_video_marginB_VT
+                    });
+
+                // info <div> styles
+                article
+                    .find('#' + div_article_info_id)
+                    .css({
+                        "width": style_div_info_width_VT,
+                        "height": style_div_info_height_VT
+                    });
+                //#endregion
+
+                break;
+            case "imageAndText":
+                //#region add article with image and text
+                div_articles.append(`
+                    <article id="${articleId}"  class="article">
+                        <div id="${div_article_image_id}" >
+                            <img src=""  alt=""  title="" />
+                        </div>
+
+                        <div id="${div_article_info_id}" >
+                        </div>
+                    </article>`
+                );
+                //#endregion
+
+                //#region add styles of article elements
+                // <img> styles
+                article = $('#' + articleId);
+                article
+                    .find("img")
+                    .css({
+                        "width": style_img_width_IT,
+                        "height": style_img_height_IT
+                    });
+
+                // image <div> styles
+                article
+                    .find('#' + div_article_image_id)
+                    .css({
+                        "width": style_div_img_width_IT,
+                        "height": style_div_img_height_IT,
+                        "margin-bottom": style_div_img_marginB_IT
+                    });
+
+                // info <div> styles
+                article
+                    .find('#' + div_article_info_id)
+                    .css({
+                        "width": style_div_info_width_IT,
+                        "height": style_div_info_height_IT
+                    });
+                //#endregion
+
+                break;
+            case "text":
+                //#region add article with only text
+                div_articles.append(`
+                    <article id="${articleId}"  class="article">
+                        <div id="${div_article_info_id}" >
+                        </div>
+                    </article>`
+                );
+                //#endregion
+
+                //#region add styles of article elements
+                // info <div> styles
+                article = $('#' + articleId);
+                article
+                    .find('#' + div_article_info_id)
+                    .css({
+                        "width": style_div_info_width_T,
+                        "height": style_div_info_height_T
+                    });
+                //#endregion
+
+                break;
+        }
         //#endregion
 
-        //#region when you wanting display image
-        else  //articleType == "image"
-            div_articles.append(`
-                <article id="${articleId}"  class="article">
-                    <div id="${div_video_id}">
-                        <img src=""  alt="" title=""/>
-                    </div>
-
-                    <div id="${div_info_id}">
-                    </div>
-                </article>
-            `);
-        //#endregion
-
-        //#region add styles to article
-
-        //#region set <article> style
-        let article = div_articles.children(`#${articleId}`);
-
-        article.attr("style", {
-            "width": style_article.width + "px",
-            "height": style_article.height + "px",
-            "margin-top": style_article.marginT + "px",
-            "margin-bottom": style_article.marginB + "px",
-            "margin-right": style_article.marginR + "px",
-            "margin-left": style_article.marginL + "px",
-            "border-width": style_article.border + "px"
+        //#region add <article> style
+        article.css({
+            "width": style_article.width,
+            "height": style_article.height,
+            "margin-top": style_article.marginT,
+            "margin-bottom": style_article.marginB,
+            "margin-right": style_article.marginR,
+            "margin-left": style_article.marginL,
+            "padding-top": style_article.paddingT,
+            "padding-bottom": style_article.paddingB,
+            "padding-right": style_article.paddingR,
+            "padding-left": style_article.paddingL,
+            "border-width": style_article.border
         });
-        //#endregion
-
-        //#region set <img> style
-        article
-            .find("img")
-            .attr("style", {
-                "width": style_img_play_width + "px",
-                "height": style_img_play_height + "px",
-                "margin-top": style_img_play_marginT + "px",
-                "margin-bottom": style_img_play_marginB + "px",
-                "margin-right": style_img_play_marginR + "px",
-                "margin-left": style_img_play_marginL + "px",
-            });
-        //#endregion
-
-        //#region set <video> style
-        article
-            .find("video")
-            .attr("style", {
-                "width": style_vid_width + "px",
-                "height": style_vid_height + "px"
-            });
-        //#endregion
-
-        //#region set video <div> style
-        article
-            .find("#" + div_video_id)
-            .attr("style", {
-                "width": style_div_video_width + "px",
-                "height": style_div_video_height + "px",
-                "text-align": "center"
-            });
-        //#endregion
-
-        //#region set info <div> style
-        article
-            .find("#" + div_info_id)
-            .attr("style", {
-                "width": style_div_info_width + "px",
-                "height": style_div_video_height + "px",
-                "text-align": "center"
-            });
-        //#endregion
-
         //#endregion
     }
     //#endregion
+
+    await alignArticlesToCenterAsync();
 }
 
-export async function updateStyleOfArticleDivAsync(div_articles, articleCountOnPage) {
-    //#region set padding left and right
+export async function alignArticlesToCenterAsync() {
+    //#region set padding left and right of articles <div>
     let divClientWidth = div_articles.prop("clientWidth");
     let netArticleWidth = style_article.width + style_article.marginL + style_article.marginR;
     let articleCountOnOneRow = Math.floor(divClientWidth / netArticleWidth);
     let whiteSpaceWidth = divClientWidth - (netArticleWidth * articleCountOnOneRow);
 
     div_articles.css({
-        "padding-left": Math.floor(whiteSpaceWidth / 2) + "px",
-        "padding-right": Math.floor(whiteSpaceWidth / 2) + "px"
+        "padding-left": Math.floor(whiteSpaceWidth / 2),
+        "padding-right": Math.floor(whiteSpaceWidth / 2)
     });
     //#endregion
 
-    //#region set height
+    //#region set height of articles <div>
     let netArticleHeight = style_article.height + style_article.marginT + style_article.marginB;
     let totalRowCount = articleCountOnPage % articleCountOnOneRow == 0 ?
         Math.floor(articleCountOnPage / articleCountOnOneRow)  // when article count of all rows is equal
@@ -160,7 +251,7 @@ export async function updateStyleOfArticleDivAsync(div_articles, articleCountOnP
 
     div_articles.css(
         "height",
-        netArticleHeight * totalRowCount + "px");
+        netArticleHeight * totalRowCount);
     //#endregion
 }
 

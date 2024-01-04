@@ -1,4 +1,4 @@
-﻿import { art_baseId, setArticleStyle, updateStyleOfArticleDivAsync } from "./miar_article.js"
+﻿import { addArticlesAsync, alignArticlesToCenterAsync, art_baseId, div_article_info_id } from "./miar_article.js"
 import {
     click_descriptionsButtonAsync, click_descriptionDropdownItemAsync,
     updateResultLabel, updateErrorRow, setDisabledOfOtherUpdateButtonsAsync,
@@ -71,13 +71,13 @@ $(function () {
     //#region events
     $(window).resize(async () => {
         setTimeout(async () =>
-            await updateStyleOfArticleDivAsync(div_articles, machineCountOnPage),
+            await alignArticlesToCenterAsync(),
             300);
     });
     $("#div_sidebarMenuButton").click(async () => {
         // wait 0.3sn until sidebar closed
         setTimeout(async () =>
-            await updateStyleOfArticleDivAsync(div_articles, machineCountOnPage),
+            await alignArticlesToCenterAsync(),
             300);
     });
     $("#box_all").click(async () => {
@@ -129,7 +129,7 @@ $(function () {
             //#region open previous page if previous page exists
             case "a_paginationBack":
                 if (paginationInfos.HasPrevious)
-                    await populateTableAsync(
+                    await addMachineArticlesAsync(
                         paginationInfos.CurrentPageNo - 1,
                         pageSize,
                         true);
@@ -140,7 +140,7 @@ $(function () {
             //#region open next page if next page exists
             case "a_paginationNext":
                 if (paginationInfos.HasNext)
-                    await populateTableAsync(
+                    await addMachineArticlesAsync(
                         paginationInfos.CurrentPageNo + 1,
                         pageSize,
                         true);
@@ -153,7 +153,7 @@ $(function () {
                 //#region populate table
                 let pageNo = clickedButton.prop("innerText");
 
-                await populateTableAsync(
+                await addMachineArticlesAsync(
                     pageNo,
                     pageSize,
                     true);
@@ -1015,94 +1015,94 @@ $(function () {
         await change_descriptionsTextareaAsync(
             $("#" + btn_descriptions_id));
     })
-    spn_eventManager.on("mouseover_articleVideo", async (_, event, articleId) => {
-        //#region add play icon onto machine image
+    //spn_eventManager.on("mouseover_articleVideo", async (_, event, articleId) => {
+    //    //#region add play icon onto machine image
 
-        //#region save article video infos
-        let minPageX = event.pageX - event.offsetX;
-        let minPageY = event.pageY - event.offsetY;
+    //    //#region save article video infos
+    //    let minPageX = event.pageX - event.offsetX;
+    //    let minPageY = event.pageY - event.offsetY;
 
-        infosOfLastMouseOveredArticleVideo = {
-            "id": articleId,
-            "minPageX": minPageX,
-            "maxPageX": minPageX + style_article_video.width,
-            "minPageY": minPageY,
-            "maxPageY": minPageY + style_article_video.height
-        };
-        //#endregion
+    //    infosOfLastMouseOveredArticleVideo = {
+    //        "id": articleId,
+    //        "minPageX": minPageX,
+    //        "maxPageX": minPageX + style_article_video.width,
+    //        "minPageY": minPageY,
+    //        "maxPageY": minPageY + style_article_video.height
+    //    };
+    //    //#endregion
 
-        //#region show "play" image
-        // hide machine image
-        $("#" + articleId)
-            .find("video")
-            .attr("hidden", "");
+    //    //#region show "play" image
+    //    // hide machine image
+    //    $("#" + articleId)
+    //        .find("video")
+    //        .attr("hidden", "");
 
-        // show play video
-        $("#" + articleId)
-            .find("img")
-            .removeAttr("hidden");
-        //#endregion
+    //    // show play video
+    //    $("#" + articleId)
+    //        .find("img")
+    //        .removeAttr("hidden");
+    //    //#endregion
 
-        //#endregion
+    //    //#endregion
 
-        // add "play.png" to poster
-        //vid_article.attr(
-        //    "poster",
-        //    "/images/play.png");
-        //#endregion
-
-
-        ////#region get video name and extension
-        //let vid_article = $("#" + articleId)
-        //    .find("video");
-
-        //let src_article = $("#" + articleId)
-        //    .find("source");
-
-        //let videoName = articleIdAndVideoNames[articleId];
-        //let videoType = videoName.substring(videoName.lastIndexOf(".") + 1);
-        ////#endregion
+    //    // add "play.png" to poster
+    //    //vid_article.attr(
+    //    //    "poster",
+    //    //    "/images/play.png");
+    //    //#endregion
 
 
+    //    ////#region get video name and extension
+    //    //let vid_article = $("#" + articleId)
+    //    //    .find("video");
 
-        ////#region display machine video
-        //    vid_article.attr({
-        //        "controls": " ",
-        //        "autoplay": " "
-        //    });
+    //    //let src_article = $("#" + articleId)
+    //    //    .find("source");
 
-        //src_article.attr({
-        //    "src": "/" + path_machineVideos + "/" + articleIdAndVideoNames[articleId],
-        //    "type": "video/" + videoType,
-        //})
+    //    //let videoName = articleIdAndVideoNames[articleId];
+    //    //let videoType = videoName.substring(videoName.lastIndexOf(".") + 1);
+    //    ////#endregion
 
-        //vid_article.load();
-        ////#endregion
-    })
-    spn_eventManager.on("mouseout_articleVideoDiv", async (_, event, articleId) => {
-        //#region when mouse is over article video (return)
-        let currentMouseX = event.pageX;
-        let currentMouseY = event.pageY;
 
-        if (currentMouseX > infosOfLastMouseOveredArticleVideo["minPageX"]
-            && currentMouseX < infosOfLastMouseOveredArticleVideo["maxPageX"]
-            && currentMouseY > infosOfLastMouseOveredArticleVideo["minPageY"]
-            && currentMouseY < infosOfLastMouseOveredArticleVideo["maxPageY"]) {
-            return;
-        }
-        //#endregion
 
-        //#region when mouse is out from article video
-        // reset
-        infosOfLastMouseOveredArticleVideo = {};
+    //    ////#region display machine video
+    //    //    vid_article.attr({
+    //    //        "controls": " ",
+    //    //        "autoplay": " "
+    //    //    });
 
-        // show machine image
-        $("#" + articleId + " video").removeAttr("hidden");
+    //    //src_article.attr({
+    //    //    "src": "/" + path_machineVideos + "/" + articleIdAndVideoNames[articleId],
+    //    //    "type": "video/" + videoType,
+    //    //})
 
-        // hide play image
-        $("#" + articleId + " img").attr("hidden", "");
-        //#endregion
-    })
+    //    //vid_article.load();
+    //    ////#endregion
+    //})
+    //spn_eventManager.on("mouseout_articleVideoDiv", async (_, event, articleId) => {
+    //    #region when mouse is over article video (return)
+    //    let currentMouseX = event.pageX;
+    //    let currentMouseY = event.pageY;
+
+    //    if (currentMouseX > infosOfLastMouseOveredArticleVideo["minPageX"]
+    //        && currentMouseX < infosOfLastMouseOveredArticleVideo["maxPageX"]
+    //        && currentMouseY > infosOfLastMouseOveredArticleVideo["minPageY"]
+    //        && currentMouseY < infosOfLastMouseOveredArticleVideo["maxPageY"]) {
+    //        return;
+    //    }
+    //    #endregion
+
+    //    #region when mouse is out from article video
+    //     reset
+    //    infosOfLastMouseOveredArticleVideo = {};
+
+    //     show machine image
+    //    $("#" + articleId + " video").removeAttr("hidden");
+
+    //     hide play image
+    //    $("#" + articleId + " img").attr("hidden", "");
+    //    #endregion
+    //})
     //#endregion
 
     //#region functions
@@ -1259,12 +1259,12 @@ $(function () {
                 if (machineInfos.length == paginationInfos.CurrentPageCount) {
                     //#region when next page exists
                     if (paginationInfos.HasNext)
-                        populateTableAsync(currentPageNo, pageSize, true);  // refresh current page
+                        addMachineArticlesAsync(currentPageNo, pageSize, true);  // refresh current page
                     //#endregion
 
                     //#region when previous page exists
                     else if (paginationInfos.HasPrevious)
-                        populateTableAsync(currentPageNo - 1, pageSize, true);
+                        addMachineArticlesAsync(currentPageNo - 1, pageSize, true);
                     //#endregion
 
                     //#region when any machines not found
@@ -1282,7 +1282,7 @@ $(function () {
 
                 //#region when some machines on page deleted
                 else
-                    populateTableAsync(currentPageNo, pageSize, true);  // refresh current page
+                    addMachineArticlesAsync(currentPageNo, pageSize, true);  // refresh current page
                 //#endregion
 
                 //#region do unchecked "box_all"
@@ -1308,8 +1308,10 @@ $(function () {
         for (let index in response) {
             //#region add machines
 
-            //#region save article infos
+            //#region save machine infos
             let machineInfos = response[index];
+            let articleId = art_baseId + index;
+
             articleInfos[articleId] = {
                 "machineId": machineInfos.id,
                 "videoName": machineInfos.videoName
@@ -1317,23 +1319,25 @@ $(function () {
             //#endregion
 
             //#region add machine image
-            let art_machine = div_articles.children(art_baseId + index);
+            let art_machine = $('#' + articleId);
 
             art_machine
                 .find("video")
                 .attr("poster", "/" + path_machineImages + "/" + machineInfos.imageName);
             //#endregion
 
-            //#region add machine video
-            let videoType = machineInfos.videoName
-                .subString(machineInfos.videoName.lastIndexOf('.') + 1);
+            //#region add machine infos 
+            let div_article_info = art_machine
+                .children("#" + div_article_info_id);
 
-            art_machine
-                .find("source")
-                .attr({
-                    "src": "/" + path_machineVideos + "/" + machineInfos.videoName,
-                    "type": "video/" + videoType,
-                });
+            div_article_info.append(`
+                <div>
+                    <h2>${machineInfos.model}</h2>
+                    <h3>${machineInfos.mainCategoryName}</h3>
+                    <h4>${machineInfos.subCategoryName}</h4>
+                </div>
+                <button id="btn_details"  type="button">Detaylar</button>
+            `);
             //#endregion
 
             //#endregion
@@ -1363,7 +1367,7 @@ $(function () {
         //#endregion
     }
 
-    async function populateTableAsync(pageNumber, pageSize, refreshPaginationButtons) {
+    async function addMachineArticlesAsync(pageNumber, pageSize, refreshPaginationButtons) {
         $.ajax({
             method: "GET",
             url: (baseApiUrl + "/machine/display/all" +
@@ -1378,19 +1382,10 @@ $(function () {
                 div_articles.empty();
             },
             success: (response, status, xhr) => {
-                setArticleStyle(
-                    div_articles,
-                    response.length,
-                    style_article.width,
-                    style_article.height,
-                    style_article.marginT,
-                    style_article.marginB,
-                    style_article.marginR,
-                    style_article.marginL);
-
-                //#region add machines to articles
-                addMachinesToArticlesAsync(response)
+                addArticlesAsync("videoAndText", div_articles, response.length)
                     .then(async () => {
+                        await addMachinesToArticlesAsync(response);
+
                         //#region get pagination infos from headers
                         paginationInfos = JSON.parse(
                             xhr.getResponseHeader(nameOfPaginationHeader));
@@ -1417,9 +1412,7 @@ $(function () {
                         //#endregion
 
                         await controlPaginationBackAndNextButtonsAsync(paginationInfos);
-                        await updateStyleOfArticleDivAsync(div_articles, machineCountOnPage);
                     });
-                //#endregion
             },
             error: (response) => {
                 //#region write error to entity quantity label
@@ -1455,20 +1448,13 @@ $(function () {
             tableMenubar_applyButtonName[language])
         //#endregion
 
-        //#region add machines article
-        for (let index = 0; index < 15; index += 1)
-            div_articles.append(`
-            <article class="article"></article>
-        `);
-        //#endregion
-
         //#region add entity quantity message
         $(entityQuantity_id).append(
             `<b>0</b> ${entityQuantity_messageByLanguages[language]}`
         );
         //#endregion
 
-        await populateTableAsync(pageNumber, pageSize, true);
+        await addMachineArticlesAsync(pageNumber, pageSize, true);
     }
     //#endregion
 
