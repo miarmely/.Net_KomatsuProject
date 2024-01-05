@@ -1,10 +1,8 @@
 ﻿using Entities.DtoModels.MachineDtos;
 using Entities.QueryParameters;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Identity.Client;
 using Presantation.Attributes;
 using Services.Contracts;
-
 
 namespace Presantation.Controllers
 {

@@ -1,10 +1,9 @@
 ﻿//#region variables
-
-//#region export variables
+let div_articles;
 export let articleCountOnPage;
 export const style_article = {
     "width": 300,
-    "height": 400,
+    "height": 450,
     "marginT": 10,
     "marginB": 10,
     "marginR": 20,
@@ -19,49 +18,44 @@ export const div_article_video_id = "div_article_video";
 export const div_article_image_id = "div_articl_image";
 export const div_article_info_id = "div_article_info";
 export const art_baseId = "art_";
-//#endregion
-
-//#region private variables
-let div_articles;
+export const path_playImage = "images/play.png";
 
 //#region article elements styles
 
 //#region when article type is "video and text" (VT)
-const style_div_video_marginB_VT = 20;
-const style_div_video_width_VT = style_article.width - (style_article.border * 2) - style_article.paddingR - style_article.paddingL
-const style_div_video_height_VT = (style_article.height - (style_article.border * 2) - style_article.paddingT - style_article.paddingB - style_div_video_marginB_VT) / 2;
+export const style_div_video_marginB_VT = 20;
+export const style_div_video_width_VT = style_article.width - (style_article.border * 2) - style_article.paddingR - style_article.paddingL
+export const style_div_video_height_VT = (style_article.height - (style_article.border * 2) - style_article.paddingT - style_article.paddingB - style_div_video_marginB_VT) / 2;
 
-const style_div_info_width_VT = style_div_video_width_VT;
-const style_div_info_height_VT = style_div_video_height_VT;
+export const style_div_info_width_VT = style_div_video_width_VT;
+export const style_div_info_height_VT = style_div_video_height_VT;
 
-const style_vid_width_VT = style_div_video_width_VT;
-const style_vid_height_VT = style_div_video_height_VT;
+export const style_vid_width_VT = style_div_video_width_VT;
+export const style_vid_height_VT = style_div_video_height_VT;
 
-const style_img_play_width_VT = style_vid_width_VT / 2.5;
-const style_img_play_height_VT = style_vid_height_VT / 2;
-const style_img_play_marginT_VT = (style_vid_height_VT - style_img_play_height_VT) / 2;
-const style_img_play_marginB_VT = style_img_play_marginT_VT;
-const style_img_play_marginR_VT = (style_vid_width_VT - style_img_play_width_VT) / 2;
-const style_img_play_marginL_VT = style_img_play_marginR_VT;
+export const style_img_play_width_VT = style_vid_width_VT / 2.5;
+export const style_img_play_height_VT = style_vid_height_VT / 2;
+export const style_img_play_marginT_VT = (style_vid_height_VT - style_img_play_height_VT) / 2;
+export const style_img_play_marginB_VT = style_img_play_marginT_VT;
+export const style_img_play_marginR_VT = (style_vid_width_VT - style_img_play_width_VT) / 2;
+export const style_img_play_marginL_VT = style_img_play_marginR_VT;
 //#endregion
 
 //#region when article type is "image and text" (IT)
-const style_div_img_width_IT = style_div_video_width_VT;
-const style_div_img_height_IT = style_div_video_height_VT;
-const style_div_img_marginB_IT = style_div_video_marginB_VT;
+export const style_div_img_width_IT = style_div_video_width_VT;
+export const style_div_img_height_IT = style_div_video_height_VT;
+export const style_div_img_marginB_IT = style_div_video_marginB_VT;
 
-const style_div_info_width_IT = style_div_info_width_VT;
-const style_div_info_height_IT = style_div_info_height_VT;
+export const style_div_info_width_IT = style_div_info_width_VT;
+export const style_div_info_height_IT = style_div_info_height_VT;
 
-const style_img_width_IT = style_div_video_width_VT;
-const style_img_height_IT = style_div_video_height_VT;
+export const style_img_width_IT = style_div_video_width_VT;
+export const style_img_height_IT = style_div_video_height_VT;
 //#endregion
 
 //#region when article type is only "text" (T)
-const style_div_info_width_T = style_div_info_width_VT;
-const style_div_info_height_T = style_div_info_height_VT;
-//#endregion
-
+export const style_div_info_width_T = style_div_info_width_VT;
+export const style_div_info_height_T = style_div_info_height_VT;
 //#endregion
 
 //#endregion
@@ -88,7 +82,7 @@ export async function addArticlesAsync(articleType, _div_articles, articleCount)
                     div_articles.append(`
                         <article id="${articleId}"  class="article">
                             <div id="${div_article_video_id}">
-                                <img src="/images/play.png"  alt="play" hidden/>
+                                <img class="img_play"  hidden/>
                                 <video poster="" >
                                     <source src="" type=""></source>
                                 </video>
@@ -101,20 +95,8 @@ export async function addArticlesAsync(articleType, _div_articles, articleCount)
                 //#endregion
 
                 //#region add styles of article elements
-                // play <img> styles
-                article = $('#' + articleId);
-                article
-                    .find("img")
-                    .css({
-                        "width": style_img_play_width_VT,
-                        "height": style_img_play_height_VT,
-                        "margin-top": style_img_play_marginT_VT,
-                        "margin-bottom": style_img_play_marginB_VT,
-                        "margin-right": style_img_play_marginR_VT,
-                        "margin-left": style_img_play_marginL_VT
-                    });
-
                 // <video> styles
+                article = $("#" + articleId);
                 article
                     .find("video")
                     .css({
@@ -264,5 +246,34 @@ export async function isSidebarOpenAsync() {
     //#endregion
 
     return true;
+}
+
+export function showPlayImage(article) {
+    //#region hide video poster
+    article
+        .find("video")
+        .attr("hidden", "");
+    //#endregion
+
+    //#region add src to play <img>
+    let img_play = article.find("img");
+    img_play.attr({
+        "src": "/" + path_playImage,
+        "alt": "play"
+    });
+    //#endregion
+
+    //#region add styles of play <img>
+    img_play.css({
+        "width": style_img_play_width_VT,
+        "height": style_img_play_height_VT,
+        "margin-top": style_img_play_marginT_VT,
+        "margin-bottom": style_img_play_marginB_VT,
+        "margin-right": style_img_play_marginR_VT,
+        "margin-left": style_img_play_marginL_VT
+    });
+    //#endregion
+
+    img_play.removeAttr("hidden"); // show play <img>
 }
 //#endregion
