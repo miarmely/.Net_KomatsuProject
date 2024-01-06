@@ -8,8 +8,9 @@
 } from "./miar_tools.js";
 
 import {
-    addArticlesAsync, alignArticlesToCenterAsync, art_baseId, div_article_info_id,
-    div_article_video_id, showPlayImage, style_vid_height_VT, style_vid_width_VT
+    addArticlesAsync, alignArticlesToCenterAsync, art_baseId, click_playImageAsync, div_article_info_id,
+    div_article_video_id, mouseout_articleVideoDivAsync, mouseover_articleVideoAsync,
+    setVariablesForArticle
 } from "./miar_article.js"
 
 
@@ -63,13 +64,6 @@ $(function () {
     let machineCountOnPage;
     let selectedPdfInfos;
     let selectedImageInfos;
-    let articleIdAndVideoNames = {
-
-    }
-    let articleInfos = {
-
-    }
-    let infosOfLastMouseOveredArticleVideo = {};
     //#endregion
 
     //#region events
@@ -1019,88 +1013,6 @@ $(function () {
         await change_descriptionsTextareaAsync(
             $("#" + btn_descriptions_id));
     })
-    spn_eventManager.on("mouseover_articleVideo", async (_, event, articleId) => {
-        //#region add play icon onto machine image
-
-        //#region save article video infos
-        let article = $("#" + articleId);
-        let minPageX = event.pageX - event.offsetX;
-        let minPageY = event.pageY - event.offsetY;
-
-        infosOfLastMouseOveredArticleVideo = {
-            "id": articleId,
-            "minPageX": minPageX,
-            "maxPageX": minPageX + style_vid_width_VT,
-            "minPageY": minPageY,
-            "maxPageY": minPageY + style_vid_height_VT
-        };
-        //#endregion
-
-        showPlayImage(article);
-        //#endregion
-
-        // add "play.png" to poster
-        //vid_article.attr(
-        //    "poster",
-        //    "/images/play.png");
-        //#endregion
-
-
-        ////#region get video name and extension
-        //let vid_article = $("#" + articleId)
-        //    .find("video");
-
-        //let src_article = $("#" + articleId)
-        //    .find("source");
-
-        //let videoName = articleIdAndVideoNames[articleId];
-        //let videoType = videoName.substring(videoName.lastIndexOf(".") + 1);
-        ////#endregion
-
-
-
-        ////#region display machine video
-        //    vid_article.attr({
-        //        "controls": " ",
-        //        "autoplay": " "
-        //    });
-
-        //src_article.attr({
-        //    "src": "/" + path_machineVideos + "/" + articleIdAndVideoNames[articleId],
-        //    "type": "video/" + videoType,
-        //})
-
-        //vid_article.load();
-        ////#endregion
-    })
-    spn_eventManager.on("mouseout_articleVideoDiv", async (_, event, articleId) => {
-        //#region when mouse isn't over on header AND is over article video 
-        let headerOfPageHeight = 80;
-
-        if (event.clientY > headerOfPageHeight) {
-            //#region when mouse is over article video (return)
-            let currentMouseX = event.pageX;
-            let currentMouseY = event.pageY;
-
-            if (currentMouseX > infosOfLastMouseOveredArticleVideo["minPageX"]
-                && currentMouseX < infosOfLastMouseOveredArticleVideo["maxPageX"]
-                && currentMouseY > infosOfLastMouseOveredArticleVideo["minPageY"]
-                && currentMouseY < infosOfLastMouseOveredArticleVideo["maxPageY"]) {
-                return;
-            }
-            //#endregion
-        }
-        //#endregion
-
-        //#region when mouse is over on header OR is out from article video
-        // reset
-        infosOfLastMouseOveredArticleVideo = {};
-
-        // show machine image
-        $("#" + articleId + " video").removeAttr("hidden");  // show machine image 
-        $("#" + articleId + " img").attr("hidden", "");  // hide play image
-        //#endregion
-    })
     //#endregion
 
     //#region functions
@@ -1303,6 +1215,7 @@ $(function () {
 
     async function addMachinesToArticlesAsync(response) {
         //#region add machines to articles
+        let articleInfos = {};
         for (let index in response) {
             //#region add machines
 
@@ -1349,19 +1262,31 @@ $(function () {
             //#endregion
 
             //#region declare events
-            $("#" + articleId + " video").mouseover((event) => {
-                spn_eventManager.trigger(
-                    "mouseover_articleVideo",
-                    [event, articleId]);
-            });
-            $("#" + articleId + " #" + div_article_video_id).mouseout((event) => {
-                spn_eventManager.trigger(
-                    "mouseout_articleVideoDiv",
-                    [event, articleId])
-            })
+            let article = $("#" + articleId);
+
+            article.find("video").mouseover(async (event) =>
+                await mouseover_articleVideoAsync(event, article)
+            );
+            article.find("#" + div_article_video_id).mouseout(async (event) =>
+                await mouseout_articleVideoDivAsync(event, article)
+            );
             //#endregion
         }
         //#endregion
+
+        //#region declare events
+        $(".img_play").click(async (event) => {
+            //#region get article id of clicked play <img>
+            let articleId = event.target
+                .closest("article")
+                .id;
+            //#endregion
+
+            await click_playImageAsync($("#" + articleId));
+        });
+        //#endregion
+
+        setVariablesForArticle({ "articleInfos": articleInfos });
     }
 
     async function addMachineArticlesAsync(pageNumber, pageSize, refreshPaginationButtons) {
@@ -1379,6 +1304,11 @@ $(function () {
                 div_articles.empty();
             },
             success: (response, status, xhr) => {
+                setVariablesForArticle({
+                    "div_articles": div_articles,
+                    "path_articleVideos": path_machineVideos,
+                    "articleCount": response.length
+                });
                 addArticlesAsync("videoAndText", div_articles, response.length)
                     .then(async () => {
                         await addMachinesToArticlesAsync(response);

@@ -1,9 +1,13 @@
 ﻿//#region variables
-let div_articles;
-export let articleCountOnPage;
+export let buffers = {
+    "articleInfos": {},
+    "div_articles": "",
+    "path_articleVideos": "",
+    "articleCount": 0,
+}
 export const style_article = {
-    "width": 300,
-    "height": 450,
+    "width": 350,
+    "height": 500,
     "marginT": 10,
     "marginB": 10,
     "marginR": 20,
@@ -19,6 +23,8 @@ export const div_article_image_id = "div_articl_image";
 export const div_article_info_id = "div_article_info";
 export const art_baseId = "art_";
 export const path_playImage = "images/play.png";
+export const headerOfPageHeight = 80;
+let infosOfLastMouseOveredArticleVideo = {};
 
 //#region article elements styles
 
@@ -62,15 +68,124 @@ export const style_div_info_height_T = style_div_info_height_VT;
 
 //#endregion
 
-//#region functions
-export async function addArticlesAsync(articleType, _div_articles, articleCount) { // articleType: "imageAndText", "videoAndText", "text"
-    //#region save parameters
-    articleCountOnPage = articleCount;
-    div_articles = _div_articles;
+//#region events
+export async function click_playImageAsync(article) {
+    hidePlayImage(article);
+
+    //#region display article video
+    let videoName = buffers
+        .articleInfos[article.attr("id")]["videoName"];
+
+    article
+        .find("video")
+        .attr({
+            "src": "/" + buffers.path_articleVideos + "/" + videoName,
+            "controls": "",
+            "autoplay": ""
+        });
+    //#endregion
+}
+
+export async function mouseover_articleVideoAsync(event, article) {
+    //#region save article video infos
+    let minPageX = event.pageX - event.offsetX;
+    let minPageY = event.pageY - event.offsetY;
+
+    infosOfLastMouseOveredArticleVideo = {
+        "id": article.attr("id"),
+        "minPageX": minPageX,
+        "maxPageX": minPageX + style_vid_width_VT,
+        "minPageY": minPageY,
+        "maxPageY": minPageY + style_vid_height_VT
+    };
     //#endregion
 
+    showPlayImage(article);
+}
+
+export async function mouseout_articleVideoDivAsync(event, article) {
+    //#region when mouse isn't over on header AND is over article video 
+    if (event.clientY > headerOfPageHeight) {
+        //#region when mouse is over article video (return)
+        let currentMouseX = event.pageX;
+        let currentMouseY = event.pageY;
+
+        if (currentMouseX > infosOfLastMouseOveredArticleVideo["minPageX"]
+            && currentMouseX < infosOfLastMouseOveredArticleVideo["maxPageX"]
+            && currentMouseY > infosOfLastMouseOveredArticleVideo["minPageY"]
+            && currentMouseY < infosOfLastMouseOveredArticleVideo["maxPageY"]) {
+            return;
+        }
+        //#endregion
+    }
+    //#endregion
+
+    //#region when mouse is over on header OR is out from article video
+    // hide play image
+    infosOfLastMouseOveredArticleVideo = {};
+    hidePlayImage(article);
+
+    // show video poster
+    article
+        .find("video")
+        .removeAttr("hidden");
+    //#endregion
+}
+//#endregion
+
+//#region functions
+export function setVariablesForArticle(variables) {
+    //#region initialize variables
+    for (let variableName in variables)
+        // when variable name is exists in "buffers"
+        if (buffers[variableName] != undefined)
+            buffers[variableName] = variables[variableName];
+    //#endregion
+}
+
+export function showPlayImage(article) {
+    //#region hide video
+    article
+        .find("video")
+        .attr("hidden", "");
+    //#endregion
+
+    //#region add src to play <img>
+    let img_play = article.find("img");
+    img_play.attr({
+        "src": "/" + path_playImage,
+        "alt": "play"
+    });
+    //#endregion
+
+    //#region add styles of play <img>
+    img_play.css({
+        "width": style_img_play_width_VT,
+        "height": style_img_play_height_VT,
+        "margin-top": style_img_play_marginT_VT,
+        "margin-bottom": style_img_play_marginB_VT,
+        "margin-right": style_img_play_marginR_VT,
+        "margin-left": style_img_play_marginL_VT
+    });
+    //#endregion
+
+    img_play.removeAttr("hidden"); // show play <img>
+}
+
+export function hidePlayImage(article) {
+    // remove attributes of play image
+    let img_play = article.find("img");
+    img_play.removeAttr("src alt style");
+
+    // hide play image
+    img_play.attr("hidden", "");
+}
+
+export async function addArticlesAsync(articleType) {  // articleType: "imageAndText", "videoAndText", "text"
     //#region add articles
-    for (let index = 0; index < articleCountOnPage; index++) {
+    buffers.articleCount = buffers.articleCount;
+
+    for (let index = 0; index < buffers.articleCount; index++) {
         //#region add articles by article type
         let articleId = art_baseId + index;
         let article;
@@ -79,11 +194,11 @@ export async function addArticlesAsync(articleType, _div_articles, articleCount)
             case "videoAndText":
                 //#region add article with video and text
                 if (articleType == "videoAndText")
-                    div_articles.append(`
+                    buffers.div_articles.append(`
                         <article id="${articleId}"  class="article">
                             <div id="${div_article_video_id}">
                                 <img class="img_play"  hidden/>
-                                <video poster="" >
+                                <video poster="">
                                     <source src="" type=""></source>
                                 </video>
                             </div>
@@ -125,7 +240,7 @@ export async function addArticlesAsync(articleType, _div_articles, articleCount)
                 break;
             case "imageAndText":
                 //#region add article with image and text
-                div_articles.append(`
+                buffers.div_articles.append(`
                     <article id="${articleId}"  class="article">
                         <div id="${div_article_image_id}" >
                             <img src=""  alt=""  title="" />
@@ -168,7 +283,7 @@ export async function addArticlesAsync(articleType, _div_articles, articleCount)
                 break;
             case "text":
                 //#region add article with only text
-                div_articles.append(`
+                buffers.div_articles.append(`
                     <article id="${articleId}"  class="article">
                         <div id="${div_article_info_id}" >
                         </div>
@@ -214,12 +329,12 @@ export async function addArticlesAsync(articleType, _div_articles, articleCount)
 
 export async function alignArticlesToCenterAsync() {
     //#region set padding left and right of articles <div>
-    let divClientWidth = div_articles.prop("clientWidth");
+    let divClientWidth = buffers.div_articles.prop("clientWidth");
     let netArticleWidth = style_article.width + style_article.marginL + style_article.marginR;
     let articleCountOnOneRow = Math.floor(divClientWidth / netArticleWidth);
     let whiteSpaceWidth = divClientWidth - (netArticleWidth * articleCountOnOneRow);
 
-    div_articles.css({
+    buffers.div_articles.css({
         "padding-left": Math.floor(whiteSpaceWidth / 2),
         "padding-right": Math.floor(whiteSpaceWidth / 2)
     });
@@ -227,11 +342,11 @@ export async function alignArticlesToCenterAsync() {
 
     //#region set height of articles <div>
     let netArticleHeight = style_article.height + style_article.marginT + style_article.marginB;
-    let totalRowCount = articleCountOnPage % articleCountOnOneRow == 0 ?
-        Math.floor(articleCountOnPage / articleCountOnOneRow)  // when article count of all rows is equal
-        : Math.floor(articleCountOnPage / articleCountOnOneRow) + 1  // when article count of last row is different
+    let totalRowCount = buffers.articleCount % articleCountOnOneRow == 0 ?
+        Math.floor(buffers.articleCount / articleCountOnOneRow)  // when article count of all rows is equal
+        : Math.floor(buffers.articleCount / articleCountOnOneRow) + 1  // when article count of last row is different
 
-    div_articles.css(
+    buffers.div_articles.css(
         "height",
         netArticleHeight * totalRowCount);
     //#endregion
@@ -246,34 +361,5 @@ export async function isSidebarOpenAsync() {
     //#endregion
 
     return true;
-}
-
-export function showPlayImage(article) {
-    //#region hide video poster
-    article
-        .find("video")
-        .attr("hidden", "");
-    //#endregion
-
-    //#region add src to play <img>
-    let img_play = article.find("img");
-    img_play.attr({
-        "src": "/" + path_playImage,
-        "alt": "play"
-    });
-    //#endregion
-
-    //#region add styles of play <img>
-    img_play.css({
-        "width": style_img_play_width_VT,
-        "height": style_img_play_height_VT,
-        "margin-top": style_img_play_marginT_VT,
-        "margin-bottom": style_img_play_marginB_VT,
-        "margin-right": style_img_play_marginR_VT,
-        "margin-left": style_img_play_marginL_VT
-    });
-    //#endregion
-
-    img_play.removeAttr("hidden"); // show play <img>
 }
 //#endregion
