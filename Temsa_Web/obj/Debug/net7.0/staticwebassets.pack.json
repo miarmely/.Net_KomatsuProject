@@ -353,6 +353,10 @@
       "PackagePath": "staticwebassets\\js\\miar_machine_display.js"
     },
     {
+      "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\js\\miar_machine_inputForm.js",
+      "PackagePath": "staticwebassets\\js\\miar_machine_inputForm.js"
+    },
+    {
       "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\js\\miar_mainLayout.js",
       "PackagePath": "staticwebassets\\js\\miar_mainLayout.js"
     },

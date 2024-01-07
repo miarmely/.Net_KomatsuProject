@@ -1,9 +1,9 @@
-﻿//#region export variables
+﻿//#region variables
 export let paginationInfosInJson;
 export let entityCountOnTable;
 //#endregion
 
-//#region export functions
+//#region functions
 
 //#region file processes
 export async function displayImageByNormalUrlAsync(

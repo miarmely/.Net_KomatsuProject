@@ -144,6 +144,10 @@ export async function mouseout_articleVideoDivAsync(event, article) {
     hidePlayImage(article);
     //#endregion
 }
+
+export async function ended_articleVideoAsync() {
+    removeArticleVideo(articleInfos_lastUploadedVideo["article"]);
+}
 //#endregion
 
 //#region functions
@@ -207,7 +211,7 @@ export function isVideoExists(article) {
 }
 
 export function removeVideoOfPreviousArticle() {
-    //#region when not uploaded video to any article previously
+    //#region when video isn't uploaded to any article previously
     let previousArticle = articleInfos_lastUploadedVideo["article"];
 
     if (previousArticle == undefined)
@@ -216,15 +220,20 @@ export function removeVideoOfPreviousArticle() {
 
     //#region when video is exists on previous article
     if (isVideoExists(previousArticle)) {
-        //#region remove attributes of previous article video
-        let video = previousArticle
-            .find("video");
-
-        video.removeAttr("src controls autoplay");
-        video.load();
-        //#endregion
+        removeArticleVideo(previousArticle);
     }
     //#endregion
+}
+
+export function removeArticleVideo(article) {
+    //#region remove attributes article video
+    let video = article
+        .find("video");
+
+    video.removeAttr("src controls autoplay");
+    //#endregion
+
+    video.load();
 }
 
 export async function addArticlesAsync(articleType) {  // articleType: "imageAndText", "videoAndText", "text"

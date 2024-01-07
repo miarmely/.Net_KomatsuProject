@@ -31,48 +31,77 @@
         @*title*@
         <div class="panel-heading">
         </div>
-
-        @*menubar*@
-        <div class="row w3-res-tb">
-            <div class="col-sm-5 m-b-xs">
-				<select id="slct_tableMenubar" class="input-sm form-control w-sm inline v-middle"></select>
-				<button id="btn_apply" class="btn btn-sm btn-default"></button>                
-            </div>
-            <div class="col-sm-4">
-            </div>
-			@*search bar*@
-			@*<div class="col-sm-3">
-				<div class="input-group">
-					<input type="text" class="input-sm form-control" placeholder="Ara">
-					<span class="input-group-btn">
-						<button class="btn btn-sm btn-default" type="button">
-							Ara
-						</button>
-					</span>
-				</div>
-			</div>*@
-			@*/search bar*@
-		</div>
-
-        @*table*@
-        <div id="div_articles" class="div_articles">
-        </div>
         
-        @*entity count and pagination buttons*@
-        <footer class="panel-footer">
-            <div class="row">
-                <div class="col-sm-5 text-left">
-                    <small id="small_entityQuantity" class="text-muted inline m-t-sm m-b-s">
-					</small>
+        <div class="panel-body">
+            <div id="div_articleDetails" class="div_articleDetails" hidden>
+                @*machine image and video*@
+                <div style="text-align:center">
+                    <video id="vid_machine" controls hidden>
+                        <source id="src_machine"/>
+                    </video>
+                        
+                    @*message label*@
+                    <div style="margin-bottom:30px">
+                        <spn id="spn_fileStatusLabel"></spn>
+                    </div>
                 </div>
-                <div class="col-sm-7 text-right text-center-xs">                
-                    <ul id="ul_pagination" class="pagination pagination-sm m-t-rowNone m-b-rowNone">
-                    </ul>
+
+                @*form*@
+                <form>
+                    <div id="div_form" class="form-horizontal bucket-form">
+                    </div>
+                </form>
+                <div style="text-align:center">
+                    <p id="p_resultLabel"></p>
+                    <img id="img_loading" src="~/images/loading.gif" style="width:40px; height:40px" hidden/>
                 </div>
             </div>
-        </footer>
+
+            <div id="div_articles_panel">
+                @*menubar*@
+                <div class="row w3-res-tb">
+                    <div class="col-sm-5 m-b-xs">
+				        <select id="slct_tableMenubar" class="input-sm form-control w-sm inline v-middle"></select>
+				        <button id="btn_apply" class="btn btn-sm btn-default"></button>                
+                    </div>
+                    <div class="col-sm-4">
+                    </div>
+			        @*search bar*@
+			        @*<div class="col-sm-3">
+				        <div class="input-group">
+					        <input type="text" class="input-sm form-control" placeholder="Ara">
+					        <span class="input-group-btn">
+						        <button class="btn btn-sm btn-default" type="button">
+							        Ara
+						        </button>
+					        </span>
+				        </div>
+			        </div>*@
+			        @*/search bar*@
+		        </div>
+
+                @*machine articles*@
+                <div id="div_articles" class="div_articles">
+                </div>
+
+                @*entity count and pagination buttons*@
+                <footer class="panel-footer">
+                    <div class="row">
+                        <div class="col-sm-5 text-left">
+                            <small id="small_entityQuantity" class="text-muted inline m-t-sm m-b-s">
+					        </small>
+                        </div>
+                        <div class="col-sm-7 text-right text-center-xs">                
+                            <ul id="ul_pagination" class="pagination pagination-sm m-t-rowNone m-b-rowNone">
+                            </ul>
+                        </div>
+                    </div>
+                </footer>
+            </div>
+        </div>
     </div>
 </div>
+
 
 <script type="module" src="~/js/miar_machine_display.js"></script>
 <script>

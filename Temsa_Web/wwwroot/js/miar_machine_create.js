@@ -1,6 +1,6 @@
 ﻿import {
     change_descriptionsTextareaAsync, click_descriptionDropdownItemAsync,
-    click_descriptionsButtonAsync, displayFileByDataUrlAsync, populateSelectAsync,
+    click_descriptionsButtonAsync, populateSelectAsync,
     isFileTypeInvalidAsync, updateResultLabel, populateElementByAjaxOrLocalAsync,
     changeDescriptionsButtonColorAsync, displayFileByObjectUrlAsync,
     removeObjectUrlFromElementAsync, getBase64StrOfFileAsync,
@@ -181,14 +181,14 @@ $(function () {
             $("#" + btn_descriptions_id),
             sessionKeys_descriptionsOnCreatePage);
     })
+    spn_eventManager.on("change_descriptionsTextarea", async () => {
+        await change_descriptionsTextareaAsync(
+            $("#" + btn_descriptions_id));
+    })
     spn_eventManager.on("click_input", async (_, clickedInputId) => {
         //#region reset help label of clicked <input>
         $(`#spn_help_${clickedInputId}`).empty();
         //#endregion
-    })
-    spn_eventManager.on("change_descriptionsTextarea", async () => {
-        await change_descriptionsTextareaAsync(
-            $("#" + btn_descriptions_id));
     })
     spn_eventManager.on("change_imageInput", async () => {
         //#region control the selected file (error)
@@ -345,10 +345,9 @@ $(function () {
         //#region set width and height
         let panelBodyWidth = $(".panel-body").prop("clientWidth");
 
-        vid_machine.css({
-            "width": panelBodyWidth - (panelBodyWidth * (60 / 100)),
-            "max-width": panelBodyWidth - (panelBodyWidth * (60 / 100))
-        });
+        vid_machine.css(
+            "width",
+            panelBodyWidth - (panelBodyWidth * (60 / 100)));
         //#endregion
     }
 
