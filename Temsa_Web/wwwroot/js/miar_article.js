@@ -24,7 +24,8 @@ export const div_article_info_id = "div_article_info";
 export const art_baseId = "art_";
 export const path_playImage = "images/play.png";
 export const headerOfPageHeight = 80;
-let infosOfLastMouseOveredArticleVideo = {};
+let articleInfos_lastUploadedPlayImage = {};
+let articleInfos_lastUploadedVideo = {};
 
 //#region article elements styles
 
@@ -70,9 +71,10 @@ export const style_div_info_height_T = style_div_info_height_VT;
 
 //#region events
 export async function click_playImageAsync(article) {
+    removeVideoOfPreviousArticle();
     hidePlayImage(article);
 
-    //#region display article video
+    //#region load article video
     let videoName = buffers
         .articleInfos[article.attr("id")]["videoName"];
 
@@ -83,16 +85,27 @@ export async function click_playImageAsync(article) {
             "controls": "",
             "autoplay": ""
         });
+
+    // save article of last uploaded video 
+    articleInfos_lastUploadedVideo["article"] = article;  
     //#endregion
 }
 
 export async function mouseover_articleVideoAsync(event, article) {
+    //#region when video is exists on article
+    if (isVideoExists(article))
+        return;
+    //#endregion
+
     //#region save article video infos
+
+    //#region save video infos
     let minPageX = event.pageX - event.offsetX;
     let minPageY = event.pageY - event.offsetY;
 
-    infosOfLastMouseOveredArticleVideo = {
-        "id": article.attr("id"),
+    // save infos
+    articleInfos_lastUploadedPlayImage = {
+        "article": article,
         "minPageX": minPageX,
         "maxPageX": minPageX + style_vid_width_VT,
         "minPageY": minPageY,
@@ -100,20 +113,27 @@ export async function mouseover_articleVideoAsync(event, article) {
     };
     //#endregion
 
+    //#endregion
+
     showPlayImage(article);
 }
 
 export async function mouseout_articleVideoDivAsync(event, article) {
+    //#region when video is exists on article
+    if (isVideoExists(article))
+        return;
+    //#endregion
+
     //#region when mouse isn't over on header AND is over article video 
     if (event.clientY > headerOfPageHeight) {
         //#region when mouse is over article video (return)
         let currentMouseX = event.pageX;
         let currentMouseY = event.pageY;
-
-        if (currentMouseX > infosOfLastMouseOveredArticleVideo["minPageX"]
-            && currentMouseX < infosOfLastMouseOveredArticleVideo["maxPageX"]
-            && currentMouseY > infosOfLastMouseOveredArticleVideo["minPageY"]
-            && currentMouseY < infosOfLastMouseOveredArticleVideo["maxPageY"]) {
+        
+        if (currentMouseX > articleInfos_lastUploadedPlayImage["minPageX"]
+            && currentMouseX < articleInfos_lastUploadedPlayImage["maxPageX"]
+            && currentMouseY > articleInfos_lastUploadedPlayImage["minPageY"]
+            && currentMouseY < articleInfos_lastUploadedPlayImage["maxPageY"]) {
             return;
         }
         //#endregion
@@ -121,14 +141,7 @@ export async function mouseout_articleVideoDivAsync(event, article) {
     //#endregion
 
     //#region when mouse is over on header OR is out from article video
-    // hide play image
-    infosOfLastMouseOveredArticleVideo = {};
     hidePlayImage(article);
-
-    // show video poster
-    article
-        .find("video")
-        .removeAttr("hidden");
     //#endregion
 }
 //#endregion
@@ -145,12 +158,11 @@ export function setVariablesForArticle(variables) {
 
 export function showPlayImage(article) {
     //#region hide video
-    article
-        .find("video")
+    article.find("video")
         .attr("hidden", "");
     //#endregion
 
-    //#region add src to play <img>
+    //#region load play image
     let img_play = article.find("img");
     img_play.attr({
         "src": "/" + path_playImage,
@@ -158,7 +170,7 @@ export function showPlayImage(article) {
     });
     //#endregion
 
-    //#region add styles of play <img>
+    //#region add play image styles
     img_play.css({
         "width": style_img_play_width_VT,
         "height": style_img_play_height_VT,
@@ -179,6 +191,40 @@ export function hidePlayImage(article) {
 
     // hide play image
     img_play.attr("hidden", "");
+
+    // show video poster
+    article
+        .find("video")
+        .removeAttr("hidden");
+}
+
+export function isVideoExists(article) {
+    let src = article
+        .find("video")
+        .attr("src");
+
+    return src != undefined;
+}
+
+export function removeVideoOfPreviousArticle() {
+    //#region when not uploaded video to any article previously
+    let previousArticle = articleInfos_lastUploadedVideo["article"];
+
+    if (previousArticle == undefined)
+        return;
+    //#endregion
+
+    //#region when video is exists on previous article
+    if (isVideoExists(previousArticle)) {
+        //#region remove attributes of previous article video
+        let video = previousArticle
+            .find("video");
+
+        video.removeAttr("src controls autoplay");
+        video.load();
+        //#endregion
+    }
+    //#endregion
 }
 
 export async function addArticlesAsync(articleType) {  // articleType: "imageAndText", "videoAndText", "text"
