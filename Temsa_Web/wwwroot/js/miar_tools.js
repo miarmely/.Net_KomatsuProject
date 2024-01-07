@@ -217,9 +217,32 @@ export async function getDescriptionKeyForSessionAsync(descriptionBaseKeyForSess
     return descriptionBaseKeyForSession + '-' + descriptions_language;
 }
 
-export async function changeDescriptionsButtonColorAsync(descriptionsButton, color) {
-    descriptionsButton.css("color", color);
-    descriptions_currentColor = color;
+export async function click_descriptionsButtonAsync(
+    descriptionsTextArea,
+    descriptionsButton,
+    descriptionsSessionKey) {
+    //#region get descriptions in session 
+    let descriptionsInSession = JSON.parse(sessionStorage
+        .getItem(descriptionsSessionKey));
+
+    // when any descriptions not exist on session
+    if (descriptionsInSession == null)
+        descriptionsInSession = {}
+    //#endregion
+
+    //#region save updated descriptions to session
+    descriptionsInSession[descriptions_language] = descriptionsTextArea.val();
+
+    sessionStorage.setItem(
+        descriptionsSessionKey,
+        JSON.stringify(descriptionsInSession));
+    //#endregion
+
+    //#region change description button color to "saved color"
+    await changeDescriptionsButtonColorAsync(
+        descriptionsButton,
+        descriptions_savedColor);
+    //#endregion
 }
 
 export async function click_descriptionDropdownItemAsync(
@@ -258,34 +281,6 @@ export async function click_descriptionDropdownItemAsync(
     //#endregion
 }
 
-export async function click_descriptionsButtonAsync(
-    descriptionsTextArea,
-    descriptionsButton,
-    descriptionsSessionKey) {
-    //#region get descriptions in session 
-    let descriptionsInSession = JSON.parse(sessionStorage
-        .getItem(descriptionsSessionKey));
-
-    // when any descriptions not exist on session
-    if (descriptionsInSession == null)
-        descriptionsInSession = {}
-    //#endregion
-
-    //#region save updated descriptions to session
-    descriptionsInSession[descriptions_language] = descriptionsTextArea.val();
-
-    sessionStorage.setItem(
-        descriptionsSessionKey,
-        JSON.stringify(descriptionsInSession));
-    //#endregion
-
-    //#region change description button color to "saved color"
-    await changeDescriptionsButtonColorAsync(
-        descriptionsButton,
-        descriptions_savedColor);
-    //#endregion
-}
-
 export async function change_descriptionsTextareaAsync(descriptionsButton) {
     //#region initialize descriptions current color if not initialized
     if (descriptions_currentColor == null)
@@ -299,6 +294,12 @@ export async function change_descriptionsTextareaAsync(descriptionsButton) {
             descriptions_unsavedColor);
     //#endregion
 }
+
+export async function changeDescriptionsButtonColorAsync(descriptionsButton, color) {
+    descriptionsButton.css("color", color);
+    descriptions_currentColor = color;
+}
+
 //#endregion
 
 export function getDateTimeInString(dateTime) {

@@ -1,0 +1,17 @@
+﻿.btn_form_label{
+    background-color: darkblue;
+    position: relative;
+    bottom: 8px;
+    color: red;
+    font-weight:bold;
+    padding: 3px 15px;
+    font-size:15px
+}
+
+.btn_form_label:hover{
+  
+}
+
+.btn_form_label:focus{
+    color: greenyellow
+}

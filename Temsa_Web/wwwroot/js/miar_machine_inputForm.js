@@ -1,7 +1,8 @@
 ﻿import {
     populateSelectAsync, isFileTypeInvalidAsync, updateResultLabel,
-    populateElementByAjaxOrLocalAsync, changeDescriptionsButtonColorAsync,
-    displayFileByObjectUrlAsync, removeObjectUrlFromElementAsync, getBase64StrOfFileAsync,
+    populateElementByAjaxOrLocalAsync, displayFileByObjectUrlAsync,
+    removeObjectUrlFromElementAsync, click_descriptionDropdownItemAsync,
+    click_descriptionsButtonAsync, change_descriptionsTextareaAsync
 } from "./miar_tools.js"
 
 //#region variables
@@ -14,6 +15,10 @@ const ul_description_id = "ul_description";
 const inpt_image_id = "inpt_image";
 const inpt_video_id = "inpt_video";
 const inpt_pdf_id = "inpt_pdf";
+const inpt_model_id = "inpt_model";
+const inpt_brand_id = "inpt_brand";
+const inpt_year_id = "inpt_year";
+const inpt_stock_id = "inpt_stock";
 const vid_machine_id = "vid_machine";
 const src_machine_id = "src_machine";
 const a_descriptions_class = "a_descriptions";
@@ -92,83 +97,9 @@ const errorMessagesByLanguages = {
 //#endregion
 
 //#region events
-export async function click_descriptionDropdownItemAsync(
-    clickedElement,
-    descriptionsTextarea,
-    descriptionsButton,
-    descriptionsSessionKey) {
-    //#region change descriptions <button> color as "unsaved_color"
-    descriptionsTextarea.val("");
-
-    await changeDescriptionsButtonColorAsync(
-        descriptionsButton,
-        descriptions_unsavedColor);
-    //#endregion
-
-    //#region change descriptions <button> name
-    descriptions_language = clickedElement.prop("innerText");
-
-    descriptionsButton.empty();
-    descriptionsButton.append(
-        `<b>${description_baseButtonNameByLanguages[language]} (${descriptions_language})</b>`);
-    //#endregion
-
-    //#region populate descriptions in session to <textarea>
-    // get descriptions from session
-    let descriptionsInSession = JSON.parse(sessionStorage
-        .getItem(descriptionsSessionKey));
-
-    // when any description is exists in session
-    if (descriptionsInSession != null  // when any descriptions exists in session
-        && descriptionsInSession[descriptions_language] != undefined)  // when descriptions in selected language 
-        // add description in session to <textarea>
-        descriptionsTextarea.val(
-            descriptionsInSession[descriptions_language]);
-    //#endregion
-}
-export async function click_descriptionsButtonAsync(
-    descriptionsTextArea,
-    descriptionsButton,
-    descriptionsSessionKey) {
-    //#region get descriptions in session 
-    let descriptionsInSession = JSON.parse(sessionStorage
-        .getItem(descriptionsSessionKey));
-
-    // when any descriptions not exist on session
-    if (descriptionsInSession == null)
-        descriptionsInSession = {}
-    //#endregion
-
-    //#region save updated descriptions to session
-    descriptionsInSession[descriptions_language] = descriptionsTextArea.val();
-
-    sessionStorage.setItem(
-        descriptionsSessionKey,
-        JSON.stringify(descriptionsInSession));
-    //#endregion
-
-    //#region change description button color to "saved color"
-    await changeDescriptionsButtonColorAsync(
-        descriptionsButton,
-        descriptions_savedColor);
-    //#endregion
-}
 export async function click_inputAsync(clickedInputId) {
     //reset help label of clicked <input>
     $(`#spn_help_${clickedInputId}`).empty();
-}
-export async function change_descriptionsTextareaAsync(descriptionsButton) {
-    //#region initialize descriptions current color if not initialized
-    if (descriptions_currentColor == null)
-        descriptions_currentColor = descriptions_unsavedColor;
-    //#endregion
-
-    //#region change descriptions <button> color as "unsaved color"
-    if (descriptions_currentColor == descriptions_savedColor)
-        await changeDescriptionsButtonColorAsync(
-            descriptionsButton,
-            descriptions_unsavedColor);
-    //#endregion
 }
 export async function change_imageInputAsync() {
     //#region control the selected file (error)
@@ -307,11 +238,14 @@ export async function populateFormAsync(addTableTitle = true) {
     div_form.append(
         `<div class="form-group">
             <label class="col-sm-3 control-label" style="text-align">
-                ${formLabelNamesByLanguages[language].image}
+                <button type="button" class="btn_form_label">${formLabelNamesByLanguages[language].image}</button>
             </label>
             <div class="col-sm-6">
             <div>
-                <input id="${inpt_image_id}"  type="file"  class="form-control"  accept="image/*"  required>
+                <input type="text"  class="form-control"  disabled/>
+                <div hidden>
+                    <input id="${inpt_image_id}"  type="file"  class=""  accept="image/*"  required>
+                </div>
                 <span id="spn_help_${inpt_image_id}" class="help-block"></span>
             </div>
         </div>`
@@ -321,7 +255,9 @@ export async function populateFormAsync(addTableTitle = true) {
     //#region add video input
     div_form.append(
         `<div class="form-group">
-            <label class="col-sm-3 control-label" style="text-align">${formLabelNamesByLanguages[language].video}</label>
+            <label class="col-sm-3 control-label" style="text-align">
+                <button type="button" class="btn_form_label">${formLabelNamesByLanguages[language].video}</button>
+            </label>
             <div class="col-sm-6">
             <div>
                 <input  id= "${inpt_video_id}"  type= "file"  class= "form-control"  accept= "video/*"  required />
@@ -410,8 +346,8 @@ export async function populateFormAsync(addTableTitle = true) {
                 ${formLabelNamesByLanguages[language].model}
             </label>
             <div class="col-sm-6">
-                <input id="inpt_model" type="text" class="form-control" required>
-                <span id="spn_help_inpt_model" class="help-block"></span>
+                <input id="${inpt_model_id}" type="text" class="form-control" required>
+                <span id="spn_help_${inpt_model_id}" class="help-block"></span>
             </div>
         </div>`
     );
@@ -424,8 +360,8 @@ export async function populateFormAsync(addTableTitle = true) {
                     ${formLabelNamesByLanguages[language].brand}
                 </label>
                 <div class="col-sm-6">
-                    <input id="inpt_brand" type="text" class="form-control" required>
-                    <span id="spn_help_inpt_brand" class="help-block"></span>
+                    <input id="${inpt_brand_id}" type="text" class="form-control" required>
+                    <span id="spn_help_${inpt_brand_id}" class="help-block"></span>
                 </div>
             </div>`
     );
@@ -438,8 +374,8 @@ export async function populateFormAsync(addTableTitle = true) {
                     ${formLabelNamesByLanguages[language].year}
                 </label>
                 <div class="col-sm-6">
-                    <input id="inpt_year" type="number" class="form-control" min=1900 max=2099 required>
-                    <span id="spn_help_inpt_year" class="help-block"></span>
+                    <input id="${inpt_year_id}" type="number" class="form-control" min=1900 max=2099 required>
+                    <span id="spn_help_${inpt_year_id}" class="help-block"></span>
                 </div>
             </div>`
     );
@@ -452,8 +388,8 @@ export async function populateFormAsync(addTableTitle = true) {
                     ${formLabelNamesByLanguages[language].stock}
                 </label>
                 <div class="col-sm-6">
-                    <input id="inpt_stock" type="number" class="form-control" min=1 max=5000 required>
-                    <span id="spn_help_inpt_stock" class="help-block"></span>
+                    <input id="${inpt_brand_id}" type="number" class="form-control" min=1 max=5000 required>
+                    <span id="spn_help_${inpt_brand_id}" class="help-block"></span>
                 </div>
             </div>`
     );
@@ -464,22 +400,22 @@ export async function populateFormAsync(addTableTitle = true) {
 
     div_form.append(
         `<div class="form-group">
-                <label class="col-sm-3 control-label">
-                    ${handStatus.label}
-                </label>
-                <div class="col-sm-6">
-                    <div class="radio">
-                        <label style="margin-right:10px">
-                            <input type="radio" name="handStatus" value="${handStatus.radio1}"  checked="">
-                                ${handStatus.radio1}
-                        </label>
-                        <label>
-                            <input type="radio" name="handStatus" value="${handStatus.radio2}">
-                                ${handStatus.radio2}
-                        </label>
-                    </div>
+            <label class="col-sm-3 control-label">
+                ${handStatus.label}
+            </label>
+            <div class="col-sm-6">
+                <div class="radio">
+                    <label style="margin-right:10px">
+                        <input type="radio" name="handStatus" value="${handStatus.radio1}"  checked="">
+                            ${handStatus.radio1}
+                    </label>
+                    <label>
+                        <input type="radio" name="handStatus" value="${handStatus.radio2}">
+                            ${handStatus.radio2}
+                    </label>
                 </div>
-            </div>`
+            </div>
+        </div>`
     );
     //#endregion
 
@@ -545,15 +481,15 @@ export async function populateFormAsync(addTableTitle = true) {
     )
     //#endregion
 
-    //#region add default value to descriptions <text>
-    let descriptionsInSession = JSON.parse(sessionStorage
-        .getItem(sessionKeys_descriptionsOnCreatePage));
+    ////#region add default value to descriptions <text>
+    //let descriptionsInSession = JSON.parse(sessionStorage
+    //    .getItem(sessionKeys_descriptionsOnCreatePage));
 
-    // when description in page language exists on session
-    if (descriptionsInSession != null)
-        $("#" + txt_descriptions_id).val(
-            descriptionsInSession[language]);
-    //#endregion
+    //// when description in page language exists on session
+    //if (descriptionsInSession != null)
+    //    $("#" + txt_descriptions_id).val(
+    //        descriptionsInSession[language]);
+    ////#endregion
 
     //#endregion
 
@@ -599,7 +535,7 @@ export async function populateFormAsync(addTableTitle = true) {
         event.preventDefault();
 
         await click_descriptionDropdownItemAsync(
-            clickedItem,
+            $(":focus"),
             $("#" + txt_descriptions_id),
             $("#" + btn_descriptions_id),
             sessionKeys_descriptionsOnCreatePage);
@@ -618,8 +554,21 @@ export async function populateFormAsync(addTableTitle = true) {
     vid_machine.on("ended", async () => {
         await ended_machineVideoAsync();
     });
-
     //#endregion
+}
+
+export async function addDefaultValuesToFormAsync(machineInfos) {
+    $("#" + inpt_image_id).val(machineInfos["imageName"]);
+    $("#" + inpt_video_id).val(machineInfos["videoName"]);
+    $("#" + slct_mainCategory_id).val(machineInfos["mainCategoryName"]);
+    $("#" + slct_subCategory_id).val(machineInfos["subCategoryName"]);
+    $("#" + inpt_model_id).val(machineInfos["model"]);
+    $("#" + inpt_brand_id).val(machineInfos["brandName"]);
+    $("#" + inpt_year_id).val(machineInfos["year"]);
+    $("#" + inpt_stock_id).val(machineInfos["stock"]);
+    $(`input[name= handStatus][value=${machineInfos.handStatus}]`).attr("checked", "");
+    $("#" + inpt_pdf_id).val(machineInfos["pdfName"]);
+    $("#" + txt_descriptions_id).val(machineInfos.descriptions[language]);
 }
 
 export async function removePosterOrVideoAsync(which) {

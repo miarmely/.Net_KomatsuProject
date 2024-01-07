@@ -1,10 +1,6 @@
 ﻿import {
-    click_descriptionsButtonAsync, click_descriptionDropdownItemAsync,
-    updateResultLabel, updateErrorRow, setDisabledOfOtherUpdateButtonsAsync,
-    resetErrorRowAsync, populateElementByAjaxOrLocalAsync, setDescriptionsLanguageAsync,
-    addPaginationButtonsAsync, controlPaginationBackAndNextButtonsAsync,
-    displayFileByDataUrlAsync, change_descriptionsTextareaAsync,
-    isFileTypeInvalidAsync, isAllObjectValuesNullAsync
+    updateResultLabel, updateErrorRow, addPaginationButtonsAsync,
+    controlPaginationBackAndNextButtonsAsync, isAllObjectValuesNullAsync
 } from "./miar_tools.js";
 
 import {
@@ -12,7 +8,8 @@ import {
     div_article_video_id, ended_articleVideoAsync, mouseout_articleVideoDivAsync, mouseover_articleVideoAsync,
     setVariablesForArticle
 } from "./miar_article.js"
-import { populateFormAsync, setMachineVideoSizeAsync } from "./miar_machine_inputForm.js";
+
+import { addDefaultValuesToFormAsync, populateFormAsync, setMachineVideoSizeAsync } from "./miar_machine_inputForm.js";
 
 
 $(function () {
@@ -35,15 +32,18 @@ $(function () {
     const spn_pdfButton_pdfName_id = "spn_pdfButton_pdfName";
     const div_articles_panel = $("#div_articles_panel");
     const div_articles = $("#div_articles");
-    const div_articleDetails = $("#div_articleDetails");
+    const div_article_update = $("#div_article_update");
     let paginationInfos = {};
     let machineCountOnPage;
+    let articleIdsAndMachineInfos = {};
     //#endregion
 
     //#region events
+
+    //#region partner
     $(window).resize(async () => {
-        //#region when machine details page is open
-        if (div_articleDetails.attr("hidden") == undefined)
+        //#region when machine update page is open
+        if (div_article_update.attr("hidden") == undefined)
             await setMachineVideoSizeAsync();
         //#endregion
 
@@ -54,96 +54,263 @@ $(function () {
                 400);
         //#endregion
     });
-    $("#div_sidebarMenuButton").click(async () => {
-        // wait 0.3sn until sidebar closed
-        setTimeout(async () =>
-            await alignArticlesToCenterAsync(),
-            450);
+    //#endregion
+
+    //#region for machine update page
+    $("form").submit(() => {
+        ////#region set variables
+        //let row = $(":focus").closest("tr");
+        //let rowId = row.attr("id");
+        //let machineId = row.attr("class");
+        //let oldColumnValues = JSON.parse(sessionStorage
+        //    .getItem(rowId));
+        ////#endregion
+
+        ////#region set data
+        //let data = {
+        //    "imageName": null,
+        //    "mainCategoryName": null,
+        //    "subCategoryName": null,
+        //    "model": null,
+        //    "brandName": null,
+        //    "handStatus": null,
+        //    "pdfName": null,
+        //    "stock": null,
+        //    "rented": null,
+        //    "sold": null,
+        //    "year": null,
+        //    "descriptions": null,
+        //    "imageContentInBase64Str": null,
+        //    "pdfContentInBase64Str": null,
+        //    "imageFolderPathAfterWwwroot": null,
+        //    "pdfFolderPathAfterWwwroot": null,
+        //    "oldImageName": null,
+        //    "oldPdfName": null,
+        //}
+
+        ////#region add values on column to data
+        //for (let index in columnNames) {
+        //    //#region check columns whether changed
+        //    let columnName = columnNames[index];
+        //    let td = row.children(`#td_${columnName}`);
+
+        //    switch (columnName) {
+        //        case "image":
+        //            //#region add image name to data if changed
+        //            let imageNameOnButton = $("#" + img_imageButton_id)
+        //                .attr("alt");
+
+        //            // if image name changed
+        //            if (imageNameOnButton != oldColumnValues[columnName]) {
+        //                // save image infos
+        //                data["imageName"] = imageNameOnButton;
+        //                data["imageFolderPathAfterWwwroot"] = path_machineImages;
+        //                data["oldImageName"] = oldColumnValues[columnName];
+
+        //                // save image content in base64 string
+        //                data["imageContentInBase64Str"] = row
+        //                    .children("#td_image")
+        //                    .find("img")
+        //                    .attr("src")
+        //                    .replace(`data:${selectedImageInfos.type};base64,`, "");
+        //            }
+
+        //            //#endregion
+        //            break;
+        //        case "mainCategory":
+        //            //#region add main category to data if changed
+        //            let mainCategory = td
+        //                .children("select")
+        //                .val();
+
+        //            // if main category changed
+        //            if (mainCategory != oldColumnValues[columnName])
+        //                data["mainCategoryName"] = mainCategory;
+        //            //#endregion
+        //            break;
+        //        case "subCategory":
+        //            //#region add subcategory to data if changed
+        //            let subCategory = td
+        //                .children("select")
+        //                .val();
+
+        //            // if subcategory changed
+        //            if (subCategory != oldColumnValues[columnName])
+        //                data["subCategoryName"] = subCategory;
+        //            //#endregion
+        //            break;
+        //        case "model":
+        //            //#region add model to data if changed
+        //            let model = td
+        //                .children("input")
+        //                .val();
+
+        //            // if model changed
+        //            if (model != oldColumnValues[columnName])
+        //                data["model"] = model;
+        //            //#endregion
+        //            break;
+        //        case "brand":
+        //            //#region add brand to data if changed
+        //            let brand = td
+        //                .children("input")
+        //                .val();
+
+        //            // if brand changed
+        //            if (brand != oldColumnValues[columnName])
+        //                data["brandName"] = brand;
+        //            //#endregion
+        //            break;
+        //        case "handStatus":
+        //            //#region add hand Status to data if changed
+        //            let handStatus = td
+        //                .children("select")
+        //                .val();
+
+        //            // if hand status changed
+        //            if (handStatus != oldColumnValues[columnName])
+        //                data["handStatus"] = handStatus;
+        //            //#endregion
+        //            break;
+        //        case "stock":
+        //            //#region add stock to data if changed
+        //            let stock = td
+        //                .children("input")
+        //                .val();
+
+        //            // if model changed
+        //            if (stock != oldColumnValues[columnName])
+        //                data["stock"] = stock;
+        //            //#endregion
+        //            break;
+        //        case "rented":
+        //            //#region add rented to data if changed
+        //            let rented = td
+        //                .children("input")
+        //                .val();
+
+        //            // if rented changed
+        //            if (rented != oldColumnValues[columnName])
+        //                data["rented"] = rented;
+        //            //#endregion
+        //            break;
+        //        case "sold":
+        //            //#region add sold to data if changed
+        //            let sold = td
+        //                .children("input")
+        //                .val();
+
+        //            // if sold changed
+        //            if (sold != oldColumnValues[columnName])
+        //                data["sold"] = sold;
+        //            //#endregion
+        //            break;
+        //        case "year":
+        //            //#region add year to data if changed
+        //            let year = td
+        //                .children("input")
+        //                .val();
+
+        //            // if year changed
+        //            if (year != oldColumnValues[columnName])
+        //                data["year"] = year;
+        //            //#endregion
+        //            break;
+        //        case "pdf":
+        //            //#region add pdf name to data if changed
+        //            let pdfNameOnButton = $("#" + spn_pdfButton_pdfName_id)
+        //                .text();
+
+        //            // if pdf name changed
+        //            if (pdfNameOnButton != oldColumnValues[columnName]) {
+        //                data["pdfName"] = pdfNameOnButton;
+        //                data["pdfFolderPathAfterWwwroot"] = path_pdfs;
+        //                data["oldPdfName"] = oldColumnValues[columnName];
+        //            }
+        //            //#endregion
+        //            break;
+        //        case "descriptions":
+        //            //#region get new descriptions in session
+        //            let newDescriptionsInSession = JSON.parse(sessionStorage
+        //                .getItem(sessionKeys_descriptionsOnDisplayPage));
+        //            //#endregion
+
+        //            //#region when description in any language changed
+        //            if (newDescriptionsInSession["TR"] != oldColumnValues[columnName]["TR"]
+        //                || newDescriptionsInSession["EN"] != oldColumnValues[columnName]["EN"]) {
+        //                //#region when "TR" description changed
+        //                data[columnName] = {};
+
+        //                if (newDescriptionsInSession["TR"] != oldColumnValues[columnName]["TR"])
+        //                    data[columnName]["TR"] = newDescriptionsInSession["TR"];
+        //                //#endregion
+
+        //                //#region when "EN" description changed
+        //                if (newDescriptionsInSession["EN"] != oldColumnValues[columnName]["EN"])
+        //                    data[columnName]["EN"] = newDescriptionsInSession["EN"];
+        //                //#endregion
+        //            }
+        //            //#endregion
+
+        //            break;
+        //    }
+        //    //#endregion
+        //}
+        ////#endregion
+
+        ////#region when any changes wasn't do (error)
+        //if (await isAllObjectValuesNullAsync(data)) {
+        //    // write error to error row
+        //    updateErrorRow(
+        //        `#${rowId}_error`,
+        //        partnerErrorMessagesByLanguages[language]["nullArguments"],
+        //        resultLabel_errorColor);
+
+        //    return;
+        //}
+        ////#endregion
+
+        ////#endregion
+
+        ////#region set url
+        //let url = baseApiUrl + "/machine/update?" +
+        //    `language=${language}` +
+        //    `&id=${machineId}` +
+        //    `&oldMainCategoryName=${oldColumnValues.mainCategory}` +
+        //    `&oldSubCategoryName=${oldColumnValues.subCategory}`
+        ////#endregion
+
+        ////#region update machine
+
+        ////#region when pdf changed
+        //if (data["pdfName"] != null) {
+        //    let fileReader = new FileReader();
+
+        //    fileReader.readAsDataURL(selectedPdfInfos)
+        //    fileReader.onloadend = async function (event) {
+        //        //#region when reading successfuly
+        //        if (fileReader.readyState == fileReader.DONE) {
+        //            //#region save pdf content in base64 string to data
+        //            let dataUrl = event.target.result;
+
+        //            data["pdfContentInBase64Str"] = dataUrl
+        //                .replace(`data:${selectedPdfInfos.type};base64,`, "");
+        //            //#endregion
+
+        //            await updateMachineAsync(url, data, rowId, oldColumnValues);
+        //        }
+        //        //#endregion
+        //    }
+        //}
+        ////#endregion
+
+        ////#region when pdf not changed
+        //else
+        //    await updateMachineAsync(url, data, rowId, oldColumnValues);
+        ////#endregion
+
+        ////#endregion
     });
-    $("#box_all").click(async () => {
-        //#region do checked/unchecked all checkbox
-        let isBoxAllChecked = $("#box_all").is(":checked");
-
-        await new Promise(resolve => {
-            for (let rowNo = 1; rowNo <= machineCountOnPage; rowNo += 1) {
-                var checkBoxInRow = $(`#tr_row${rowNo} #td_checkbox input`);
-
-                //#region do checked of checkbox
-                if (isBoxAllChecked
-                    && !checkBoxInRow.is(":checked")) // if not checked
-                    checkBoxInRow.prop("checked", true);
-                //#endregion
-
-                //#region do unchecked of checkbox
-                else if (!isBoxAllChecked
-                    && checkBoxInRow.is(":checked")) // if checked
-                    checkBoxInRow.prop("checked", false);
-                //#endregion
-            }
-
-            resolve();
-        })
-        //#endregion
-    })
-    $("#btn_apply").click(async () => {
-        let slct_tableMenubar = $("#slct_tableMenubar");
-
-        switch (slct_tableMenubar.val()) {
-            //#region delete selected values
-            case "0":
-                await deleteSelectedMachinesAsync();
-                break;
-            //#endregion 
-        }
-    })
-    ul_pagination.click(async () => {
-        //#region do unchecked "box_all"
-        if ($("#box_all").is(":checked"))
-            $("#box_all").prop("checked", false);
-        //#endregion
-
-        //#region click control of pagination buttons
-        let clickedButton = $(":focus");
-
-        switch (clickedButton.attr("id")) {
-            //#region open previous page if previous page exists
-            case "a_paginationBack":
-                if (paginationInfos.HasPrevious)
-                    await addMachineArticlesAsync(
-                        paginationInfos.CurrentPageNo - 1,
-                        pageSize,
-                        true);
-
-                break;
-            //#endregion
-
-            //#region open next page if next page exists
-            case "a_paginationNext":
-                if (paginationInfos.HasNext)
-                    await addMachineArticlesAsync(
-                        paginationInfos.CurrentPageNo + 1,
-                        pageSize,
-                        true);
-
-                break;
-            //#endregion
-
-            //#region open page that matched with clicked button number
-            default:
-                //#region populate table
-                let pageNo = clickedButton.prop("innerText");
-
-                await addMachineArticlesAsync(
-                    pageNo,
-                    pageSize,
-                    true);
-                //#endregion
-
-                break;
-            //#endregion
-        }
-        //#endregion 
-    })
     spn_eventManager.on("click_saveButton", async () => {
         //#region set variables
         let row = $(":focus").closest("tr");
@@ -400,6 +567,127 @@ $(function () {
     })
     //#endregion
 
+    //#region for articles page
+    $("#div_sidebarMenuButton").click(async () => {
+        // wait 0.3sn until sidebar closed
+        setTimeout(async () =>
+            await alignArticlesToCenterAsync(),
+            450);
+    });
+    $("#box_all").click(async () => {
+        //#region do checked/unchecked all checkbox
+        let isBoxAllChecked = $("#box_all").is(":checked");
+
+        await new Promise(resolve => {
+            for (let rowNo = 1; rowNo <= machineCountOnPage; rowNo += 1) {
+                var checkBoxInRow = $(`#tr_row${rowNo} #td_checkbox input`);
+
+                //#region do checked of checkbox
+                if (isBoxAllChecked
+                    && !checkBoxInRow.is(":checked")) // if not checked
+                    checkBoxInRow.prop("checked", true);
+                //#endregion
+
+                //#region do unchecked of checkbox
+                else if (!isBoxAllChecked
+                    && checkBoxInRow.is(":checked")) // if checked
+                    checkBoxInRow.prop("checked", false);
+                //#endregion
+            }
+
+            resolve();
+        })
+        //#endregion
+    })
+    $("#btn_apply").click(async () => {
+        let slct_tableMenubar = $("#slct_tableMenubar");
+
+        switch (slct_tableMenubar.val()) {
+            //#region delete selected values
+            case "0":
+                await deleteSelectedMachinesAsync();
+                break;
+            //#endregion 
+        }
+    })
+    ul_pagination.click(async () => {
+        //#region do unchecked "box_all"
+        if ($("#box_all").is(":checked"))
+            $("#box_all").prop("checked", false);
+        //#endregion
+
+        //#region click control of pagination buttons
+        let clickedButton = $(":focus");
+
+        switch (clickedButton.attr("id")) {
+            //#region open previous page if previous page exists
+            case "a_paginationBack":
+                if (paginationInfos.HasPrevious)
+                    await addMachineArticlesAsync(
+                        paginationInfos.CurrentPageNo - 1,
+                        pageSize,
+                        true);
+
+                break;
+            //#endregion
+
+            //#region open next page if next page exists
+            case "a_paginationNext":
+                if (paginationInfos.HasNext)
+                    await addMachineArticlesAsync(
+                        paginationInfos.CurrentPageNo + 1,
+                        pageSize,
+                        true);
+
+                break;
+            //#endregion
+
+            //#region open page that matched with clicked button number
+            default:
+                //#region populate table
+                let pageNo = clickedButton.prop("innerText");
+
+                await addMachineArticlesAsync(
+                    pageNo,
+                    pageSize,
+                    true);
+                //#endregion
+
+                break;
+            //#endregion
+        }
+        //#endregion 
+    })
+    spn_eventManager.on("click_playImage", async (_, event) => {
+        //#region get article id of clicked play <img>
+        let articleId = event.target
+            .closest("article")
+            .id;
+        //#endregion
+
+        await click_playImageAsync($("#" + articleId));
+    })
+    spn_eventManager.on("ended_articleVideo", async () => {
+        await ended_articleVideoAsync();
+    })
+    spn_eventManager.on("click_articleInfoDiv", async (_, event) => {
+        //#region hide machine articles <div>
+        div_articles_panel.attr("hidden", "");
+        div_article_update.removeAttr("hidden");
+        //#endregion
+
+        //#region get machine infos of clicked article
+        let articleId = event.currentTarget.closest("article").id;
+        let machineInfosOfArticle = articleIdsAndMachineInfos[articleId];
+        //#endregion
+
+        await populateFormAsync(false);
+        await addDefaultValuesToFormAsync(machineInfosOfArticle);
+    })
+    //#endregion
+
+    //#endregion
+
     //#region functions
     async function updateMachineAsync(url, data, rowId, oldColumnValues) {
         let propertyNamesAndColumnNamesGuide = {
@@ -599,7 +887,7 @@ $(function () {
     }
 
     async function populateArticlesAsync(response) {
-        //#region add machines to articles
+        //#region add machines to <article>
         let articleInfos = {};
         for (let index in response) {
             //#region add machines
@@ -608,9 +896,9 @@ $(function () {
             let machineInfos = response[index];
             let articleId = art_baseId + index;
 
+            articleIdsAndMachineInfos[articleId] = machineInfos;
             articleInfos[articleId] = {
-                "machineId": machineInfos.id,
-                "videoName": machineInfos.videoName
+                "videoName": machineInfos["videoName"]
             };
             //#endregion
 
@@ -646,7 +934,7 @@ $(function () {
                 }));
             //#endregion
 
-            //#region declare events
+            //#region declare article page events
             let article = $("#" + articleId);
 
             article.find("video").mouseover(async (event) =>
@@ -660,23 +948,14 @@ $(function () {
         //#endregion
 
         //#region declare articles page events
-        $(".img_play").click(async (event) => {
-            //#region get article id of clicked play <img>
-            let articleId = event.target
-                .closest("article")
-                .id;
-            //#endregion
-
-            await click_playImageAsync($("#" + articleId));
+        $(".img_play").click((event) => {
+            spn_eventManager.trigger("click_playImage", [event]);
         });
-        $(".article video").on("ended", async () =>
-            await ended_articleVideoAsync());
-        $(".article #" + div_article_info_id).click(async () => {
-            // hide machine articles panel
-            div_articles_panel.attr("hidden", "");
-            div_articleDetails.removeAttr("hidden");
-
-            await populateFormAsync(false);
+        $(".article video").on("ended", () => {
+            spn_eventManager.trigger("ended_articleVideo");
+        })
+        $(".article #" + div_article_info_id).click((event) => {
+            spn_eventManager.trigger("click_articleInfoDiv", [event]);
         })
         //#endregion
 
@@ -705,6 +984,7 @@ $(function () {
                     "path_articleVideos": path_machineVideos,
                     "articleCount": response.length
                 });
+
                 addArticlesAsync("videoAndText", div_articles, response.length)
                     .then(async () => {
                         await populateArticlesAsync(response);
@@ -783,418 +1063,3 @@ $(function () {
 
     populateHtmlAsync();
 })
-
-//spn_eventManager.on("click_updateButton", async (_, row) => {
-//    //#region add <input>, <select> and <button> to columns
-//    let oldColumnValues = {};
-
-//    for (let index in columnNames) {
-//        let columnName = columnNames[index];
-//        let td = row.children(`#td_${columnName}`);
-
-//        switch (columnName) {
-//            case "image":
-//                //#region add machine image <button>
-//                // save old value
-//                oldColumnValues[columnName] = td
-//                    .children("img")
-//                    .attr("alt");
-
-//                // add <button>
-//                td.empty();
-//                td.append(
-//                    `<button id="${btn_image_id}" type="button">
-//                            <img id="${img_imageButton_id}"  src="/${path_machineImages}/${oldColumnValues[columnName]}"  alt="${oldColumnValues[columnName]}"  style="max-width: ${machineImage_maxWidth}px; max-height: ${machineImage_maxHeight - 70}px">
-//                            <div>
-//                                <span id="${spn_imageButton_guide_id}"  style="color:black;  font-size:${style_fontSize_chooseFileButtons}">${machineImageButtonNameByLanguages[language]}</span>
-//                            </div>
-//                         </button>
-//                         <div hidden>
-//                            <input id="${inpt_chooseImage_id}"  type="file"  accept="image/*"/>
-//                         </div>`);
-//                //#endregion
-
-//                //#region add events
-//                $("#" + btn_image_id).click(() =>
-//                    spn_eventManager.trigger("click_imageButton", [row])
-//                );
-//                $("#" + inpt_chooseImage_id).change((event) => {
-//                    //#region trigger the "change_chooseFileInput_image" event
-//                    let selectedFileInfos = event.target.files[0];
-
-//                    spn_eventManager.trigger(
-//                        "change_chooseFileInput_image",
-//                        [row.attr("id"), selectedFileInfos]);
-//                    //#endregion
-//                });
-//                //#endregion
-
-//                break;
-//            case "mainCategory":
-//                //#region add main category <select>
-//                // save old value
-//                oldColumnValues[columnName] = td.text();
-
-//                // add <select>
-//                td.empty();
-//                td.append(
-//                    `<select id="slct_${columnName}">
-//                        </select`);
-
-//                // populate <select>
-//                await populateElementByAjaxOrLocalAsync(
-//                    localKeys_allMainCategories,
-//                    `/machine/display/mainCategory?language=${language}`,
-//                    (mainCategoryNames) => {
-//                        //#region add main category names to <select>
-//                        let slct_mainCategory = $("#" + slct_mainCategory_id);
-
-//                        for (let index in mainCategoryNames) {
-//                            let mainCategoryName = mainCategoryNames[index];
-
-//                            //#region !!!!!!!!!!! disable some maincategory names (TEMPOARARY) !!!!!!!!!!!!!!!!!!
-//                            if (mainCategoryName != "Work Machines"
-//                                && mainCategoryName != "İş Makineleri") {
-//                                slct_mainCategory.append(
-//                                    `<option style="color: darkgrey"  disabled >${mainCategoryName}</option>`
-//                                );
-//                            }
-//                            //#endregion !!!!!!!!!!!!!!!!!!!!!!!!!!
-
-//                            else
-//                                slct_mainCategory.append(
-//                                    `<option>${mainCategoryName}</option>`
-//                                );
-//                        }
-//                        //#endregion
-
-//                        //#region display default main category
-//                        slct_mainCategory.val(
-//                            oldColumnValues[columnName]);
-//                        //#endregion
-//                    }
-//                )
-//                //#endregion
-//                break;
-//            case "subCategory":
-//                //#region add sub category <select>
-//                // save old value
-//                oldColumnValues[columnName] = td.text();
-
-//                // add <select>
-//                td.empty();
-//                td.append(
-//                    `<select id="slct_${columnName}">
-//                        </select`);
-
-//                // populate <select>
-//                await populateElementByAjaxOrLocalAsync(
-//                    localKeys_allSubCategories,
-//                    `/machine/display/subCategory?language=${language}&mainCategoryName=${oldColumnValues["mainCategory"]}`,
-//                    (subCategoryNames) => {
-//                        //#region add sub category names to <select>
-//                        let slct_subCategory = $("#" + slct_subCategory_id);
-
-//                        for (let index in subCategoryNames) {
-//                            let subCategoryName = subCategoryNames[index];
-
-//                            slct_subCategory.append(
-//                                `<option>${subCategoryName}</option>`
-//                            )
-//                        }
-//                        //#endregion
-
-//                        //#region display default subcategory
-//                        slct_subCategory.val(
-//                            oldColumnValues[columnName]);
-//                        //#endregion
-//                    }
-//                )
-//                //#endregion
-//                break;
-//            case "model":
-//                //#region add model <input>
-//                // save old value
-//                oldColumnValues[columnName] = td.text()
-
-//                // add <input>
-//                td.empty();
-//                td.append(
-//                    `<input id="inpt_${columnName}" 
-//                                type="text"
-//                                value= ${oldColumnValues[columnName]}>`);
-//                //#endregion
-//                break;
-//            case "brand":
-//                //#region add brand <input>
-//                // save old value
-//                oldColumnValues[columnName] = td.text()
-
-//                // add <input>
-//                td.empty();
-//                td.append(
-//                    `<input id="inpt_${columnName}" 
-//                                type="text" 
-//                                value= ${oldColumnValues[columnName]}>`);
-//                //#endregion
-//                break;
-//            case "handStatus":
-//                //#region add handStatus <select>
-//                // save old value
-//                oldColumnValues[columnName] = td.text()
-
-//                // add <select>
-//                td.empty();
-//                td.append(
-//                    `<select id="slct_${columnName}">
-//                         </select>`);
-
-//                // populate <select>
-//                await populateElementByAjaxOrLocalAsync(
-//                    localKeys_handStatuses,
-//                    `/machine/display/handStatus?language=${language}`,
-//                    (handStatuses) => {
-//                        //#region add hand statuses to <select>
-//                        let slct_handStatus = $("#" + slct_handStatus_id);
-
-//                        for (let index in handStatuses) {
-//                            let handStatus = handStatuses[index];
-
-//                            slct_handStatus.append(
-//                                `<option>${handStatus}</option>`
-//                            );
-//                        }
-//                        //#endregion
-
-//                        //#region display default hand status
-//                        slct_handStatus.val(
-//                            oldColumnValues[columnName]);
-//                        //#endregion
-//                    }
-//                )
-//                //#endregion
-//                break;
-//            case "stock":
-//                //#region add stock <input>
-//                // save old value
-//                oldColumnValues[columnName] = td.text()
-
-//                // add <input>
-//                td.empty();
-//                td.append(
-//                    `<input id="inpt_${columnName}" 
-//                                type= "number"
-//                                min= 1
-//                                max= 5000
-//                                value= ${oldColumnValues[columnName]}>`);
-//                //#endregion
-//                break;
-//            case "rented":
-//                //#region add rented <input>
-//                // save old value
-//                oldColumnValues[columnName] = td.text()
-
-//                // add <input>
-//                td.empty();
-//                td.append(
-//                    `<input id="inpt_${columnName}" 
-//                                type="number" 
-//                                min= 1
-//                                max= 5000
-//                                value= ${oldColumnValues[columnName]}>`);
-//                //#endregion
-//                break;
-//            case "sold":
-//                //#region add sold <input>
-//                // save old value
-//                oldColumnValues[columnName] = td.text()
-
-//                // add <input>
-//                td.empty();
-//                td.append(
-//                    `<input id="inpt_${columnName}" 
-//                                type= "number" 
-//                                min= 1
-//                                max= 5000
-//                                value= ${oldColumnValues[columnName]}>`);
-//                //#endregion
-//                break;
-//            case "year":
-//                //#region add year <input>
-//                // save old value
-//                oldColumnValues[columnName] = td.text()
-
-//                // add <input>
-//                td.empty();
-//                td.append(
-//                    `<input id="inpt_${columnName}" 
-//                                type="number" 
-//                                min=1900
-//                                max=2099
-//                                value= ${oldColumnValues[columnName]}>`);
-//                //#endregion
-//                break;
-//            case "descriptions":
-//                //#region save descriptions to different place in session
-//                let rowInfosInSession = JSON.parse(sessionStorage
-//                    .getItem(row.attr("id")));
-
-//                // add descriptions to object
-//                let descriptionByLanguages = rowInfosInSession[columnName];
-
-//                // save descriptions to session
-//                sessionStorage.setItem(
-//                    sessionKeys_descriptionsOnDisplayPage,
-//                    JSON.stringify(descriptionByLanguages));
-//                //#endregion
-
-//                //#region add description <textarea>        
-//                // save old value by language
-//                oldColumnValues[columnName] = descriptionByLanguages;
-
-//                // add <textarea>
-//                td.empty();
-//                td.append(
-//                    `<textarea id="${txt_descriptions_id}"  style="${style_descriptionsTextarea}">${oldColumnValues[columnName][language]}</textarea>`);
-//                //#endregion
-
-//                //#region add description dropdown
-
-//                //#region create dropdown
-//                let th_descriptions = $("#" + th_descriptions_id);
-
-//                th_descriptions.empty();
-//                th_descriptions.append(
-//                    `<div class="btn-group">
-//                            <button id= "${btn_descriptions_id}"  type="button"  style= "background-color: darkblue;  color: red"  class= "btn btn-danger"> <b>${description_baseButtonNameByLanguages[language]} (${language})</b></button>
-//                            <button value="${language}"  type="button"  style="background-color: darkblue"  class="btn btn-danger dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> <span class="caret"></span> </button>
-//                            <div class="dropdown-menu">
-//                                <div class="col-xs-1" style="padding:0px">
-//                                    <ul id="${ul_descriptions_id}" style="list-style-type:none">
-//                                    </ul>
-//                                </div>
-//                            </div>
-//                        </div>`
-//                );
-//                //#endregion
-
-//                //#region add languages to description dropdown
-//                await populateElementByAjaxOrLocalAsync(
-//                    localKeys_allLanguages,
-//                    "/machine/display/language",
-//                    (languages) => {
-//                        //#region populate dropdown
-//                        for (let index in languages) {
-//                            //#region add languages
-//                            let languageInDb = languages[index];
-
-//                            $("#" + ul_descriptions_id).append(
-//                                `<li class="dropdown-item">
-//                                        <a href="#"  class="${a_descriptionsDropdown_class}"  style="padding: 3px 75px;  color: black">${languageInDb}</a>
-//                                    </li>`
-//                            );
-//                            //#endregion
-//                        }
-//                        //#endregion
-//                    }
-//                )
-//                //#endregion
-
-//                //#endregion
-
-//                //#region declare events
-//                $("#" + btn_descriptions_id).click(() =>
-//                    spn_eventManager.trigger("click_descriptionsButton")
-//                );
-//                $("." + a_descriptionsDropdown_class).click((event) => {
-//                    // for prevent coming to head of web page when clicked to <a>
-//                    event.preventDefault();
-
-//                    // trigger event
-//                    spn_eventManager.trigger("click_descriptionsDropdownItem")
-//                });
-//                $("#" + txt_descriptions_id).on("input", () =>
-//                    spn_eventManager.trigger("change_descriptionsTextarea")
-//                );
-//                //#endregion
-
-//                break;
-//            case "pdf":
-//                //#region add pdf <button>
-//                // save old value
-//                oldColumnValues[columnName] = td
-//                    .children("a")
-//                    .attr("title");
-
-//                // add <button>
-//                td.empty();
-//                td.append(
-//                    `<button id="${btn_pdf_id}"  type="button"  title="${pdfButtonNameByLanguages[language]}">
-//                            <div>
-//                                <img id="${img_pdfButton_id}"  src="/images/pdf.png"  alt="pdf.png"  style="max-width=50px;  max-height:50px">
-//                                <i>(<span id="${spn_pdfButton_pdfName_id}" style="font-size:${style_fontSize_pdfButton_pdfName}">${oldColumnValues[columnName]}</span>)</i>
-//                            </div>
-//                            <span id="${spn_pdfButton_guide_id}"  style="color:black;  font-size:${style_fontSize_chooseFileButtons}">${pdfButtonNameByLanguages[language]}</span>
-//                         </button>
-//                         <div hidden>
-//                            <input id="${inpt_choosePdf_id}"  type="file"  accept="application/pdf"/>
-//                         </div>`);
-//                //#endregion
-
-//                //#region declare events
-//                $("#" + btn_pdf_id).click(() =>
-//                    spn_eventManager.trigger("click_pdfButton", [row])
-//                )
-//                $("#" + inpt_choosePdf_id).change((event) => {
-//                    //#region trigger the "change_chooseFileInput_image" event
-//                    let selectedFileInfos = event.target.files[0];
-
-//                    spn_eventManager.trigger(
-//                        "change_chooseFileInput_pdf",
-//                        [row.attr("id"), selectedFileInfos]);
-//                    //#endregion
-//                })
-//                //#endregion
-
-//                break;
-//            case "processes":
-//                //#region add "save" and "cancel" buttons
-//                // remove 'update' button
-//                td.empty();
-
-//                // add buttons
-//                td.append(
-//                    `<button id="${btn_save_id}" class="active" ui-toggle-class="">
-//                            <i class="fa fa-check text-success" style="width:15px"></i>
-//                        </button>
-//                        <button id="${btn_cancel_id}" class="active" ui-toggle-class="">
-//                            <i class="fa fa-times text-danger" style="width:15px"></i>
-//                        </button>`
-//                );
-//                //#endregion
-
-//                //#region declare events
-//                $("#" + btn_save_id).click(() =>
-//                    spn_eventManager.trigger("click_saveButton")
-//                )
-//                $("#" + btn_cancel_id).click(() =>
-//                    spn_eventManager.trigger("click_cancelButton", [row])
-//                )
-//                //#endregion
-//                break;
-//        }
-//    }
-//    //#endregion
-
-//    //#region save old column values to session
-//    // add registration data as extra (for cancel button)
-//    oldColumnValues["createdAt"] = row
-//        .children("#td_createdAt")
-//        .text();
-
-//    // save to session
-//    sessionStorage.setItem(
-//        row.attr("id"),
-//        JSON.stringify(oldColumnValues));
-//    //#endregion
-//})
