@@ -3,15 +3,22 @@
     position: relative;
     bottom: 8px;
     color: red;
-    font-weight:bold;
-    padding: 3px 15px;
-    font-size:15px
+    font-weight: bold;
 }
 
 .btn_form_label:hover{
+    color: white;
   
 }
 
 .btn_form_label:focus{
-    color: greenyellow
+   color: red;
+}
+
+.form_file_input{
+    cursor: pointer 
+}
+
+.form_file_input:hover{
+    font-weight:bold
 }

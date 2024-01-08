@@ -4,12 +4,15 @@
 } from "./miar_tools.js";
 
 import {
-    addArticlesAsync, alignArticlesToCenterAsync, art_baseId, click_playImageAsync, div_article_info_id,
-    div_article_video_id, ended_articleVideoAsync, mouseout_articleVideoDivAsync, mouseover_articleVideoAsync,
-    setVariablesForArticle
+    addArticlesAsync, alignArticlesToCenterAsync, art_baseId, click_playImageAsync,
+    div_article_info_id, div_article_video_id, ended_articleVideoAsync,
+    mouseout_articleVideoDivAsync, mouseover_articleVideoAsync, removeArticleVideo,
+    removeLastUploadedArticleVideoAsync, setVariablesForArticle
 } from "./miar_article.js"
 
-import { addDefaultValuesToFormAsync, populateFormAsync, setMachineVideoSizeAsync } from "./miar_machine_inputForm.js";
+import {
+    addDefaultValuesToFormAsync, populateFormAsync, setMachineVideoSizeAsync
+} from "./miar_machine_inputForm.js";
 
 
 $(function () {
@@ -35,7 +38,6 @@ $(function () {
     const div_article_update = $("#div_article_update");
     let paginationInfos = {};
     let machineCountOnPage;
-    let articleIdsAndMachineInfos = {};
     //#endregion
 
     //#region events
@@ -667,10 +669,9 @@ $(function () {
 
         await click_playImageAsync($("#" + articleId));
     })
-    spn_eventManager.on("ended_articleVideo", async () => {
-        await ended_articleVideoAsync();
-    })
     spn_eventManager.on("click_articleInfoDiv", async (_, event) => {
+        await removeLastUploadedArticleVideoAsync();
+
         //#region hide machine articles <div>
         div_articles_panel.attr("hidden", "");
         div_article_update.removeAttr("hidden");
@@ -683,6 +684,9 @@ $(function () {
 
         await populateFormAsync(false);
         await addDefaultValuesToFormAsync(machineInfosOfArticle);
+    })
+    spn_eventManager.on("ended_articleVideo", async () => {
+        await ended_articleVideoAsync();
     })
     //#endregion
 
@@ -902,7 +906,7 @@ $(function () {
             };
             //#endregion
 
-            //#region add machine image
+            //#region add machine video poster
             let art_machine = $('#' + articleId);
 
             art_machine
@@ -924,14 +928,6 @@ $(function () {
             `);
             //#endregion
 
-            //#endregion
-
-            //#region save descriptions of machine to session
-            sessionStorage.setItem(
-                articleId,
-                JSON.stringify({
-                    "descriptions": machineInfos.descriptions
-                }));
             //#endregion
 
             //#region declare article page events

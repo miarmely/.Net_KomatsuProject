@@ -1,6 +1,6 @@
 {
   "Version": 1,
-  "Hash": "3AH4+ykwTCQ0t4z7VYCscd1AA6TNnlbRTFxGAk/r5BE=",
+  "Hash": "nWq1Xd0Mr2mHycXhiJ/bR5CMGA9hnysD9PBoVJNFAIw=",
   "Source": "Temsa_Web",
   "BasePath": "_content/Temsa_Web",
   "Mode": "Default",
@@ -270,6 +270,23 @@
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "wwwroot\\css\\miar_login.css"
+    },
+    {
+      "Identity": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\css\\miar_tools.css",
+      "SourceId": "Temsa_Web",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\",
+      "BasePath": "_content/Temsa_Web",
+      "RelativePath": "css/miar_tools.css",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\css\\miar_tools.css"
     },
     {
       "Identity": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\css\\minimal.css",
@@ -1443,6 +1460,23 @@
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "wwwroot\\js\\miar_article.js"
+    },
+    {
+      "Identity": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\js\\miar_descriptions.js",
+      "SourceId": "Temsa_Web",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\",
+      "BasePath": "_content/Temsa_Web",
+      "RelativePath": "js/miar_descriptions.js",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\js\\miar_descriptions.js"
     },
     {
       "Identity": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\js\\miar_form.js",

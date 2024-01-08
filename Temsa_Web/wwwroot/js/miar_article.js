@@ -25,7 +25,9 @@ export const art_baseId = "art_";
 export const path_playImage = "images/play.png";
 export const headerOfPageHeight = 80;
 let articleInfos_lastUploadedPlayImage = {};
-let articleInfos_lastUploadedVideo = {};
+let articleInfos_lastUploadedVideo = {
+    "article" : null
+};
 
 //#region article elements styles
 
@@ -210,6 +212,17 @@ export function isVideoExists(article) {
     return src != undefined;
 }
 
+export function removeArticleVideo(article) {
+    //#region remove attributes article video
+    let video = article
+        .find("video");
+
+    video.removeAttr("src controls autoplay");
+    //#endregion
+
+    video.load();
+}
+
 export function removeVideoOfPreviousArticle() {
     //#region when video isn't uploaded to any article previously
     let previousArticle = articleInfos_lastUploadedVideo["article"];
@@ -225,15 +238,14 @@ export function removeVideoOfPreviousArticle() {
     //#endregion
 }
 
-export function removeArticleVideo(article) {
-    //#region remove attributes article video
-    let video = article
-        .find("video");
+export async function removeLastUploadedArticleVideoAsync() {
+    //#region remove last uploaded article video if exists
+    let article = articleInfos_lastUploadedVideo["article"];
 
-    video.removeAttr("src controls autoplay");
+    if (article != null  // when at least one video has been opened previously
+        && isVideoExists(article))
+        removeArticleVideo(article);
     //#endregion
-
-    video.load();
 }
 
 export async function addArticlesAsync(articleType) {  // articleType: "imageAndText", "videoAndText", "text"

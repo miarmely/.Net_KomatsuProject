@@ -25,7 +25,6 @@
     }
 </style>
 
-
 <div class="table-agile-info">
     <div class="panel panel-default">
         @*title*@
@@ -33,7 +32,7 @@
         </div>
         
         <div class="panel-body">
-            <div id="div_articleDetails" class="div_articleDetails" hidden>
+            <div id="div_article_update" class="div_articleDetails" hidden>
                 @*machine image and video*@
                 <div style="text-align:center">
                     <video id="vid_machine" controls hidden>
@@ -102,8 +101,6 @@
     </div>
 </div>
 
-
-<script type="module" src="~/js/miar_machine_display.js"></script>
 <script>
     const tableTitleByLanguages = {
         "TR": "KAYITLI MAKİNELER",
@@ -179,4 +176,7 @@
         "TR": "Oynat",
         "EN": "Play"
     }
+    let articleIdsAndMachineInfos = {};
 </script>
+<script type="module" src="~/js/miar_machine_display.js"></script>
+<script type="module" src="~/js/miar_descriptions.js"></script>
