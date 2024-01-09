@@ -1,13 +1,10 @@
 ﻿using Dapper;
-using Entities.Attributes;
-using Entities.ConfigModels.Contracts;
 using Entities.DtoModels.MachineDtos;
 using Entities.Enums;
 using Entities.Exceptions;
 using Entities.QueryParameters;
 using Entities.ViewModels;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Server.IIS.Core;
 using Repositories;
 using Repositories.Contracts;
 using Services.Contracts;
@@ -409,6 +406,7 @@ namespace Services.Concretes
 			var parameters = new DynamicParameters(new
 			{
 				machineDto.ImageName,
+				machineDto.VideoName,
 				machineDto.MainCategoryName,
 				machineDto.SubCategoryName,
 				machineDto.Model,

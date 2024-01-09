@@ -6,41 +6,42 @@
 
 import { ul_descriptions_id, uploadDescriptionsEvents  } from "./miar_descriptions.js"
 
-
 //#region variables
-const resultLabel_id = "#p_resultLabel";
-const btn_descriptions_id = "btn_descriptions";
-const txt_descriptions_id = "txt_descriptions";
-const slct_mainCategory_id = "slct_mainCategory";
-const slct_subCategory_id = "slct_subCategory";
-const inpt_image_id = "inpt_image";
-const inpt_video_id = "inpt_video";
-const inpt_pdf_id = "inpt_pdf";
-const inpt_model_id = "inpt_model";
-const inpt_brand_id = "inpt_brand";
-const inpt_year_id = "inpt_year";
-const inpt_stock_id = "inpt_stock";
-const inpt_chooseImage_id = "inpt_chooseImage";
-const inpt_chooseVideo_id = "inpt_chooseVideo";
-const inpt_choosePdf_id = "inpt_choosePdf";
-const vid_machine_id = "vid_machine";
-const src_machine_id = "src_machine";
-const a_descriptions_class = "a_descriptions";
-const btn_chooseImage_id = "btn_chooseImage";
-const btn_chooseVideo_id = "btn_chooseVideo";
-const btn_choosePdf_id = "btn_choosePdf";
-const div_form = $("#div_form");
-const spn_fileStatusLabel = $("#spn_fileStatusLabel");
-const path_imageFolderAfterWwwroot = "images\\machines";
-const path_pdfFolderAfterWwwroot = "pdfs";
-const path_videoFolderAfterWwwRoot = "videos\\machines";
-const img_loading = $("#img_loading");
-const vid_machine = $("#" + vid_machine_id);
-const src_machine = $("#" + src_machine_id);
-let selectedImageInfos;
-let selectedPdfInfos;
-let selectedVideoInfos;
-
+export const resultLabel_id = "#p_resultLabel";
+export const btn_descriptions_id = "btn_descriptions";
+export const txt_descriptions_id = "txt_descriptions";
+export const slct_mainCategory_id = "slct_mainCategory";
+export const slct_subCategory_id = "slct_subCategory";
+export const inpt_image_id = "inpt_image";
+export const inpt_video_id = "inpt_video";
+export const inpt_pdf_id = "inpt_pdf";
+export const inpt_model_id = "inpt_model";
+export const inpt_brand_id = "inpt_brand";
+export const inpt_year_id = "inpt_year";
+export const inpt_stock_id = "inpt_stock";
+export const inpt_sold_id = "inpt_sold";
+export const inpt_rented_id = "inpt_rented";
+export const inpt_chooseImage_id = "inpt_chooseImage";
+export const inpt_chooseVideo_id = "inpt_chooseVideo";
+export const inpt_choosePdf_id = "inpt_choosePdf";
+export const vid_machine_id = "vid_machine";
+export const src_machine_id = "src_machine";
+export const a_descriptions_class = "a_descriptions";
+export const btn_chooseImage_id = "btn_chooseImage";
+export const btn_chooseVideo_id = "btn_chooseVideo";
+export const btn_choosePdf_id = "btn_choosePdf";
+export const btn_save_id = "btn_save";
+export const div_form = $("#div_form");
+export const spn_fileStatusLabel = $("#spn_fileStatusLabel");
+export const path_imageFolderAfterWwwroot = "images\\machines";
+export const path_videoFolderAfterWwwRoot = "videos\\machines";
+export const path_pdfFolderAfterWwwroot = "pdfs";
+export const img_loading = $("#img_loading");
+export const vid_machine = $("#" + vid_machine_id);
+export const src_machine = $("#" + src_machine_id);
+export let selectedImageInfos;
+export let selectedPdfInfos;
+export let selectedVideoInfos;
 const formLabelNamesByLanguages = {
     "TR": {
         "mainCategory": "Ana Kategori",
@@ -54,6 +55,8 @@ const formLabelNamesByLanguages = {
             "radio2": "İkinci El"
         },
         "stock": "Stok Adedi",
+        "sold": "Satılan",
+        "rented": "Kiralanan",
         "image": "Resim",
         "video": "Video",
         "pdf": "Pdf"
@@ -70,6 +73,8 @@ const formLabelNamesByLanguages = {
             "radio2": "Second Hand"
         },
         "stock": "Stock",
+        "sold": "sold",
+        "rented": "rented",
         "image": "Image",
         "video": "Video",
         "pdf": "Pdf"
@@ -245,22 +250,6 @@ function uploadEvents() {
         inpt_choosePdf.val(selectedPdfInfos.name);
         //#endregion
     })
-    //$("#" + btn_descriptions_id).click(async () => {
-    //    await click_descriptionsButtonAsync(
-    //        $("#" + txt_descriptions_id),
-    //        $("#" + btn_descriptions_id),
-    //        sessionKeys_descriptionsOnCreatePage);
-    //})
-    //$("." + a_descriptions_class).click(async (event) => {
-    //    // for prevent coming to head of web page when clicked to <a>
-    //    event.preventDefault();
-
-    //    //await click_descriptionDropdownItemAsync(
-    //        $(":focus"),
-    //        $("#" + txt_descriptions_id),
-    //        $("#" + btn_descriptions_id),
-    //        sessionKeys_descriptionsOnCreatePage);
-    //})
     $("#" + txt_descriptions_id).on("input", async () => {
         await change_descriptionsTextareaAsync(
             $("#" + btn_descriptions_id));
@@ -301,7 +290,7 @@ export async function populateFormAsync(addTableTitle = true) {
                 <input id="${inpt_chooseImage_id}"  type="text"  class="form-control  form_file_input"   readonly/>
                 <span id="spn_help_${inpt_chooseImage_id}" class="help-block"></span>
                 <div hidden>
-                    <input id="${inpt_image_id}"  type="file"  class=""  accept="image/*"  required>
+                    <input id="${inpt_image_id}"  type="file"  class=""  accept="image/*">
                 </div>
             </div>
         </div>`
@@ -317,7 +306,7 @@ export async function populateFormAsync(addTableTitle = true) {
                 <input id="${inpt_chooseVideo_id}"  type="text"  class="form-control  form_file_input"  readonly/>
                 <span id="spn_help_${inpt_chooseVideo_id}" class="help-block"></span>
                 <div hidden>
-                    <input  id="${inpt_video_id}"  type= "file"  class= "form-control"  accept= "video/*"  required />
+                    <input  id="${inpt_video_id}"  type= "file"  accept= "video/*"/>
                 </div>
             </div>
         </div>`
@@ -448,6 +437,30 @@ export async function populateFormAsync(addTableTitle = true) {
     );
     //#endregion
 
+    //#region add sold input
+    div_form.append(
+        `<div class="form-group">
+                <label class="col-sm-3 control-label">${formLabelNamesByLanguages[language].sold}</label>
+                <div class="col-sm-6">
+                    <input id="${inpt_sold_id}" type="number" class="form-control" min=1 max=5000 required>
+                    <span id="spn_help_${inpt_sold_id}" class="help-block"></span>
+                </div>
+            </div>`
+    );
+    //#endregion
+
+    //#region add rented input
+    div_form.append(
+        `<div class="form-group">
+                <label class="col-sm-3 control-label">${formLabelNamesByLanguages[language].rented}</label>
+                <div class="col-sm-6">
+                    <input id="${inpt_rented_id}" type="number" class="form-control" min=1 max=5000 required>
+                    <span id="spn_help_${inpt_rented_id}" class="help-block"></span>
+                </div>
+            </div>`
+    );
+    //#endregion
+
     //#region add handStatus radioButton
     let handStatus = formLabelNamesByLanguages[language].handStatus;
 
@@ -477,17 +490,17 @@ export async function populateFormAsync(addTableTitle = true) {
         `<div class="form-group">
             <label class="col-sm-3 control-label">${formLabelNamesByLanguages[language].pdf}</label>
             <div class="col-sm-6">
-                <input id="${inpt_choosePdf_id}"  type="text"  class="form-control  form_file_input" readonly>
+                <input id="${inpt_choosePdf_id}"  type="text"  class="form-control  form_file_input"  readonly>
                 <span id="spn_help_${inpt_choosePdf_id}" class="help-block"></span>
                 <div hidden>
-                    <input id="${inpt_pdf_id}" type="file" class="form-control" accept="application/pdf" required>
+                    <input id="${inpt_pdf_id}" type="file" class="form-control" accept="application/pdf"  name="pdf">
                 </div>
             </div>
         </div>`
     );
     //#endregion
 
-    //#region add descriptions texarea
+    //#region add descriptions <textarea>
 
     //#region add descriptions <div>
     div_form.append(
@@ -535,15 +548,6 @@ export async function populateFormAsync(addTableTitle = true) {
     )
     //#endregion
 
-    ////#region add default value to descriptions <text>
-    //let descriptionsInSession = JSON.parse(sessionStorage
-    //    .getItem(sessionKeys_descriptionsOnCreatePage));
-
-    //// when description in page language exists on session
-    //if (descriptionsInSession != null)
-    //    $("#" + txt_descriptions_id).val(
-    //        descriptionsInSession[language]);
-    ////#endregion
     //#endregion
 
     //#region add save button
@@ -565,13 +569,22 @@ export async function addDefaultValuesToFormAsync(machineInfos) {
     //#region upload video
     await setMachineVideoSizeAsync();
 
-    vid_machine.attr({
-        "poster": "/" + path_imageFolderAfterWwwroot + "/" + machineInfos["imageName"],
-        "src": "/" + path_videoFolderAfterWwwRoot + "/" + machineInfos["videoName"],
-        "type": getFileTypeFromFileName(machineInfos["videoName"])
-    });
+    //#region upload video attributes
+    vid_machine.attr(
+        "poster",
+        "/" + path_imageFolderAfterWwwroot + "/" + machineInfos["imageName"],);
 
-    vid_machine.removeAttr("hidden");  // display
+    src_machine.attr({
+        "src": "/" + path_videoFolderAfterWwwRoot + "/" + machineInfos["videoName"],
+        "type": "video/" + getFileTypeFromFileName(machineInfos["videoName"])
+    });
+    //#endregion
+
+    //#region display video
+    vid_machine.removeAttr("hidden");
+    vid_machine.load();
+    //#endregion
+
     //#endregion
 
     //#region populate inputs
@@ -583,6 +596,8 @@ export async function addDefaultValuesToFormAsync(machineInfos) {
     $("#" + inpt_brand_id).val(machineInfos["brandName"]);
     $("#" + inpt_year_id).val(machineInfos["year"]);
     $("#" + inpt_stock_id).val(machineInfos["stock"]);
+    $("#" + inpt_sold_id).val(machineInfos["sold"]);
+    $("#" + inpt_rented_id).val(machineInfos["rented"]);
     $(`input[name= handStatus][value=${machineInfos.handStatus}]`).attr("checked", "");
     $("#" + inpt_choosePdf_id).val(machineInfos["pdfName"]);
     $("#" + txt_descriptions_id).val(machineInfos.descriptions[language]);

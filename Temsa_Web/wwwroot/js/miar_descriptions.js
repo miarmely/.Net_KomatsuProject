@@ -1,11 +1,9 @@
 ﻿//#region variables
-export let buffer = {
+export let descriptions = {
     "currentColor": null,
     "language": null,
-    "descriptionsByLanguages": {
-        "TR": null,
-        "EN": null
-    }
+    "byLanguages": {},
+    "isChanged": false
 }
 export const a_descriptions_class = "a_descriptions";
 export const txt_descriptions_id = "txt_descriptions";
@@ -19,14 +17,26 @@ export const descriptions_baseButtonNameByLanguages = {
 
 //#region events
 export function uploadDescriptionsEvents() {
+    //#region set variables
     const btn_descriptions = $("#" + btn_descriptions_id);
     const txt_descriptions = $("#" + txt_descriptions_id);
+    //#endregion
 
     btn_descriptions.click(async () => {
         //#region save new description
+
+        //#region when description not changed
         let newDescription = txt_descriptions.val();
 
-        newDescriptionsByLanguages[buffer["language"]] = newDescription;
+        if (newDescription == descriptions.byLanguages[descriptions.language])
+            return;
+        //#endregion
+
+        //#region when changed
+        descriptions.byLanguages[descriptions.language] = newDescription;
+        descriptions.isChanged = true;
+        //#endregion
+
         //#endregion
 
         //#region change description button color to "saved color"
@@ -36,7 +46,7 @@ export function uploadDescriptionsEvents() {
         //#endregion
     })
     $("#" + ul_descriptions_id).click(async (event) => {
-        buffer["language"] = event.target.innerText;
+        descriptions.language = event.target.innerText;
 
         //#region change descriptions <button> color as "unsaved_color"
         txt_descriptions.val("");
@@ -49,109 +59,48 @@ export function uploadDescriptionsEvents() {
         //#region change descriptions <button> name
         btn_descriptions.empty();
         btn_descriptions.append(
-            `<b>${descriptions_baseButtonNameByLanguages[language]} (${buffer["language"]})</b>`);
+            `<b>${descriptions_baseButtonNameByLanguages[language]} (${descriptions.language})</b>`);
         //#endregion
 
         //#region add description to <textarea> if exists
-        if (buffer.descriptionsByLanguages[buffer["language"]] != null)
+        if (descriptions.byLanguages[descriptions.language] != null)
             txt_descriptions.val(
-                newDescriptionsByLanguages[buffer["language"]]);
+                descriptions.byLanguages[descriptions.language]);
         //#endregion
     })
 }
 //#endregion
 
-
 //#region functions
-export function setVariablesForDescriptions(variables) {
-    //#region initialize variables
-    for (let variableName in variables)
-        // when variable name is exists in "buffers"
-        if (buffer[variableName] != undefined)
-            buffer[variableName] = variables[variableName];
-    //#endregion
-}
 
-export async function setDescriptionsLanguageAsync(newLanguage) {
-    buffer["language"] = newLanguage;
+
+export async function setVariablesForDescriptionsAsync(bufferName, variables) {
+    //#region set variables as dynamic
+    switch (bufferName) {
+        case "descriptions":
+            //#region initialize variables
+            for (let variableName in variables)
+                // when variable name is exists in buffer
+                if (descriptions[variableName] != undefined)
+                    descriptions[variableName] = variables[variableName];
+            //#endregion
+            break;
+    }
+    //#endregion
 }
 
 export async function getDescriptionKeyForSessionAsync(descriptionBaseKeyForSession) {
-    return descriptionBaseKeyForSession + '-' + buffer["language"];
-}
-
-export async function click_descriptionsButtonAsync(
-    descriptionsTextArea,
-    descriptionsButton,
-    descriptionsSessionKey) {
-    //#region get descriptions in session 
-    let descriptionsInSession = JSON.parse(sessionStorage
-        .getItem(descriptionsSessionKey));
-
-    // when any descriptions not exist on session
-    if (descriptionsInSession == null)
-        descriptionsInSession = {}
-    //#endregion
-
-    //#region save updated descriptions to session
-    descriptionsInSession[buffer["language"]] = descriptionsTextArea.val();
-
-    sessionStorage.setItem(
-        descriptionsSessionKey,
-        JSON.stringify(descriptionsInSession));
-    //#endregion
-
-    //#region change description button color to "saved color"
-    await changeDescriptionsButtonColorAsync(
-        descriptionsButton,
-        descriptions_savedColor);
-    //#endregion
-}
-
-export async function click_descriptionDropdownItemAsync(
-    clickedElement,
-    descriptionsTextarea,
-    descriptionsButton,
-    descriptionsSessionKey) {
-    //#region change descriptions <button> color as "unsaved_color"
-    descriptionsTextarea.val("");
-
-    await changeDescriptionsButtonColorAsync(
-        descriptionsButton,
-        descriptions_unsavedColor);
-    //#endregion
-
-    //#region change descriptions <button> name
-    buffer["language"] = clickedElement.prop("innerText");
-
-    descriptionsButton.empty();
-    descriptionsButton.append(
-        `<b>${description_baseButtonNameByLanguages[language]} (${buffer["language"]})</b>`);
-    //#endregion
-
-    //#region populate descriptions in session to <textarea>
-    // get descriptions from session
-    let descriptionsInSession = JSON.parse(sessionStorage
-        .getItem(descriptionsSessionKey));
-
-    // when any description is exists in session
-    if (descriptionsInSession != null  // when any descriptions exists in session
-        && descriptionsInSession[buffer["language"]] != undefined)  // when descriptions in selected language 
-        //#region add description in session to <textarea>
-        descriptionsTextarea.val(
-            descriptionsInSession[buffer["language"]]);
-    //#endregion
-    //#endregion
+    return descriptionBaseKeyForSession + '-' + descriptions.language;
 }
 
 export async function change_descriptionsTextareaAsync(descriptionsButton) {
     //#region initialize descriptions current color if not initialized
-    if (buffer["currentColor"] == null)
-        buffer["currentColor"] = descriptions_unsavedColor;
+    if (descriptions["currentColor"] == null)
+        descriptions["currentColor"] = descriptions_unsavedColor;
     //#endregion
 
     //#region change descriptions <button> color as "unsaved color"
-    if (buffer["currentColor"] == descriptions_savedColor)
+    if (descriptions["currentColor"] == descriptions_savedColor)
         await changeDescriptionsButtonColorAsync(
             descriptionsButton,
             descriptions_unsavedColor);
@@ -160,6 +109,6 @@ export async function change_descriptionsTextareaAsync(descriptionsButton) {
 
 export async function changeDescriptionsButtonColorAsync(descriptionsButton, color) {
     descriptionsButton.css("color", color);
-    buffer["currentColor"] = color;
+    descriptions["currentColor"] = color;
 }
 //#endregion

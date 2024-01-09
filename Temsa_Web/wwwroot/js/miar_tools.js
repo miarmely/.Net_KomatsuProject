@@ -343,11 +343,9 @@ export async function populateTable(
     errorMessageColor,
     paginationButtonQuantity,
     entityQuantity_message,
-    refreshPaginationButtons) {
-
+    refreshPaginationButtons
+) {
     //#region set variables
-    descriptions_language = language; // set page language as default 
-
     let url = `${baseApiUrl}/${specialUrl}` +
         `?language=${language}` +
         `&pageNumber=${pageNumber}` +

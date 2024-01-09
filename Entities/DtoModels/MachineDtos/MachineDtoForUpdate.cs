@@ -8,6 +8,9 @@ namespace Entities.DtoModels.MachineDtos
 		[MiarLength(1, 50, "Resim Adı", "Image Name")]
 		public string? ImageName { get; init; }
 
+		[MiarLength(1, 50, "Video Adı", "Video Name")]
+		public string? VideoName { get; init; }
+
 		[MiarLength(1, 50, "Ana Kategori", "Main Category")]
 		public string? MainCategoryName { get; init; }
 

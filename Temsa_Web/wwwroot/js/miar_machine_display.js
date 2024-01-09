@@ -1,18 +1,28 @@
 ﻿import {
     updateResultLabel, updateErrorRow, addPaginationButtonsAsync,
-    controlPaginationBackAndNextButtonsAsync, isAllObjectValuesNullAsync
+    controlPaginationBackAndNextButtonsAsync, isAllObjectValuesNullAsync, getBase64StrOfFileAsync
 } from "./miar_tools.js";
 
 import {
     addArticlesAsync, alignArticlesToCenterAsync, art_baseId, click_playImageAsync,
     div_article_info_id, div_article_video_id, ended_articleVideoAsync,
-    mouseout_articleVideoDivAsync, mouseover_articleVideoAsync, removeArticleVideo,
+    mouseout_articleVideoDivAsync, mouseover_articleVideoAsync,
     removeLastUploadedArticleVideoAsync, setVariablesForArticle
 } from "./miar_article.js"
 
 import {
-    addDefaultValuesToFormAsync, populateFormAsync, setMachineVideoSizeAsync
+    addDefaultValuesToFormAsync, inpt_brand_id, inpt_chooseImage_id,
+    inpt_choosePdf_id, inpt_chooseVideo_id, inpt_model_id, inpt_rented_id, inpt_sold_id,
+    inpt_stock_id, inpt_year_id, populateFormAsync, setMachineVideoSizeAsync, slct_mainCategory_id,
+    slct_subCategory_id, path_imageFolderAfterWwwroot, path_videoFolderAfterWwwRoot,
+    path_pdfFolderAfterWwwroot,
+    selectedImageInfos,
+    selectedVideoInfos,
+    selectedPdfInfos,
+    resultLabel_id
 } from "./miar_machine_inputForm.js";
+
+import { descriptions, setVariablesForDescriptionsAsync, txt_descriptions_id } from "./miar_descriptions.js";
 
 
 $(function () {
@@ -27,10 +37,7 @@ $(function () {
     const ul_pagination = $("#ul_pagination");
     const entityQuantity_id = "#small_entityQuantity";
     const entityQuantity_color = "#7A7A7A";
-    const path_machineImages = "images/machines";
-    const path_machineVideos = "videos/machines";
     const path_pdfs = "pdfs";
-    const columnNames = Object.keys(columnNamesByLanguages[language]);
     const img_imageButton_id = "img_imageButton";
     const spn_pdfButton_pdfName_id = "spn_pdfButton_pdfName";
     const div_articles_panel = $("#div_articles_panel");
@@ -38,6 +45,7 @@ $(function () {
     const div_article_update = $("#div_article_update");
     let paginationInfos = {};
     let machineCountOnPage;
+    let idOfLastViewedArticle = null;
     //#endregion
 
     //#region events
@@ -59,220 +67,63 @@ $(function () {
     //#endregion
 
     //#region for machine update page
-    $("form").submit(() => {
-        ////#region set variables
-        //let row = $(":focus").closest("tr");
-        //let rowId = row.attr("id");
-        //let machineId = row.attr("class");
-        //let oldColumnValues = JSON.parse(sessionStorage
-        //    .getItem(rowId));
-        ////#endregion
+    $("form").submit(async (event) => {
+        event.preventDefault();
 
-        ////#region set data
-        //let data = {
-        //    "imageName": null,
-        //    "mainCategoryName": null,
-        //    "subCategoryName": null,
-        //    "model": null,
-        //    "brandName": null,
-        //    "handStatus": null,
-        //    "pdfName": null,
-        //    "stock": null,
-        //    "rented": null,
-        //    "sold": null,
-        //    "year": null,
-        //    "descriptions": null,
-        //    "imageContentInBase64Str": null,
-        //    "pdfContentInBase64Str": null,
-        //    "imageFolderPathAfterWwwroot": null,
-        //    "pdfFolderPathAfterWwwroot": null,
-        //    "oldImageName": null,
-        //    "oldPdfName": null,
-        //}
+        let newMachineInfos = {
+            "imageName": $("#" + inpt_chooseImage_id).val(),
+            "videoName": $("#" + inpt_chooseVideo_id).val(),
+            "mainCategoryName": $("#" + slct_mainCategory_id).val(),
+            "subCategoryName": $("#" + slct_subCategory_id).val(),
+            "model": $("#" + inpt_model_id).val(),
+            "brandName": $("#" + inpt_brand_id).val(),
+            "handStatus": $("input[name= handStatus]:checked").val(),
+            "pdfName": $("#" + inpt_choosePdf_id).val(),
+            "stock": $("#" + inpt_stock_id).val(),
+            "rented": $("#" + inpt_rented_id).val(),
+            "sold": $("#" + inpt_sold_id).val(),
+            "year": $("#" + inpt_year_id).val(),
+        };
 
-        ////#region add values on column to data
-        //for (let index in columnNames) {
-        //    //#region check columns whether changed
-        //    let columnName = columnNames[index];
-        //    let td = row.children(`#td_${columnName}`);
+        //#region set data
+        let oldMachineInfos = articleIdsAndMachineInfos[idOfLastViewedArticle];
 
-        //    switch (columnName) {
-        //        case "image":
-        //            //#region add image name to data if changed
-        //            let imageNameOnButton = $("#" + img_imageButton_id)
-        //                .attr("alt");
+        let data = {
+            "imageName": newMachineInfos.imageName == oldMachineInfos.imageName ? null : newMachineInfos.imageName,
+            "videoName": newMachineInfos.videoName == oldMachineInfos.videoName ? null : newMachineInfos.videoName,
+            "mainCategoryName": newMachineInfos.mainCategoryName == oldMachineInfos.mainCategoryName ? null : newMachineInfos.mainCategoryName,
+            "subCategoryName": newMachineInfos.subCategoryName == oldMachineInfos.subCategoryName ? null : newMachineInfos.subCategoryName,
+            "model": newMachineInfos.model == oldMachineInfos.model ? null : newMachineInfos.model,
+            "brandName": newMachineInfos.brandName == oldMachineInfos.brandName ? null : newMachineInfos.brandName,
+            "handStatus": newMachineInfos.handStatus == oldMachineInfos.handStatus ? null : newMachineInfos.handStatus,
+            "pdfName": newMachineInfos.pdfName == oldMachineInfos.pdfName ? null : newMachineInfos.pdfName,
+            "stock": newMachineInfos.stock == oldMachineInfos.stock ? null : newMachineInfos.stock,
+            "rented": newMachineInfos.rented == oldMachineInfos.rented ? null : newMachineInfos.rented,
+            "sold": newMachineInfos.sold == oldMachineInfos.sold ? null : newMachineInfos.sold,
+            "year": newMachineInfos.year == oldMachineInfos.year ? null : newMachineInfos.year,
+            "descriptions": descriptions.isChanged ? descriptions.byLanguages : null,
+            "imageContentInBase64Str": newMachineInfos.imageName == oldMachineInfos.imageName ? null : await getBase64StrOfFileAsync(selectedImageInfos),
+            "videoContentInBase64Str": newMachineInfos.videoName == oldMachineInfos.videoName ? null : await getBase64StrOfFileAsync(selectedVideoInfos),
+            "pdfContentInBase64Str": newMachineInfos.pdfName == oldMachineInfos.pdfName ? null : await getBase64StrOfFileAsync(selectedPdfInfos),
+            "imageFolderPathAfterWwwroot": newMachineInfos.imageName == oldMachineInfos.imageName ? null : path_imageFolderAfterWwwroot,
+            "videoFolderPathAfterWwwroot": newMachineInfos.videoName == oldMachineInfos.videoName ? null : path_videoFolderAfterWwwRoot,
+            "pdfFolderPathAfterWwwroot": newMachineInfos.pdfName == oldMachineInfos.pdfName ? null : path_pdfFolderAfterWwwroot,
+            "oldImageName": null,
+            "oldPdfName": null,
+        }
+        //#endregion
 
-        //            // if image name changed
-        //            if (imageNameOnButton != oldColumnValues[columnName]) {
-        //                // save image infos
-        //                data["imageName"] = imageNameOnButton;
-        //                data["imageFolderPathAfterWwwroot"] = path_machineImages;
-        //                data["oldImageName"] = oldColumnValues[columnName];
+        //#region when any changes wasn't do (error)
+        if (await isAllObjectValuesNullAsync(data)) {
+            // write error
+            updateErrorRow(
+                resultLabel_id,
+                partnerErrorMessagesByLanguages[language]["nullArguments"],
+                resultLabel_errorColor);
 
-        //                // save image content in base64 string
-        //                data["imageContentInBase64Str"] = row
-        //                    .children("#td_image")
-        //                    .find("img")
-        //                    .attr("src")
-        //                    .replace(`data:${selectedImageInfos.type};base64,`, "");
-        //            }
-
-        //            //#endregion
-        //            break;
-        //        case "mainCategory":
-        //            //#region add main category to data if changed
-        //            let mainCategory = td
-        //                .children("select")
-        //                .val();
-
-        //            // if main category changed
-        //            if (mainCategory != oldColumnValues[columnName])
-        //                data["mainCategoryName"] = mainCategory;
-        //            //#endregion
-        //            break;
-        //        case "subCategory":
-        //            //#region add subcategory to data if changed
-        //            let subCategory = td
-        //                .children("select")
-        //                .val();
-
-        //            // if subcategory changed
-        //            if (subCategory != oldColumnValues[columnName])
-        //                data["subCategoryName"] = subCategory;
-        //            //#endregion
-        //            break;
-        //        case "model":
-        //            //#region add model to data if changed
-        //            let model = td
-        //                .children("input")
-        //                .val();
-
-        //            // if model changed
-        //            if (model != oldColumnValues[columnName])
-        //                data["model"] = model;
-        //            //#endregion
-        //            break;
-        //        case "brand":
-        //            //#region add brand to data if changed
-        //            let brand = td
-        //                .children("input")
-        //                .val();
-
-        //            // if brand changed
-        //            if (brand != oldColumnValues[columnName])
-        //                data["brandName"] = brand;
-        //            //#endregion
-        //            break;
-        //        case "handStatus":
-        //            //#region add hand Status to data if changed
-        //            let handStatus = td
-        //                .children("select")
-        //                .val();
-
-        //            // if hand status changed
-        //            if (handStatus != oldColumnValues[columnName])
-        //                data["handStatus"] = handStatus;
-        //            //#endregion
-        //            break;
-        //        case "stock":
-        //            //#region add stock to data if changed
-        //            let stock = td
-        //                .children("input")
-        //                .val();
-
-        //            // if model changed
-        //            if (stock != oldColumnValues[columnName])
-        //                data["stock"] = stock;
-        //            //#endregion
-        //            break;
-        //        case "rented":
-        //            //#region add rented to data if changed
-        //            let rented = td
-        //                .children("input")
-        //                .val();
-
-        //            // if rented changed
-        //            if (rented != oldColumnValues[columnName])
-        //                data["rented"] = rented;
-        //            //#endregion
-        //            break;
-        //        case "sold":
-        //            //#region add sold to data if changed
-        //            let sold = td
-        //                .children("input")
-        //                .val();
-
-        //            // if sold changed
-        //            if (sold != oldColumnValues[columnName])
-        //                data["sold"] = sold;
-        //            //#endregion
-        //            break;
-        //        case "year":
-        //            //#region add year to data if changed
-        //            let year = td
-        //                .children("input")
-        //                .val();
-
-        //            // if year changed
-        //            if (year != oldColumnValues[columnName])
-        //                data["year"] = year;
-        //            //#endregion
-        //            break;
-        //        case "pdf":
-        //            //#region add pdf name to data if changed
-        //            let pdfNameOnButton = $("#" + spn_pdfButton_pdfName_id)
-        //                .text();
-
-        //            // if pdf name changed
-        //            if (pdfNameOnButton != oldColumnValues[columnName]) {
-        //                data["pdfName"] = pdfNameOnButton;
-        //                data["pdfFolderPathAfterWwwroot"] = path_pdfs;
-        //                data["oldPdfName"] = oldColumnValues[columnName];
-        //            }
-        //            //#endregion
-        //            break;
-        //        case "descriptions":
-        //            //#region get new descriptions in session
-        //            let newDescriptionsInSession = JSON.parse(sessionStorage
-        //                .getItem(sessionKeys_descriptionsOnDisplayPage));
-        //            //#endregion
-
-        //            //#region when description in any language changed
-        //            if (newDescriptionsInSession["TR"] != oldColumnValues[columnName]["TR"]
-        //                || newDescriptionsInSession["EN"] != oldColumnValues[columnName]["EN"]) {
-        //                //#region when "TR" description changed
-        //                data[columnName] = {};
-
-        //                if (newDescriptionsInSession["TR"] != oldColumnValues[columnName]["TR"])
-        //                    data[columnName]["TR"] = newDescriptionsInSession["TR"];
-        //                //#endregion
-
-        //                //#region when "EN" description changed
-        //                if (newDescriptionsInSession["EN"] != oldColumnValues[columnName]["EN"])
-        //                    data[columnName]["EN"] = newDescriptionsInSession["EN"];
-        //                //#endregion
-        //            }
-        //            //#endregion
-
-        //            break;
-        //    }
-        //    //#endregion
-        //}
-        ////#endregion
-
-        ////#region when any changes wasn't do (error)
-        //if (await isAllObjectValuesNullAsync(data)) {
-        //    // write error to error row
-        //    updateErrorRow(
-        //        `#${rowId}_error`,
-        //        partnerErrorMessagesByLanguages[language]["nullArguments"],
-        //        resultLabel_errorColor);
-
-        //    return;
-        //}
-        ////#endregion
-
-        ////#endregion
+            return;
+        }
+        //#endregion
 
         ////#region set url
         //let url = baseApiUrl + "/machine/update?" +
@@ -360,7 +211,7 @@ $(function () {
                     if (imageNameOnButton != oldColumnValues[columnName]) {
                         // save image infos
                         data["imageName"] = imageNameOnButton;
-                        data["imageFolderPathAfterWwwroot"] = path_machineImages;
+                        data["imageFolderPathAfterWwwroot"] = path_imageFolderAfterWwwroot;
                         data["oldImageName"] = oldColumnValues[columnName];
 
                         // save image content in base64 string
@@ -672,16 +523,19 @@ $(function () {
     spn_eventManager.on("click_articleInfoDiv", async (_, event) => {
         await removeLastUploadedArticleVideoAsync();
 
-        //#region hide machine articles <div>
+        //#region hide machine articles
         div_articles_panel.attr("hidden", "");
         div_article_update.removeAttr("hidden");
         //#endregion
 
         //#region get machine infos of clicked article
-        let articleId = event.currentTarget.closest("article").id;
-        let machineInfosOfArticle = articleIdsAndMachineInfos[articleId];
+        idOfLastViewedArticle = event.currentTarget.closest("article").id;
+        let machineInfosOfArticle = articleIdsAndMachineInfos[idOfLastViewedArticle];
         //#endregion
 
+        await setVariablesForDescriptionsAsync("descriptions", {
+            "byLanguages": machineInfosOfArticle.descriptions
+        })
         await populateFormAsync(false);
         await addDefaultValuesToFormAsync(machineInfosOfArticle);
     })
@@ -833,7 +687,7 @@ $(function () {
             method: "DELETE",
             url: (baseApiUrl + "/machine/delete" +
                 `?language=${language}` +
-                `&imageFolderPathAfterWwwroot=${path_machineImages}` +
+                `&imageFolderPathAfterWwwroot=${path_imageFolderAfterWwwroot}` +
                 `&pdfFolderPathAfterWwwroot=${path_pdfs}`),
             headers: { "Authorization": jwtToken },
             data: JSON.stringify(machineInfos),
@@ -911,7 +765,7 @@ $(function () {
 
             art_machine
                 .find("video")
-                .attr("poster", "/" + path_machineImages + "/" + machineInfos.imageName);
+                .attr("poster", "/" + path_imageFolderAfterWwwroot + "/" + machineInfos.imageName);
             //#endregion
 
             //#region add machine infos 
@@ -977,7 +831,7 @@ $(function () {
             success: (response, status, xhr) => {
                 setVariablesForArticle({
                     "div_articles": div_articles,
-                    "path_articleVideos": path_machineVideos,
+                    "path_articleVideos": path_videoFolderAfterWwwRoot,
                     "articleCount": response.length
                 });
 
