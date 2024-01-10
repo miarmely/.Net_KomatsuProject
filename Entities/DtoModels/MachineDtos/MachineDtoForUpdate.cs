@@ -43,10 +43,13 @@ namespace Entities.DtoModels.MachineDtos
 
         public DescriptionsByLanguages? Descriptions { get; init; }
 		public string? ImageContentInBase64Str { get; init; }
+		public string? VideoContentInBase64Str { get; init; }
 		public string? PdfContentInBase64Str { get; init; }
 		public string? ImageFolderPathAfterWwwroot { get; init; }
+		public string? VideoFolderPathAfterWwwroot { get; init; }
 		public string? PdfFolderPathAfterWwwroot { get; init; }
 		public string? OldImageName { get; init; }
+		public string? OldVideoName { get; init; }
 		public string? OldPdfName { get; init; }
 	}
 

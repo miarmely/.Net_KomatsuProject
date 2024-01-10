@@ -430,7 +430,7 @@ export async function populateFormAsync(addTableTitle = true) {
                     ${formLabelNamesByLanguages[language].stock}
                 </label>
                 <div class="col-sm-6">
-                    <input id="${inpt_stock_id}" type="number" class="form-control" min=1 max=5000 required>
+                    <input id="${inpt_stock_id}" type="number" class="form-control" min=0 max=5000 required>
                     <span id="spn_help_${inpt_stock_id}" class="help-block"></span>
                 </div>
             </div>`
@@ -442,7 +442,7 @@ export async function populateFormAsync(addTableTitle = true) {
         `<div class="form-group">
                 <label class="col-sm-3 control-label">${formLabelNamesByLanguages[language].sold}</label>
                 <div class="col-sm-6">
-                    <input id="${inpt_sold_id}" type="number" class="form-control" min=1 max=5000 required>
+                    <input id="${inpt_sold_id}" type="number" class="form-control" min=0 max=5000 required>
                     <span id="spn_help_${inpt_sold_id}" class="help-block"></span>
                 </div>
             </div>`
@@ -454,7 +454,7 @@ export async function populateFormAsync(addTableTitle = true) {
         `<div class="form-group">
                 <label class="col-sm-3 control-label">${formLabelNamesByLanguages[language].rented}</label>
                 <div class="col-sm-6">
-                    <input id="${inpt_rented_id}" type="number" class="form-control" min=1 max=5000 required>
+                    <input id="${inpt_rented_id}" type="number" class="form-control" min=0 max=5000 required>
                     <span id="spn_help_${inpt_rented_id}" class="help-block"></span>
                 </div>
             </div>`
@@ -636,12 +636,13 @@ export async function removePosterOrVideoAsync(which) {
 }
 
 export async function setMachineVideoSizeAsync() {
-    //#region set width and height
+    //#region set width and max-height
     let panelBodyWidth = $(".panel-body").prop("clientWidth");
 
-    vid_machine.css(
-        "width",
-        panelBodyWidth - (panelBodyWidth * (60 / 100)));
+    vid_machine.css({
+        "width": panelBodyWidth - (panelBodyWidth * (60 / 100)),
+        "max-height": panelBodyWidth - (panelBodyWidth * (60 / 100))
+    }); 
     //#endregion
 }
 //#endregion

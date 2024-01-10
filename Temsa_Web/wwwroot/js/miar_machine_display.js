@@ -1,6 +1,7 @@
 ﻿import {
     updateResultLabel, updateErrorRow, addPaginationButtonsAsync,
-    controlPaginationBackAndNextButtonsAsync, isAllObjectValuesNullAsync, getBase64StrOfFileAsync
+    controlPaginationBackAndNextButtonsAsync, isAllObjectValuesNullAsync, autoObjectMapperAsync,
+
 } from "./miar_tools.js";
 
 import {
@@ -15,14 +16,10 @@ import {
     inpt_choosePdf_id, inpt_chooseVideo_id, inpt_model_id, inpt_rented_id, inpt_sold_id,
     inpt_stock_id, inpt_year_id, populateFormAsync, setMachineVideoSizeAsync, slct_mainCategory_id,
     slct_subCategory_id, path_imageFolderAfterWwwroot, path_videoFolderAfterWwwRoot,
-    path_pdfFolderAfterWwwroot,
-    selectedImageInfos,
-    selectedVideoInfos,
-    selectedPdfInfos,
-    resultLabel_id
+    selectedImageInfos, selectedPdfInfos, resultLabel_id
 } from "./miar_machine_inputForm.js";
 
-import { descriptions, setVariablesForDescriptionsAsync, txt_descriptions_id } from "./miar_descriptions.js";
+import { descriptions, setVariablesForDescriptionsAsync} from "./miar_descriptions.js";
 
 
 $(function () {
@@ -70,6 +67,7 @@ $(function () {
     $("form").submit(async (event) => {
         event.preventDefault();
 
+        //#region set data
         let newMachineInfos = {
             "imageName": $("#" + inpt_chooseImage_id).val(),
             "videoName": $("#" + inpt_chooseVideo_id).val(),
@@ -83,11 +81,9 @@ $(function () {
             "rented": $("#" + inpt_rented_id).val(),
             "sold": $("#" + inpt_sold_id).val(),
             "year": $("#" + inpt_year_id).val(),
+            "descriptions": descriptions.isChanged ? descriptions.byLanguages : null,
         };
-
-        //#region set data
         let oldMachineInfos = articleIdsAndMachineInfos[idOfLastViewedArticle];
-
         let data = {
             "imageName": newMachineInfos.imageName == oldMachineInfos.imageName ? null : newMachineInfos.imageName,
             "videoName": newMachineInfos.videoName == oldMachineInfos.videoName ? null : newMachineInfos.videoName,
@@ -101,16 +97,42 @@ $(function () {
             "rented": newMachineInfos.rented == oldMachineInfos.rented ? null : newMachineInfos.rented,
             "sold": newMachineInfos.sold == oldMachineInfos.sold ? null : newMachineInfos.sold,
             "year": newMachineInfos.year == oldMachineInfos.year ? null : newMachineInfos.year,
-            "descriptions": descriptions.isChanged ? descriptions.byLanguages : null,
-            "imageContentInBase64Str": newMachineInfos.imageName == oldMachineInfos.imageName ? null : await getBase64StrOfFileAsync(selectedImageInfos),
-            "videoContentInBase64Str": newMachineInfos.videoName == oldMachineInfos.videoName ? null : await getBase64StrOfFileAsync(selectedVideoInfos),
-            "pdfContentInBase64Str": newMachineInfos.pdfName == oldMachineInfos.pdfName ? null : await getBase64StrOfFileAsync(selectedPdfInfos),
-            "imageFolderPathAfterWwwroot": newMachineInfos.imageName == oldMachineInfos.imageName ? null : path_imageFolderAfterWwwroot,
-            "videoFolderPathAfterWwwroot": newMachineInfos.videoName == oldMachineInfos.videoName ? null : path_videoFolderAfterWwwRoot,
-            "pdfFolderPathAfterWwwroot": newMachineInfos.pdfName == oldMachineInfos.pdfName ? null : path_pdfFolderAfterWwwroot,
-            "oldImageName": null,
-            "oldPdfName": null,
+            "descriptions": newMachineInfos.descriptions,
+            "imageContentInBase64Str":null,
+            "videoContentInBase64Str":null,
+            "pdfContentInBase64Str":null,
+            "imageFolderPathAfterWwwroot":null,
+            "videoFolderPathAfterWwwroot":null,
+            "pdfFolderPathAfterWwwroot":null,
+            "oldImageName":null,
+            "oldVideoName": null,
+            "oldPdfName": null
         }
+
+        //#region add image infos if changed
+        if (newMachineInfos.imageName != oldMachineInfos.imageName) {
+            data["imageContentInBase64Str"] = newMachineInfos.imageContentInBase64Str;
+            data["imageFolderPathAfterWwwroot"] = newMachineInfos.imageFolderPathAfterWwwroot;
+            data["oldImageName"] = newMachineInfos.oldImageName;
+        }
+        //#endregion
+
+        //#region add video infos if changed
+        if (newMachineInfos.videoName != oldMachineInfos.videoName) {
+            data["videoContentInBase64Str"] = newMachineInfos.videoContentInBase64Str;
+            data["videoFolderPathAfterWwwroot"] = newMachineInfos.videoFolderPathAfterWwwroot;
+            data["oldVideoName"] = newMachineInfos.oldVideoName;
+        }
+        //#endregion
+
+        //#region add pdf infos if changed
+        if (newMachineInfos.pdfName != oldMachineInfos.pdfName) {
+            data["pdfContentInBase64Str"] = newMachineInfos.pdfContentInBase64Str;
+            data["pdfFolderPathAfterWwwroot"] = newMachineInfos.pdfFolderPathAfterWwwroot;
+            data["oldPdfName"] = newMachineInfos.oldPdfName;
+        }
+        //#endregion
+
         //#endregion
 
         //#region when any changes wasn't do (error)
@@ -125,44 +147,15 @@ $(function () {
         }
         //#endregion
 
-        ////#region set url
-        //let url = baseApiUrl + "/machine/update?" +
-        //    `language=${language}` +
-        //    `&id=${machineId}` +
-        //    `&oldMainCategoryName=${oldColumnValues.mainCategory}` +
-        //    `&oldSubCategoryName=${oldColumnValues.subCategory}`
-        ////#endregion
+        //#region set url
+        let url = baseApiUrl + "/machine/update?" +
+            `language=${language}` +
+            `&id=${machineId}` +
+            `&oldMainCategoryName=${oldColumnValues.mainCategory}` +
+            `&oldSubCategoryName=${oldColumnValues.subCategory}`
+        //#endregion
 
-        ////#region update machine
-
-        ////#region when pdf changed
-        //if (data["pdfName"] != null) {
-        //    let fileReader = new FileReader();
-
-        //    fileReader.readAsDataURL(selectedPdfInfos)
-        //    fileReader.onloadend = async function (event) {
-        //        //#region when reading successfuly
-        //        if (fileReader.readyState == fileReader.DONE) {
-        //            //#region save pdf content in base64 string to data
-        //            let dataUrl = event.target.result;
-
-        //            data["pdfContentInBase64Str"] = dataUrl
-        //                .replace(`data:${selectedPdfInfos.type};base64,`, "");
-        //            //#endregion
-
-        //            await updateMachineAsync(url, data, rowId, oldColumnValues);
-        //        }
-        //        //#endregion
-        //    }
-        //}
-        ////#endregion
-
-        ////#region when pdf not changed
-        //else
-        //    await updateMachineAsync(url, data, rowId, oldColumnValues);
-        ////#endregion
-
-        ////#endregion
+        await updateMachineAsync(url, data);
     });
     spn_eventManager.on("click_saveButton", async () => {
         //#region set variables
@@ -547,22 +540,7 @@ $(function () {
     //#endregion
 
     //#region functions
-    async function updateMachineAsync(url, data, rowId, oldColumnValues) {
-        let propertyNamesAndColumnNamesGuide = {
-            "imageName": "image",
-            "mainCategoryName": "mainCategory",
-            "subCategoryName": "subCategory",
-            "model": "model",
-            "brandName": "brand",
-            "handStatus": "handStatus",
-            "pdfName": "pdf",
-            "stock": "stock",
-            "rented": "rented",
-            "sold": "sold",
-            "year": "year",
-            "descriptions": "descriptions"
-        };
-
+    async function updateMachineAsync(url, data) {
         $.ajax({
             method: "PUT",
             url: url,
@@ -571,47 +549,14 @@ $(function () {
             contentType: "application/json",
             dataType: "json",
             success: () => {
-                //#region update "oldColumnValues" with new column values
-                for (let propertyName in data) {
-                    let propertyValue = data[propertyName];
+                autoObjectMapperAsync(newMachineInfos, data, true)
+                    .then(() => {
+                        updateResultLabel(
+                            resultLabel_id,
+                            success
+                        )
 
-                    // when column changed
-                    if (propertyValue != null) {
-                        //#region when "descriptions" column
-                        if (propertyValue == "descriptions") {
-                            //#region when "TR" description changed
-                            if (newColumnValue["TR"] != undefined)
-                                oldColumnValues[propertyValue]["TR"] = newColumnValue["TR"]
-                            //#endregion
-
-                            //#region when "EN" description changed
-                            if (newColumnValue["EN"] != undefined)
-                                oldColumnValues[propertyValue]["EN"] = newColumnValue["EN"]
-                            //#endregion
-                        }
-                        //#endregion
-
-                        //#region for other columns
-                        else {
-                            //#region when property name matched a column
-                            let columnName = propertyNamesAndColumnNamesGuide[propertyName];
-
-                            if (columnName != undefined)
-                                oldColumnValues[columnName] = propertyValue;
-                            //#endregion
-                        }
-                        //#endregion
-                    }
-                }
-                //#endregion
-
-                //#region save updated "oldColumnValues" to session
-                sessionStorage.setItem(
-                    rowId,
-                    JSON.stringify(oldColumnValues));
-                //#endregion
-
-                spn_eventManager.trigger("click_cancelButton", [$("#" + rowId)]);
+                    });
             },
             error: (response) => {
                 //#region write error to error row
@@ -879,12 +824,12 @@ $(function () {
     }
 
     async function populateHtmlAsync() {
-        //#region add table title
+        //#region add panel title
         $(".panel-heading").append(
             tableTitleByLanguages[language]);
         //#endregion
 
-        //#region add table menubars
+        //#region add panel menubars
         let tableMenubarOptions = tableMenubar_optionsByLanguages[language];
 
         for (let index = 0; index < tableMenubarOptions.length; index += 1) {

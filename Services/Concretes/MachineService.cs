@@ -5,6 +5,7 @@ using Entities.Exceptions;
 using Entities.QueryParameters;
 using Entities.ViewModels;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Repositories;
 using Repositories.Contracts;
 using Services.Contracts;
@@ -96,7 +97,7 @@ namespace Services.Concretes
 				machineParams.ImageFolderPathAfterWwwroot,
 				machineDto.ImageName,
 				machineDto.ImageContentInBase64Str,
-				FileTypes.MachineImage);
+				FileTypes.Image);
 			#endregion
 
 			#region machine video 
@@ -105,7 +106,7 @@ namespace Services.Concretes
 				machineParams.VideoFolderPathAfterWwwroot,
 				machineDto.VideoName,
 				machineDto.VideoContentInBase64Str,
-				FileTypes.MachineVideo);
+				FileTypes.Video);
 			#endregion,
 
 			#region pdf
@@ -114,7 +115,7 @@ namespace Services.Concretes
 				machineParams.PdfFolderPathAfterWwwroot,
 				machineDto.PdfName,
 				machineDto.PdfContentInBase64Str,
-				FileTypes.PDF);
+				FileTypes.Pdf);
 			#endregion
 
 			#endregion
@@ -451,14 +452,33 @@ namespace Services.Concretes
 					machineDto.ImageFolderPathAfterWwwroot,
 					new List<string> { machineDto.OldImageName },
 					"ImageName",
-					FileTypes.MachineImage);
+					FileTypes.Image);
 
 				await _fileService.UploadFileToFolderAsync(
 					machineParams.Language,
 					machineDto.ImageFolderPathAfterWwwroot,
 					machineDto.ImageName,
 					machineDto.ImageContentInBase64Str,
-					FileTypes.MachineImage);
+					FileTypes.Image);
+			}
+			#endregion
+
+			#region delete old and upload new video to folder
+			if (machineDto.PdfName != null)
+			{
+				await DeleteFilesFromFolderForMachineAsync(
+					machineParams.Language,
+					machineDto.VideoFolderPathAfterWwwroot,
+					new List<string> { machineDto.OldVideoName},
+					"VideoName",
+					FileTypes.Video);
+
+				await _fileService.UploadFileToFolderAsync(
+					machineParams.Language,
+					machineDto.VideoFolderPathAfterWwwroot,
+					machineDto.VideoName,
+					machineDto.VideoContentInBase64Str,
+					FileTypes.Video);
 			}
 			#endregion
 
@@ -470,16 +490,15 @@ namespace Services.Concretes
 					machineDto.PdfFolderPathAfterWwwroot,
 					new List<string> { machineDto.OldPdfName },
 					"PdfName",
-					FileTypes.PDF);
+					FileTypes.Pdf);
 
 				await _fileService.UploadFileToFolderAsync(
 					machineParams.Language,
 					machineDto.PdfFolderPathAfterWwwroot,
 					machineDto.PdfName,
 					machineDto.PdfContentInBase64Str,
-					FileTypes.PDF);
+					FileTypes.Pdf);
 			}
-
 			#endregion
 		}
 
@@ -523,7 +542,7 @@ namespace Services.Concretes
 				machineParams.ImageFolderPathAfterWwwroot,
 				machineDtos.Select(m => m.ImageName),
 				"ImageName",
-				FileTypes.MachineImage);
+				FileTypes.Image);
 			#endregion
 
 			#region delete PDFs on folder
@@ -532,7 +551,7 @@ namespace Services.Concretes
 				machineParams.PdfFolderPathAfterWwwroot,
 				machineDtos.Select(m => m.PdfName),
 				"PdfName",
-				FileTypes.PDF);
+				FileTypes.Pdf);
 			#endregion
 		}
 	}

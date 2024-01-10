@@ -46,6 +46,7 @@ export function uploadDescriptionsEvents() {
         //#endregion
     })
     $("#" + ul_descriptions_id).click(async (event) => {
+        event.preventDefault();
         descriptions.language = event.target.innerText;
 
         //#region change descriptions <button> color as "unsaved_color"

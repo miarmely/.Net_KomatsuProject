@@ -2,10 +2,10 @@
 {
 	public enum FileTypes
 	{
-		MachineImage,
-		PDF,
+		Image,
+		Pdf,
 		Slider,
-		MachineVideo
+		Video
 	}	
 
 	public enum FormTypes

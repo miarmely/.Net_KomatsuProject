@@ -59,7 +59,7 @@ namespace Services.Concretes
 				catch (Exception ex)
 				{
 					#region when other errors occured for "image" file (throw)
-					if (fileType == FileTypes.MachineImage)
+					if (fileType == FileTypes.Image)
 						throw new ErrorWithCodeException(
 							ErrorDetailsConfig.ToErrorDto(
 								language,
@@ -67,7 +67,7 @@ namespace Services.Concretes
 					#endregion
 
 					#region when other errors occured for "video" file (throw)
-					if (fileType == FileTypes.MachineVideo)
+					if (fileType == FileTypes.Video)
 						throw new ErrorWithCodeException(
 							ErrorDetailsConfig.ToErrorDto(
 								language,
@@ -75,7 +75,7 @@ namespace Services.Concretes
 					#endregion
 
 					#region when other errors occured for "pdf" file (throw)
-					if (fileType == FileTypes.PDF)
+					if (fileType == FileTypes.Pdf)
 						throw new ErrorWithCodeException(
 							ErrorDetailsConfig.ToErrorDto(
 								language,
@@ -175,16 +175,24 @@ namespace Services.Concretes
 			}
 			catch (Exception ex)
 			{
-				#region when any error occured for machine "image" file (throw)
-				if (fileType == FileTypes.MachineImage)
+				#region when any error occured for "image" file (throw)
+				if (fileType == FileTypes.Image)
 					throw new ErrorWithCodeException(
 						ErrorDetailsConfig.ToErrorDto(
 							language,
 							_configs.ErrorDetails.FiE_D_I));
 				#endregion
 
+				#region when any error occured for "video" file (throw)
+				if (fileType == FileTypes.Image)
+					throw new ErrorWithCodeException(
+						ErrorDetailsConfig.ToErrorDto(
+							language,
+							_configs.ErrorDetails.FiE_D_V));
+				#endregion
+
 				#region when any error occured for "pdf" file (throw)
-				else if (fileType == FileTypes.PDF)
+				else if (fileType == FileTypes.Pdf)
 					throw new ErrorWithCodeException(
 						ErrorDetailsConfig.ToErrorDto(
 							language,

@@ -638,6 +638,23 @@ export async function isAllObjectValuesNullAsync(object) {
     return false;
 }
 
+export async function autoObjectMapperAsync(targetObject, sourceObject, checkNull=false) {
+    //#region update target object values with source object values
+    for (let sourceKey in sourceObject) {
+        //#region when source key exists in target object
+        if (targetObject[sourceKey] != undefined) {
+            //#region when source object value is null (check null)
+            if (checkNull && sourceObject[sourceKey] == null)
+                continue;
+            //#endregion
+
+            targetObject[sourceKey] = sourceObject[sourceKey];
+        }            
+        //#endregion
+    }
+    //#endregion
+}
+
 async function addEntitiesToTableAsync(
     response,
     language,
