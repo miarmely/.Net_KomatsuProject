@@ -119,8 +119,6 @@ function uploadEvents() {
     let inpt_pdf = $("#" + inpt_pdf_id);
     //#endregion
 
-    uploadDescriptionsEvents();
-
     inpt_chooseImage.click(() => {
         inpt_image.trigger("click");
     })
@@ -250,10 +248,6 @@ function uploadEvents() {
         inpt_choosePdf.val(selectedPdfInfos.name);
         //#endregion
     })
-    $("#" + txt_descriptions_id).on("input", async () => {
-        await change_descriptionsTextareaAsync(
-            $("#" + btn_descriptions_id));
-    })
     $("input").click((event) => {
         //#region reset help label of clicked <input>
         let clickedInputId = event.target.id;
@@ -265,6 +259,8 @@ function uploadEvents() {
         // restart video
         vid_machine.load();
     });
+
+    uploadDescriptionsEvents();
 }
 //#endregion
 

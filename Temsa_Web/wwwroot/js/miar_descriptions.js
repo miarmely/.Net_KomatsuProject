@@ -1,7 +1,11 @@
-﻿//#region variables
+﻿import { resultLabel_id } from "./miar_machine_inputForm.js";
+import { updateResultLabel } from "./miar_tools.js";
+
+
+//#region variables
 export let descriptions = {
     "currentColor": null,
-    "language": null,
+    "language": language,  // set page language as default
     "byLanguages": {},
     "isChanged": false
 }
@@ -23,6 +27,12 @@ export function uploadDescriptionsEvents() {
     //#endregion
 
     btn_descriptions.click(async () => {
+        //#region change description button color to "saved color"
+        await changeDescriptionsButtonColorAsync(
+            btn_descriptions,
+            descriptions_savedColor);
+        //#endregion
+
         //#region save new description
 
         //#region when description not changed
@@ -30,6 +40,7 @@ export function uploadDescriptionsEvents() {
 
         if (newDescription == descriptions.byLanguages[descriptions.language])
             return;
+            
         //#endregion
 
         //#region when changed
@@ -37,12 +48,6 @@ export function uploadDescriptionsEvents() {
         descriptions.isChanged = true;
         //#endregion
 
-        //#endregion
-
-        //#region change description button color to "saved color"
-        await changeDescriptionsButtonColorAsync(
-            btn_descriptions,
-            descriptions_savedColor);
         //#endregion
     })
     $("#" + ul_descriptions_id).click(async (event) => {
@@ -69,11 +74,29 @@ export function uploadDescriptionsEvents() {
                 descriptions.byLanguages[descriptions.language]);
         //#endregion
     })
+    $("#" + txt_descriptions_id).on("input", async () => {
+        //#region initialize descriptions current color if not initialized
+        if (descriptions["currentColor"] == null)
+            descriptions["currentColor"] = descriptions_unsavedColor;
+        //#endregion
+
+        //#region change descriptions <button> color as "unsaved color"
+        if (descriptions["currentColor"] == descriptions_savedColor)
+            await changeDescriptionsButtonColorAsync(
+                btn_descriptions,
+                descriptions_unsavedColor);
+        //#endregion
+    })
 }
 //#endregion
 
 //#region functions
-
+export function resetDescriptionsBuffer() {
+    descriptions.currentColor = null;
+    descriptions.language = null;
+    descriptions.byLanguages = {};
+    descriptions.isChanged = false;
+}
 
 export async function setVariablesForDescriptionsAsync(bufferName, variables) {
     //#region set variables as dynamic
@@ -94,22 +117,8 @@ export async function getDescriptionKeyForSessionAsync(descriptionBaseKeyForSess
     return descriptionBaseKeyForSession + '-' + descriptions.language;
 }
 
-export async function change_descriptionsTextareaAsync(descriptionsButton) {
-    //#region initialize descriptions current color if not initialized
-    if (descriptions["currentColor"] == null)
-        descriptions["currentColor"] = descriptions_unsavedColor;
-    //#endregion
-
-    //#region change descriptions <button> color as "unsaved color"
-    if (descriptions["currentColor"] == descriptions_savedColor)
-        await changeDescriptionsButtonColorAsync(
-            descriptionsButton,
-            descriptions_unsavedColor);
-    //#endregion
-}
-
-export async function changeDescriptionsButtonColorAsync(descriptionsButton, color) {
-    descriptionsButton.css("color", color);
-    descriptions["currentColor"] = color;
+export async function changeDescriptionsButtonColorAsync(btn_descriptions, color) {
+    btn_descriptions.css("color", color);
+    descriptions.currentColor = color;
 }
 //#endregion

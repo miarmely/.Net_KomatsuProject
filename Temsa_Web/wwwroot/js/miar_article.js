@@ -1,9 +1,7 @@
 ﻿//#region variables
 export let buffers = {
-    "articleInfos": {},
     "div_articles": "",
     "path_articleVideos": "",
-    "articleCount": 0,
 }
 export const style_article = {
     "width": 350,
@@ -77,8 +75,7 @@ export async function click_playImageAsync(article) {
     hidePlayImage(article);
 
     //#region load article video
-    let videoName = buffers
-        .articleInfos[article.attr("id")]["videoName"];
+    let videoName = article_idsAndMachineInfos[article.attr("id")]["videoName"];
 
     article
         .find("video")
@@ -250,9 +247,7 @@ export async function removeLastUploadedArticleVideoAsync() {
 
 export async function addArticlesAsync(articleType) {  // articleType: "imageAndText", "videoAndText", "text"
     //#region add articles
-    buffers.articleCount = buffers.articleCount;
-
-    for (let index = 0; index < buffers.articleCount; index++) {
+    for (let index = 0; index < article_totalCount; index++) {
         //#region add articles by article type
         let articleId = art_baseId + index;
         let article;
@@ -409,9 +404,9 @@ export async function alignArticlesToCenterAsync() {
 
     //#region set height of articles <div>
     let netArticleHeight = style_article.height + style_article.marginT + style_article.marginB;
-    let totalRowCount = buffers.articleCount % articleCountOnOneRow == 0 ?
-        Math.floor(buffers.articleCount / articleCountOnOneRow)  // when article count of all rows is equal
-        : Math.floor(buffers.articleCount / articleCountOnOneRow) + 1  // when article count of last row is different
+    let totalRowCount = article_totalCount % articleCountOnOneRow == 0 ?
+        Math.floor(article_totalCount / articleCountOnOneRow)  // when article count of all rows is equal
+        : Math.floor(article_totalCount / articleCountOnOneRow) + 1  // when article count of last row is different
 
     buffers.div_articles.css(
         "height",

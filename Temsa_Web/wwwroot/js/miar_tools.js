@@ -269,15 +269,15 @@ export function updateResultLabel(
     message,
     color,
     marginT = "0px",
-    loadingImage = null) {
+    img_loading = null) {
     //#region resets
     // reset result label
     let resultLabel = $(resultLabelId);
     resultLabel.empty();
 
     // hide loading gif
-    if (loadingImage != null)
-        loadingImage.attr("hidden", "");
+    if (img_loading != null)
+        img_loading.attr("hidden", "");
     //#endregion
 
     //#region change style
@@ -316,6 +316,11 @@ export function updateErrorRow(
     td_error.empty();
     td_error.append(message);
     //#endregion
+}
+
+export function updateElementText(element, text) {
+    element.empty();
+    element.text(text);
 }
 
 export async function resetErrorRowAsync(rowId) {
@@ -638,13 +643,13 @@ export async function isAllObjectValuesNullAsync(object) {
     return false;
 }
 
-export async function autoObjectMapperAsync(targetObject, sourceObject, checkNull=false) {
+export async function autoObjectMapperAsync(targetObject, sourceObject, dontAddNullValues=false) {
     //#region update target object values with source object values
     for (let sourceKey in sourceObject) {
         //#region when source key exists in target object
         if (targetObject[sourceKey] != undefined) {
             //#region when source object value is null (check null)
-            if (checkNull && sourceObject[sourceKey] == null)
+            if (dontAddNullValues && sourceObject[sourceKey] == null)
                 continue;
             //#endregion
 

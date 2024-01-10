@@ -1,6 +1,7 @@
 ﻿import {
     updateResultLabel, updateErrorRow, addPaginationButtonsAsync,
     controlPaginationBackAndNextButtonsAsync, isAllObjectValuesNullAsync, autoObjectMapperAsync,
+    getFileTypeFromFileName, updateElementText, getBase64StrOfFileAsync,
 
 } from "./miar_tools.js";
 
@@ -16,11 +17,10 @@ import {
     inpt_choosePdf_id, inpt_chooseVideo_id, inpt_model_id, inpt_rented_id, inpt_sold_id,
     inpt_stock_id, inpt_year_id, populateFormAsync, setMachineVideoSizeAsync, slct_mainCategory_id,
     slct_subCategory_id, path_imageFolderAfterWwwroot, path_videoFolderAfterWwwRoot,
-    selectedImageInfos, selectedPdfInfos, resultLabel_id
+    selectedImageInfos, selectedPdfInfos, resultLabel_id, img_loading, selectedVideoInfos, path_pdfFolderAfterWwwroot
 } from "./miar_machine_inputForm.js";
 
-import { descriptions, setVariablesForDescriptionsAsync} from "./miar_descriptions.js";
-
+import { descriptions, setVariablesForDescriptionsAsync } from "./miar_descriptions.js";
 
 $(function () {
     //#region variables
@@ -40,6 +40,7 @@ $(function () {
     const div_articles_panel = $("#div_articles_panel");
     const div_articles = $("#div_articles");
     const div_article_update = $("#div_article_update");
+    const descriptions_charQuantityToBeDisplayOnArticle = 200;
     let paginationInfos = {};
     let machineCountOnPage;
     let idOfLastViewedArticle = null;
@@ -83,7 +84,7 @@ $(function () {
             "year": $("#" + inpt_year_id).val(),
             "descriptions": descriptions.isChanged ? descriptions.byLanguages : null,
         };
-        let oldMachineInfos = articleIdsAndMachineInfos[idOfLastViewedArticle];
+        let oldMachineInfos = article_idsAndMachineInfos[idOfLastViewedArticle];
         let data = {
             "imageName": newMachineInfos.imageName == oldMachineInfos.imageName ? null : newMachineInfos.imageName,
             "videoName": newMachineInfos.videoName == oldMachineInfos.videoName ? null : newMachineInfos.videoName,
@@ -98,38 +99,38 @@ $(function () {
             "sold": newMachineInfos.sold == oldMachineInfos.sold ? null : newMachineInfos.sold,
             "year": newMachineInfos.year == oldMachineInfos.year ? null : newMachineInfos.year,
             "descriptions": newMachineInfos.descriptions,
-            "imageContentInBase64Str":null,
-            "videoContentInBase64Str":null,
-            "pdfContentInBase64Str":null,
-            "imageFolderPathAfterWwwroot":null,
-            "videoFolderPathAfterWwwroot":null,
-            "pdfFolderPathAfterWwwroot":null,
-            "oldImageName":null,
+            "imageContentInBase64Str": null,
+            "videoContentInBase64Str": null,
+            "pdfContentInBase64Str": null,
+            "imageFolderPathAfterWwwroot": null,
+            "videoFolderPathAfterWwwroot": null,
+            "pdfFolderPathAfterWwwroot": null,
+            "oldImageName": null,
             "oldVideoName": null,
             "oldPdfName": null
         }
 
         //#region add image infos if changed
         if (newMachineInfos.imageName != oldMachineInfos.imageName) {
-            data["imageContentInBase64Str"] = newMachineInfos.imageContentInBase64Str;
-            data["imageFolderPathAfterWwwroot"] = newMachineInfos.imageFolderPathAfterWwwroot;
-            data["oldImageName"] = newMachineInfos.oldImageName;
+            data["imageContentInBase64Str"] = await getBase64StrOfFileAsync(selectedImageInfos);
+            data["imageFolderPathAfterWwwroot"] = path_imageFolderAfterWwwroot;
+            data["oldImageName"] = oldMachineInfos.imageName;
         }
         //#endregion
 
         //#region add video infos if changed
         if (newMachineInfos.videoName != oldMachineInfos.videoName) {
-            data["videoContentInBase64Str"] = newMachineInfos.videoContentInBase64Str;
-            data["videoFolderPathAfterWwwroot"] = newMachineInfos.videoFolderPathAfterWwwroot;
-            data["oldVideoName"] = newMachineInfos.oldVideoName;
+            data["videoContentInBase64Str"] = await getBase64StrOfFileAsync(selectedVideoInfos);
+            data["videoFolderPathAfterWwwroot"] = path_videoFolderAfterWwwRoot
+            data["oldVideoName"] = oldMachineInfos.videoName
         }
         //#endregion
 
         //#region add pdf infos if changed
         if (newMachineInfos.pdfName != oldMachineInfos.pdfName) {
-            data["pdfContentInBase64Str"] = newMachineInfos.pdfContentInBase64Str;
-            data["pdfFolderPathAfterWwwroot"] = newMachineInfos.pdfFolderPathAfterWwwroot;
-            data["oldPdfName"] = newMachineInfos.oldPdfName;
+            data["pdfContentInBase64Str"] = await getBase64StrOfFileAsync(selectedPdfInfos);
+            data["pdfFolderPathAfterWwwroot"] = path_pdfFolderAfterWwwroot
+            data["oldPdfName"] = oldMachineInfos.pdfName
         }
         //#endregion
 
@@ -138,10 +139,11 @@ $(function () {
         //#region when any changes wasn't do (error)
         if (await isAllObjectValuesNullAsync(data)) {
             // write error
-            updateErrorRow(
+            updateResultLabel(
                 resultLabel_id,
                 partnerErrorMessagesByLanguages[language]["nullArguments"],
-                resultLabel_errorColor);
+                resultLabel_errorColor,
+                "30px");
 
             return;
         }
@@ -150,9 +152,9 @@ $(function () {
         //#region set url
         let url = baseApiUrl + "/machine/update?" +
             `language=${language}` +
-            `&id=${machineId}` +
-            `&oldMainCategoryName=${oldColumnValues.mainCategory}` +
-            `&oldSubCategoryName=${oldColumnValues.subCategory}`
+            `&id=${oldMachineInfos.id}` +
+            `&oldMainCategoryName=${oldMachineInfos.mainCategoryName}` +
+            `&oldSubCategoryName=${oldMachineInfos.subCategoryName}`
         //#endregion
 
         await updateMachineAsync(url, data);
@@ -523,7 +525,7 @@ $(function () {
 
         //#region get machine infos of clicked article
         idOfLastViewedArticle = event.currentTarget.closest("article").id;
-        let machineInfosOfArticle = articleIdsAndMachineInfos[idOfLastViewedArticle];
+        let machineInfosOfArticle = article_idsAndMachineInfos[idOfLastViewedArticle];
         //#endregion
 
         await setVariablesForDescriptionsAsync("descriptions", {
@@ -549,21 +551,33 @@ $(function () {
             contentType: "application/json",
             dataType: "json",
             success: () => {
-                autoObjectMapperAsync(newMachineInfos, data, true)
-                    .then(() => {
+                updateArticleAsync(
+                    idOfLastViewedArticle,
+                    data)
+                    .then(async () => {
+                        // update "article_idsAndMachineInfos"
+                        await autoObjectMapperAsync(
+                            article_idsAndMachineInfos[idOfLastViewedArticle],
+                            data,
+                            true);
+
+                        // write successful message
                         updateResultLabel(
                             resultLabel_id,
-                            success
-                        )
-
-                    });
+                            successMessagesByLanguages[language]["successfulUpdate"],
+                            resultLabel_successColor,
+                            "30px",
+                            img_loading);
+                    })
             },
             error: (response) => {
                 //#region write error to error row
-                updateErrorRow(
-                    `#${rowId}_error`,
+                updateResultLabel(
+                    resultLabel_id,
                     JSON.parse(response.responseText).errorMessage,
-                    errorMessageColor);
+                    resultLabel_errorColor,
+                    "30px",
+                    img_loading);
                 //#endregion
             }
         })
@@ -691,18 +705,14 @@ $(function () {
 
     async function populateArticlesAsync(response) {
         //#region add machines to <article>
-        let articleInfos = {};
         for (let index in response) {
             //#region add machines
 
-            //#region save machine infos
+            //#region save article infos
             let machineInfos = response[index];
             let articleId = art_baseId + index;
 
-            articleIdsAndMachineInfos[articleId] = machineInfos;
-            articleInfos[articleId] = {
-                "videoName": machineInfos["videoName"]
-            };
+            article_idsAndMachineInfos[articleId] = machineInfos;
             //#endregion
 
             //#region add machine video poster
@@ -722,7 +732,7 @@ $(function () {
                     <h2 style="margin-bottom: 5px">${machineInfos.model}</h2>
                     <h3 style="margin-bottom: 3px">${machineInfos.mainCategoryName}</h3>
                     <h4 style="margin-bottom: 20px">${machineInfos.subCategoryName}</h4>
-                    <h5>${machineInfos.descriptions[language].substring(0, 200)}...</h5>
+                    <h5>${machineInfos.descriptions[language].substring(0, descriptions_charQuantityToBeDisplayOnArticle)}...</h5>
                 </div>
             `);
             //#endregion
@@ -753,10 +763,6 @@ $(function () {
             spn_eventManager.trigger("click_articleInfoDiv", [event]);
         })
         //#endregion
-
-        setVariablesForArticle({
-            "articleInfos": articleInfos
-        });
     }
 
     async function addMachineArticlesAsync(pageNumber, pageSize, refreshPaginationButtons) {
@@ -774,11 +780,14 @@ $(function () {
                 div_articles.empty();
             },
             success: (response, status, xhr) => {
+                //#region set variables
+                article_totalCount = response.length;
+
                 setVariablesForArticle({
                     "div_articles": div_articles,
                     "path_articleVideos": path_videoFolderAfterWwwRoot,
-                    "articleCount": response.length
                 });
+                //#endregion
 
                 addArticlesAsync("videoAndText", div_articles, response.length)
                     .then(async () => {
@@ -821,6 +830,61 @@ $(function () {
                 //#endregion
             },
         });
+    }
+
+    async function updateArticleAsync(
+        articleId,
+        data
+    ) {
+        let article = $("#" + articleId);
+
+        //#region when image is changed
+        if (data.imageName != null)
+            article
+                .find("#" + div_article_video_id + " video")
+                .attr("poster", "/" + path_imageFolderAfterWwwroot + "/" + data.imageName);
+        //#endregion
+
+        //#region when video is changed
+        if (data.videoName != null) {
+            article
+                .find("#" + div_article_video_id + " source")
+                .attr({
+                    "src": "/" + path_videoFolderAfterWwwRoot + "/" + data.videoName,
+                    "type": "video/" + getFileTypeFromFileName(data.videoName)
+                })
+
+            article.find("video").load()
+        }
+        //#endregion
+
+        //#region when model is changed
+        if (data.model != null)
+            updateElementText(
+                article.find("#" + div_article_info_id + " h2"),
+                data.model);
+        //#endregion
+
+        //#region when mainCategoryName is changed
+        if (data.mainCategoryName != null)
+            updateElementText(
+                article.find("#" + div_article_info_id + " h3"),
+                data.mainCategoryName);
+        //#endregion
+
+        //#region when subCategoryName is changed
+        if (data.subCategoryName != null)
+            updateElementText(
+                article.find("#" + div_article_info_id + " h4"),
+                data.subCategoryName);
+        //#endregion
+
+        //#region when descriptions is changed
+        if (data.descriptions != null)
+            updateElementText(
+                article.find("#" + div_article_info_id + " h5"),
+                data.descriptions[language].substring(0, descriptions_charQuantityToBeDisplayOnArticle));
+        //#endregion
     }
 
     async function populateHtmlAsync() {

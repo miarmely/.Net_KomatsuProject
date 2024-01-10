@@ -29,28 +29,19 @@ namespace Entities.DtoModels.MachineDtos
 		[MiarLength(1, 50, "PDF Adı", "PDF Name")]
 		public string? PdfName { get; init; }
 
-		[MiarRange(1, 5000, "Stok", "Stock")]
+		[MiarRange(0, 5000, "Stok", "Stock")]
 		public int? Stock { get; init; }
 
-		[MiarRange(1, 5000, "Kiralık", "Rented")]
+		[MiarRange(0, 5000, "Kiralık", "Rented")]
 		public int? Rented { get; init; }
 
-		[MiarRange(1, 5000, "Satılık", "Sold")]
+		[MiarRange(0, 5000, "Satılık", "Sold")]
 		public int? Sold { get; init; }
 
 		[MiarRange(1900, 2099, "Yıl", "Year")]
 		public int? Year { get; init; }
 
         public DescriptionsByLanguages? Descriptions { get; init; }
-		public string? ImageContentInBase64Str { get; init; }
-		public string? VideoContentInBase64Str { get; init; }
-		public string? PdfContentInBase64Str { get; init; }
-		public string? ImageFolderPathAfterWwwroot { get; init; }
-		public string? VideoFolderPathAfterWwwroot { get; init; }
-		public string? PdfFolderPathAfterWwwroot { get; init; }
-		public string? OldImageName { get; init; }
-		public string? OldVideoName { get; init; }
-		public string? OldPdfName { get; init; }
 	}
 
 	public record DescriptionsByLanguages
