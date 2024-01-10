@@ -1,4 +1,5 @@
 ﻿using Entities.DtoModels.MachineDtos;
+using Entities.Enums;
 using Entities.QueryParameters;
 using Entities.ViewModels;
 using Microsoft.AspNetCore.Http;
@@ -42,5 +43,11 @@ namespace Services.Contracts
 		Task DeleteMachineAsync(
 			MachineParamsForDelete machineParams,
 			IEnumerable<MachineDtoForDelete> machineDtos);
+
+		Task UpdateMachineFileOnFolderAsync(
+			MachineParamsForUpdateFile machineParams,
+			MachineDtoForUploadFile machineDto,
+			string columnNameInDb,
+			FileTypes fileType);
 	}
 }

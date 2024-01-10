@@ -1,4 +1,5 @@
 ﻿using Entities.DtoModels.MachineDtos;
+using Entities.Enums;
 using Entities.QueryParameters;
 using Microsoft.AspNetCore.Mvc;
 using Presantation.Attributes;
@@ -37,8 +38,8 @@ namespace Presantation.Controllers
 		{
 			var machines = await _manager.MachineService
 				.GetAllMachinesAsync(
-					languageParam.Language, 
-					pagingParameters, 
+					languageParam.Language,
+					pagingParameters,
 					Response);
 
 			return Ok(machines);
@@ -142,7 +143,52 @@ namespace Presantation.Controllers
 		{
 			await _manager.MachineService.DeleteMachineAsync(
 				machineParams,
-				machineDtos);	
+				machineDtos);
+
+			return NoContent();
+		}
+
+		[HttpPut("update/image")]
+		[Authorization("Admin,Editor,Yönetici,Editör")]
+		public async Task<IActionResult> UpdateMachineImage(
+			[FromQuery] MachineParamsForUpdateFile machineParams,
+			[FromBody] MachineDtoForUploadFile machineDto)
+		{
+			await _manager.MachineService.UpdateMachineFileOnFolderAsync(
+				machineParams,
+				machineDto,
+				"imageName",
+				FileTypes.Image);
+
+			return NoContent();
+		}
+
+		[HttpPut("update/video")]
+		[Authorization("Admin,Editor,Yönetici,Editör")]
+		public async Task<IActionResult> UpdateMachineVideo(
+			[FromQuery] MachineParamsForUpdateFile machineParams,
+			[FromBody] MachineDtoForUploadFile machineDto)
+		{
+			await _manager.MachineService.UpdateMachineFileOnFolderAsync(
+				machineParams,
+				machineDto,
+				"VideoName",
+				FileTypes.Video);
+
+			return NoContent();
+		}
+
+		[HttpPut("update/pdf")]
+		[Authorization("Admin,Editor,Yönetici,Editör")]
+		public async Task<IActionResult> UpdateMachinePdf(
+			[FromQuery] MachineParamsForUpdateFile machineParams,
+			[FromBody] MachineDtoForUploadFile machineDto)
+		{
+			await _manager.MachineService.UpdateMachineFileOnFolderAsync(
+				machineParams,
+				machineDto,
+				"PdfName",
+				FileTypes.Pdf);
 
 			return NoContent();
 		}

@@ -4,6 +4,7 @@ using Entities.Enums;
 using Entities.Exceptions;
 using Entities.QueryParameters;
 using Entities.ViewModels;
+using Microsoft.AspNetCore.Authentication.OAuth.Claims;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Repositories;
@@ -443,63 +444,6 @@ namespace Services.Concretes
 			#endregion
 
 			#endregion
-
-			#region delete old and upload new image to folder
-			if (machineDto.ImageName != null)
-			{
-				await DeleteFilesFromFolderForMachineAsync(
-					machineParams.Language,
-					machineDto.ImageFolderPathAfterWwwroot,
-					new List<string> { machineDto.OldImageName },
-					"ImageName",
-					FileTypes.Image);
-
-				await _fileService.UploadFileToFolderAsync(
-					machineParams.Language,
-					machineDto.ImageFolderPathAfterWwwroot,
-					machineDto.ImageName,
-					machineDto.ImageContentInBase64Str,
-					FileTypes.Image);
-			}
-			#endregion
-
-			#region delete old and upload new video to folder
-			if (machineDto.PdfName != null)
-			{
-				await DeleteFilesFromFolderForMachineAsync(
-					machineParams.Language,
-					machineDto.VideoFolderPathAfterWwwroot,
-					new List<string> { machineDto.OldVideoName},
-					"VideoName",
-					FileTypes.Video);
-
-				await _fileService.UploadFileToFolderAsync(
-					machineParams.Language,
-					machineDto.VideoFolderPathAfterWwwroot,
-					machineDto.VideoName,
-					machineDto.VideoContentInBase64Str,
-					FileTypes.Video);
-			}
-			#endregion
-
-			#region delete old and upload new pdf to folder
-			if (machineDto.PdfName != null)
-			{
-				await DeleteFilesFromFolderForMachineAsync(
-					machineParams.Language,
-					machineDto.PdfFolderPathAfterWwwroot,
-					new List<string> { machineDto.OldPdfName },
-					"PdfName",
-					FileTypes.Pdf);
-
-				await _fileService.UploadFileToFolderAsync(
-					machineParams.Language,
-					machineDto.PdfFolderPathAfterWwwroot,
-					machineDto.PdfName,
-					machineDto.PdfContentInBase64Str,
-					FileTypes.Pdf);
-			}
-			#endregion
 		}
 
 		public async Task DeleteMachineAsync(
@@ -553,6 +497,27 @@ namespace Services.Concretes
 				"PdfName",
 				FileTypes.Pdf);
 			#endregion
+		}
+
+		public async Task UpdateMachineFileOnFolderAsync(
+			MachineParamsForUpdateFile machineParams,
+			MachineDtoForUploadFile machineDto,
+			string columnNameInDb,
+			FileTypes fileType)
+		{
+			await DeleteFilesFromFolderForMachineAsync(
+				machineParams.Language,
+				machineParams.FileFolderPathAfterWwwroot,
+				new List<string> { machineParams.OldFileName },
+				columnNameInDb,
+				fileType);
+
+			await _fileService.UploadFileToFolderAsync(
+				machineParams.Language,
+				machineParams.FileFolderPathAfterWwwroot,
+				machineParams.NewFileName,
+				machineDto.FileContentInBase64Str,
+				fileType);
 		}
 	}
 }

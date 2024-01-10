@@ -68,7 +68,8 @@ $(function () {
     $("form").submit(async (event) => {
         event.preventDefault();
 
-        //#region set data
+        //#region set data for update machine
+        let oldMachineInfos = article_idsAndMachineInfos[idOfLastViewedArticle];
         let newMachineInfos = {
             "imageName": $("#" + inpt_chooseImage_id).val(),
             "videoName": $("#" + inpt_chooseVideo_id).val(),
@@ -84,7 +85,8 @@ $(function () {
             "year": $("#" + inpt_year_id).val(),
             "descriptions": descriptions.isChanged ? descriptions.byLanguages : null,
         };
-        let oldMachineInfos = article_idsAndMachineInfos[idOfLastViewedArticle];
+        //#endregion
+
         let data = {
             "imageName": newMachineInfos.imageName == oldMachineInfos.imageName ? null : newMachineInfos.imageName,
             "videoName": newMachineInfos.videoName == oldMachineInfos.videoName ? null : newMachineInfos.videoName,
@@ -98,45 +100,10 @@ $(function () {
             "rented": newMachineInfos.rented == oldMachineInfos.rented ? null : newMachineInfos.rented,
             "sold": newMachineInfos.sold == oldMachineInfos.sold ? null : newMachineInfos.sold,
             "year": newMachineInfos.year == oldMachineInfos.year ? null : newMachineInfos.year,
-            "descriptions": newMachineInfos.descriptions,
-            "imageContentInBase64Str": null,
-            "videoContentInBase64Str": null,
-            "pdfContentInBase64Str": null,
-            "imageFolderPathAfterWwwroot": null,
-            "videoFolderPathAfterWwwroot": null,
-            "pdfFolderPathAfterWwwroot": null,
-            "oldImageName": null,
-            "oldVideoName": null,
-            "oldPdfName": null
+            "descriptions": newMachineInfos.descriptions
         }
 
-        //#region add image infos if changed
-        if (newMachineInfos.imageName != oldMachineInfos.imageName) {
-            data["imageContentInBase64Str"] = await getBase64StrOfFileAsync(selectedImageInfos);
-            data["imageFolderPathAfterWwwroot"] = path_imageFolderAfterWwwroot;
-            data["oldImageName"] = oldMachineInfos.imageName;
-        }
-        //#endregion
-
-        //#region add video infos if changed
-        if (newMachineInfos.videoName != oldMachineInfos.videoName) {
-            data["videoContentInBase64Str"] = await getBase64StrOfFileAsync(selectedVideoInfos);
-            data["videoFolderPathAfterWwwroot"] = path_videoFolderAfterWwwRoot
-            data["oldVideoName"] = oldMachineInfos.videoName
-        }
-        //#endregion
-
-        //#region add pdf infos if changed
-        if (newMachineInfos.pdfName != oldMachineInfos.pdfName) {
-            data["pdfContentInBase64Str"] = await getBase64StrOfFileAsync(selectedPdfInfos);
-            data["pdfFolderPathAfterWwwroot"] = path_pdfFolderAfterWwwroot
-            data["oldPdfName"] = oldMachineInfos.pdfName
-        }
-        //#endregion
-
-        //#endregion
-
-        //#region when any changes wasn't do (error)
+        //#region when any changes wasn't do (data)
         if (await isAllObjectValuesNullAsync(data)) {
             // write error
             updateResultLabel(
@@ -149,15 +116,38 @@ $(function () {
         }
         //#endregion
 
-        //#region set url
-        let url = baseApiUrl + "/machine/update?" +
-            `language=${language}` +
-            `&id=${oldMachineInfos.id}` +
-            `&oldMainCategoryName=${oldMachineInfos.mainCategoryName}` +
-            `&oldSubCategoryName=${oldMachineInfos.subCategoryName}`
+        //#region update machine
+        let isUpdatingSuccess = updateMachineInfos(data) ?
+            updateMachineImageOnFolder(oldMachineInfos, newMachineInfos) ?
+                updateMachineVideoOnFolder(oldMachineInfos, newMachineInfos) ?
+                    updateMachinePdfOnFolder(oldMachineInfos, newMachineInfos) ?
+                        true
+                        : false
+                    : false
+                : false
+            : false;
         //#endregion
 
-        await updateMachineAsync(url, data);
+        //#region when machine infos and files updated with successful
+        if (isUpdatingSuccess) {
+            await updateArticleAsync(idOfLastViewedArticle, newMachineInfos);
+
+            // update "article_idsAndMachineInfos"
+            await autoObjectMapperAsync(
+                article_idsAndMachineInfos[idOfLastViewedArticle],
+                data,
+                true);
+
+            // write successful message
+            updateResultLabel(
+                resultLabel_id,
+                successMessagesByLanguages[language]["successfulUpdate"],
+                resultLabel_successColor,
+                "30px",
+                img_loading);
+        }
+        //#endregion
+
     });
     spn_eventManager.on("click_saveButton", async () => {
         //#region set variables
@@ -541,46 +531,141 @@ $(function () {
 
     //#endregion
 
-    //#region functions
-    async function updateMachineAsync(url, data) {
-        $.ajax({
-            method: "PUT",
-            url: url,
-            headers: { "Authorization": jwtToken },
-            data: JSON.stringify(data),
-            contentType: "application/json",
-            dataType: "json",
-            success: () => {
-                updateArticleAsync(
-                    idOfLastViewedArticle,
-                    data)
-                    .then(async () => {
-                        // update "article_idsAndMachineInfos"
-                        await autoObjectMapperAsync(
-                            article_idsAndMachineInfos[idOfLastViewedArticle],
-                            data,
-                            true);
 
-                        // write successful message
-                        updateResultLabel(
-                            resultLabel_id,
-                            successMessagesByLanguages[language]["successfulUpdate"],
-                            resultLabel_successColor,
-                            "30px",
-                            img_loading);
-                    })
-            },
-            error: (response) => {
-                //#region write error to error row
-                updateResultLabel(
-                    resultLabel_id,
-                    JSON.parse(response.responseText).errorMessage,
-                    resultLabel_errorColor,
-                    "30px",
-                    img_loading);
-                //#endregion
-            }
-        })
+    async function updateMachineAsync(data) {
+        //#region get file contents in base64 string
+        let imageContentInBase64Str = data.imageName != null ?
+            await getBase64StrOfFileAsync(selectedImageInfos)
+            : null
+
+        let videoContentInBase64Str = data.videoName != null ?
+            await getBase64StrOfFileAsync(selectedVideoInfos)
+            : null
+
+        let pdfContentInBase64Str = data.pdfName != null ?
+            await getBase64StrOfFileAsync(selectedPdfInfos)
+            : null
+        //#endregion
+
+            $.ajax({
+                method: "PUT",
+                url: (baseApiUrl + "/machine/update?" +
+                    `language=${language}` +
+                    `&id=${oldMachineInfos.id}` +
+                    `&oldMainCategoryName=${oldMachineInfos.mainCategoryName}` +
+                    `&oldSubCategoryName=${oldMachineInfos.subCategoryName}`),
+                headers: { "Authorization": jwtToken },
+                data: JSON.stringify(data),
+                contentType: "application/json",
+                dataType: "json",
+                success: () => {
+
+                    $.ajax({
+                        type: "PUT",
+                        url: (baseApiUrl + "machine/update/image?" +
+                            `newImageName=${newMachineInfos.imageName}` +
+                            `&oldImageName=${oldMachineInfos.oldImageName}` +
+                            `&imageFolderPathAfterWwwroot=${path_imageFolderAfterWwwroot}`),
+                        data: JSON.stringify({
+                            "imageContentInBase64Str": 
+                        }),
+                        contentType: "application/json",
+                        dataType: "json",
+                        success: () => {
+
+                        },
+                        error: () => {
+                            //#region write error to error row
+                            updateResultLabel(
+                                resultLabel_id,
+                                errorMessagesByLanguages[language]["unsuccessfulImageUpdating"],
+                                resultLabel_errorColor,
+                                "30px",
+                                img_loading);
+                            //#endregion
+
+                            resolve(false);
+                        }
+                    }));
+                },
+                error: () => {
+                    //#region write error
+                    updateResultLabel(
+                        resultLabel_id,
+                        errorMessagesByLanguages[language]["unsuccessfulInfosUpdating"],
+                        resultLabel_errorColor,
+                        "30px",
+                        img_loading);
+                    //#endregion
+                }
+            }));
+    }
+
+    async function updateMachineImageOnFolder(oldMachineInfos, newMachineInfos) {
+        await new Promise(async resolve =>
+            
+    }
+
+    async function updateMachineVideoOnFolder(oldMachineInfos, newMachineInfos) {
+        await new Promise(async resolve =>
+            $.ajax({
+                type: "PUT",
+                url: (baseApiUrl + "machine/update/video?" +
+                    `newVideoName=${newMachineInfos.videoName}` +
+                    `&oldVideoName=${oldMachineInfos.oldVideoName}` +
+                    `&videoFolderPathAfterWwwroot=${path_videoFolderAfterWwwRoot}`),
+                data: JSON.stringify({
+                    "videoContentInBase64Str": await getBase64StrOfFileAsync(selectedVideoInfos)
+                }),
+                contentType: "application/json",
+                dataType: "json",
+                success: () => {
+                    resolve(true);
+                },
+                error: () => {
+                    //#region write error
+                    updateResultLabel(
+                        resultLabel_id,
+                        errorMessagesByLanguages[language]["unsuccessfulVideoUpdating"],
+                        resultLabel_errorColor,
+                        "30px",
+                        img_loading);
+                    //#endregion
+
+                    resolve(false);
+                }
+            }));
+    }
+
+    async function updateMachinePdfOnFolder(oldMachineInfos, newMachineInfos) {
+        await new Promise(async resolve =>
+            $.ajax({
+                type: "PUT",
+                url: (baseApiUrl + "machine/update/pdf?" +
+                    `newPdfName=${newMachineInfos.pdfName}` +
+                    `&oldPdfName=${oldMachineInfos.oldPdfName}` +
+                    `&pdfFolderPathAfterWwwroot=${path_pdfFolderAfterWwwroot}`),
+                data: JSON.stringify({
+                    "pdfContentInBase64Str": await getBase64StrOfFileAsync(selectedPdfInfos)
+                }),
+                contentType: "application/json",
+                dataType: "json",
+                success: () => {
+                    resolve(true);
+                },
+                error: () => {
+                    //#region write error
+                    updateResultLabel(
+                        resultLabel_id,
+                        errorMessagesByLanguages[language]["unsuccessfulPdfUpdating"],
+                        resultLabel_errorColor,
+                        "30px",
+                        img_loading);
+                    //#endregion
+
+                    resolve(false);
+                }
+            }));
     }
 
     async function removeDescriptionButtonOnColumnAsync() {

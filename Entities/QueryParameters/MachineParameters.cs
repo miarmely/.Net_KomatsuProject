@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Entities.Attributes;
+using System.ComponentModel.DataAnnotations;
 
 
 namespace Entities.QueryParameters
@@ -32,5 +33,18 @@ namespace Entities.QueryParameters
 	public record MachineParamsForDisplayOneMachine : LanguageParams
 	{
 		[Required] public Guid MachineId { get; init; }
+	}
+	
+	public record MachineParamsForUpdateFile : LanguageParams
+	{
+		[Required] [MiarLength(1, 50, "Dosya Adı", "File Name")]
+		public string NewFileName { get; init; }
+
+
+		[Required] [MiarLength(1, 50, "Dosya Adı", "File Name")]
+		public string OldFileName { get; init; }
+
+		[Required] 
+		public string FileFolderPathAfterWwwroot { get; init; }
 	}
 }
