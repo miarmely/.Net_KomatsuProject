@@ -1,8 +1,7 @@
 ﻿import {
     updateResultLabel, updateErrorRow, addPaginationButtonsAsync,
-    controlPaginationBackAndNextButtonsAsync, isAllObjectValuesNullAsync, autoObjectMapperAsync,
-    getFileTypeFromFileName, updateElementText, getBase64StrOfFileAsync,
-
+    controlPaginationBackAndNextButtonsAsync, isAllObjectValuesNullAsync,
+    getFileTypeFromFileName, updateElementText, getBase64StrOfFileAsync, autoObjectMapperAsync,
 } from "./miar_tools.js";
 
 import {
@@ -17,7 +16,11 @@ import {
     inpt_choosePdf_id, inpt_chooseVideo_id, inpt_model_id, inpt_rented_id, inpt_sold_id,
     inpt_stock_id, inpt_year_id, populateFormAsync, setMachineVideoSizeAsync, slct_mainCategory_id,
     slct_subCategory_id, path_imageFolderAfterWwwroot, path_videoFolderAfterWwwRoot,
-    selectedImageInfos, selectedPdfInfos, resultLabel_id, img_loading, selectedVideoInfos, path_pdfFolderAfterWwwroot
+    selectedImageInfos, selectedPdfInfos, resultLabel_id, img_loading, selectedVideoInfos,
+    path_pdfFolderAfterWwwroot,
+    inpt_image_id,
+    inpt_video_id,
+    inpt_pdf_id
 } from "./miar_machine_inputForm.js";
 
 import { descriptions, setVariablesForDescriptionsAsync } from "./miar_descriptions.js";
@@ -68,7 +71,7 @@ $(function () {
     $("form").submit(async (event) => {
         event.preventDefault();
 
-        //#region set data for update machine
+        //#region set variables
         let oldMachineInfos = article_idsAndMachineInfos[idOfLastViewedArticle];
         let newMachineInfos = {
             "imageName": $("#" + inpt_chooseImage_id).val(),
@@ -85,8 +88,6 @@ $(function () {
             "year": $("#" + inpt_year_id).val(),
             "descriptions": descriptions.isChanged ? descriptions.byLanguages : null,
         };
-        //#endregion
-
         let data = {
             "imageName": newMachineInfos.imageName == oldMachineInfos.imageName ? null : newMachineInfos.imageName,
             "videoName": newMachineInfos.videoName == oldMachineInfos.videoName ? null : newMachineInfos.videoName,
@@ -102,6 +103,7 @@ $(function () {
             "year": newMachineInfos.year == oldMachineInfos.year ? null : newMachineInfos.year,
             "descriptions": newMachineInfos.descriptions
         }
+        //#endregion
 
         //#region when any changes wasn't do (data)
         if (await isAllObjectValuesNullAsync(data)) {
@@ -110,299 +112,48 @@ $(function () {
                 resultLabel_id,
                 partnerErrorMessagesByLanguages[language]["nullArguments"],
                 resultLabel_errorColor,
-                "30px");
+                "30px",
+                img_loading);
 
             return;
         }
         //#endregion
 
         //#region update machine
-        let isUpdatingSuccess = updateMachineInfos(data) ?
-            updateMachineImageOnFolder(oldMachineInfos, newMachineInfos) ?
-                updateMachineVideoOnFolder(oldMachineInfos, newMachineInfos) ?
-                    updateMachinePdfOnFolder(oldMachineInfos, newMachineInfos) ?
-                        true
+        let isUpdatingSuccess =
+            await updateMachineAsync(data, oldMachineInfos.id, oldMachineInfos.mainCategoryName, oldMachineInfos.subCategoryName) ?
+                await updateMachineImageOnFolderAsync(oldMachineInfos, newMachineInfos) ?
+                    await updateMachineVideoOnFolderAsync(oldMachineInfos, newMachineInfos) ?
+                        await updateMachinePdfOnFolderAsync(oldMachineInfos, newMachineInfos) ?
+                            true  // when all update process is successfull
+                            : false
                         : false
                     : false
-                : false
-            : false;
+                : false;
         //#endregion
 
-        //#region when machine infos and files updated with successful
+        //#region update machine article
         if (isUpdatingSuccess) {
             await updateArticleAsync(idOfLastViewedArticle, newMachineInfos);
 
-            // update "article_idsAndMachineInfos"
+            //#region update "article_idsAndMachineInfos"
             await autoObjectMapperAsync(
                 article_idsAndMachineInfos[idOfLastViewedArticle],
                 data,
                 true);
+            //#endregion
 
-            // write successful message
+            //#region write successful message
             updateResultLabel(
                 resultLabel_id,
                 successMessagesByLanguages[language]["successfulUpdate"],
                 resultLabel_successColor,
                 "30px",
                 img_loading);
-        }
-        //#endregion
-
-    });
-    spn_eventManager.on("click_saveButton", async () => {
-        //#region set variables
-        let row = $(":focus").closest("tr");
-        let rowId = row.attr("id");
-        let machineId = row.attr("class");
-        let oldColumnValues = JSON.parse(sessionStorage
-            .getItem(rowId));
-        //#endregion
-
-        //#region set data
-        let data = {
-            "imageName": null,
-            "mainCategoryName": null,
-            "subCategoryName": null,
-            "model": null,
-            "brandName": null,
-            "handStatus": null,
-            "pdfName": null,
-            "stock": null,
-            "rented": null,
-            "sold": null,
-            "year": null,
-            "descriptions": null,
-            "imageContentInBase64Str": null,
-            "pdfContentInBase64Str": null,
-            "imageFolderPathAfterWwwroot": null,
-            "pdfFolderPathAfterWwwroot": null,
-            "oldImageName": null,
-            "oldPdfName": null,
-        }
-
-        //#region add values on column to data
-        for (let index in columnNames) {
-            //#region check columns whether changed
-            let columnName = columnNames[index];
-            let td = row.children(`#td_${columnName}`);
-
-            switch (columnName) {
-                case "image":
-                    //#region add image name to data if changed
-                    let imageNameOnButton = $("#" + img_imageButton_id)
-                        .attr("alt");
-
-                    // if image name changed
-                    if (imageNameOnButton != oldColumnValues[columnName]) {
-                        // save image infos
-                        data["imageName"] = imageNameOnButton;
-                        data["imageFolderPathAfterWwwroot"] = path_imageFolderAfterWwwroot;
-                        data["oldImageName"] = oldColumnValues[columnName];
-
-                        // save image content in base64 string
-                        data["imageContentInBase64Str"] = row
-                            .children("#td_image")
-                            .find("img")
-                            .attr("src")
-                            .replace(`data:${selectedImageInfos.type};base64,`, "");
-                    }
-
-                    //#endregion
-                    break;
-                case "mainCategory":
-                    //#region add main category to data if changed
-                    let mainCategory = td
-                        .children("select")
-                        .val();
-
-                    // if main category changed
-                    if (mainCategory != oldColumnValues[columnName])
-                        data["mainCategoryName"] = mainCategory;
-                    //#endregion
-                    break;
-                case "subCategory":
-                    //#region add subcategory to data if changed
-                    let subCategory = td
-                        .children("select")
-                        .val();
-
-                    // if subcategory changed
-                    if (subCategory != oldColumnValues[columnName])
-                        data["subCategoryName"] = subCategory;
-                    //#endregion
-                    break;
-                case "model":
-                    //#region add model to data if changed
-                    let model = td
-                        .children("input")
-                        .val();
-
-                    // if model changed
-                    if (model != oldColumnValues[columnName])
-                        data["model"] = model;
-                    //#endregion
-                    break;
-                case "brand":
-                    //#region add brand to data if changed
-                    let brand = td
-                        .children("input")
-                        .val();
-
-                    // if brand changed
-                    if (brand != oldColumnValues[columnName])
-                        data["brandName"] = brand;
-                    //#endregion
-                    break;
-                case "handStatus":
-                    //#region add hand Status to data if changed
-                    let handStatus = td
-                        .children("select")
-                        .val();
-
-                    // if hand status changed
-                    if (handStatus != oldColumnValues[columnName])
-                        data["handStatus"] = handStatus;
-                    //#endregion
-                    break;
-                case "stock":
-                    //#region add stock to data if changed
-                    let stock = td
-                        .children("input")
-                        .val();
-
-                    // if model changed
-                    if (stock != oldColumnValues[columnName])
-                        data["stock"] = stock;
-                    //#endregion
-                    break;
-                case "rented":
-                    //#region add rented to data if changed
-                    let rented = td
-                        .children("input")
-                        .val();
-
-                    // if rented changed
-                    if (rented != oldColumnValues[columnName])
-                        data["rented"] = rented;
-                    //#endregion
-                    break;
-                case "sold":
-                    //#region add sold to data if changed
-                    let sold = td
-                        .children("input")
-                        .val();
-
-                    // if sold changed
-                    if (sold != oldColumnValues[columnName])
-                        data["sold"] = sold;
-                    //#endregion
-                    break;
-                case "year":
-                    //#region add year to data if changed
-                    let year = td
-                        .children("input")
-                        .val();
-
-                    // if year changed
-                    if (year != oldColumnValues[columnName])
-                        data["year"] = year;
-                    //#endregion
-                    break;
-                case "pdf":
-                    //#region add pdf name to data if changed
-                    let pdfNameOnButton = $("#" + spn_pdfButton_pdfName_id)
-                        .text();
-
-                    // if pdf name changed
-                    if (pdfNameOnButton != oldColumnValues[columnName]) {
-                        data["pdfName"] = pdfNameOnButton;
-                        data["pdfFolderPathAfterWwwroot"] = path_pdfs;
-                        data["oldPdfName"] = oldColumnValues[columnName];
-                    }
-                    //#endregion
-                    break;
-                case "descriptions":
-                    //#region get new descriptions in session
-                    let newDescriptionsInSession = JSON.parse(sessionStorage
-                        .getItem(sessionKeys_descriptionsOnDisplayPage));
-                    //#endregion
-
-                    //#region when description in any language changed
-                    if (newDescriptionsInSession["TR"] != oldColumnValues[columnName]["TR"]
-                        || newDescriptionsInSession["EN"] != oldColumnValues[columnName]["EN"]) {
-                        //#region when "TR" description changed
-                        data[columnName] = {};
-
-                        if (newDescriptionsInSession["TR"] != oldColumnValues[columnName]["TR"])
-                            data[columnName]["TR"] = newDescriptionsInSession["TR"];
-                        //#endregion
-
-                        //#region when "EN" description changed
-                        if (newDescriptionsInSession["EN"] != oldColumnValues[columnName]["EN"])
-                            data[columnName]["EN"] = newDescriptionsInSession["EN"];
-                        //#endregion
-                    }
-                    //#endregion
-
-                    break;
-            }
             //#endregion
         }
         //#endregion
-
-        //#region when any changes wasn't do (error)
-        if (await isAllObjectValuesNullAsync(data)) {
-            // write error to error row
-            updateErrorRow(
-                `#${rowId}_error`,
-                partnerErrorMessagesByLanguages[language]["nullArguments"],
-                resultLabel_errorColor);
-
-            return;
-        }
-        //#endregion
-
-        //#endregion
-
-        //#region set url
-        let url = baseApiUrl + "/machine/update?" +
-            `language=${language}` +
-            `&id=${machineId}` +
-            `&oldMainCategoryName=${oldColumnValues.mainCategory}` +
-            `&oldSubCategoryName=${oldColumnValues.subCategory}`
-        //#endregion
-
-        //#region update machine
-
-        //#region when pdf changed
-        if (data["pdfName"] != null) {
-            let fileReader = new FileReader();
-
-            fileReader.readAsDataURL(selectedPdfInfos)
-            fileReader.onloadend = async function (event) {
-                //#region when reading successfuly
-                if (fileReader.readyState == fileReader.DONE) {
-                    //#region save pdf content in base64 string to data
-                    let dataUrl = event.target.result;
-
-                    data["pdfContentInBase64Str"] = dataUrl
-                        .replace(`data:${selectedPdfInfos.type};base64,`, "");
-                    //#endregion
-
-                    await updateMachineAsync(url, data, rowId, oldColumnValues);
-                }
-                //#endregion
-            }
-        }
-        //#endregion
-
-        //#region when pdf not changed
-        else
-            await updateMachineAsync(url, data, rowId, oldColumnValues);
-        //#endregion
-
-        //#endregion
-    })
+    });
     //#endregion
 
     //#region for articles page
@@ -530,63 +281,26 @@ $(function () {
     //#endregion
 
     //#endregion
-
-
-    async function updateMachineAsync(data) {
-        //#region get file contents in base64 string
-        let imageContentInBase64Str = data.imageName != null ?
-            await getBase64StrOfFileAsync(selectedImageInfos)
-            : null
-
-        let videoContentInBase64Str = data.videoName != null ?
-            await getBase64StrOfFileAsync(selectedVideoInfos)
-            : null
-
-        let pdfContentInBase64Str = data.pdfName != null ?
-            await getBase64StrOfFileAsync(selectedPdfInfos)
-            : null
-        //#endregion
-
+    async function updateMachineAsync(
+        data,
+        oldMachineId,
+        oldMainCategoryName,
+        oldSubCategoryName
+    ) {
+        return new Promise(resolve => {
             $.ajax({
                 method: "PUT",
                 url: (baseApiUrl + "/machine/update?" +
                     `language=${language}` +
-                    `&id=${oldMachineInfos.id}` +
-                    `&oldMainCategoryName=${oldMachineInfos.mainCategoryName}` +
-                    `&oldSubCategoryName=${oldMachineInfos.subCategoryName}`),
+                    `&id=${oldMachineId}` +
+                    `&oldMainCategoryName=${oldMainCategoryName}` +
+                    `&oldSubCategoryName=${oldSubCategoryName}`),
                 headers: { "Authorization": jwtToken },
                 data: JSON.stringify(data),
                 contentType: "application/json",
                 dataType: "json",
                 success: () => {
-
-                    $.ajax({
-                        type: "PUT",
-                        url: (baseApiUrl + "machine/update/image?" +
-                            `newImageName=${newMachineInfos.imageName}` +
-                            `&oldImageName=${oldMachineInfos.oldImageName}` +
-                            `&imageFolderPathAfterWwwroot=${path_imageFolderAfterWwwroot}`),
-                        data: JSON.stringify({
-                            "imageContentInBase64Str": 
-                        }),
-                        contentType: "application/json",
-                        dataType: "json",
-                        success: () => {
-
-                        },
-                        error: () => {
-                            //#region write error to error row
-                            updateResultLabel(
-                                resultLabel_id,
-                                errorMessagesByLanguages[language]["unsuccessfulImageUpdating"],
-                                resultLabel_errorColor,
-                                "30px",
-                                img_loading);
-                            //#endregion
-
-                            resolve(false);
-                        }
-                    }));
+                    resolve(true);
                 },
                 error: () => {
                     //#region write error
@@ -597,25 +311,34 @@ $(function () {
                         "30px",
                         img_loading);
                     //#endregion
+
+                    resolve(false);
                 }
-            }));
+            });
+        });
     }
 
-    async function updateMachineImageOnFolder(oldMachineInfos, newMachineInfos) {
-        await new Promise(async resolve =>
-            
-    }
+    async function updateMachineImageOnFolderAsync(oldMachineInfos, newMachineInfos) {
+        return new Promise(async resolve => {
+            //#region when machine image not changed
+            if (newMachineInfos.imageName == oldMachineInfos.imageName) {
+                resolve(true);
+                return;
+            }
+            //#endregion
 
-    async function updateMachineVideoOnFolder(oldMachineInfos, newMachineInfos) {
-        await new Promise(async resolve =>
             $.ajax({
                 type: "PUT",
-                url: (baseApiUrl + "machine/update/video?" +
-                    `newVideoName=${newMachineInfos.videoName}` +
-                    `&oldVideoName=${oldMachineInfos.oldVideoName}` +
-                    `&videoFolderPathAfterWwwroot=${path_videoFolderAfterWwwRoot}`),
+                url: (baseApiUrl + "/machine/update/image?" +
+                    `language=${language}` +
+                    `&newFileName=${newMachineInfos.imageName}` +
+                    `&oldFileName=${oldMachineInfos.imageName}` +
+                    `&fileFolderPathAfterWwwroot=${path_imageFolderAfterWwwroot}`),
+                headers: {
+                    "authorization": jwtToken
+                },
                 data: JSON.stringify({
-                    "videoContentInBase64Str": await getBase64StrOfFileAsync(selectedVideoInfos)
+                    "fileContentInBase64Str": await getBase64StrOfFileAsync(selectedImageInfos)
                 }),
                 contentType: "application/json",
                 dataType: "json",
@@ -623,30 +346,83 @@ $(function () {
                     resolve(true);
                 },
                 error: () => {
-                    //#region write error
+                    // write error
+                    updateResultLabel(
+                        resultLabel_id,
+                        errorMessagesByLanguages[language]["unsuccessfulImageUpdating"],
+                        resultLabel_errorColor,
+                        "30px",
+                        img_loading);
+
+                    resolve(false);
+                }
+            });
+        });
+    }
+
+    async function updateMachineVideoOnFolderAsync(oldMachineInfos, newMachineInfos) {
+        return new Promise(async resolve => {
+            //#region when machine video not changed
+            if (newMachineInfos.videoName == oldMachineInfos.videoName) {
+                resolve(true);
+                return;
+            }
+            //#endregion
+
+            $.ajax({
+                type: "PUT",
+                url: (baseApiUrl + "/machine/update/video?" +
+                    `language=${language}` +
+                    `&newFileName=${newMachineInfos.videoName}` +
+                    `&oldFileName=${oldMachineInfos.videoName}` +
+                    `&fileFolderPathAfterWwwroot=${path_videoFolderAfterWwwRoot}`),
+                headers: {
+                    "authorization": jwtToken
+                },
+                data: JSON.stringify({
+                    "fileContentInBase64Str": await getBase64StrOfFileAsync(selectedVideoInfos)
+                }),
+                contentType: "application/json",
+                dataType: "json",
+                success: () => {
+                    resolve(true);
+                },
+                error: (response) => {
+                    // write error
                     updateResultLabel(
                         resultLabel_id,
                         errorMessagesByLanguages[language]["unsuccessfulVideoUpdating"],
                         resultLabel_errorColor,
                         "30px",
                         img_loading);
-                    //#endregion
 
                     resolve(false);
                 }
-            }));
+            })
+        });
     }
 
-    async function updateMachinePdfOnFolder(oldMachineInfos, newMachineInfos) {
-        await new Promise(async resolve =>
+    async function updateMachinePdfOnFolderAsync(oldMachineInfos, newMachineInfos) {
+        return new Promise(async resolve => {
+            //#region when pdf not changed
+            if (newMachineInfos.pdfName == oldMachineInfos.pdfName) {
+                resolve(true);
+                return;
+            }
+            //#endregion
+
             $.ajax({
                 type: "PUT",
-                url: (baseApiUrl + "machine/update/pdf?" +
-                    `newPdfName=${newMachineInfos.pdfName}` +
-                    `&oldPdfName=${oldMachineInfos.oldPdfName}` +
-                    `&pdfFolderPathAfterWwwroot=${path_pdfFolderAfterWwwroot}`),
+                url: (baseApiUrl + "/machine/update/pdf?" +
+                    `language=${language}` +
+                    `&newFileName=${newMachineInfos.pdfName}` +
+                    `&oldFileName=${oldMachineInfos.pdfName}` +
+                    `&fileFolderPathAfterWwwroot=${path_pdfFolderAfterWwwroot}`),
+                headers: {
+                    "authorization": jwtToken
+                },
                 data: JSON.stringify({
-                    "pdfContentInBase64Str": await getBase64StrOfFileAsync(selectedPdfInfos)
+                    "fileContentInBase64Str": await getBase64StrOfFileAsync(selectedPdfInfos)
                 }),
                 contentType: "application/json",
                 dataType: "json",
@@ -654,18 +430,18 @@ $(function () {
                     resolve(true);
                 },
                 error: () => {
-                    //#region write error
+                    //write error
                     updateResultLabel(
                         resultLabel_id,
                         errorMessagesByLanguages[language]["unsuccessfulPdfUpdating"],
                         resultLabel_errorColor,
                         "30px",
                         img_loading);
-                    //#endregion
 
                     resolve(false);
                 }
-            }));
+            });
+        });
     }
 
     async function removeDescriptionButtonOnColumnAsync() {
@@ -974,7 +750,7 @@ $(function () {
 
     async function populateHtmlAsync() {
         //#region add panel title
-        $(".panel-heading").append(
+        $("#div_panelTitle").append(
             tableTitleByLanguages[language]);
         //#endregion
 

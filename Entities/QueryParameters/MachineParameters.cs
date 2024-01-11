@@ -40,7 +40,6 @@ namespace Entities.QueryParameters
 		[Required] [MiarLength(1, 50, "Dosya Adı", "File Name")]
 		public string NewFileName { get; init; }
 
-
 		[Required] [MiarLength(1, 50, "Dosya Adı", "File Name")]
 		public string OldFileName { get; init; }
 

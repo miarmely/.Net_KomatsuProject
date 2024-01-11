@@ -209,6 +209,10 @@
       "PackagePath": "staticwebassets\\images\\machines\\WA600-8_Walkaround_01.png"
     },
     {
+      "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\images\\machines\\black_skull_wings_74330_2560x1600.jpg",
+      "PackagePath": "staticwebassets\\images\\machines\\black_skull_wings_74330_2560x1600.jpg"
+    },
+    {
       "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\images\\machines\\d85-exi-1250x835-02.webp",
       "PackagePath": "staticwebassets\\images\\machines\\d85-exi-1250x835-02.webp"
     },
@@ -639,6 +643,14 @@
     {
       "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\pdfs\\MachineDetails.pdf",
       "PackagePath": "staticwebassets\\pdfs\\MachineDetails.pdf"
+    },
+    {
+      "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\videos\\machines\\FeiGongTransmission 2023-02-17 18-08-56.mp4",
+      "PackagePath": "staticwebassets\\videos\\machines\\FeiGongTransmission 2023-02-17 18-08-56.mp4"
+    },
+    {
+      "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\videos\\machines\\FeiGongTransmission 2023-02-17 18-10-10.mp4",
+      "PackagePath": "staticwebassets\\videos\\machines\\FeiGongTransmission 2023-02-17 18-10-10.mp4"
     },
     {
       "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\videos\\machines\\random1.mp4",

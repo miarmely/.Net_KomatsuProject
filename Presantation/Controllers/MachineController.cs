@@ -128,10 +128,10 @@ namespace Presantation.Controllers
 			[FromQuery] MachineParamsForUpdate machineParams,
 			[FromBody] MachineDtoForUpdate machineDto)
 		{
-			return NoContent();
-
 			await _manager.MachineService
 				.UpdateMachineAsync(machineParams, machineDto);
+
+			return NoContent();
 		}
 
 

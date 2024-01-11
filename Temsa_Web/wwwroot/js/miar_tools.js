@@ -187,21 +187,27 @@ export async function resetBeforeAddUrlAsync(
         fileStatusLabel_color);
 }
 
-export async function isFileTypeInvalidAsync(
+export async function isFileTypeValidAsync(
     selectedFileInfos,
-    fileType,
-    fileNameInput) {  // "fileNameInput": for reset it
-
+    fileType
+) {
     //#region when file type invalid
-    if (!selectedFileInfos.type.startsWith(fileType)) {
-        // reset file name <input>
-        fileNameInput.val("");
-
-        return true;
-    }
+    if (!selectedFileInfos.type.startsWith(fileType))
+        return false;
     //#endregion
 
-    return false;
+    return true;
+}
+
+export async function isFileSizeValidAsync(fileSizeInByte, limitInMb) {
+    //#region when file size is invalid
+    let fileSizeInMb = (fileSizeInByte / 1024) / 1024;  // first division for KB; second division for MB
+
+    if (fileSizeInMb >= limitInMb)
+        return false;
+    //#endregion
+
+    return true;
 }
 
 export function getFileTypeFromFileName(fileName) {

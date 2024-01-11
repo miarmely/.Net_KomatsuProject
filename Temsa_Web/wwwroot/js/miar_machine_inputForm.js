@@ -1,7 +1,7 @@
 ﻿import {
-    populateSelectAsync, isFileTypeInvalidAsync, updateResultLabel,
+    populateSelectAsync, isFileTypeValidAsync, updateResultLabel,
     populateElementByAjaxOrLocalAsync, displayFileByObjectUrlAsync,
-    removeObjectUrlFromElementAsync, getFileTypeFromFileName
+    removeObjectUrlFromElementAsync, getFileTypeFromFileName, isFileSizeValidAsync
 } from "./miar_tools.js"
 
 import { ul_descriptions_id, uploadDescriptionsEvents  } from "./miar_descriptions.js"
@@ -42,6 +42,9 @@ export const src_machine = $("#" + src_machine_id);
 export let selectedImageInfos;
 export let selectedPdfInfos;
 export let selectedVideoInfos;
+export let imageSizeLimitInMb = 25;
+export let videoSizeLimitInMb = 25;
+export let pdfSizeLimitInMb = 25;
 const formLabelNamesByLanguages = {
     "TR": {
         "mainCategory": "Ana Kategori",
@@ -88,24 +91,6 @@ const description_baseButtonNameByLanguages = {
     "TR": "Açıklama",
     "EN": "Description"
 }
-const successMessagesByLanguages = {
-    "TR": {
-        "saveSuccessful": "başarıyla kaydedildi",
-    },
-    "EN": {
-        "saveSuccessful": "saved with successful"
-    }
-}
-const errorMessagesByLanguages = {
-    "TR": {
-        "pdfReadingError": "pdf yüklenirken bir hata oluştu.",
-        "descriptionNotEntered": "açıklama girilmedi"
-    },
-    "EN": {
-        "pdfReadingError": "an error occured when pdf uploading",
-        "descriptionNotEntered": "description not entered"
-    }
-}
 //#endregion
 
 //#region events
@@ -129,6 +114,8 @@ function uploadEvents() {
         inpt_pdf.trigger("click");
     })
     inpt_image.change(async (event) => {
+        //#region control selected file (error)
+
         //#region when any file not selected (return)
         selectedImageInfos = event.target.files[0];
 
@@ -137,11 +124,7 @@ function uploadEvents() {
         //#endregion
 
         //#region when file type is not image (error)
-        if (await isFileTypeInvalidAsync(
-            selectedImageInfos,
-            "image",
-            inpt_image)
-        ) {
+        if (!await isFileTypeValidAsync(selectedImageInfos, "image")) {
             // write error
             updateResultLabel(
                 `#spn_help_${inpt_chooseImage_id}`,
@@ -149,8 +132,28 @@ function uploadEvents() {
                 resultLabel_errorColor,
                 "10px");
 
+            // reset file input
+            inpt_image.val("");
             return;
         }
+        //#endregion
+
+        //#region when file size is invalid (error)
+        if (!await isFileSizeValidAsync(selectedImageInfos.size, imageSizeLimitInMb)) {
+            // write error
+            updateResultLabel(
+                "#spn_help_" + inpt_chooseImage_id,
+                errorMessagesByLanguages[language]["imageSizeOverflow"],
+                resultLabel_errorColor,
+                "30px",
+                img_loading);
+
+            // reset file input
+            inpt_image.val("");
+            return;
+        }
+        //#endregion
+
         //#endregion
 
         //#region display image
@@ -172,6 +175,8 @@ function uploadEvents() {
         //#endregion
     })
     inpt_video.change(async (event) => {
+        //#region control selected file (error)
+
         //#region when any file not selected (return)
         selectedVideoInfos = event.target.files[0];
 
@@ -180,11 +185,7 @@ function uploadEvents() {
         //#endregion
 
         //#region when file type isn't video (error)
-        if (await isFileTypeInvalidAsync(
-            selectedVideoInfos,
-            "video/",
-            $('#' + inpt_video_id))
-        ) {
+        if (!await isFileTypeValidAsync(selectedVideoInfos, "video/")) {
             // write error
             updateResultLabel(
                 "#spn_help_" + inpt_chooseVideo_id,
@@ -192,8 +193,27 @@ function uploadEvents() {
                 resultLabel_errorColor,
                 "10px");
 
+            // reset file input
+            inpt_video.val("");
             return;
         }
+        //#endregion
+        
+        //#region when file size is invalid (error)
+        if (!await isFileSizeValidAsync(selectedVideoInfos.size, videoSizeLimitInMb)) {
+            updateResultLabel(
+                "#spn_help_" + inpt_chooseVideo_id,
+                errorMessagesByLanguages[language]["videoSizeOverflow"],
+                resultLabel_errorColor,
+                "30px",
+                img_loading);
+
+            // reset file input
+            inpt_video.val("");
+            return;
+        }
+        //#endregion
+
         //#endregion
 
         //#region display video
@@ -218,6 +238,8 @@ function uploadEvents() {
         //#endregion
     })
     inpt_pdf.change(async (event) => {
+        //#region control selected file (error)
+
         //#region when any file not selected (return)
         selectedPdfInfos = event.target.files[0];
 
@@ -226,10 +248,7 @@ function uploadEvents() {
         //#endregion
 
         //#region when file type is not "pdf" (error)
-        if (await isFileTypeInvalidAsync(
-            selectedPdfInfos,
-            "application/pdf",
-            $("#" + inpt_pdf_id))) {
+        if (!await isFileTypeValidAsync(selectedPdfInfos, "application/pdf")) {
             // write error
             updateResultLabel(
                 "#spn_help_" + inpt_choosePdf_id,
@@ -238,10 +257,28 @@ function uploadEvents() {
                 "10px",
                 img_loading);
 
-            // reset pdf <input>
-            $("#" + inpt_pdf_id).val("");
+           // reset file input
+            inpt_pdf.val("");
             return;
         }
+        //#endregion
+
+        //#region when file size is invalid (error)
+        if (!await isFileSizeValidAsync(selectedPdfInfos.size, pdfSizeLimitInMb)) {
+            // write error
+            updateResultLabel(
+                "#spn_help_" + inpt_choosePdf_id,
+                errorMessagesByLanguages[language]["pdfSizeOverflow"],
+                resultLabel_errorColor,
+                "30px",
+                img_loading);
+
+            // reset file input
+            inpt_pdf.val("");
+            return;
+        }
+        //#endregion
+
         //#endregion
 
         //#region add new pdf name to <input>
@@ -251,15 +288,16 @@ function uploadEvents() {
     $("input").click((event) => {
         //#region reset help label of clicked <input>
         let clickedInputId = event.target.id;
+        let spn_help = $(`#spn_help_${clickedInputId}`);
 
-        $(`#spn_help_${clickedInputId}`).empty();
+        spn_help.removeAttr("style"); // rese style
+        spn_help.empty();  // reset input
         //#endregion
     })
     vid_machine.on("ended", async () => {
         // restart video
         vid_machine.load();
     });
-
     uploadDescriptionsEvents();
 }
 //#endregion

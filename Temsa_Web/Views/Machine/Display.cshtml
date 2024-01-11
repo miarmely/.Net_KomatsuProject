@@ -30,12 +30,15 @@
     <div class="panel panel-default">
         @*title*@
         <div class="panel-heading">
+            <div></div>
+            <div id="div_panelTitle"></div>
+            <div></div>
         </div>
-        
+
         <div class="panel-body">
             <div id="div_article_update" class="div_articleDetails" hidden>
                 @*machine image and video*@
-                <div style="text-align:center">
+                <div style="text-align:center; float:none">
                     <video id="vid_machine" controls hidden>
                         <source id="src_machine"/>
                     </video>
@@ -156,13 +159,19 @@
             "unsuccessfulInfosUpdating": "bilgiler güncellenirken bir hata oluştu",
             "unsuccessfulImageUpdating": "resim güncellenirken bir hata oluştu",
             "unsuccessfulVideoUpdating": "video güncellenirken bir hata oluştu",
-            "unsuccessfulPdfUpdating": "pdf güncellenirken bir hata oluştu"
+            "unsuccessfulPdfUpdating": "pdf güncellenirken bir hata oluştu",
+            "imageSizeOverflow": "resim boyutu en fazla 25mb olabilir",
+            "videoSizeOverflow": "video boyutu en fazla 25mb olabilir",
+            "pdfSizeOverflow": "pdf boyutu en fazla 25mb olabilir"
         },
         "EN":{
             "unsuccessfulInfosUpdating": "an error occured when informations updating",
             "unsuccessfulImageUpdating": "an error occured when image updating",
             "unsuccessfulVideoUpdating": "an error occured when video updating",
-            "unsuccessfulPdfUpdating": "an error occured when pdf updating"
+            "unsuccessfulPdfUpdating": "an error occured when pdf updating",
+            "imageSizeOverflow": "image size can be max 25mb",
+            "videoSizeOverflow": "video size can be max 25mb",
+            "pdfSizeOverflow": "pdf size can be max 25mb"
         }
     }
     let article_idsAndMachineInfos = {};  // id == article Id
