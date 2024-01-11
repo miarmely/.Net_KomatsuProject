@@ -157,7 +157,7 @@ namespace Presantation.Controllers
 			await _manager.MachineService.UpdateMachineFileOnFolderAsync(
 				machineParams,
 				machineDto,
-				"imageName",
+				"ImageName",
 				FileTypes.Image);
 
 			return NoContent();

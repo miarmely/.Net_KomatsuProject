@@ -1,8 +1,4 @@
-﻿import { resultLabel_id } from "./miar_machine_inputForm.js";
-import { updateResultLabel } from "./miar_tools.js";
-
-
-//#region variables
+﻿//#region variables
 export let descriptions = {
     "currentColor": null,
     "language": language,  // set page language as default

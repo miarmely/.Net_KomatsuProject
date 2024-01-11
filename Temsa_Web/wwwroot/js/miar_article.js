@@ -4,8 +4,8 @@ export let buffers = {
     "path_articleVideos": "",
 }
 export const style_article = {
-    "width": 350,
-    "height": 500,
+    "width": 370,
+    "height": 580,
     "marginT": 10,
     "marginB": 10,
     "marginR": 20,
@@ -19,29 +19,38 @@ export const style_article = {
 export const div_article_video_id = "div_article_video";
 export const div_article_image_id = "div_articl_image";
 export const div_article_info_id = "div_article_info";
+export const div_article_button_id = "div_article_button";
 export const art_baseId = "art_";
 export const path_playImage = "images/play.png";
+export const btn_pdf_id = "btn_pdf";
 export const headerOfPageHeight = 80;
 let articleInfos_lastUploadedPlayImage = {};
 let articleInfos_lastUploadedVideo = {
-    "article" : null
+    "article": null
 };
 
 //#region article elements styles
 
 //#region when article type is "video and text" (VT)
+export const style_a_pdfButton_fontSize = 18;
+export const style_a_pdfButton_paddingTB = 6;
+export const style_a_pdfButton_paddingRL = 40;
+
 export const style_div_video_marginB_VT = 20;
 export const style_div_video_width_VT = style_article.width - (style_article.border * 2) - style_article.paddingR - style_article.paddingL
 export const style_div_video_height_VT = (style_article.height - (style_article.border * 2) - style_article.paddingT - style_article.paddingB - style_div_video_marginB_VT) / 2;
 
+export const style_div_button_width_VT = style_div_video_width_VT;
+export const style_div_button_height_VT = (style_a_pdfButton_fontSize + 9) + (style_a_pdfButton_paddingTB * 2);
+
 export const style_div_info_width_VT = style_div_video_width_VT;
-export const style_div_info_height_VT = style_div_video_height_VT;
+export const style_div_info_height_VT = style_div_video_height_VT - style_div_button_height_VT;
 
 export const style_vid_width_VT = style_div_video_width_VT;
 export const style_vid_height_VT = style_div_video_height_VT;
 
 export const style_img_play_width_VT = style_vid_width_VT / 2.5;
-export const style_img_play_height_VT = style_vid_height_VT / 2;
+export const style_img_play_height_VT = style_vid_height_VT / 2.2;
 export const style_img_play_marginT_VT = (style_vid_height_VT - style_img_play_height_VT) / 2;
 export const style_img_play_marginB_VT = style_img_play_marginT_VT;
 export const style_img_play_marginR_VT = (style_vid_width_VT - style_img_play_width_VT) / 2;
@@ -86,7 +95,7 @@ export async function click_playImageAsync(article) {
         });
 
     // save article of last uploaded video 
-    articleInfos_lastUploadedVideo["article"] = article;  
+    articleInfos_lastUploadedVideo["article"] = article;
     //#endregion
 }
 
@@ -128,7 +137,7 @@ export async function mouseout_articleVideoDivAsync(event, article) {
         //#region when mouse is over article video (return)
         let currentMouseX = event.pageX;
         let currentMouseY = event.pageY;
-        
+
         if (currentMouseX > articleInfos_lastUploadedPlayImage["minPageX"]
             && currentMouseX < articleInfos_lastUploadedPlayImage["maxPageX"]
             && currentMouseY > articleInfos_lastUploadedPlayImage["minPageY"]
@@ -257,7 +266,7 @@ export async function addArticlesAsync(articleType) {  // articleType: "imageAnd
                 //#region add article with video and text
                 if (articleType == "videoAndText")
                     buffers.div_articles.append(`
-                        <article id="${articleId}"  class="article">
+                        <article id="${articleId}"  class="article" style="text-align: center">
                             <div id="${div_article_video_id}">
                                 <img class="img_play"  hidden/>
                                 <video poster="">
@@ -265,7 +274,15 @@ export async function addArticlesAsync(articleType) {  // articleType: "imageAnd
                                 </video>
                             </div>
 
-                            <div id="${div_article_info_id}"  style="text-align: center">
+                            <div id="${div_article_info_id}">
+                            </div>
+
+                            <div id="${div_article_button_id}">
+                                <ul>
+                                    <li class="btn btn_article">
+                                        <a target="blank">PDF</a>
+                                    </li>
+                                </ul>  
                             </div>
                         </article>`
                     );
@@ -296,6 +313,35 @@ export async function addArticlesAsync(articleType) {  // articleType: "imageAnd
                     .css({
                         "width": style_div_info_width_VT,
                         "height": style_div_info_height_VT
+                    });
+
+                // button <div> styles
+                article
+                    .find("#" + div_article_button_id)
+                    .css({
+                        "width": style_div_button_width_VT,
+                        "height": style_div_button_height_VT,
+                    })
+
+                // pdf button <li> styles
+                article
+                    .find("#" + div_article_button_id + " li")
+                    .css({
+                        "padding-top": style_a_pdfButton_paddingTB,
+                        "padding-bottom": style_a_pdfButton_paddingTB,
+                        "padding-right": 0,
+                        "padding-left": 0
+                    });
+
+                // pdf button <a> styles
+                article
+                    .find("#" + div_article_button_id + " a")
+                    .css({
+                        "padding-top": style_a_pdfButton_paddingTB,
+                        "padding-bottom": style_a_pdfButton_paddingTB,
+                        "padding-right": style_a_pdfButton_paddingRL,
+                        "padding-left": style_a_pdfButton_paddingRL,
+                        "font-size": style_a_pdfButton_fontSize
                     });
                 //#endregion
 

@@ -37,15 +37,18 @@ namespace Services.Concretes
 			#region set parameters
 			var parameters = new DynamicParameters();
 
-			parameters.Add("ColumnName",
+			parameters.Add(
+				"ColumnName",
 				columnNameInDb,
 				DbType.String);
 
-			parameters.Add("ValuesInString",
+			parameters.Add(
+				"ValuesInString",
 				string.Join(",", fileNames),
 				DbType.String);
 
-			parameters.Add("ValuesNotExistsOnTableInString",
+			parameters.Add(
+				"ValuesNotExistsOnTableInString",
 				"",
 				DbType.String,
 				ParameterDirection.Output);
@@ -66,12 +69,12 @@ namespace Services.Concretes
 			#region delete files that not using by other machines (throw)
 			if (fileNamesNotExistsOnTableInStr != null)
 			{
-				#region add image names in string to array
+				#region add file names in str to array
 				var fileNamesNotExistsOnTable = fileNamesNotExistsOnTableInStr
 					.Split(',');
 				#endregion
 
-				#region delete images
+				#region delete files
 				foreach (var fileName in fileNamesNotExistsOnTable)
 					await _fileService.DeleteFileOnFolderByPathAsync(
 						language,

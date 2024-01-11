@@ -1,11 +1,13 @@
 ﻿import {
-    updateResultLabel, updateErrorRow, addPaginationButtonsAsync,
+    updateResultLabel, addPaginationButtonsAsync,
     controlPaginationBackAndNextButtonsAsync, isAllObjectValuesNullAsync,
-    getFileTypeFromFileName, updateElementText, getBase64StrOfFileAsync, autoObjectMapperAsync,
+    getFileTypeFromFileName, updateElementText, getBase64StrOfFileAsync,
+    autoObjectMapperAsync,
 } from "./miar_tools.js";
 
 import {
     addArticlesAsync, alignArticlesToCenterAsync, art_baseId, click_playImageAsync,
+    div_article_button_id,
     div_article_info_id, div_article_video_id, ended_articleVideoAsync,
     mouseout_articleVideoDivAsync, mouseover_articleVideoAsync,
     removeLastUploadedArticleVideoAsync, setVariablesForArticle
@@ -14,21 +16,21 @@ import {
 import {
     addDefaultValuesToFormAsync, inpt_brand_id, inpt_chooseImage_id,
     inpt_choosePdf_id, inpt_chooseVideo_id, inpt_model_id, inpt_rented_id, inpt_sold_id,
-    inpt_stock_id, inpt_year_id, populateFormAsync, setMachineVideoSizeAsync, slct_mainCategory_id,
-    slct_subCategory_id, path_imageFolderAfterWwwroot, path_videoFolderAfterWwwRoot,
-    selectedImageInfos, selectedPdfInfos, resultLabel_id, img_loading, selectedVideoInfos,
-    path_pdfFolderAfterWwwroot,
-    inpt_image_id,
-    inpt_video_id,
-    inpt_pdf_id
+    inpt_stock_id, inpt_year_id, populateFormAsync, setMachineVideoSizeAsync,
+    slct_mainCategory_id, slct_subCategory_id, path_imageFolderAfterWwwroot,
+    path_videoFolderAfterWwwRoot, selectedImageInfos, selectedPdfInfos, resultLabel_id,
+    img_loading, selectedVideoInfos, path_pdfFolderAfterWwwroot,
 } from "./miar_machine_inputForm.js";
 
-import { descriptions, setVariablesForDescriptionsAsync } from "./miar_descriptions.js";
+import {
+    descriptions, setVariablesForDescriptionsAsync
+} from "./miar_descriptions.js";
+
 
 $(function () {
     //#region variables
     const pageNumber = 1;
-    const pageSize = 15;
+    const pageSize = 10;
     const paginationButtonQuantity = 5;
     const nameOfPaginationHeader = "Machine-Pagination";
     const errorMessageColor = "rgb(255, 75, 75)";
@@ -38,8 +40,6 @@ $(function () {
     const entityQuantity_id = "#small_entityQuantity";
     const entityQuantity_color = "#7A7A7A";
     const path_pdfs = "pdfs";
-    const img_imageButton_id = "img_imageButton";
-    const spn_pdfButton_pdfName_id = "spn_pdfButton_pdfName";
     const div_articles_panel = $("#div_articles_panel");
     const div_articles = $("#div_articles");
     const div_article_update = $("#div_article_update");
@@ -67,9 +67,12 @@ $(function () {
     });
     //#endregion
 
-    //#region for machine update page
+    //#region for update page
     $("form").submit(async (event) => {
+        //#region show loading image
         event.preventDefault();
+        img_loading.removeAttr("hidden");
+        //#endregion
 
         //#region set variables
         let oldMachineInfos = article_idsAndMachineInfos[idOfLastViewedArticle];
@@ -88,7 +91,7 @@ $(function () {
             "year": $("#" + inpt_year_id).val(),
             "descriptions": descriptions.isChanged ? descriptions.byLanguages : null,
         };
-        let data = {
+        let dataForUpdate = {
             "imageName": newMachineInfos.imageName == oldMachineInfos.imageName ? null : newMachineInfos.imageName,
             "videoName": newMachineInfos.videoName == oldMachineInfos.videoName ? null : newMachineInfos.videoName,
             "mainCategoryName": newMachineInfos.mainCategoryName == oldMachineInfos.mainCategoryName ? null : newMachineInfos.mainCategoryName,
@@ -105,8 +108,8 @@ $(function () {
         }
         //#endregion
 
-        //#region when any changes wasn't do (data)
-        if (await isAllObjectValuesNullAsync(data)) {
+        //#region when any changes wasn't do
+        if (await isAllObjectValuesNullAsync(dataForUpdate)) {
             // write error
             updateResultLabel(
                 resultLabel_id,
@@ -121,7 +124,7 @@ $(function () {
 
         //#region update machine
         let isUpdatingSuccess =
-            await updateMachineAsync(data, oldMachineInfos.id, oldMachineInfos.mainCategoryName, oldMachineInfos.subCategoryName) ?
+            await updateMachineAsync(dataForUpdate, oldMachineInfos.id, oldMachineInfos.mainCategoryName, oldMachineInfos.subCategoryName) ?
                 await updateMachineImageOnFolderAsync(oldMachineInfos, newMachineInfos) ?
                     await updateMachineVideoOnFolderAsync(oldMachineInfos, newMachineInfos) ?
                         await updateMachinePdfOnFolderAsync(oldMachineInfos, newMachineInfos) ?
@@ -139,7 +142,7 @@ $(function () {
             //#region update "article_idsAndMachineInfos"
             await autoObjectMapperAsync(
                 article_idsAndMachineInfos[idOfLastViewedArticle],
-                data,
+                dataForUpdate,
                 true);
             //#endregion
 
@@ -153,7 +156,14 @@ $(function () {
             //#endregion
         }
         //#endregion
+
+        //#region reset descriptions variables
+        await setVariablesForDescriptionsAsync("descriptions", {
+            "isChanged": false
+        });
+        //#endregion
     });
+
     //#endregion
 
     //#region for articles page
@@ -281,6 +291,7 @@ $(function () {
     //#endregion
 
     //#endregion
+
     async function updateMachineAsync(
         data,
         oldMachineId,
@@ -577,32 +588,34 @@ $(function () {
             //#endregion
 
             //#region add machine video poster
-            let art_machine = $('#' + articleId);
+            let article = $('#' + articleId);
 
-            art_machine
+            article
                 .find("video")
                 .attr("poster", "/" + path_imageFolderAfterWwwroot + "/" + machineInfos.imageName);
             //#endregion
 
             //#region add machine infos 
-            let div_article_info = art_machine
+            let div_article_info = article
                 .children("#" + div_article_info_id);
 
             div_article_info.append(`
-                <div>
-                    <h2 style="margin-bottom: 5px">${machineInfos.model}</h2>
-                    <h3 style="margin-bottom: 3px">${machineInfos.mainCategoryName}</h3>
-                    <h4 style="margin-bottom: 20px">${machineInfos.subCategoryName}</h4>
-                    <h5>${machineInfos.descriptions[language].substring(0, descriptions_charQuantityToBeDisplayOnArticle)}...</h5>
-                </div>
+                <h2 style="margin-bottom: 5px">${machineInfos.model}</h2>
+                <h3 style="margin-bottom: 3px">${machineInfos.mainCategoryName}</h3>
+                <h4 style="margin-bottom: 20px">${machineInfos.subCategoryName}</h4>
+                <h5>${machineInfos.descriptions[language].substring(0, descriptions_charQuantityToBeDisplayOnArticle)}...</h5>
             `);
+            //#endregion
+
+            //#region add link to pdf button 
+            article
+                .find("#" + div_article_button_id + " a")
+                .attr("href", "/" + path_pdfFolderAfterWwwroot + "/" + machineInfos.pdfName);
             //#endregion
 
             //#endregion
 
             //#region declare article page events
-            let article = $("#" + articleId);
-
             article.find("video").mouseover(async (event) =>
                 await mouseover_articleVideoAsync(event, article)
             );

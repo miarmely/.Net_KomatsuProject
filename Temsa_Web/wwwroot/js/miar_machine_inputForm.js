@@ -104,6 +104,20 @@ function uploadEvents() {
     let inpt_pdf = $("#" + inpt_pdf_id);
     //#endregion
 
+    $("input").click((event) => {
+        //#region reset help label of clicked <input>
+        let clickedInputId = event.target.id;
+        let spn_help = $(`#spn_help_${clickedInputId}`);
+
+        spn_help.removeAttr("style"); // rese style
+        spn_help.empty();  // reset input
+        //#endregion
+
+        $(resultLabel_id).empty();
+    })
+    $("textarea").click(() => {
+        $(resultLabel_id).empty();
+    })
     inpt_chooseImage.click(() => {
         inpt_image.trigger("click");
     })
@@ -283,15 +297,6 @@ function uploadEvents() {
 
         //#region add new pdf name to <input>
         inpt_choosePdf.val(selectedPdfInfos.name);
-        //#endregion
-    })
-    $("input").click((event) => {
-        //#region reset help label of clicked <input>
-        let clickedInputId = event.target.id;
-        let spn_help = $(`#spn_help_${clickedInputId}`);
-
-        spn_help.removeAttr("style"); // rese style
-        spn_help.empty();  // reset input
         //#endregion
     })
     vid_machine.on("ended", async () => {
@@ -632,7 +637,7 @@ export async function addDefaultValuesToFormAsync(machineInfos) {
     $("#" + inpt_stock_id).val(machineInfos["stock"]);
     $("#" + inpt_sold_id).val(machineInfos["sold"]);
     $("#" + inpt_rented_id).val(machineInfos["rented"]);
-    $(`input[name= handStatus][value=${machineInfos.handStatus}]`).attr("checked", "");
+    $(`input[name= "handStatus"][value= "${machineInfos.handStatus}"]`).attr("checked", "");
     $("#" + inpt_choosePdf_id).val(machineInfos["pdfName"]);
     $("#" + txt_descriptions_id).val(machineInfos.descriptions[language]);
     //#endregion
