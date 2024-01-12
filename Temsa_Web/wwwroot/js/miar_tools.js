@@ -203,7 +203,7 @@ export async function isFileSizeValidAsync(fileSizeInByte, limitInMb) {
     //#region when file size is invalid
     let fileSizeInMb = (fileSizeInByte / 1024) / 1024;  // first division for KB; second division for MB
 
-    if (fileSizeInMb >= limitInMb)
+    if (fileSizeInMb > limitInMb)
         return false;
     //#endregion
 

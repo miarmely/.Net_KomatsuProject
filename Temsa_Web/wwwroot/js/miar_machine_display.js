@@ -18,7 +18,7 @@ import {
     inpt_choosePdf_id, inpt_chooseVideo_id, inpt_model_id, inpt_rented_id, inpt_sold_id,
     inpt_stock_id, inpt_year_id, populateFormAsync, setMachineVideoSizeAsync,
     slct_mainCategory_id, slct_subCategory_id, path_imageFolderAfterWwwroot,
-    path_videoFolderAfterWwwRoot, selectedImageInfos, selectedPdfInfos, resultLabel_id,
+    path_videoFolderAfterWwwroot, selectedImageInfos, selectedPdfInfos, resultLabel_id,
     img_loading, selectedVideoInfos, path_pdfFolderAfterWwwroot, removePosterAttrAsync,
     removeVideoAttrAsync,
 } from "./miar_machine_inputForm.js";
@@ -172,6 +172,7 @@ $(function () {
     btn_back.click(async () => {
         //#region reset form
         $("form")[0].reset();
+        $(resultLabel_id).empty();
 
         await removePosterAttrAsync();
         await removeVideoAttrAsync();
@@ -183,6 +184,7 @@ $(function () {
         //#endregion
 
         await showOrHideBackButtonAsync("hide");
+        await alignArticlesToCenterAsync();
     })
     //#endregion
 
@@ -433,7 +435,7 @@ $(function () {
             article
                 .find("#" + div_article_video_id + " source")
                 .attr({
-                    "src": "/" + path_videoFolderAfterWwwRoot + "/" + data.videoName,
+                    "src": "/" + path_videoFolderAfterWwwroot + "/" + data.videoName,
                     "type": "video/" + getFileTypeFromFileName(data.videoName)
                 })
 
@@ -527,7 +529,7 @@ $(function () {
                     `language=${language}` +
                     `&newFileName=${newMachineInfos.videoName}` +
                     `&oldFileName=${oldMachineInfos.videoName}` +
-                    `&fileFolderPathAfterWwwroot=${path_videoFolderAfterWwwRoot}`),
+                    `&fileFolderPathAfterWwwroot=${path_videoFolderAfterWwwroot}`),
                 headers: {
                     "authorization": jwtToken
                 },
@@ -617,7 +619,7 @@ $(function () {
             url: (baseApiUrl + "/machine/delete" +
                 `?language=${language}` +
                 `&imageFolderPathAfterWwwroot=${path_imageFolderAfterWwwroot}` +
-                `&videoFolderPathAfterWwwroot=${path_videoFolderAfterWwwRoot}` +
+                `&videoFolderPathAfterWwwroot=${path_videoFolderAfterWwwroot}` +
                 `&pdfFolderPathAfterWwwroot=${path_pdfs}`),
             headers: { "Authorization": jwtToken },
             data: JSON.stringify(data),
@@ -769,7 +771,7 @@ $(function () {
 
                 setVariablesForArticle({
                     "div_articles": div_articles,
-                    "path_articleVideos": path_videoFolderAfterWwwRoot,
+                    "path_articleVideos": path_videoFolderAfterWwwroot,
                 });
                 //#endregion
 

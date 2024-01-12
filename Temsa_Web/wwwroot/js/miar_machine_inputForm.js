@@ -34,7 +34,7 @@ export const btn_save_id = "btn_save";
 export const div_form = $("#div_form");
 export const spn_fileStatusLabel = $("#spn_fileStatusLabel");
 export const path_imageFolderAfterWwwroot = "images\\machines";
-export const path_videoFolderAfterWwwRoot = "videos\\machines";
+export const path_videoFolderAfterWwwroot = "videos\\machines";
 export const path_pdfFolderAfterWwwroot = "pdfs";
 export const img_loading = $("#img_loading");
 export const vid_machine = $("#" + vid_machine_id);
@@ -42,12 +42,12 @@ export const src_machine = $("#" + src_machine_id);
 export let selectedImageInfos;
 export let selectedPdfInfos;
 export let selectedVideoInfos;
-export let imageSizeLimitInMb = 25;
-export let videoSizeLimitInMb = 25;
-export let pdfSizeLimitInMb = 25;
+export let imageSizeLimitInMb = 20;
+export let videoSizeLimitInMb = 20;
+export let pdfSizeLimitInMb = 20;
 const formLabelNamesByLanguages = {
     "TR": {
-        "mainCategory": "Ana Kategori",
+        "mainCategory": "Kategori",
         "subCategory": "Alt Kategori",
         "brand": "Marka",
         "model": "Model",
@@ -65,7 +65,7 @@ const formLabelNamesByLanguages = {
         "pdf": "Pdf"
     },
     "EN": {
-        "mainCategory": "Main Category",
+        "mainCategory": "Category",
         "subCategory": "Subcategory",
         "brand": "Brand",
         "model": "Model",
@@ -76,8 +76,8 @@ const formLabelNamesByLanguages = {
             "radio2": "Second Hand"
         },
         "stock": "Stock",
-        "sold": "sold",
-        "rented": "rented",
+        "sold": "Sold",
+        "rented": "Rented",
         "image": "Image",
         "video": "Video",
         "pdf": "Pdf"
@@ -131,14 +131,14 @@ function uploadEvents() {
         //#region control selected file (error)
 
         //#region when any file not selected (return)
-        selectedImageInfos = event.target.files[0];
+        let selectedFileInfos = event.target.files[0];
 
-        if (selectedImageInfos == undefined)
+        if (selectedFileInfos == undefined)
             return;
         //#endregion
 
         //#region when file type is not image (error)
-        if (!await isFileTypeValidAsync(selectedImageInfos, "image")) {
+        if (!await isFileTypeValidAsync(selectedFileInfos, "image")) {
             // write error
             updateResultLabel(
                 `#spn_help_${inpt_chooseImage_id}`,
@@ -153,7 +153,7 @@ function uploadEvents() {
         //#endregion
 
         //#region when file size is invalid (error)
-        if (!await isFileSizeValidAsync(selectedImageInfos.size, imageSizeLimitInMb)) {
+        if (!await isFileSizeValidAsync(selectedFileInfos.size, imageSizeLimitInMb)) {
             // write error
             updateResultLabel(
                 "#spn_help_" + inpt_chooseImage_id,
@@ -172,6 +172,7 @@ function uploadEvents() {
 
         //#region display image
         // change image name on <input>
+        selectedImageInfos = selectedFileInfos;
         inpt_chooseImage.val(selectedImageInfos.name);
 
         await displayFileByObjectUrlAsync(
@@ -192,14 +193,14 @@ function uploadEvents() {
         //#region control selected file (error)
 
         //#region when any file not selected (return)
-        selectedVideoInfos = event.target.files[0];
+        let selectedFileInfos = event.target.files[0];
 
-        if (selectedVideoInfos == undefined)
+        if (selectedFileInfos == undefined)
             return;
         //#endregion
 
         //#region when file type isn't video (error)
-        if (!await isFileTypeValidAsync(selectedVideoInfos, "video/")) {
+        if (!await isFileTypeValidAsync(selectedFileInfos, "video/")) {
             // write error
             updateResultLabel(
                 "#spn_help_" + inpt_chooseVideo_id,
@@ -214,7 +215,7 @@ function uploadEvents() {
         //#endregion
 
         //#region when file size is invalid (error)
-        if (!await isFileSizeValidAsync(selectedVideoInfos.size, videoSizeLimitInMb)) {
+        if (!await isFileSizeValidAsync(selectedFileInfos.size, videoSizeLimitInMb)) {
             updateResultLabel(
                 "#spn_help_" + inpt_chooseVideo_id,
                 errorMessagesByLanguages[language]["videoSizeOverflow"],
@@ -232,6 +233,7 @@ function uploadEvents() {
 
         //#region display video
         // add new video name to <input>
+        selectedVideoInfos = selectedFileInfos;
         inpt_chooseVideo.val(selectedVideoInfos.name)
 
         await displayFileByObjectUrlAsync(
@@ -255,14 +257,14 @@ function uploadEvents() {
         //#region control selected file (error)
 
         //#region when any file not selected (return)
-        selectedPdfInfos = event.target.files[0];
+        let selectedFileInfos = event.target.files[0];
 
-        if (selectedPdfInfos == undefined)
+        if (selectedFileInfos == undefined)
             return;
         //#endregion
 
         //#region when file type is not "pdf" (error)
-        if (!await isFileTypeValidAsync(selectedPdfInfos, "application/pdf")) {
+        if (!await isFileTypeValidAsync(selectedFileInfos, "application/pdf")) {
             // write error
             updateResultLabel(
                 "#spn_help_" + inpt_choosePdf_id,
@@ -278,7 +280,7 @@ function uploadEvents() {
         //#endregion
 
         //#region when file size is invalid (error)
-        if (!await isFileSizeValidAsync(selectedPdfInfos.size, pdfSizeLimitInMb)) {
+        if (!await isFileSizeValidAsync(selectedFileInfos.size, pdfSizeLimitInMb)) {
             // write error
             updateResultLabel(
                 "#spn_help_" + inpt_choosePdf_id,
@@ -296,6 +298,7 @@ function uploadEvents() {
         //#endregion
 
         //#region add new pdf name to <input>
+        selectedPdfInfos = selectedFileInfos;
         inpt_choosePdf.val(selectedPdfInfos.name);
         //#endregion
     })
@@ -614,7 +617,7 @@ export async function addDefaultValuesToFormAsync(machineInfos) {
         "/" + path_imageFolderAfterWwwroot + "/" + machineInfos["imageName"],);
 
     src_machine.attr({
-        "src": "/" + path_videoFolderAfterWwwRoot + "/" + machineInfos["videoName"],
+        "src": "/" + path_videoFolderAfterWwwroot + "/" + machineInfos["videoName"],
         "type": "video/" + getFileTypeFromFileName(machineInfos["videoName"])
     });
     //#endregion
@@ -643,7 +646,7 @@ export async function addDefaultValuesToFormAsync(machineInfos) {
     //#endregion
 }
 
-export async function removePosterAttrAsync(){
+export async function removePosterAttrAsync() {
     //#region when poster is object url
     if (vid_machine.attr("poster").startsWith("blob:"))
         await removeObjectUrlFromElementAsync(
@@ -661,10 +664,10 @@ export async function removePosterAttrAsync(){
     //#region when poster is normal url
     else
         vid_machine.removeAttr("poster");
-            //#endregion
+    //#endregion
 }
 
-export async function removeVideoAttrAsync(){
+export async function removeVideoAttrAsync() {
     //#region when video is object url
     if (src_machine.attr("src").startsWith("blob:"))
         await removeObjectUrlFromElementAsync(
@@ -684,7 +687,7 @@ export async function removeVideoAttrAsync(){
     //#region when video is normal url
     else
         src_machine.removeAttr("src type");
-            //#endregion
+    //#endregion
 }
 
 export async function setMachineVideoSizeAsync() {
