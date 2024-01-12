@@ -20,11 +20,53 @@ namespace Presantation.Controllers
 		[HttpPost("create")]
 		[Authorization("Admin,Yönetici,Editor,Editör")]
 		public async Task<IActionResult> CreateMachine(
-			[FromQuery] MachineParamsForCreate machineParams,
+			[FromQuery] LanguageParams languageParams,
 			[FromBody] MachineDtoForCreate machineDto)
 		{
 			await _manager.MachineService
-				.CreateMachineAsync(machineParams, machineDto);
+				.CreateMachineAsync(languageParams, machineDto);
+
+			return NoContent();
+		}
+
+	
+		[HttpPost("upload/image")]
+		public async Task<IActionResult> UploadMachineImage(
+			[FromQuery] MachineParamsForUploadFile machineParams,
+			[FromBody] MachineDtoForUploadFile machineDto)
+		{
+			await _manager.MachineService.UploadMachineFileToFolderAsync(
+				machineParams,
+				machineDto,
+				FileTypes.Image);
+
+			return NoContent();
+		}
+
+
+		[HttpPost("upload/video")]
+		public async Task<IActionResult> UploadMachineVideo(
+			[FromQuery] MachineParamsForUploadFile machineParams,
+			[FromBody] MachineDtoForUploadFile machineDto)
+		{
+			await _manager.MachineService.UploadMachineFileToFolderAsync(
+				machineParams,
+				machineDto,
+				FileTypes.Video);
+
+			return NoContent();
+		}
+
+
+		[HttpPost("upload/pdf")]
+		public async Task<IActionResult> UploadMachinePdf(
+			[FromQuery] MachineParamsForUploadFile machineParams,
+			[FromBody] MachineDtoForUploadFile machineDto)
+		{
+			await _manager.MachineService.UploadMachineFileToFolderAsync(
+				machineParams,
+				machineDto,
+				FileTypes.Pdf);
 
 			return NoContent();
 		}
@@ -134,7 +176,7 @@ namespace Presantation.Controllers
 			return NoContent();
 		}
 
-
+		
 		[HttpDelete("delete")]
 		[Authorization("Admin,Yönetici")]
 		public async Task<IActionResult> DeleteMachines(

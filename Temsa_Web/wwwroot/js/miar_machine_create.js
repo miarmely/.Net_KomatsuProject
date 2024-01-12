@@ -122,6 +122,8 @@ $(function () {
         await setMachineVideoSizeAsync();
     })
     //#endregion
+
+    //#region functions
     async function setMachineVideoSizeAsync() {
         //#region set width and height
         let panelBodyWidth = $(".panel-body").prop("clientWidth");

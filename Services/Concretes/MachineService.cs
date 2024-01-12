@@ -90,42 +90,9 @@ namespace Services.Concretes
 	public partial class MachineService  // main functions
 	{
 		public async Task CreateMachineAsync(
-			MachineParamsForCreate machineParams,
+			LanguageParams languageParams,
 			MachineDtoForCreate machineDto)
 		{
-			#region upload files to folder
-
-			#region machine image 
-			await _fileService.UploadFileToFolderAsync(
-				machineParams.Language,
-				machineParams.ImageFolderPathAfterWwwroot,
-				machineDto.ImageName,
-				machineDto.ImageContentInBase64Str,
-				FileTypes.Image);
-			#endregion
-
-			#region machine video 
-			await _fileService.UploadFileToFolderAsync(
-				machineParams.Language,
-				machineParams.VideoFolderPathAfterWwwroot,
-				machineDto.VideoName,
-				machineDto.VideoContentInBase64Str,
-				FileTypes.Video);
-			#endregion,
-
-			#region pdf
-			await _fileService.UploadFileToFolderAsync(
-				machineParams.Language,
-				machineParams.PdfFolderPathAfterWwwroot,
-				machineDto.PdfName,
-				machineDto.PdfContentInBase64Str,
-				FileTypes.Pdf);
-			#endregion
-
-			#endregion
-
-			#region create machine (throw)
-
 			#region set parameters
 			var parameters = new DynamicParameters(new
 			{
@@ -143,7 +110,7 @@ namespace Services.Concretes
 				machineDto.PdfName
 			});
 
-			parameters.Add("Language", machineParams.Language, DbType.String);
+			parameters.Add("Language", languageParams.Language, DbType.String);
 			#endregion
 
 			#region create machine
@@ -155,8 +122,19 @@ namespace Services.Concretes
 			if (errorDto != null)
 				throw new ErrorWithCodeException(errorDto);
 			#endregion
+		}
 
-			#endregion
+		public async Task UploadMachineFileToFolderAsync(
+			MachineParamsForUploadFile machineParams,
+			MachineDtoForUploadFile machineDto,
+			FileTypes fileType)
+		{
+			await _fileService.UploadFileToFolderAsync(
+				machineParams.Language,
+				machineParams.FileFolderPathAfterWwwroot,
+				machineParams.FileName,
+				machineDto.FileContentInBase64Str,
+				fileType);
 		}
 
 		public async Task<PagingList<MachineView>> GetAllMachinesAsync(

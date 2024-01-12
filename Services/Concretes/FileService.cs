@@ -112,11 +112,8 @@ namespace Services.Concretes
 			}
 			catch (Exception ex)
 			{
-				#region when directory not found (throw)
-				throw new ErrorWithCodeException(
-					ErrorDetailsConfig.ToErrorDto(
-						language,
-						_configs.ErrorDetails.NF_F_D));
+				#region when directory not found
+				return new string[0];  // return empty array;
 				#endregion
 			}
 			#endregion
@@ -137,7 +134,7 @@ namespace Services.Concretes
 			string folderPathAfterWwwroot,
 			List<string> FileNamesToBeNotDelete)
 		{
-			#region get full file names on directory (throw)
+			#region get paths
 			var fullFilePathsOnDirectory = await GetFullFilePathsOnDirectoryAsync(
 				language,
 				folderPathAfterWwwroot);

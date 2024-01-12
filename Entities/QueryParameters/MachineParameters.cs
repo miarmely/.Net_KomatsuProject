@@ -16,20 +16,12 @@ namespace Entities.QueryParameters
 		[Required] public string? MainCategoryName { get; init; }
 	}
 
-	public record MachineParamsForCreate : LanguageParams
-	{
-		[Required] public string ImageFolderPathAfterWwwroot { get; init; }
-		[Required] public string VideoFolderPathAfterWwwroot { get; init; }
-		[Required] public string PdfFolderPathAfterWwwroot { get; init; }
-	}
-
 	public record MachineParamsForDelete : LanguageParams
 	{
 		[Required] public string ImageFolderPathAfterWwwroot { get; init; }
 		[Required] public string VideoFolderPathAfterWwwroot { get; init; }
 		[Required] public string PdfFolderPathAfterWwwroot { get; init; }
 	}
-
 
 	public record MachineParamsForDisplayOneMachine : LanguageParams
 	{
@@ -38,13 +30,14 @@ namespace Entities.QueryParameters
 	
 	public record MachineParamsForUpdateFile : LanguageParams
 	{
-		[Required] [MiarLength(1, 50, "Dosya Adı", "File Name")]
-		public string NewFileName { get; init; }
+		[Required] public string NewFileName { get; init; }
+		[Required] public string OldFileName { get; init; }
+		[Required] public string FileFolderPathAfterWwwroot { get; init; }
+	}
 
-		[Required] [MiarLength(1, 50, "Dosya Adı", "File Name")]
-		public string OldFileName { get; init; }
-
-		[Required] 
-		public string FileFolderPathAfterWwwroot { get; init; }
+	public record MachineParamsForUploadFile : LanguageParams
+	{
+		[Required] public string FileName { get; init; }
+		[Required] public string FileFolderPathAfterWwwroot { get; init; }
 	}
 }

@@ -11,7 +11,7 @@ namespace Services.Contracts
 			string fileContentInBase64Str,
 			FileTypes fileType);
 
-		Task<string[]> GetFullFilePathsOnDirectoryAsync(
+		Task<string[]?> GetFullFilePathsOnDirectoryAsync(
 			string language,
 			string folderPathAfterWwwroot);
 

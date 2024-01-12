@@ -35,8 +35,5 @@ namespace Entities.DtoModels.MachineDtos
 		public string PdfName { get; init; }
 
 		public DescriptionsByLanguages? Descriptions { get; init; }
-		public string ImageContentInBase64Str { get; init; }
-		public string VideoContentInBase64Str { get; init; }
-		public string PdfContentInBase64Str { get; init; }
 	}
 }

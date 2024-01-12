@@ -10,8 +10,13 @@ namespace Services.Contracts
 	public interface IMachineService
 	{
 		Task CreateMachineAsync(
-			MachineParamsForCreate machineParams,
+			LanguageParams languageParams,
 			MachineDtoForCreate machineDto);
+
+		Task UploadMachineFileToFolderAsync(
+		   MachineParamsForUploadFile machineParams,
+		   MachineDtoForUploadFile machineDto,
+		   FileTypes fileType);
 
 		Task<PagingList<MachineView>> GetAllMachinesAsync(
 			string language,

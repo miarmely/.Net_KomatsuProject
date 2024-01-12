@@ -38,51 +38,9 @@
 <script type="module"  src="~/js/miar_machine_create.js"></script>
 
 <script>
-    const formLabelNamesByLanguages = {
-    "TR": {
-        "mainCategory": "Ana Kategori",
-        "subCategory": "Alt Kategori",
-        "brand": "Marka",
-        "model": "Model",
-        "year": "Yıl",
-        "handStatus": {
-            "label": "El Durumu",
-            "radio1": "Sıfır",
-            "radio2": "İkinci El"
-        },
-        "stock": "Stok Adedi",
-        "image": "Resim",
-        "video": "Video",
-        "pdf": "Pdf"
-    },
-    "EN": {
-        "mainCategory": "Main Category",
-        "subCategory": "Subcategory",
-        "brand": "Brand",
-        "model": "Model",
-        "year": "Year",
-        "handStatus": {
-            "label": "Hand Status",
-            "radio1": "Zero",
-            "radio2": "Second Hand"
-        },
-        "stock": "Stock",
-        "image": "Image",
-        "video": "Video",
-        "pdf": "Pdf"
-    },
-}
     const tableTitleByLanguages = {
         "TR": "YENİ MAKİNE OLUŞTUR",
         "EN": "CREATE NEW MACHINE"
-    }
-    const saveButtonNameByLanguages = {
-        "TR": "KAYDET",
-        "EN": "SAVE"
-    }
-    const description_baseButtonNameByLanguages = {
-        "TR": "Açıklama",
-        "EN": "Description"
     }
     const successMessagesByLanguages = {
         "TR": {
@@ -95,11 +53,25 @@
     const errorMessagesByLanguages = {
         "TR":{
             "pdfReadingError": "pdf yüklenirken bir hata oluştu.",
-            "descriptionNotEntered": "açıklama girilmedi"
+            "descriptionNotEntered": "açıklama girilmedi",
+            "imageSizeOverflow": "resim boyutu en fazla 20mb olabilir",
+            "videoSizeOverflow": "video boyutu en fazla 20mb olabilir",
+            "pdfSizeOverflow": "pdf boyutu en fazla 20mb olabilir",
+            "unsuccessfulCreate": "makine oluşturulurken bir hata oluştu",
+            "unsuccessfulImageUpload": "resim yüklenirken bir hata oluştu",
+            "unsuccessfulVideoUpload": "video yüklenirken bir hata oluştu",
+            "unsuccessfulPdfUpload": "pdf yüklenirken bir hata oluştu"
         },
         "EN":{
             "pdfReadingError": "an error occured when pdf uploading",
-            "descriptionNotEntered": "description not entered"
+            "descriptionNotEntered": "description not entered",
+            "imageSizeOverflow": "image size can be max 20mb",
+            "videoSizeOverflow": "video size can be max 20mb",
+            "pdfSizeOverflow": "pdf size can be max 20mb",
+            "unsuccessfulCreate": "an error occured when machine creating",
+            "unsuccessfulImageUpload": "an error occured when image uploading",
+            "unsuccessfulVideoUpload": "an error occured when video uploading",
+            "unsuccessfulPdfUpload": "an error occured when pdf uploading",
         }
     }
 </script>

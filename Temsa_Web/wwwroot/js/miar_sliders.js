@@ -1,5 +1,5 @@
 ﻿import {
-    isFileTypeInvalidAsync, displayFileByDataUrlAsync, displayImageByNormalUrlAsync,
+    isFileTypeValidAsync, displayFileByDataUrlAsync, displayImageByNormalUrlAsync,
     setDisabledOfButtonAsync, updateResultLabel
 } from "./miar_tools.js";
 
@@ -50,7 +50,7 @@ $(function () {
         //#endregion
 
         //#region when selected file type not image (error)
-        if (await isFileTypeInvalidAsync(selectedFileInfos, "image", inpt_chooseFile)) {
+        if (!await isFileTypeValidAsync(selectedFileInfos, "image", inpt_chooseFile)) {
             // write error
             updateResultLabel(
                 resultLabel_id,
