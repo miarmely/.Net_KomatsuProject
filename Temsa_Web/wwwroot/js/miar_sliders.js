@@ -21,7 +21,7 @@ $(function () {
     const image_newImagePath = "/images/newImage.png";
     const image_newImagePath_style = "max-width:45px; max-height:45px";
     const inpt_selectedFile = $("#inpt_selectedFile");
-    const nextButton_bgColor_enabled = "darkBlue";
+    const nextButton_bgColor_enabled = "#1111c7";
     const nextButton_bgColor_disabled = "darkGrey";
     const btn_chooseFile = $("#btn_chooseFile");
     const img_loading = $("#img_loading");

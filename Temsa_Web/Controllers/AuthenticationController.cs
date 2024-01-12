@@ -48,7 +48,7 @@ namespace Temsa_Web.Controllers
 				new ClaimsPrincipal(claimsIdentity));
 			#endregion
 			
-            return RedirectToAction("create", "user");
+            return RedirectToAction("display", "machine");
 		}
 
 

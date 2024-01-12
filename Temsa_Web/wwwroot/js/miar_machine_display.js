@@ -280,10 +280,10 @@ $(function () {
     })
     spn_eventManager.on("click_article", async (_, event) => {
         //#region when click to article <div> or play <image>
-        if (event.target.id == div_article_video_id
-            || event.target.className == "img_play") {
+        if (event.target.id == div_article_video_id  // when article video clicked
+            || event.target.className == "img_play"  // when play image clicked
+            || event.target.innerText == "PDF")  // when pdf button clicked
             return;
-        }
         //#endregion
 
         //#region when click to other places

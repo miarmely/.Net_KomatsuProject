@@ -153,14 +153,6 @@
       "PackagePath": "staticwebassets\\images\\machines\\HD785-8_Walkaround_01.png"
     },
     {
-      "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\images\\machines\\IMG_2307.JPG",
-      "PackagePath": "staticwebassets\\images\\machines\\IMG_2307.JPG"
-    },
-    {
-      "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\images\\machines\\NvEE6FC.jpg",
-      "PackagePath": "staticwebassets\\images\\machines\\NvEE6FC.jpg"
-    },
-    {
       "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\images\\machines\\PC138US-11_Walkaround_01.png",
       "PackagePath": "staticwebassets\\images\\machines\\PC138US-11_Walkaround_01.png"
     },
@@ -371,6 +363,14 @@
     {
       "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\images\\search-icon.png",
       "PackagePath": "staticwebassets\\images\\search-icon.png"
+    },
+    {
+      "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\images\\sliders\\black_skull_wings_74330_2560x1600.jpg",
+      "PackagePath": "staticwebassets\\images\\sliders\\black_skull_wings_74330_2560x1600.jpg"
+    },
+    {
+      "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\images\\sliders\\panther_predator_big_cat_125419_2560x1600.jpg",
+      "PackagePath": "staticwebassets\\images\\sliders\\panther_predator_big_cat_125419_2560x1600.jpg"
     },
     {
       "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\images\\user.png",
