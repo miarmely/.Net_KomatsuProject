@@ -15,6 +15,7 @@ export const style_article = {
     "paddingR": 10,
     "paddingL": 10,
     "border": 6,
+    "bgColorForDelete": "rgb(220, 0, 0)"
 };
 export const div_article_video_id = "div_article_video";
 export const div_article_image_id = "div_articl_image";
@@ -79,8 +80,8 @@ export const style_div_info_height_T = style_div_info_height_VT;
 //#endregion
 
 //#region events
-export async function click_playImageAsync(article) {
-    removeVideoOfPreviousArticle();
+export async function click_articleVideoDivAsync(article) {
+    removeLastUploadedArticleVideoAsync();
     hidePlayImage(article);
 
     //#region load article video
@@ -100,6 +101,11 @@ export async function click_playImageAsync(article) {
 }
 
 export async function mouseover_articleVideoAsync(event, article) {
+    //#region when page mode is "delete"
+    if (pageMode == "delete")
+        return;
+    //#endregion
+
     //#region when video is exists on article
     if (isVideoExists(article))
         return;
@@ -127,6 +133,11 @@ export async function mouseover_articleVideoAsync(event, article) {
 }
 
 export async function mouseout_articleVideoDivAsync(event, article) {
+    //#region when page mode is "delete"
+    if (pageMode == "delete")
+        return;
+    //#endregion
+
     //#region when video is exists on article
     if (isVideoExists(article))
         return;
@@ -229,28 +240,13 @@ export function removeArticleVideo(article) {
     video.load();
 }
 
-export function removeVideoOfPreviousArticle() {
-    //#region when video isn't uploaded to any article previously
-    let previousArticle = articleInfos_lastUploadedVideo["article"];
-
-    if (previousArticle == undefined)
-        return;
-    //#endregion
-
-    //#region when video is exists on previous article
-    if (isVideoExists(previousArticle)) {
-        removeArticleVideo(previousArticle);
-    }
-    //#endregion
-}
-
 export async function removeLastUploadedArticleVideoAsync() {
     //#region remove last uploaded article video if exists
     let article = articleInfos_lastUploadedVideo["article"];
 
     if (article != null  // when at least one video has been opened previously
         && isVideoExists(article))
-        removeArticleVideo(article);
+        removeArticleVideo(article);    
     //#endregion
 }
 

@@ -181,6 +181,10 @@
       "PackagePath": "staticwebassets\\images\\machines\\PW180-11_Walkaround_02.png"
     },
     {
+      "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\images\\machines\\WA200-8_Walkaround_02.png",
+      "PackagePath": "staticwebassets\\images\\machines\\WA200-8_Walkaround_02.png"
+    },
+    {
       "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\images\\machines\\WA270-8.jpg",
       "PackagePath": "staticwebassets\\images\\machines\\WA270-8.jpg"
     },
@@ -209,10 +213,6 @@
       "PackagePath": "staticwebassets\\images\\machines\\WA600-8_Walkaround_01.png"
     },
     {
-      "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\images\\machines\\black_skull_wings_74330_2560x1600.jpg",
-      "PackagePath": "staticwebassets\\images\\machines\\black_skull_wings_74330_2560x1600.jpg"
-    },
-    {
       "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\images\\machines\\d85-exi-1250x835-02.webp",
       "PackagePath": "staticwebassets\\images\\machines\\d85-exi-1250x835-02.webp"
     },
@@ -223,6 +223,102 @@
     {
       "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\images\\machines\\pw160.jpg",
       "PackagePath": "staticwebassets\\images\\machines\\pw160.jpg"
+    },
+    {
+      "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\images\\machines_copy\\D155AX-8_Walkaround_01.png",
+      "PackagePath": "staticwebassets\\images\\machines_copy\\D155AX-8_Walkaround_01.png"
+    },
+    {
+      "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\images\\machines_copy\\D65EX-18_Walkaround_01.png",
+      "PackagePath": "staticwebassets\\images\\machines_copy\\D65EX-18_Walkaround_01.png"
+    },
+    {
+      "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\images\\machines_copy\\D85EX-18_Walkaround_01.png",
+      "PackagePath": "staticwebassets\\images\\machines_copy\\D85EX-18_Walkaround_01.png"
+    },
+    {
+      "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\images\\machines_copy\\GD675-7_Walkaround_01.png",
+      "PackagePath": "staticwebassets\\images\\machines_copy\\GD675-7_Walkaround_01.png"
+    },
+    {
+      "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\images\\machines_copy\\HD405-8EO.jpg",
+      "PackagePath": "staticwebassets\\images\\machines_copy\\HD405-8EO.jpg"
+    },
+    {
+      "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\images\\machines_copy\\HD785-8_Walkaround_01.png",
+      "PackagePath": "staticwebassets\\images\\machines_copy\\HD785-8_Walkaround_01.png"
+    },
+    {
+      "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\images\\machines_copy\\PC138US-11_Walkaround_01.png",
+      "PackagePath": "staticwebassets\\images\\machines_copy\\PC138US-11_Walkaround_01.png"
+    },
+    {
+      "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\images\\machines_copy\\PC210LC-11.jpg",
+      "PackagePath": "staticwebassets\\images\\machines_copy\\PC210LC-11.jpg"
+    },
+    {
+      "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\images\\machines_copy\\PC290LC-11_Walkaround_01.png",
+      "PackagePath": "staticwebassets\\images\\machines_copy\\PC290LC-11_Walkaround_01.png"
+    },
+    {
+      "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\images\\machines_copy\\PC360LC-11_Walkaround_01.png",
+      "PackagePath": "staticwebassets\\images\\machines_copy\\PC360LC-11_Walkaround_01.png"
+    },
+    {
+      "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\images\\machines_copy\\PC490LC-11_Walkaround_01.png",
+      "PackagePath": "staticwebassets\\images\\machines_copy\\PC490LC-11_Walkaround_01.png"
+    },
+    {
+      "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\images\\machines_copy\\PC700LC-11_Walkaround_01.png",
+      "PackagePath": "staticwebassets\\images\\machines_copy\\PC700LC-11_Walkaround_01.png"
+    },
+    {
+      "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\images\\machines_copy\\PW180-11_Walkaround_02.png",
+      "PackagePath": "staticwebassets\\images\\machines_copy\\PW180-11_Walkaround_02.png"
+    },
+    {
+      "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\images\\machines_copy\\WA200-8_Walkaround_02.png",
+      "PackagePath": "staticwebassets\\images\\machines_copy\\WA200-8_Walkaround_02.png"
+    },
+    {
+      "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\images\\machines_copy\\WA270-8.jpg",
+      "PackagePath": "staticwebassets\\images\\machines_copy\\WA270-8.jpg"
+    },
+    {
+      "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\images\\machines_copy\\WA320-8_Walkaround_01.png",
+      "PackagePath": "staticwebassets\\images\\machines_copy\\WA320-8_Walkaround_01.png"
+    },
+    {
+      "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\images\\machines_copy\\WA380-8_Walkaround_02.png",
+      "PackagePath": "staticwebassets\\images\\machines_copy\\WA380-8_Walkaround_02.png"
+    },
+    {
+      "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\images\\machines_copy\\WA470-8_Walkaround_01.png",
+      "PackagePath": "staticwebassets\\images\\machines_copy\\WA470-8_Walkaround_01.png"
+    },
+    {
+      "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\images\\machines_copy\\WA475-10_Walkaround_02.png",
+      "PackagePath": "staticwebassets\\images\\machines_copy\\WA475-10_Walkaround_02.png"
+    },
+    {
+      "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\images\\machines_copy\\WA500-8_Walkaround_02.png",
+      "PackagePath": "staticwebassets\\images\\machines_copy\\WA500-8_Walkaround_02.png"
+    },
+    {
+      "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\images\\machines_copy\\WA600-8_Walkaround_01.png",
+      "PackagePath": "staticwebassets\\images\\machines_copy\\WA600-8_Walkaround_01.png"
+    },
+    {
+      "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\images\\machines_copy\\d85-exi-1250x835-02.webp",
+      "PackagePath": "staticwebassets\\images\\machines_copy\\d85-exi-1250x835-02.webp"
+    },
+    {
+      "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\images\\machines_copy\\pc950lc-11.jpg",
+      "PackagePath": "staticwebassets\\images\\machines_copy\\pc950lc-11.jpg"
+    },
+    {
+      "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\images\\machines_copy\\pw160.jpg",
+      "PackagePath": "staticwebassets\\images\\machines_copy\\pw160.jpg"
     },
     {
       "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\images\\mail.png",
@@ -639,10 +735,6 @@
     {
       "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\lib\\jquery\\dist\\jquery.min.map",
       "PackagePath": "staticwebassets\\lib\\jquery\\dist\\jquery.min.map"
-    },
-    {
-      "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\pdfs\\MachineDetails.pdf",
-      "PackagePath": "staticwebassets\\pdfs\\MachineDetails.pdf"
     },
     {
       "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\videos\\machines\\random1.mp4",

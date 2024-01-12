@@ -3,13 +3,14 @@
 
 <div class="table-agile-info">
     <div class="panel panel-default">
-        @*title*@
         <div class="panel-heading">
-            <div></div>
+            <div id="div_backButton" style="float:right" hidden>
+                <button id="btn_back" type="button" class="btn">
+                    <img src="~/images/close.png" alt="close"/>
+                </button>
+            </div>
             <div id="div_panelTitle"></div>
-            <div></div>
         </div>
-
         <div class="panel-body">
             <div id="div_article_update" class="div_articleDetails" hidden>
                 @*machine image and video*@
@@ -34,13 +35,15 @@
                     <img id="img_loading" src="~/images/loading.gif" style="width:40px; height:40px" hidden/>
                 </div>
             </div>
-
-            <div id="div_articles_panel">
+            <div id="div_article_display">
                 @*menubar*@
-                <div class="row w3-res-tb">
+                <div class="row w3-res-tb"  style="padding-top:10px">
                     <div class="col-sm-5 m-b-xs">
-				        <select id="slct_tableMenubar" class="input-sm form-control w-sm inline v-middle"></select>
-				        <button id="btn_apply" class="btn btn-sm btn-default"></button>                
+				        <select id="slct_menubar" class="input-sm form-control w-sm inline v-middle" style="float:left"></select>
+                        <div id="div_menubar_button" hidden>
+                            <button id="btn_menubar_apply" class="btn btn-sm btn_menubar_apply "></button>
+                        </div>
+				        
                     </div>
                     <div class="col-sm-4">
                     </div>
@@ -80,8 +83,9 @@
     </div>
 </div>
 
+
 <script>
-    const tableTitleByLanguages = {
+    const panelTitleByLanguages = {
         "TR": "KAYITLI MAKİNELER",
         "EN": "REGISTERED MACHINES"
     };
@@ -89,15 +93,17 @@
         "TR": "makine gösteriliyor",
         "EN": "machine displaying"
     };
-    const tableMenubar_optionsByLanguages = {
+    const menubar_optionsByLanguages = {
         "TR": [
-            "Seçilenleri Sil"
+            "Görüntüle",
+            "Sil"
         ],
         "EN": [
-            "Delete Selected"
+            "Display",
+            "Delete"
         ]
     };
-    const tableMenubar_applyButtonName = {
+    const menubar_applyButtonName = {
         "TR": "Uygula",
         "EN": "Apply"
     };
@@ -151,6 +157,7 @@
     }
     let article_idsAndMachineInfos = {};  // id == article Id
     let article_totalCount = 0;
+    let pageMode = "display";
 </script>
 <script type="module" src="~/js/miar_machine_display.js"></script>
 <script type="module" src="~/js/miar_descriptions.js"></script>

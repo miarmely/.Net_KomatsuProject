@@ -6,11 +6,11 @@
 } from "./miar_tools.js";
 
 import {
-    addArticlesAsync, alignArticlesToCenterAsync, art_baseId, click_playImageAsync,
+    addArticlesAsync, alignArticlesToCenterAsync, art_baseId, click_articleVideoDivAsync,
     div_article_button_id,
     div_article_info_id, div_article_video_id, ended_articleVideoAsync,
     mouseout_articleVideoDivAsync, mouseover_articleVideoAsync,
-    removeLastUploadedArticleVideoAsync, setVariablesForArticle
+    removeLastUploadedArticleVideoAsync, setVariablesForArticle, style_article
 } from "./miar_article.js"
 
 import {
@@ -19,7 +19,8 @@ import {
     inpt_stock_id, inpt_year_id, populateFormAsync, setMachineVideoSizeAsync,
     slct_mainCategory_id, slct_subCategory_id, path_imageFolderAfterWwwroot,
     path_videoFolderAfterWwwRoot, selectedImageInfos, selectedPdfInfos, resultLabel_id,
-    img_loading, selectedVideoInfos, path_pdfFolderAfterWwwroot,
+    img_loading, selectedVideoInfos, path_pdfFolderAfterWwwroot, removePosterAttrAsync,
+    removeVideoAttrAsync,
 } from "./miar_machine_inputForm.js";
 
 import {
@@ -34,19 +35,24 @@ $(function () {
     const paginationButtonQuantity = 5;
     const nameOfPaginationHeader = "Machine-Pagination";
     const errorMessageColor = "rgb(255, 75, 75)";
-    const th_descriptions_id = "th_descriptions";
-    const table_body = $("#tbl_machine tbody");
     const ul_pagination = $("#ul_pagination");
     const entityQuantity_id = "#small_entityQuantity";
     const entityQuantity_color = "#7A7A7A";
     const path_pdfs = "pdfs";
-    const div_articles_panel = $("#div_articles_panel");
+    const div_article_display = $("#div_article_display");
     const div_articles = $("#div_articles");
     const div_article_update = $("#div_article_update");
+    const div_backButton = $("#div_backButton");
+    const div_panelTitle = $("#div_panelTitle");
+    const div_menubar_button = $("#div_menubar_button");
     const descriptions_charQuantityToBeDisplayOnArticle = 200;
+    const btn_back = $("#btn_back");
+    const btn_menubar_apply = $("#btn_menubar_apply")
+    const slct_menubar = $("#slct_menubar");
     let paginationInfos = {};
     let machineCountOnPage;
     let idOfLastViewedArticle = null;
+    let article_idsToBeDelete = [];
     //#endregion
 
     //#region events
@@ -162,8 +168,22 @@ $(function () {
             "isChanged": false
         });
         //#endregion
-    });
+    })
+    btn_back.click(async () => {
+        //#region reset form
+        $("form")[0].reset();
 
+        await removePosterAttrAsync();
+        await removeVideoAttrAsync();
+        //#endregion
+
+        //#region show articles
+        div_article_update.attr("hidden", "");
+        div_article_display.removeAttr("hidden");
+        //#endregion
+
+        await showOrHideBackButtonAsync("hide");
+    })
     //#endregion
 
     //#region for articles page
@@ -173,40 +193,25 @@ $(function () {
             await alignArticlesToCenterAsync(),
             450);
     });
-    $("#box_all").click(async () => {
-        //#region do checked/unchecked all checkbox
-        let isBoxAllChecked = $("#box_all").is(":checked");
+    slct_menubar.change(async () => {
+        //#region set page mode
+        let selectedMode = slct_menubar.val();
 
-        await new Promise(resolve => {
-            for (let rowNo = 1; rowNo <= machineCountOnPage; rowNo += 1) {
-                var checkBoxInRow = $(`#tr_row${rowNo} #td_checkbox input`);
-
-                //#region do checked of checkbox
-                if (isBoxAllChecked
-                    && !checkBoxInRow.is(":checked")) // if not checked
-                    checkBoxInRow.prop("checked", true);
-                //#endregion
-
-                //#region do unchecked of checkbox
-                else if (!isBoxAllChecked
-                    && checkBoxInRow.is(":checked")) // if checked
-                    checkBoxInRow.prop("checked", false);
-                //#endregion
-            }
-
-            resolve();
-        })
+        switch (selectedMode) {
+            case '0':  // display
+                await changePageModeAsync("display");
+                break;
+            case '1':  // delete
+                await changePageModeAsync("delete");
+                break;
+        }
         //#endregion
     })
-    $("#btn_apply").click(async () => {
-        let slct_tableMenubar = $("#slct_tableMenubar");
-
-        switch (slct_tableMenubar.val()) {
-            //#region delete selected values
-            case "0":
+    btn_menubar_apply.click(async () => {
+        switch (slct_menubar.val()) {
+            case "1":  // delete
                 await deleteSelectedMachinesAsync();
                 break;
-            //#endregion 
         }
     })
     ul_pagination.click(async () => {
@@ -257,33 +262,82 @@ $(function () {
         }
         //#endregion 
     })
-    spn_eventManager.on("click_playImage", async (_, event) => {
+    spn_eventManager.on("click_articleVideoDiv", async (_, event) => {
+        //#region when page mode is "delete"
+        if (pageMode == "delete")
+            return;
+        //#endregion
+
         //#region get article id of clicked play <img>
         let articleId = event.target
             .closest("article")
             .id;
         //#endregion
 
-        await click_playImageAsync($("#" + articleId));
+        await click_articleVideoDivAsync($("#" + articleId));
     })
-    spn_eventManager.on("click_articleInfoDiv", async (_, event) => {
-        await removeLastUploadedArticleVideoAsync();
-
-        //#region hide machine articles
-        div_articles_panel.attr("hidden", "");
-        div_article_update.removeAttr("hidden");
+    spn_eventManager.on("click_article", async (_, event) => {
+        //#region when click to article <div> or play <image>
+        if (event.target.id == div_article_video_id
+            || event.target.className == "img_play") {
+            return;
+        }
         //#endregion
 
-        //#region get machine infos of clicked article
-        idOfLastViewedArticle = event.currentTarget.closest("article").id;
-        let machineInfosOfArticle = article_idsAndMachineInfos[idOfLastViewedArticle];
-        //#endregion
+        //#region when click to other places
+        let articleId = event.currentTarget.closest("article").id;
 
-        await setVariablesForDescriptionsAsync("descriptions", {
-            "byLanguages": machineInfosOfArticle.descriptions
-        })
-        await populateFormAsync(false);
-        await addDefaultValuesToFormAsync(machineInfosOfArticle);
+        switch (pageMode) {
+            case "display":
+                //#region open update page
+                await removeLastUploadedArticleVideoAsync();
+
+                //#region hide machine articles
+                div_article_display.attr("hidden", "");
+                div_article_update.removeAttr("hidden");
+                //#endregion
+
+                //#region get machine infos of clicked article
+                idOfLastViewedArticle = articleId;
+                let machineInfosOfArticle = article_idsAndMachineInfos[articleId];
+                //#endregion
+
+                await setVariablesForDescriptionsAsync("descriptions", {
+                    "byLanguages": machineInfosOfArticle.descriptions
+                })
+                await populateFormAsync(false);
+                await addDefaultValuesToFormAsync(machineInfosOfArticle);
+                await showOrHideBackButtonAsync("show");
+                //#endregion
+
+                break;
+            case "delete":
+                //#region when click article for "undelete"
+                let article = $("#" + articleId);
+
+                if (article.css("background-color") == style_article.bgColorForDelete) {
+                    // change article <style>
+                    article.css("background-color", "white");
+
+                    // remove article id from "article_idsToBeDelete"
+                    let articleIdIndex = article_idsToBeDelete.indexOf(articleId);
+                    article_idsToBeDelete.splice(articleIdIndex, 1);
+                }
+                //#endregion
+
+                //#region when click article for "delete"
+                else {
+                    // change article style
+                    article.css("background-color", style_article.bgColorForDelete);
+
+                    // save article id
+                    article_idsToBeDelete.push(articleId);
+                }
+                //#endregion
+
+                break;
+        }
+        //#endregion
     })
     spn_eventManager.on("ended_articleVideo", async () => {
         await ended_articleVideoAsync();
@@ -291,6 +345,38 @@ $(function () {
     //#endregion
 
     //#endregion
+
+    //#region functions
+    async function populateHtmlAsync() {
+        //#region add panel title
+        $("#div_panelTitle").append(
+            panelTitleByLanguages[language]);
+        //#endregion
+
+        //#region populate menubar
+        let menubarOptions = menubar_optionsByLanguages[language];
+
+        for (let index = 0; index < menubarOptions.length; index += 1) {
+            let menubarOption = menubarOptions[index];
+
+            slct_menubar.append(`
+                <option value="${index}">${menubarOption}</option>`);
+        }
+        //#endregion
+
+        //#region add apply button name
+        btn_menubar_apply.append(
+            menubar_applyButtonName[language])
+        //#endregion
+
+        //#region add entity quantity message
+        $(entityQuantity_id).append(
+            `<b>0</b> ${entityQuantity_messageByLanguages[language]}`
+        );
+        //#endregion
+
+        await addMachineArticlesAsync(pageNumber, pageSize, true);
+    }
 
     async function updateMachineAsync(
         data,
@@ -327,6 +413,61 @@ $(function () {
                 }
             });
         });
+    }
+
+    async function updateArticleAsync(
+        articleId,
+        data
+    ) {
+        let article = $("#" + articleId);
+
+        //#region when image is changed
+        if (data.imageName != null)
+            article
+                .find("#" + div_article_video_id + " video")
+                .attr("poster", "/" + path_imageFolderAfterWwwroot + "/" + data.imageName);
+        //#endregion
+
+        //#region when video is changed
+        if (data.videoName != null) {
+            article
+                .find("#" + div_article_video_id + " source")
+                .attr({
+                    "src": "/" + path_videoFolderAfterWwwRoot + "/" + data.videoName,
+                    "type": "video/" + getFileTypeFromFileName(data.videoName)
+                })
+
+            article.find("video").load()
+        }
+        //#endregion
+
+        //#region when model is changed
+        if (data.model != null)
+            updateElementText(
+                article.find("#" + div_article_info_id + " h2"),
+                data.model);
+        //#endregion
+
+        //#region when mainCategoryName is changed
+        if (data.mainCategoryName != null)
+            updateElementText(
+                article.find("#" + div_article_info_id + " h3"),
+                data.mainCategoryName);
+        //#endregion
+
+        //#region when subCategoryName is changed
+        if (data.subCategoryName != null)
+            updateElementText(
+                article.find("#" + div_article_info_id + " h4"),
+                data.subCategoryName);
+        //#endregion
+
+        //#region when descriptions is changed
+        if (data.descriptions != null)
+            updateElementText(
+                article.find("#" + div_article_info_id + " h5"),
+                data.descriptions[language].substring(0, descriptions_charQuantityToBeDisplayOnArticle));
+        //#endregion
     }
 
     async function updateMachineImageOnFolderAsync(oldMachineInfos, newMachineInfos) {
@@ -455,63 +596,20 @@ $(function () {
         });
     }
 
-    async function removeDescriptionButtonOnColumnAsync() {
-        //#region remove descriptions button
-        let th_descriptions = $("#" + th_descriptions_id);
-
-        th_descriptions.empty();
-        th_descriptions.append(
-            description_baseButtonNameByLanguages[language]);
-        //#endregion
-    }
-
     async function deleteSelectedMachinesAsync() {
         //#region set data
-        let machineInfos = [];
+        let data = [];  // [{}, {}, ...]
 
-        //#region populate "machineInfos" array
-        for (let rowNo = 1; rowNo <= machineCountOnPage; rowNo += 1) {
-            //#region set variables
-            let checkBox = $(`#tr_row${rowNo} #td_checkbox input`);
-            let row = $(`#tr_row${rowNo}`);
-            //#endregion
+        for (let index in article_idsToBeDelete) {
+            let machineInfos = article_idsAndMachineInfos[article_idsToBeDelete[index]];
 
-            //#region add machine infos to "machineInfos" if checked
-            if (checkBox.is(":checked")) {
-                //#region when update process continuing
-                if (row.children("td>input").length != 0)  // when any <input> exists
-                    await clicked_cancelButtonAsync(rowNo);  // cancel update process
-                //#endregion
-
-                //#region get machine id, image name and pdf name
-                let machineId = row.attr("class");
-
-                let imageName = row.children("#td_image")
-                    .children("img")
-                    .attr("alt");
-
-                let pdfName = row.children("#td_pdf")
-                    .children("a")
-                    .attr("title");
-                //#endregion
-
-                //#region populate "machineInfos"
-                machineInfos.push({
-                    "MachineId": machineId,
-                    "ImageName": imageName,
-                    "PdfName": pdfName,
-                });
-                //#endregion
-            }
-            //#endregion
+            data.push({
+                "machineId": machineInfos.id,
+                "imageName": machineInfos.imageName,
+                "videoName": machineInfos.videoName,
+                "pdfName": machineInfos.pdfName
+            });
         }
-        //#endregion
-
-        //#region when any machine not select
-        if (machineInfos.length == 0)
-            return;
-        //#endregion
-
         //#endregion
 
         $.ajax({
@@ -519,16 +617,19 @@ $(function () {
             url: (baseApiUrl + "/machine/delete" +
                 `?language=${language}` +
                 `&imageFolderPathAfterWwwroot=${path_imageFolderAfterWwwroot}` +
+                `&videoFolderPathAfterWwwroot=${path_videoFolderAfterWwwRoot}` +
                 `&pdfFolderPathAfterWwwroot=${path_pdfs}`),
             headers: { "Authorization": jwtToken },
-            data: JSON.stringify(machineInfos),
+            data: JSON.stringify(data),
             contentType: "application/json",
             dataType: "json",
             success: () => {
+                article_idsToBeDelete = [];  // reset
+
                 //#region when all machines on page deleted
                 let currentPageNo = paginationInfos.CurrentPageNo;
 
-                if (machineInfos.length == paginationInfos.CurrentPageCount) {
+                if (data.length == paginationInfos.CurrentPageCount) {
                     //#region when next page exists
                     if (paginationInfos.HasNext)
                         addMachineArticlesAsync(currentPageNo, pageSize, true);  // refresh current page
@@ -541,12 +642,15 @@ $(function () {
 
                     //#region when any machines not found
                     else {
-                        table_body.empty();
+                        //#region reset articles <div>
+                        div_articles.empty();
+                        div_articles.removeAttr("style");
+                        //#endregion
 
                         updateResultLabel(
                             entityQuantity_id,
-                            `<b>0/${pageSize}<b> ${entityQuantity_message}`,
-                            errorMessageColor);
+                            `<b>0/${pageSize}<b> ${entityQuantity_messageByLanguages[language]}`,
+                            entityQuantity_color);
                     }
                     //#endregion
                 }
@@ -557,11 +661,13 @@ $(function () {
                     addMachineArticlesAsync(currentPageNo, pageSize, true);  // refresh current page
                 //#endregion
 
-                //#region do unchecked "box_all"
-                $("#box_all").prop("checked", false);
-                //#endregion
+                //#region change page mode
+                pageMode = "display";
+                slct_menubar.val(0);  // select "display"
 
-                removeDescriptionButtonOnColumnAsync();
+                // hide apply button
+                div_menubar_button.attr("hidden", "");
+                //#endregion
             },
             error: (response) => {
                 //#region write error to entity quantity label
@@ -573,10 +679,14 @@ $(function () {
                 //#endregion
             }
         });
+
+
     }
 
     async function populateArticlesAsync(response) {
         //#region add machines to <article>
+        article_idsAndMachineInfos = {};  // reset
+
         for (let index in response) {
             //#region add machines
 
@@ -627,14 +737,14 @@ $(function () {
         //#endregion
 
         //#region declare articles page events
-        $(".img_play").click((event) => {
-            spn_eventManager.trigger("click_playImage", [event]);
+        $(".article #" + div_article_video_id).click((event) => {
+            spn_eventManager.trigger("click_articleVideoDiv", [event]);
         });
         $(".article video").on("ended", () => {
             spn_eventManager.trigger("ended_articleVideo");
         })
-        $(".article #" + div_article_info_id).click((event) => {
-            spn_eventManager.trigger("click_articleInfoDiv", [event]);
+        $(".article").click((event) => {
+            spn_eventManager.trigger("click_article", [event]);
         })
         //#endregion
     }
@@ -706,91 +816,56 @@ $(function () {
         });
     }
 
-    async function updateArticleAsync(
-        articleId,
-        data
-    ) {
-        let article = $("#" + articleId);
+    async function showOrHideBackButtonAsync(mode) {
+        switch (mode) {
+            case "show":
+                // show back button
+                div_backButton.removeAttr("hidden");
 
-        //#region when image is changed
-        if (data.imageName != null)
-            article
-                .find("#" + div_article_video_id + " video")
-                .attr("poster", "/" + path_imageFolderAfterWwwroot + "/" + data.imageName);
-        //#endregion
+                // shift the panel title to right
+                let backButtonWidth = btn_back.css("width");
+                div_panelTitle.css("padding-left", backButtonWidth);
 
-        //#region when video is changed
-        if (data.videoName != null) {
-            article
-                .find("#" + div_article_video_id + " source")
-                .attr({
-                    "src": "/" + path_videoFolderAfterWwwRoot + "/" + data.videoName,
-                    "type": "video/" + getFileTypeFromFileName(data.videoName)
-                })
+                break;
+            case "hide":
+                // hide back button
+                div_backButton.attr("hidden", "");
 
-            article.find("video").load()
+                // shift the panel title to left
+                div_panelTitle.css("padding-left", "");
+
+                break;
         }
-        //#endregion
-
-        //#region when model is changed
-        if (data.model != null)
-            updateElementText(
-                article.find("#" + div_article_info_id + " h2"),
-                data.model);
-        //#endregion
-
-        //#region when mainCategoryName is changed
-        if (data.mainCategoryName != null)
-            updateElementText(
-                article.find("#" + div_article_info_id + " h3"),
-                data.mainCategoryName);
-        //#endregion
-
-        //#region when subCategoryName is changed
-        if (data.subCategoryName != null)
-            updateElementText(
-                article.find("#" + div_article_info_id + " h4"),
-                data.subCategoryName);
-        //#endregion
-
-        //#region when descriptions is changed
-        if (data.descriptions != null)
-            updateElementText(
-                article.find("#" + div_article_info_id + " h5"),
-                data.descriptions[language].substring(0, descriptions_charQuantityToBeDisplayOnArticle));
-        //#endregion
     }
 
-    async function populateHtmlAsync() {
-        //#region add panel title
-        $("#div_panelTitle").append(
-            tableTitleByLanguages[language]);
-        //#endregion
+    async function changePageModeAsync(mode) {
+        switch (mode) {
+            case "display":
+                //#region reset bg color of selected articles for delete 
+                for (let index in article_idsToBeDelete) {
+                    let articleId = article_idsToBeDelete[index];
 
-        //#region add panel menubars
-        let tableMenubarOptions = tableMenubar_optionsByLanguages[language];
+                    $("#" + articleId).css("background-color", "");
+                }
+                //#endregion
 
-        for (let index = 0; index < tableMenubarOptions.length; index += 1) {
-            let tableMenubarOption = tableMenubarOptions[index];
+                //#region hide apply <button>
+                pageMode = "display";
+                article_idsToBeDelete = [];
+                div_menubar_button.attr("hidden", "");
+                //#endregion
 
-            $("#slct_tableMenubar").append(`
-                <option value="${index}">${tableMenubarOption}</option>
-            `);
+                break;
+            case "delete":
+                await removeLastUploadedArticleVideoAsync();
+
+                //#region show apply <button>
+                pageMode = "delete";
+                div_menubar_button.removeAttr("hidden");
+                //#endregion
+
+                break;
         }
-        //#endregion
-
-        //#region add apply button name
-        $("#btn_apply").append(
-            tableMenubar_applyButtonName[language])
-        //#endregion
-
-        //#region add entity quantity message
-        $(entityQuantity_id).append(
-            `<b>0</b> ${entityQuantity_messageByLanguages[language]}`
-        );
-        //#endregion
-
-        await addMachineArticlesAsync(pageNumber, pageSize, true);
     }
     //#endregion
 

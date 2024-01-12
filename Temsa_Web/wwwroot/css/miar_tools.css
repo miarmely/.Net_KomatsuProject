@@ -1,4 +1,5 @@
-﻿.btn_form_label {
+﻿/*machine dispaly page (update page)*/
+.btn_form_label {
     background-color: darkblue;
     position: relative;
     bottom: 8px;
@@ -22,22 +23,25 @@
         font-weight: bold
     }
 
+#btn_back {
+    color: black;
+    background-color: red;
+    width: 55px;
+}
+/*///////////////////////////////////////////////////*/
 
 
-/*article page*/
+/*machine display page (article page)*/
 .article {
     border-style: solid;
     float: left;
     border-radius: 25px;
-}
-
-.article:hover {
-    background-color: lightgrey;
-}
-
-#div_article_info:hover {
     cursor: pointer;
 }
+
+    .article:hover {
+        background-color: lightgrey;
+    }
 
 .div_articles {
     margin-top: 20px;
@@ -48,19 +52,32 @@
     cursor: pointer;
 }
 
-.btn_article{
+.btn_article {
     background-color: dimgray;
     color: white;
     text-align: center;
 }
 
-.btn_article > a:hover{
-    font-weight:bold
+    .btn_article > a {
+        color: white;
+        text-decoration: none;
+    }
+
+        .btn_article > a:hover {
+            font-weight: bold
+        }
+
+#slct_menubar {
+    font-size: 13px;
 }
 
-.btn_article > a {
-    color: white;
-    text-decoration: none;
+.btn_menubar_apply {
+    background-color: rgb(220, 0, 0);
+    color: white
 }
 
-/*/////////////////////////////*/
+    .btn_menubar_apply:hover {
+        color: white;
+        font-weight: bold
+    }
+/*///////////////////////////////////////////////////*/

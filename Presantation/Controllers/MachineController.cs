@@ -148,6 +148,7 @@ namespace Presantation.Controllers
 			return NoContent();
 		}
 
+
 		[HttpPut("update/image")]
 		[Authorization("Admin,Editor,Yönetici,Editör")]
 		public async Task<IActionResult> UpdateMachineImage(
@@ -163,6 +164,7 @@ namespace Presantation.Controllers
 			return NoContent();
 		}
 
+
 		[HttpPut("update/video")]
 		[Authorization("Admin,Editor,Yönetici,Editör")]
 		public async Task<IActionResult> UpdateMachineVideo(
@@ -177,6 +179,7 @@ namespace Presantation.Controllers
 
 			return NoContent();
 		}
+
 
 		[HttpPut("update/pdf")]
 		[Authorization("Admin,Editor,Yönetici,Editör")]

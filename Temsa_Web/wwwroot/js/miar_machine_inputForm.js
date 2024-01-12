@@ -4,7 +4,7 @@
     removeObjectUrlFromElementAsync, getFileTypeFromFileName, isFileSizeValidAsync
 } from "./miar_tools.js"
 
-import { ul_descriptions_id, uploadDescriptionsEvents  } from "./miar_descriptions.js"
+import { ul_descriptions_id, uploadDescriptionsEvents } from "./miar_descriptions.js"
 
 //#region variables
 export const resultLabel_id = "#p_resultLabel";
@@ -212,7 +212,7 @@ function uploadEvents() {
             return;
         }
         //#endregion
-        
+
         //#region when file size is invalid (error)
         if (!await isFileSizeValidAsync(selectedVideoInfos.size, videoSizeLimitInMb)) {
             updateResultLabel(
@@ -271,7 +271,7 @@ function uploadEvents() {
                 "10px",
                 img_loading);
 
-           // reset file input
+            // reset file input
             inpt_pdf.val("");
             return;
         }
@@ -643,35 +643,48 @@ export async function addDefaultValuesToFormAsync(machineInfos) {
     //#endregion
 }
 
-export async function removePosterOrVideoAsync(which) {
-    //#region remove video or poster on video
-    switch (which) {
-        case "poster":
-            await removeObjectUrlFromElementAsync(
-                vid_machine,
-                "poster",
-                () => {
-                    // when video isn't exists too
-                    if (src_machine.attr("src") == undefined)
-                        vid_machine.attr("hidden", "");  // hide <video>
+export async function removePosterAttrAsync(){
+    //#region when poster is object url
+    if (vid_machine.attr("poster").startsWith("blob:"))
+        await removeObjectUrlFromElementAsync(
+            vid_machine,
+            "poster",
+            () => {
+                // when video isn't exists too
+                if (src_machine.attr("src") == undefined)
+                    vid_machine.attr("hidden", "");  // hide <video>
 
-                    vid_machine.load();
-                });
-            break;
-        case "video":
-            await removeObjectUrlFromElementAsync(
-                src_machine,
-                "src",
-                () => {
-                    // when image isn't exists
-                    if (vid_machine.attr("poster") == undefined)
-                        vid_machine.attr("hidden", "");  // hide <video>
-
-                    vid_machine.load();
-                });
-            break;
-    }
+                vid_machine.load();
+            });
     //#endregion
+
+    //#region when poster is normal url
+    else
+        vid_machine.removeAttr("poster");
+            //#endregion
+}
+
+export async function removeVideoAttrAsync(){
+    //#region when video is object url
+    if (src_machine.attr("src").startsWith("blob:"))
+        await removeObjectUrlFromElementAsync(
+            src_machine,
+            "src",
+            () => {
+                // when image isn't exists
+                if (vid_machine.attr("poster") == undefined)
+                    vid_machine.attr("hidden", "");  // hide <video>
+
+                // remove video type 
+                src_machine.removeAttr("type");
+                vid_machine.load();
+            });
+    //#endregion
+
+    //#region when video is normal url
+    else
+        src_machine.removeAttr("src type");
+            //#endregion
 }
 
 export async function setMachineVideoSizeAsync() {
@@ -681,7 +694,7 @@ export async function setMachineVideoSizeAsync() {
     vid_machine.css({
         "width": panelBodyWidth - (panelBodyWidth * (60 / 100)),
         "max-height": panelBodyWidth - (panelBodyWidth * (60 / 100))
-    }); 
+    });
     //#endregion
 }
 //#endregion

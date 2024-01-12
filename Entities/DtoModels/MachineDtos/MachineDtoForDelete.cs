@@ -4,8 +4,9 @@ namespace Entities.DtoModels.MachineDtos
 {
     public record MachineDtoForDelete
     {
-        [Required] public Guid MachineId { get; init; }
-        [Required] public string ImageName { get; init; }
-		[Required] public string PdfName { get; init; }
+        public Guid MachineId { get; init; }
+        public string ImageName { get; init; }
+        public string VideoName { get; init; }
+		public string PdfName { get; init; }
     }
 }

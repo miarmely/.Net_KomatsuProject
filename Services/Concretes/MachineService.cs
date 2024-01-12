@@ -483,7 +483,7 @@ namespace Services.Concretes
 
 			#endregion
 
-			#region delete machine image on folder
+			#region delete machine images on folder
 			await DeleteFilesFromFolderForMachineAsync(
 				machineParams.Language,
 				machineParams.ImageFolderPathAfterWwwroot,
@@ -492,7 +492,16 @@ namespace Services.Concretes
 				FileTypes.Image);
 			#endregion
 
-			#region delete PDFs on folder
+			#region delete videos on folder
+			await DeleteFilesFromFolderForMachineAsync(
+				machineParams.Language,
+				machineParams.VideoFolderPathAfterWwwroot,
+				machineDtos.Select(m => m.VideoName),
+				"VideoName",
+				FileTypes.Video);
+			#endregion
+
+			#region delete Pdfs on folder
 			await DeleteFilesFromFolderForMachineAsync(
 				machineParams.Language,
 				machineParams.PdfFolderPathAfterWwwroot,

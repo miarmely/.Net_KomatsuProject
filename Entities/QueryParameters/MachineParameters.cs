@@ -26,6 +26,7 @@ namespace Entities.QueryParameters
 	public record MachineParamsForDelete : LanguageParams
 	{
 		[Required] public string ImageFolderPathAfterWwwroot { get; init; }
+		[Required] public string VideoFolderPathAfterWwwroot { get; init; }
 		[Required] public string PdfFolderPathAfterWwwroot { get; init; }
 	}
 
