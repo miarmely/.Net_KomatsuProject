@@ -6,11 +6,10 @@
 } from "./miar_tools.js";
 
 import {
-    addArticlesAsync, alignArticlesToCenterAsync, art_baseId, click_articleVideoDivAsync,
-    div_article_button_id,
-    div_article_info_id, div_article_video_id, ended_articleVideoAsync,
-    mouseout_articleVideoDivAsync, mouseover_articleVideoAsync,
-    removeLastUploadedArticleVideoAsync, setVariablesForArticle, style_article
+    addArticlesAsync, alignArticlesToCenterAsync, articleBuffer, art_baseId,
+    click_articleVideoDivAsync, div_article_button_id, div_article_info_id,
+    div_article_video_id, ended_articleVideoAsync, mouseout_articleVideoDivAsync,
+    mouseover_articleVideoAsync, removeLastUploadedArticleVideoAsync, setVariablesForArticle
 } from "./miar_article.js"
 
 import {
@@ -317,7 +316,7 @@ $(function () {
                 //#region when click article for "undelete"
                 let article = $("#" + articleId);
 
-                if (article.css("background-color") == style_article.bgColorForDelete) {
+                if (article.css("background-color") == articleBuffer.articleStyle.bgColorForDelete) {
                     // change article <style>
                     article.css("background-color", "white");
 
@@ -330,7 +329,7 @@ $(function () {
                 //#region when click article for "delete"
                 else {
                     // change article style
-                    article.css("background-color", style_article.bgColorForDelete);
+                    article.css("background-color", articleBuffer.articleStyle.bgColorForDelete);
 
                     // save article id
                     article_idsToBeDelete.push(articleId);
@@ -767,16 +766,30 @@ $(function () {
             },
             success: (response, status, xhr) => {
                 //#region set variables
-                article_totalCount = response.length;
-
                 setVariablesForArticle({
                     "div_articles": div_articles,
                     "path_articleVideos": path_videoFolderAfterWwwroot,
+                    "totalArticalCount": response.length,
+                    "articleStyle": {
+                        "width": 370,
+                        "height": 580,
+                        "marginT": 10,
+                        "marginB": 10,
+                        "marginR": 20,
+                        "marginL": 20,
+                        "paddingT": 10,
+                        "paddingB": 10,
+                        "paddingR": 10,
+                        "paddingL": 10,
+                        "border": 6,
+                        "bgColorForDelete": "rgb(220, 0, 0)"
+                    }
                 });
                 //#endregion
 
                 addArticlesAsync("videoAndText", div_articles, response.length)
                     .then(async () => {
+                        await alignArticlesToCenterAsync();
                         await populateArticlesAsync(response);
 
                         //#region get pagination infos from headers

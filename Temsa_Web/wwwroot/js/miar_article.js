@@ -1,22 +1,4 @@
 ﻿//#region variables
-export let buffers = {
-    "div_articles": "",
-    "path_articleVideos": "",
-}
-export const style_article = {
-    "width": 370,
-    "height": 580,
-    "marginT": 10,
-    "marginB": 10,
-    "marginR": 20,
-    "marginL": 20,
-    "paddingT": 10,
-    "paddingB": 10,
-    "paddingR": 10,
-    "paddingL": 10,
-    "border": 6,
-    "bgColorForDelete": "rgb(220, 0, 0)"
-};
 export const div_article_video_id = "div_article_video";
 export const div_article_image_id = "div_articl_image";
 export const div_article_info_id = "div_article_info";
@@ -25,37 +7,54 @@ export const art_baseId = "art_";
 export const path_playImage = "images/play.png";
 export const btn_pdf_id = "btn_pdf";
 export const headerOfPageHeight = 80;
+export let articleBuffer = {
+    "div_articles": "",  // should be set
+    "path_articleVideos": "",
+    "totalArticalCount": "",  // should be set
+    "articleStyle": {  // should be set
+        "width": 0,
+        "height": 0,
+        "marginT": 0,
+        "marginB": 0,
+        "marginR": 0,
+        "marginL": 0,
+        "paddingT": 0,
+        "paddingB": 0,
+        "paddingR": 0,
+        "paddingL": 0,
+        "border": 0,
+        "bgColorForDelete": "",
+    }
+}
 let articleInfos_lastUploadedPlayImage = {};
 let articleInfos_lastUploadedVideo = {
     "article": null
 };
+let article_type = "";
+let article_desiredWidth = 0;
+let article_isWidthReduced = false;
 
 //#region article elements styles
 
 //#region when article type is "video and text" (VT)
-export const style_a_pdfButton_fontSize = 18;
-export const style_a_pdfButton_paddingTB = 6;
-export const style_a_pdfButton_paddingRL = 40;
-
-export const style_div_video_marginB_VT = 20;
-export const style_div_video_width_VT = style_article.width - (style_article.border * 2) - style_article.paddingR - style_article.paddingL
-export const style_div_video_height_VT = (style_article.height - (style_article.border * 2) - style_article.paddingT - style_article.paddingB - style_div_video_marginB_VT) / 2;
-
-export const style_div_button_width_VT = style_div_video_width_VT;
-export const style_div_button_height_VT = (style_a_pdfButton_fontSize + 9) + (style_a_pdfButton_paddingTB * 2);
-
-export const style_div_info_width_VT = style_div_video_width_VT;
-export const style_div_info_height_VT = style_div_video_height_VT - style_div_button_height_VT;
-
-export const style_vid_width_VT = style_div_video_width_VT;
-export const style_vid_height_VT = style_div_video_height_VT;
-
-export const style_img_play_width_VT = style_vid_width_VT / 2.5;
-export const style_img_play_height_VT = style_vid_height_VT / 2.2;
-export const style_img_play_marginT_VT = (style_vid_height_VT - style_img_play_height_VT) / 2;
-export const style_img_play_marginB_VT = style_img_play_marginT_VT;
-export const style_img_play_marginR_VT = (style_vid_width_VT - style_img_play_width_VT) / 2;
-export const style_img_play_marginL_VT = style_img_play_marginR_VT;
+export let style_a_pdfButton_fontSize;
+export let style_a_pdfButton_paddingTB;
+export let style_a_pdfButton_paddingRL;
+export let style_div_video_marginB_VT;
+export let style_div_video_width_VT;
+export let style_div_video_height_VT;
+export let style_div_button_width_VT;
+export let style_div_button_height_VT;
+export let style_div_info_width_VT;
+export let style_div_info_height_VT;
+export let style_vid_width_VT;
+export let style_vid_height_VT;
+export let style_img_play_width_VT;
+export let style_img_play_height_VT;
+export let style_img_play_marginT_VT;
+export let style_img_play_marginB_VT;
+export let style_img_play_marginR_VT;
+export let style_img_play_marginL_VT;
 //#endregion
 
 //#region when article type is "image and text" (IT)
@@ -90,7 +89,7 @@ export async function click_articleVideoDivAsync(article) {
     article
         .find("video")
         .attr({
-            "src": "/" + buffers.path_articleVideos + "/" + videoName,
+            "src": "/" + articleBuffer.path_articleVideos + "/" + videoName,
             "controls": "",
             "autoplay": ""
         });
@@ -170,12 +169,205 @@ export async function ended_articleVideoAsync() {
 //#endregion
 
 //#region functions
+export async function addArticlesAsync(articleType) {
+    // articleType: "imageAndText", "videoAndText", "text"
+
+    //#region add articles
+    article_type = articleType;
+
+    for (let index = 0; index < articleBuffer.totalArticalCount; index++) {
+        //#region add articles by article type
+        let articleId = art_baseId + index;
+
+        switch (article_type) {
+            case "videoAndText":
+                //#region add article with video and text
+                if (articleType == "videoAndText")
+                    articleBuffer.div_articles.append(`
+                        <article id="${articleId}"  class="article" style="text-align: center">
+                            <div id="${div_article_video_id}">
+                                <img class="img_play"  hidden/>
+                                <video poster="">
+                                    <source src="" type=""></source>
+                                </video>
+                            </div>
+
+                            <div id="${div_article_info_id}">
+                            </div>
+
+                            <div id="${div_article_button_id}">
+                                <ul>
+                                    <li class="btn btn_article">
+                                        <a target="blank">PDF</a>
+                                    </li>
+                                </ul>  
+                            </div>
+                        </article>`
+                    );
+                //#endregion
+
+                await addStyleToArticleElements($("#" + articleId));
+                break;
+            case "imageAndText":
+                //#region add article with image and text
+                articleBuffer.div_articles.append(`
+                    <article id="${articleId}"  class="article">
+                        <div id="${div_article_image_id}" >
+                            <img src=""  alt=""  title="" />
+                        </div>
+
+                        <div id="${div_article_info_id}" >
+                        </div>
+                    </article>`
+                );
+                //#endregion
+
+                await addStyleToArticleElements($("#" + articleId));
+                break;
+            case "text":
+                //#region add article with only text
+                articleBuffer.div_articles.append(`
+                    <article id="${articleId}"  class="article">
+                        <div id="${div_article_info_id}" >
+                        </div>
+                    </article>`
+                );
+                //#endregion
+
+                await addStyleToArticleElements($("#" + articleId));
+                break;
+        }
+        //#endregion
+
+        //#region add <article> style
+        $("#" + articleId).css({
+            "width": articleBuffer.articleStyle.width,
+            "height": articleBuffer.articleStyle.height,
+            "margin-top": articleBuffer.articleStyle.marginT,
+            "margin-bottom": articleBuffer.articleStyle.marginB,
+            "margin-right": articleBuffer.articleStyle.marginR,
+            "margin-left": articleBuffer.articleStyle.marginL,
+            "padding-top": articleBuffer.articleStyle.paddingT,
+            "padding-bottom": articleBuffer.articleStyle.paddingB,
+            "padding-right": articleBuffer.articleStyle.paddingR,
+            "padding-left": articleBuffer.articleStyle.paddingL,
+            "border-width": articleBuffer.articleStyle.border
+        });
+        //#endregion
+    }
+    //#endregion
+}
+
+export async function alignArticlesToCenterAsync() {
+    //#region control article and div_articles width
+
+    //#region when article width bigger than div_articles width (reduce)
+
+    //#region variables
+    let article_style = articleBuffer.articleStyle;
+    let div_articles_width = articleBuffer.div_articles.prop("clientWidth");
+    let article_maxWidth = div_articles_width - article_style.marginR - article_style.marginL;
+    let article_netWidth = article_style.width + article_style.marginR + article_style.marginL;
+    //#endregion
+
+    //#region reduce article width
+    if (article_netWidth > article_maxWidth) {
+        //#region change article width
+        article_style.width = article_maxWidth;
+        article_netWidth = article_style.width + article_style.marginR + article_style.marginL;
+        article_isWidthReduced = true;
+        //#endregion
+
+        setStylesOfArticleElements();
+        await updateArticleAndArticleElementsStylesAsync();
+    }
+    //#endregion
+
+    //#endregion
+
+    //#region when article width reduced
+    if (article_isWidthReduced) {
+        //#region when the desired width smaller than max width
+        let article_netDesiredWidth = (article_desiredWidth +
+            article_style.marginR +
+            article_style.marginL);
+
+        if (article_netDesiredWidth <= article_maxWidth) {
+            //#region update article styles with desired values
+            articleBuffer.articleStyle.width = article_desiredWidth;
+            article_netWidth = (article_desiredWidth +
+                articleBuffer.articleStyle.marginR +
+                articleBuffer.articleStyle.marginL);
+            article_isWidthReduced = false;  // reset
+            //#endregion
+
+            setStylesOfArticleElements();
+            await updateArticleAndArticleElementsStylesAsync();
+        }
+        //#endregion
+    }
+    //#endregion
+
+    //#endregion
+
+    //#region set padding of articles <div>
+    let articleCountOnOneRow = Math.floor(div_articles_width / article_netWidth);
+    let whiteSpaceWidth = div_articles_width - (article_netWidth * articleCountOnOneRow);
+
+    articleBuffer.div_articles.css({
+        "padding-left": Math.floor(whiteSpaceWidth / 2),
+        "padding-right": Math.floor(whiteSpaceWidth / 2)
+    });
+    //#endregion
+
+    //#region set height of articles <div>
+    let netArticleHeight = articleBuffer.articleStyle.height + articleBuffer.articleStyle.marginT + articleBuffer.articleStyle.marginB;
+    let totalRowCount = articleBuffer.totalArticalCount % articleCountOnOneRow == 0 ?
+        Math.floor(articleBuffer.totalArticalCount / articleCountOnOneRow)  // when article count of all rows is equal
+        : Math.floor(articleBuffer.totalArticalCount / articleCountOnOneRow) + 1  // when article count of last row is different
+
+    articleBuffer.div_articles.css(
+        "height",
+        netArticleHeight * totalRowCount);
+    //#endregion
+}
+
+export async function removeLastUploadedArticleVideoAsync() {
+    //#region remove last uploaded article video if exists
+    let article = articleInfos_lastUploadedVideo["article"];
+
+    if (article != null  // when at least one video has been opened previously
+        && isVideoExists(article))
+        removeArticleVideo(article);
+    //#endregion
+}
+
+export async function isSidebarOpenAsync() {
+    //#region when sidebar is closed
+    let closedSidebarClass = "nav-collapse hide-left-bar";
+
+    if ($("#sidebar").attr("class") == closedSidebarClass)
+        return false;
+    //#endregion
+
+    return true;
+}
+
 export function setVariablesForArticle(variables) {
-    //#region initialize variables
-    for (let variableName in variables)
-        // when variable name is exists in "buffers"
-        if (buffers[variableName] != undefined)
-            buffers[variableName] = variables[variableName];
+    //#region initialize buffer
+    for (let variableName in variables) {
+        //#region when variable name is exists in "articleBuffer"
+        if (articleBuffer[variableName] != undefined)
+            articleBuffer[variableName] = variables[variableName];
+        //#endregion
+
+        //#region when article styles entered
+        if (variableName == "articleStyle") {
+            article_desiredWidth = articleBuffer.articleStyle.width;  // i saved wanting width as extra because width in buffer can be change so if change then i am losing wanting width.
+            setStylesOfArticleElements();
+        }
+        //#endregion
+    }
     //#endregion
 }
 
@@ -240,230 +432,148 @@ export function removeArticleVideo(article) {
     video.load();
 }
 
-export async function removeLastUploadedArticleVideoAsync() {
-    //#region remove last uploaded article video if exists
-    let article = articleInfos_lastUploadedVideo["article"];
-
-    if (article != null  // when at least one video has been opened previously
-        && isVideoExists(article))
-        removeArticleVideo(article);    
-    //#endregion
-}
-
-export async function addArticlesAsync(articleType) {  // articleType: "imageAndText", "videoAndText", "text"
-    //#region add articles
-    for (let index = 0; index < article_totalCount; index++) {
-        //#region add articles by article type
-        let articleId = art_baseId + index;
-        let article;
-
-        switch (articleType) {
-            case "videoAndText":
-                //#region add article with video and text
-                if (articleType == "videoAndText")
-                    buffers.div_articles.append(`
-                        <article id="${articleId}"  class="article" style="text-align: center">
-                            <div id="${div_article_video_id}">
-                                <img class="img_play"  hidden/>
-                                <video poster="">
-                                    <source src="" type=""></source>
-                                </video>
-                            </div>
-
-                            <div id="${div_article_info_id}">
-                            </div>
-
-                            <div id="${div_article_button_id}">
-                                <ul>
-                                    <li class="btn btn_article">
-                                        <a target="blank">PDF</a>
-                                    </li>
-                                </ul>  
-                            </div>
-                        </article>`
-                    );
-                //#endregion
-
-                //#region add styles of article elements
-                // <video> styles
-                article = $("#" + articleId);
-                article
-                    .find("video")
-                    .css({
-                        "width": style_vid_width_VT,
-                        "height": style_vid_height_VT
-                    });
-
-                // video <div> styles
-                article
-                    .find('#' + div_article_video_id)
-                    .css({
-                        "width": style_div_video_width_VT,
-                        "height": style_div_video_height_VT,
-                        "margin-bottom": style_div_video_marginB_VT
-                    });
-
-                // info <div> styles
-                article
-                    .find('#' + div_article_info_id)
-                    .css({
-                        "width": style_div_info_width_VT,
-                        "height": style_div_info_height_VT
-                    });
-
-                // button <div> styles
-                article
-                    .find("#" + div_article_button_id)
-                    .css({
-                        "width": style_div_button_width_VT,
-                        "height": style_div_button_height_VT,
-                    })
-
-                // pdf button <li> styles
-                article
-                    .find("#" + div_article_button_id + " li")
-                    .css({
-                        "padding-top": style_a_pdfButton_paddingTB,
-                        "padding-bottom": style_a_pdfButton_paddingTB,
-                        "padding-right": 0,
-                        "padding-left": 0
-                    });
-
-                // pdf button <a> styles
-                article
-                    .find("#" + div_article_button_id + " a")
-                    .css({
-                        "padding-top": style_a_pdfButton_paddingTB,
-                        "padding-bottom": style_a_pdfButton_paddingTB,
-                        "padding-right": style_a_pdfButton_paddingRL,
-                        "padding-left": style_a_pdfButton_paddingRL,
-                        "font-size": style_a_pdfButton_fontSize
-                    });
-                //#endregion
-
-                break;
-            case "imageAndText":
-                //#region add article with image and text
-                buffers.div_articles.append(`
-                    <article id="${articleId}"  class="article">
-                        <div id="${div_article_image_id}" >
-                            <img src=""  alt=""  title="" />
-                        </div>
-
-                        <div id="${div_article_info_id}" >
-                        </div>
-                    </article>`
-                );
-                //#endregion
-
-                //#region add styles of article elements
-                // <img> styles
-                article = $('#' + articleId);
-                article
-                    .find("img")
-                    .css({
-                        "width": style_img_width_IT,
-                        "height": style_img_height_IT
-                    });
-
-                // image <div> styles
-                article
-                    .find('#' + div_article_image_id)
-                    .css({
-                        "width": style_div_img_width_IT,
-                        "height": style_div_img_height_IT,
-                        "margin-bottom": style_div_img_marginB_IT
-                    });
-
-                // info <div> styles
-                article
-                    .find('#' + div_article_info_id)
-                    .css({
-                        "width": style_div_info_width_IT,
-                        "height": style_div_info_height_IT
-                    });
-                //#endregion
-
-                break;
-            case "text":
-                //#region add article with only text
-                buffers.div_articles.append(`
-                    <article id="${articleId}"  class="article">
-                        <div id="${div_article_info_id}" >
-                        </div>
-                    </article>`
-                );
-                //#endregion
-
-                //#region add styles of article elements
-                // info <div> styles
-                article = $('#' + articleId);
-                article
-                    .find('#' + div_article_info_id)
-                    .css({
-                        "width": style_div_info_width_T,
-                        "height": style_div_info_height_T
-                    });
-                //#endregion
-
-                break;
-        }
+async function updateArticleAndArticleElementsStylesAsync() {
+    //#region update styles
+    for (let no = 0; no < articleBuffer.totalArticalCount; no++) {
+        //#region update article style
+        let article = $("#" + art_baseId + no);
+        article.css("width", articleBuffer.articleStyle.width);
         //#endregion
 
-        //#region add <article> style
-        article.css({
-            "width": style_article.width,
-            "height": style_article.height,
-            "margin-top": style_article.marginT,
-            "margin-bottom": style_article.marginB,
-            "margin-right": style_article.marginR,
-            "margin-left": style_article.marginL,
-            "padding-top": style_article.paddingT,
-            "padding-bottom": style_article.paddingB,
-            "padding-right": style_article.paddingR,
-            "padding-left": style_article.paddingL,
-            "border-width": style_article.border
-        });
-        //#endregion
+        addStyleToArticleElements(article,);
     }
     //#endregion
-
-    await alignArticlesToCenterAsync();
 }
 
-export async function alignArticlesToCenterAsync() {
-    //#region set padding left and right of articles <div>
-    let divClientWidth = buffers.div_articles.prop("clientWidth");
-    let netArticleWidth = style_article.width + style_article.marginL + style_article.marginR;
-    let articleCountOnOneRow = Math.floor(divClientWidth / netArticleWidth);
-    let whiteSpaceWidth = divClientWidth - (netArticleWidth * articleCountOnOneRow);
+function setStylesOfArticleElements() {
+    style_a_pdfButton_fontSize = 18;
+    style_a_pdfButton_paddingTB = 6;
+    style_a_pdfButton_paddingRL = 40;
 
-    buffers.div_articles.css({
-        "padding-left": Math.floor(whiteSpaceWidth / 2),
-        "padding-right": Math.floor(whiteSpaceWidth / 2)
-    });
-    //#endregion
+    style_div_video_marginB_VT = 20;
+    style_div_video_width_VT = articleBuffer.articleStyle.width - (articleBuffer.articleStyle.border * 2) - articleBuffer.articleStyle.paddingR - articleBuffer.articleStyle.paddingL
+    style_div_video_height_VT = (articleBuffer.articleStyle.height - (articleBuffer.articleStyle.border * 2) - articleBuffer.articleStyle.paddingT - articleBuffer.articleStyle.paddingB - style_div_video_marginB_VT) / 2;
 
-    //#region set height of articles <div>
-    let netArticleHeight = style_article.height + style_article.marginT + style_article.marginB;
-    let totalRowCount = article_totalCount % articleCountOnOneRow == 0 ?
-        Math.floor(article_totalCount / articleCountOnOneRow)  // when article count of all rows is equal
-        : Math.floor(article_totalCount / articleCountOnOneRow) + 1  // when article count of last row is different
+    style_div_button_width_VT = style_div_video_width_VT;
+    style_div_button_height_VT = (style_a_pdfButton_fontSize + 9) + (style_a_pdfButton_paddingTB * 2);
 
-    buffers.div_articles.css(
-        "height",
-        netArticleHeight * totalRowCount);
-    //#endregion
+    style_div_info_width_VT = style_div_video_width_VT;
+    style_div_info_height_VT = style_div_video_height_VT - style_div_button_height_VT;
+
+    style_vid_width_VT = style_div_video_width_VT;
+    style_vid_height_VT = style_div_video_height_VT;
+
+    style_img_play_width_VT = style_vid_width_VT / 2.5;
+    style_img_play_height_VT = style_vid_height_VT / 2.2;
+    style_img_play_marginT_VT = (style_vid_height_VT - style_img_play_height_VT) / 2;
+    style_img_play_marginB_VT = style_img_play_marginT_VT;
+    style_img_play_marginR_VT = (style_vid_width_VT - style_img_play_width_VT) / 2;
+    style_img_play_marginL_VT = style_img_play_marginR_VT;
 }
 
-export async function isSidebarOpenAsync() {
-    //#region when sidebar is closed
-    let closedSidebarClass = "nav-collapse hide-left-bar";
+function addStyleToArticleElements(article) {
+    //#region add style to one article by article type
+    switch (article_type) {
+        case "videoAndText":
+            //#region add styles of article elements
+            // <video> styles
+            article
+                .find("video")
+                .css({
+                    "width": style_vid_width_VT,
+                    "height": style_vid_height_VT
+                });
 
-    if ($("#sidebar").attr("class") == closedSidebarClass)
-        return false;
+            // video <div> styles
+            article
+                .find('#' + div_article_video_id)
+                .css({
+                    "width": style_div_video_width_VT,
+                    "height": style_div_video_height_VT,
+                    "margin-bottom": style_div_video_marginB_VT
+                });
+
+            // info <div> styles
+            article
+                .find('#' + div_article_info_id)
+                .css({
+                    "width": style_div_info_width_VT,
+                    "height": style_div_info_height_VT
+                });
+
+            // button <div> styles
+            article
+                .find("#" + div_article_button_id)
+                .css({
+                    "width": style_div_button_width_VT,
+                    "height": style_div_button_height_VT,
+                })
+
+            // pdf button <li> styles
+            article
+                .find("#" + div_article_button_id + " li")
+                .css({
+                    "padding-top": style_a_pdfButton_paddingTB,
+                    "padding-bottom": style_a_pdfButton_paddingTB,
+                    "padding-right": 0,
+                    "padding-left": 0
+                });
+
+            // pdf button <a> styles
+            article
+                .find("#" + div_article_button_id + " a")
+                .css({
+                    "padding-top": style_a_pdfButton_paddingTB,
+                    "padding-bottom": style_a_pdfButton_paddingTB,
+                    "padding-right": style_a_pdfButton_paddingRL,
+                    "padding-left": style_a_pdfButton_paddingRL,
+                    "font-size": style_a_pdfButton_fontSize
+                });
+            //#endregion
+
+            break;
+        case "imageAndText":
+            //#region add styles of article elements
+            // <img> styles
+            article
+                .find("img")
+                .css({
+                    "width": style_img_width_IT,
+                    "height": style_img_height_IT
+                });
+
+            // image <div> styles
+            article
+                .find('#' + div_article_image_id)
+                .css({
+                    "width": style_div_img_width_IT,
+                    "height": style_div_img_height_IT,
+                    "margin-bottom": style_div_img_marginB_IT
+                });
+
+            // info <div> styles
+            article
+                .find('#' + div_article_info_id)
+                .css({
+                    "width": style_div_info_width_IT,
+                    "height": style_div_info_height_IT
+                });
+            //#endregion
+
+            break;
+        case "text":
+            //#region add styles of article elements
+            // info <div> styles
+            article
+                .find('#' + div_article_info_id)
+                .css({
+                    "width": style_div_info_width_T,
+                    "height": style_div_info_height_T
+                });
+            //#endregion
+
+            break;
+    }
     //#endregion
-
-    return true;
 }
 //#endregion

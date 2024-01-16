@@ -1,37 +1,4 @@
-﻿/*machine dispaly page (update page)*/
-.btn_form_label {
-    background-color: darkblue;
-    position: relative;
-    bottom: 8px;
-    color: red;
-    font-weight: bold;
-}
-
-    .btn_form_label:hover {
-        color: white;
-    }
-
-    .btn_form_label:focus {
-        color: red;
-    }
-
-.form_file_input {
-    cursor: pointer
-}
-
-    .form_file_input:hover {
-        font-weight: bold
-    }
-
-#btn_back {
-    color: black;
-    background-color: red;
-    width: 55px;
-}
-/*///////////////////////////////////////////////////*/
-
-
-/*machine display page (article page)*/
+﻿/*machine display page (article page)*/
 .article {
     border-style: solid;
     float: left;
@@ -80,4 +47,37 @@
         color: white;
         font-weight: bold
     }
+/*///////////////////////////////////////////////////*/
+
+
+/*machine display page (update page)*/
+.btn_form_label {
+    background-color: darkblue;
+    position: relative;
+    bottom: 8px;
+    color: red;
+    font-weight: bold;
+}
+
+    .btn_form_label:hover {
+        color: white;
+    }
+
+    .btn_form_label:focus {
+        color: red;
+    }
+
+.form_file_input {
+    cursor: pointer
+}
+
+    .form_file_input:hover {
+        font-weight: bold
+    }
+
+#btn_back {
+    color: black;
+    background-color: red;
+    width: 55px;
+}
 /*///////////////////////////////////////////////////*/
