@@ -6,7 +6,8 @@ namespace Entities.ConfigModels
 	{
 		public ErrorDetails ISE { get; init; }
 		public ErrorDetails NF_F_D { get; init; }
-		public ErrorDetails FiE_U_I { get; init; }
+        public ErrorDetails NF_Fo { get; init; }
+        public ErrorDetails FiE_U_I { get; init; }
 		public ErrorDetails FiE_U_V { get; init; }
 		public ErrorDetails FiE_U_P { get; init; }
 		public ErrorDetails FiE_U_S { get; init; }
@@ -16,7 +17,6 @@ namespace Entities.ConfigModels
 		public ErrorDetails FiE_D_S { get; init; }
 		public ErrorDetails AE_F { get; init; }
 		public ErrorDetails FE_U_E { get; init; }
-
 	}
 
     public partial record ErrorDetailsConfig  // functions

@@ -10,7 +10,8 @@ export const headerOfPageHeight = 80;
 export let articleBuffer = {
     "div_articles": "",  // should be set
     "path_articleVideos": "",
-    "totalArticalCount": "",  // should be set
+    "totalArticalCount": 0,  // should be set
+    "articleCountOnOneRow" : 0,
     "articleStyle": {  // should be set
         "width": 0,
         "height": 0,
@@ -258,23 +259,21 @@ export async function addArticlesAsync(articleType) {
     //#endregion
 }
 
-export async function alignArticlesToCenterAsync() {
-    //#region control article and div_articles width
-
+export async function controlArticleWidthAsync() {
     //#region when article width bigger than div_articles width (reduce)
 
     //#region variables
     let article_style = articleBuffer.articleStyle;
     let div_articles_width = articleBuffer.div_articles.prop("clientWidth");
     let article_maxWidth = div_articles_width - article_style.marginR - article_style.marginL;
-    let article_netWidth = article_style.width + article_style.marginR + article_style.marginL;
+    let article_netCurrentWidth = article_style.width + article_style.marginR + article_style.marginL;
     //#endregion
 
     //#region reduce article width
-    if (article_netWidth > article_maxWidth) {
+    if (article_netCurrentWidth > article_maxWidth) {
         //#region change article width
         article_style.width = article_maxWidth;
-        article_netWidth = article_style.width + article_style.marginR + article_style.marginL;
+        article_netCurrentWidth = article_style.width + article_style.marginR + article_style.marginL;
         article_isWidthReduced = true;
         //#endregion
 
@@ -295,7 +294,7 @@ export async function alignArticlesToCenterAsync() {
         if (article_netDesiredWidth <= article_maxWidth) {
             //#region update article styles with desired values
             articleBuffer.articleStyle.width = article_desiredWidth;
-            article_netWidth = (article_desiredWidth +
+            article_netCurrentWidth = (article_desiredWidth +
                 articleBuffer.articleStyle.marginR +
                 articleBuffer.articleStyle.marginL);
             article_isWidthReduced = false;  // reset
@@ -307,24 +306,34 @@ export async function alignArticlesToCenterAsync() {
         //#endregion
     }
     //#endregion
+}
 
+export async function alignArticlesToCenterAsync(widthUnit = "px") {
+    //#region set variables
+    let article_style = articleBuffer.articleStyle;
+    let div_articles_width = articleBuffer.div_articles.prop("clientWidth");
+    let article_netCurrentWidth = (widthUnit == "px" ?
+        article_style.width + article_style.marginR + article_style.marginL
+        : $(".article").prop("offsetWidth"));  // widthUnit == "%"
     //#endregion
 
-    //#region set padding of articles <div>
-    let articleCountOnOneRow = Math.floor(div_articles_width / article_netWidth);
-    let whiteSpaceWidth = div_articles_width - (article_netWidth * articleCountOnOneRow);
-
+    //#region set padding left and right of article
+    articleBuffer.articleCountOnOneRow = Math.floor(div_articles_width / article_netCurrentWidth);
+    let whiteSpaceWidth = div_articles_width - (article_netCurrentWidth * articleBuffer.articleCountOnOneRow);
+    
     articleBuffer.div_articles.css({
         "padding-left": Math.floor(whiteSpaceWidth / 2),
         "padding-right": Math.floor(whiteSpaceWidth / 2)
     });
     //#endregion
+}
 
+export async function setHeightOfArticlesDivAsync() {
     //#region set height of articles <div>
     let netArticleHeight = articleBuffer.articleStyle.height + articleBuffer.articleStyle.marginT + articleBuffer.articleStyle.marginB;
-    let totalRowCount = articleBuffer.totalArticalCount % articleCountOnOneRow == 0 ?
-        Math.floor(articleBuffer.totalArticalCount / articleCountOnOneRow)  // when article count of all rows is equal
-        : Math.floor(articleBuffer.totalArticalCount / articleCountOnOneRow) + 1  // when article count of last row is different
+    let totalRowCount = (articleBuffer.totalArticalCount % articleBuffer.articleCountOnOneRow == 0 ?
+        Math.floor(articleBuffer.totalArticalCount / articleBuffer.articleCountOnOneRow)  // when article count of all rows is equal
+        : Math.floor(articleBuffer.totalArticalCount / articleBuffer.articleCountOnOneRow) + 1)  // when article count of last row is different
 
     articleBuffer.div_articles.css(
         "height",

@@ -9,10 +9,10 @@ namespace Entities.QueryParameters
 		public bool? GetAnsweredForms { get; init; }
 	}
 
-	public record FormParamsForGetGeneralCommFormsOfOneUser : PagingParams
+	public record FormParamsForGetGeneralCommFormsOfOneUser : LanguageAndPagingParams
 	{
-		[Required] public Guid? UserId { get; init; }
-		public bool? GetAnsweredForms { get; init; }
+		public bool? GetAnsweredForms { get; init; } 
+		// true: answered forms || false: unanswered forms ||  null: all forms
 	}
 
 	public record FormParamsForGetGetOfferFormsOfOneUser : FormParamsForGetAllFormsOfOneUser

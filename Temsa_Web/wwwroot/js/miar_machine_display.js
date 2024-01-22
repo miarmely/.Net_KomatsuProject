@@ -7,9 +7,9 @@
 
 import {
     addArticlesAsync, alignArticlesToCenterAsync, articleBuffer, art_baseId,
-    click_articleVideoDivAsync, div_article_button_id, div_article_info_id,
+    click_articleVideoDivAsync, controlArticleWidthAsync, div_article_button_id, div_article_info_id,
     div_article_video_id, ended_articleVideoAsync, mouseout_articleVideoDivAsync,
-    mouseover_articleVideoAsync, removeLastUploadedArticleVideoAsync, setVariablesForArticle
+    mouseover_articleVideoAsync, removeLastUploadedArticleVideoAsync, setHeightOfArticlesDivAsync, setVariablesForArticle
 } from "./miar_article.js"
 
 import {
@@ -65,9 +65,10 @@ $(function () {
 
         //#region when machine articles page is open
         else
-            setTimeout(async () =>
-                await alignArticlesToCenterAsync(),
-                400);
+            setTimeout(async () => {
+                await controlArticleWidthAsync();
+                await alignArticlesToCenterAsync();
+            }, 400);
         //#endregion
     });
     //#endregion
@@ -183,6 +184,7 @@ $(function () {
         //#endregion
 
         await showOrHideBackButtonAsync("hide");
+        await controlArticleWidthAsync();
         await alignArticlesToCenterAsync();
     })
     //#endregion
@@ -190,9 +192,10 @@ $(function () {
     //#region for articles page
     $("#div_sidebarMenuButton").click(async () => {
         // wait 0.3sn until sidebar closed
-        setTimeout(async () =>
-            await alignArticlesToCenterAsync(),
-            450);
+        setTimeout(async () => {
+            await controlArticleWidthAsync();
+            await alignArticlesToCenterAsync();
+        }, 450);
     });
     slct_menubar.change(async () => {
         //#region set page mode
@@ -789,7 +792,9 @@ $(function () {
 
                 addArticlesAsync("videoAndText", div_articles, response.length)
                     .then(async () => {
+                        await controlArticleWidthAsync();
                         await alignArticlesToCenterAsync();
+                        await setHeightOfArticlesDivAsync();
                         await populateArticlesAsync(response);
 
                         //#region get pagination infos from headers
