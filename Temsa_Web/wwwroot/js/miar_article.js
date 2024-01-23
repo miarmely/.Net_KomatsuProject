@@ -7,6 +7,7 @@ export const art_baseId = "art_";
 export const path_playImage = "images/play.png";
 export const btn_pdf_id = "btn_pdf";
 export const headerOfPageHeight = 80;
+export const article_class = "article";
 export let articleBuffer = {
     "div_articles": "",  // should be set
     "path_articleVideos": "",
@@ -185,7 +186,7 @@ export async function addArticlesAsync(articleType) {
                 //#region add article with video and text
                 if (articleType == "videoAndText")
                     articleBuffer.div_articles.append(`
-                        <article id="${articleId}"  class="article" style="text-align: center">
+                        <article id="${articleId}"  class="${article_class}" style="text-align: center">
                             <div id="${div_article_video_id}">
                                 <img class="img_play"  hidden/>
                                 <video poster="">
@@ -212,7 +213,7 @@ export async function addArticlesAsync(articleType) {
             case "imageAndText":
                 //#region add article with image and text
                 articleBuffer.div_articles.append(`
-                    <article id="${articleId}"  class="article">
+                    <article id="${articleId}"  class="${article_class}">
                         <div id="${div_article_image_id}" >
                             <img src=""  alt=""  title="" />
                         </div>
@@ -228,7 +229,7 @@ export async function addArticlesAsync(articleType) {
             case "text":
                 //#region add article with only text
                 articleBuffer.div_articles.append(`
-                    <article id="${articleId}"  class="article">
+                    <article id="${articleId}"  class="${article_class}">
                         <div id="${div_article_info_id}" >
                         </div>
                     </article>`
@@ -239,23 +240,23 @@ export async function addArticlesAsync(articleType) {
                 break;
         }
         //#endregion
-
-        //#region add <article> style
-        $("#" + articleId).css({
-            "width": articleBuffer.articleStyle.width,
-            "height": articleBuffer.articleStyle.height,
-            "margin-top": articleBuffer.articleStyle.marginT,
-            "margin-bottom": articleBuffer.articleStyle.marginB,
-            "margin-right": articleBuffer.articleStyle.marginR,
-            "margin-left": articleBuffer.articleStyle.marginL,
-            "padding-top": articleBuffer.articleStyle.paddingT,
-            "padding-bottom": articleBuffer.articleStyle.paddingB,
-            "padding-right": articleBuffer.articleStyle.paddingR,
-            "padding-left": articleBuffer.articleStyle.paddingL,
-            "border-width": articleBuffer.articleStyle.border
-        });
-        //#endregion
     }
+    //#endregion
+
+    //#region add <article> style
+    $("." + article_class).css({
+        "width": articleBuffer.articleStyle.width,
+        "height": articleBuffer.articleStyle.height,
+        "margin-top": articleBuffer.articleStyle.marginT,
+        "margin-bottom": articleBuffer.articleStyle.marginB,
+        "margin-right": articleBuffer.articleStyle.marginR,
+        "margin-left": articleBuffer.articleStyle.marginL,
+        "padding-top": articleBuffer.articleStyle.paddingT,
+        "padding-bottom": articleBuffer.articleStyle.paddingB,
+        "padding-right": articleBuffer.articleStyle.paddingR,
+        "padding-left": articleBuffer.articleStyle.paddingL,
+        "border-width": articleBuffer.articleStyle.border
+    });
     //#endregion
 }
 

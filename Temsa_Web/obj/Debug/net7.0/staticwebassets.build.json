@@ -1,6 +1,6 @@
 {
   "Version": 1,
-  "Hash": "KtCyou7p1zNFTExm/JqIbgNN2d7Em1X2n+en3vRz5mk=",
+  "Hash": "yGgRUNpfvM7OOe/tPMij2QRzOOqNqnGnPuGrllKfEdI=",
   "Source": "Temsa_Web",
   "BasePath": "_content/Temsa_Web",
   "Mode": "Default",
@@ -219,6 +219,23 @@
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "wwwroot\\css\\font-awesome.css"
+    },
+    {
+      "Identity": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\css\\form_generalCommunication.css",
+      "SourceId": "Temsa_Web",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\",
+      "BasePath": "_content/Temsa_Web",
+      "RelativePath": "css/form_generalCommunication.css",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\css\\form_generalCommunication.css"
     },
     {
       "Identity": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\css\\jqvmap.css",
@@ -491,6 +508,23 @@
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "wwwroot\\fonts\\glyphicons-halflings-regular.woff2"
+    },
+    {
+      "Identity": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\images\\checked.png",
+      "SourceId": "Temsa_Web",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\",
+      "BasePath": "_content/Temsa_Web",
+      "RelativePath": "images/checked.png",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\images\\checked.png"
     },
     {
       "Identity": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\images\\chooseImage.png",
@@ -1545,6 +1579,23 @@
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "wwwroot\\images\\prev.png"
+    },
+    {
+      "Identity": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\images\\question.png",
+      "SourceId": "Temsa_Web",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\",
+      "BasePath": "_content/Temsa_Web",
+      "RelativePath": "images/question.png",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\images\\question.png"
     },
     {
       "Identity": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\images\\search-icon.png",

@@ -3,6 +3,8 @@
 }
 
 
+<link rel="stylesheet" href="~/css/form_generalCommunication.css"/>
+
 <div class="table-agile-info">
     <div class="panel panel-default">
         <div class="panel-heading">
@@ -19,28 +21,36 @@
         <div class="panel-body">
             @*details of one article*@
             <div id="div_article_details" class="div_articleDetails" hidden>
-                @*machine image and video*@
-                <div style="text-align:center; float:none">
-                    <video id="vid_machine" controls hidden>
-                        <source id="src_machine"/>
-                    </video>
-                        
-                    @*message label*@
-                    <div style="margin-bottom:30px">
-                        <spn id="spn_fileStatusLabel"></spn>
+                <div id="div_userInfos">
+                    <div id="div_ownerInfos" style="float:left">
+                        <table>
+                            <thead></thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                    <div id="div_answererInfos"  style="float:right">
+                        <table>
+                            <thead></thead>
+                            <tbody></tbody>
+                        </table>
                     </div>
                 </div>
-
-                @*form*@
-                <form>
-                    <div id="div_form" class="form-horizontal bucket-form">
-                    </div>
-                </form>
-
-                @*result label*@
+                <div id="div_content">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th id="th_subject">Subject</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td id="td_message">rous pleasing of this fair proportive tricks, Now are our dreadful measures. Grim-visaged to delight the souls of the lascivious wrinkled for sportive tricks, He capers nimbly in a lute. But I, that am rudely stampd, and with victorious looking-glass; Our brows bound war hath smoothd his fair proportion, amorous pleasing of York; And now, instead of</td>
+                            </tr>
+                        </tbody>
+                     </table>
+                </div>
                 <div style="text-align:center">
-                    <p id="p_resultLabel"></p>
-                    <img id="img_loading" src="~/images/loading.gif" style="width:40px; height:40px" hidden/>
+                    <button id="btn_answer" class="btn" type="submit">Answer</button>
                 </div>
             </div>
             
@@ -90,6 +100,5 @@
         </div>
     </div>
 </div>
-
 
 <script type="module" src="~/js/miar_form_generalCommunication.js"></script>

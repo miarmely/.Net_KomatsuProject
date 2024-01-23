@@ -1,0 +1,50 @@
+﻿#div_userInfos {
+    height: 200px;
+}
+
+#div_ownerInfos > table {
+    margin-left: 20px;
+}
+
+    #div_ownerInfos > table > thead > tr > th {
+        padding-bottom: 5px;
+        font-size: 17px;
+    }
+
+#div_answererInfos > table {
+    margin-right: 20px;
+}
+
+    #div_answererInfos > table > thead > tr > th {
+        padding-bottom: 5px;
+        font-size: 17px;
+    }
+
+#th_subject {
+    text-align:center;
+}
+
+#td_message{
+    padding-top: 20px;
+    padding-left: 20%;
+    padding-right: 20%;
+}
+
+#btn_answer{
+    margin-top: 60px
+}
+
+#div_message {
+    height: 200px;
+    text-align: center;
+    margin: 20px 150px
+}*/
+
+#btn_answer {
+    background-color: #521FFF;
+    color: white
+}
+
+.td_spaceAfterKey {
+    padding-left: 50px
+}

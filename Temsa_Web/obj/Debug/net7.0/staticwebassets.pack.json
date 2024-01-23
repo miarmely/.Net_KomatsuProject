@@ -45,6 +45,10 @@
       "PackagePath": "staticwebassets\\css\\font.css"
     },
     {
+      "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\css\\form_generalCommunication.css",
+      "PackagePath": "staticwebassets\\css\\form_generalCommunication.css"
+    },
+    {
       "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\css\\jqvmap.css",
       "PackagePath": "staticwebassets\\css\\jqvmap.css"
     },
@@ -115,6 +119,10 @@
     {
       "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\images\\TR.png",
       "PackagePath": "staticwebassets\\images\\TR.png"
+    },
+    {
+      "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\images\\checked.png",
+      "PackagePath": "staticwebassets\\images\\checked.png"
     },
     {
       "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\images\\chooseImage.png",
@@ -359,6 +367,10 @@
     {
       "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\images\\prev.png",
       "PackagePath": "staticwebassets\\images\\prev.png"
+    },
+    {
+      "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\images\\question.png",
+      "PackagePath": "staticwebassets\\images\\question.png"
     },
     {
       "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\images\\search-icon.png",
