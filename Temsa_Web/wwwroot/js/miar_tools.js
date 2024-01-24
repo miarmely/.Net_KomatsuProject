@@ -649,7 +649,7 @@ export async function isAllObjectValuesNullAsync(object) {
     return false;
 }
 
-export async function autoObjectMapperAsync(targetObject, sourceObject, dontAddNullValues=false) {
+export async function autoObjectMapperAsync(targetObject, sourceObject, dontAddNullValues = false) {
     //#region update target object values with source object values
     for (let sourceKey in sourceObject) {
         //#region when source key exists in target object
@@ -660,10 +660,85 @@ export async function autoObjectMapperAsync(targetObject, sourceObject, dontAddN
             //#endregion
 
             targetObject[sourceKey] = sourceObject[sourceKey];
-        }            
+        }
         //#endregion
     }
     //#endregion
+}
+
+export async function getPassedTimeInStringAsync(dateTimeInStr) {
+    //#region set variables
+    var languagePackage_message = {
+        "TR": {
+            "year": " yıl önce",
+            "month": " ay önce",
+            "day": " gün önce",
+            "hours": " saat önce",
+            "minutes": " dakika önce",
+            "seconds": " saniye önce"
+        },
+        "EN": {
+            "year": " year ago",
+            "month": " month ago",
+            "day": " day ago",
+            "hours": " hours ago",
+            "minutes": " minutes ago",
+            "seconds": " seconds ago"
+        }
+    };
+    let nowDateInMs = new Date().getTime();
+    let oldDateInMs = new Date(dateTimeInStr).getTime()
+
+    let dateDifferenceInSn = (nowDateInMs - oldDateInMs) / 10 ** 3;
+    let totalSecondOnOneYear = ((365 * 24) + 6) * 3600;  // one year == 365 day 6 hours
+
+    console.log(Math.floor(dateDifferenceInSn / 3600));
+    
+    //#endregion
+
+    ////#region when year difference is equal or more than one
+    //let yearDifference = nowDate.getMonth() - oldDate.getMonth();
+    //let monthDifference = nowDate.getMonth() - oldDate.getMonth();
+
+    //if (yearDifference > 0
+    //    && monthDifference >= 12)
+    //    return yearDifference + languagePackage_message[language]["year"];
+    ////#endregion
+
+    ////#region when month difference is equal or more than one
+    
+
+    //if (monthDifference > 0)
+    //    return monthDifference + languagePackage_message[language]["month"];
+    ////#endregion
+
+    ////#region when day difference is equal or more than one
+    //let dayDifference = nowDate.getDay() - oldDate.getDay();
+
+    //if (dayDifference > 0)
+    //    return dayDifference + languagePackage_message[language]["day"];
+    ////#endregion
+
+    ////#region when hours difference is equal or more than one
+    //let hoursDifference = nowDate.getHours() - oldDate.getHours();
+
+    //if (hoursDifference > 0)
+    //    return hoursDifference + languagePackage_message[language]["hours"];
+    ////#endregion
+
+    ////#region when minutes difference is equal or more than one
+    //let minutesDifference = nowDate.getMinutes() - oldDate.getMinutes();
+
+    //if(minutesDifference > 0)
+    //    return minutesDifference + languagePackage_message[language]["minutes"];
+    ////#endregion
+
+    ////#region when second difference is equal or more than one
+    //let secondDifference = nowDate.getSeconds() - oldDate.getSeconds();
+
+    //if (secondDifference > 0)
+    //    return secondDifference + languagePackage_message[language]["second"];
+    ////#endregion
 }
 
 async function addEntitiesToTableAsync(

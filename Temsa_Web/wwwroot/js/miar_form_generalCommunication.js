@@ -4,7 +4,7 @@
     setHeightOfArticlesDivAsync
 } from "./miar_article.js";
 
-import { getDateTimeInString } from "./miar_tools.js"
+import { getDateTimeInString, getPassedTimeInStringAsync } from "./miar_tools.js"
 
 
 $(function () {
@@ -17,10 +17,15 @@ $(function () {
     const div_article_display = $("#div_article_display");
     const div_article_details = $("#div_article_details");
     const div_backButton = $("#div_backButton");
-    const tbl_ownerInfos = $("#div_ownerInfos table");
-    const tbl_answererInfos = $("#div_answererInfos table");
+    const div_ownerInfos = $("#div_ownerInfos");
+    const div_answererInfos = $("#div_answererInfos");
+    const div_content = $("#div_content");
+    const tbl_ownerInfos = div_ownerInfos.children("table");
+    const tbl_answererInfos = div_answererInfos.children("table");
     const path_checkedImage = "/images/checked.png";
     const path_questionImage = "/images/question.png";
+    const slct_menubar = $("#slct_menubar");
+    const btn_complete = $("#btn_complete");
     const languagePackage_ownerInfosKeys = {
         "TR": {
             "title": "Gönderen",
@@ -55,6 +60,26 @@ $(function () {
             "answeredDate": "Answered Date"
         }
     }
+    const languagePackage_panelTitle = {
+        "TR": "GENEL İLETİŞİM FORMU",
+        "EN": "GENERAL COMMUNICATION FORM"
+    }
+    const languagePackage_panelMenubar = {
+        "TR": {
+            "answered": "Tamamlanmış",
+            "unanswered": "Tamamlanmamış",
+            "all": "Hepsi"
+        },
+        "EN": {
+            "answered": "Completed",
+            "unanswered": "Not Completed",
+            "all": "All"
+        }
+    }
+    const languagePackage_completeButton = {
+        "TR": "Tamamla",
+        "EN": "Complete"
+    }
     let article_IdsAndFormInfos = {};
     //#endregion
 
@@ -72,6 +97,20 @@ $(function () {
             await alignArticlesToCenterAsync()
         }, 500);
         //#endregion
+    })
+    div_backButton.click(async () => {
+        await resetFormDetailsPageAsync();
+
+        //#region show articles
+        div_article_details.attr("hidden", "");  // hide form details page
+        div_backButton.attr("hidden", "");  // remove back button
+        div_article_display.removeAttr("hidden");  // show articles page
+        //#endregion
+
+        await alignArticlesToCenterAsync();
+     })
+    slct_menubar.change(async () => {
+        await addFormArticlesAsync();
     })
     spn_eventManager.on("click_article", async (_, event) => {
         //#region hide articles
@@ -169,19 +208,50 @@ $(function () {
     //#endregion
 
     //#region functions
+    async function resetFormDetailsPageAsync() {
+        // remove sender infos
+        div_ownerInfos.find("thead").empty();
+        div_ownerInfos.find("tbody").empty();
+
+        // remove answerer infos
+        div_answererInfos.find("thead").empty();
+        div_answererInfos.find("tbody").empty();
+
+        // remove subject and message
+        div_content.find("thead").empty();
+        div_content.find("tbody").empty();
+
+        // remove button
+        btn_complete.reset;
+    }
+
     async function addFormArticlesAsync() {
-        //#region populate form articles (ajax)
+        //#region set "getAnsweredForms" query params
+        let selectedMenubar = slct_menubar.val();
+        let query_getAnsweredForms = (selectedMenubar == "answered" ?
+            true  // get answered forms
+            : selectedMenubar == "unanswered" ?
+                false  // get unanswered forms
+                : '');  // get answered and unanswered forms;
+        //#endregion
+
+        //#region add form articles (ajax)
         $.ajax({
             method: "GET",
             url: (baseApiUrl + "/form/display/oneUser/generalCommunication" +
                 `?language=${language}` +
                 `&PageNumber=${pageNumber}` +
-                `&PageSize=${pageSize}`),
+                `&PageSize=${pageSize}` +
+                `&GetAnsweredForms=${query_getAnsweredForms}`),
             headers: {
                 "authorization": jwtToken
             },
             contentType: "application/json",
             dataType: "json",
+            beforeSend: () => {
+                // reset articles
+                div_articles.empty();
+            },
             success: (response, status, xhr) => {
                 new Promise(async (resolve) => {
                     //#region add <article>s
@@ -227,10 +297,17 @@ $(function () {
                         //#endregion
 
                         //#region set article image
-                        let path_articleImage = formInfos.isAnswered ?
-                            path_checkedImage
-                            : path_questionImage
+                        let path_articleImage = query_getAnsweredForms == '' ?
+                            formInfos.isAnswered ?  // when all form displaying  (query_getAnsweredForms == null)
+                                path_checkedImage
+                                : path_questionImage
+                            : query_getAnsweredForms == true ?
+                                path_checkedImage  // when answered forms displaying
+                                : path_questionImage  // when unanswered forms displaying
                         //#endregion
+
+                        let x = await getPassedTimeInStringAsync(formInfos.createdAt);
+
 
                         //#region populate articles
                         div_article_info.append(`
@@ -240,6 +317,7 @@ $(function () {
                                 <h4 style="margin-top:5px;">${formInfos.firstName} ${formInfos.lastName}</h4>
                                 <h4 style="margin-top:25px; margin-bottom:8px">${formInfos.subject}</h4>
                                 <p>${formInfos.message.substring(0, article_maxMessageCount)}...</p>
+                                <h2 style="margin-top:15px">${getDateTimeInString(formInfos.createdAt)}</h2 >
                             </div>
                         `);
                         //#endregion
@@ -252,7 +330,31 @@ $(function () {
         })
         //#endregion
     }
+
+    async function populateHtmlAsync() {
+        //#region add panel title
+        $("#div_panelTitle").append(
+            languagePackage_panelTitle[language])
+        //#endregion
+
+        //#region populate panel menubar
+        for (let key in languagePackage_panelMenubar[language]) {
+            let option = languagePackage_panelMenubar[language][key];
+
+            slct_menubar.append(`
+                <option value=${key}>${option}</option>
+            `);
+        }
+        //#endregion
+
+        //#region populate "complete button"
+        btn_complete.append(
+            languagePackage_completeButton[language]);
+        //#endregion
+
+        await addFormArticlesAsync();
+    }
     //#endregion
 
-    addFormArticlesAsync();
+    populateHtmlAsync();
 })

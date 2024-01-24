@@ -30,19 +30,16 @@
     padding-right: 20%;
 }
 
-#btn_answer{
-    margin-top: 60px
-}
-
 #div_message {
     height: 200px;
     text-align: center;
     margin: 20px 150px
-}*/
+}
 
-#btn_answer {
+#btn_complete {
     background-color: #521FFF;
-    color: white
+    color: white;
+    margin-top: 60px;
 }
 
 .td_spaceAfterKey {
