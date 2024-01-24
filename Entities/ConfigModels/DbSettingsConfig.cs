@@ -37,7 +37,8 @@
 		string User_Form_GetOffer_GetAllOfOneUserByUserId,
 		string User_Form_Renting_Create,
 		string User_Form_Renting_GetAll,
-		string User_Form_Renting_GetAllOfOneUserByUserId);
+		string User_Form_Renting_GetAllOfOneUserByUserId,
+		string User_Form_AnswerTheAnyForm);
 
     public record TableNames(
 		string Language,

@@ -37,5 +37,8 @@ namespace Repositories.Contracts
 
 		Task<IEnumerable<T>> GetAllRentingFormsAsync<T>(
 			DynamicParameters parameters);
-	}
+
+		Task<ErrorDto?> AnswerTheFormAsync(
+			DynamicParameters parameters);
+    }
 }

@@ -82,5 +82,12 @@ namespace Repositories.Concretes
 					base.Configs.DbSettings.ProcedureNames
 						.User_Form_Renting_GetAll,
 					parameters);
+
+		public async Task<ErrorDto?> AnswerTheFormAsync(
+			DynamicParameters parameters) =>
+				await base.QuerySingleOrDefaultAsync<ErrorDto>(
+					base.Configs.DbSettings.ProcedureNames
+						.User_Form_AnswerTheAnyForm,
+					parameters);
 	}
 }

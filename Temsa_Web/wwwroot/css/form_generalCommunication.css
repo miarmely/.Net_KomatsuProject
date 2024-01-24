@@ -21,10 +21,10 @@
     }
 
 #th_subject {
-    text-align:center;
+    text-align: center;
 }
 
-#td_message{
+#td_message {
     padding-top: 20px;
     padding-left: 20%;
     padding-right: 20%;
@@ -44,4 +44,10 @@
 
 .td_spaceAfterKey {
     padding-left: 50px
+}
+
+
+.article_passedTime {
+    margin-top: 15px;
+    color: red;
 }

@@ -14,8 +14,6 @@ using Repositories;
 using Repositories.Contracts;
 using Services.Contracts;
 using System.Data;
-using System.IdentityModel.Tokens.Jwt;
-using System.Net.Http;
 using System.Security.Claims;
 
 
@@ -119,7 +117,7 @@ namespace Services.Concretes
             HttpContext httpContext)
         {
             #region set parameters
-            var parameters = await 
+            var parameters = await
                 GetDynamicParametersWithUserIdAsync(httpContext);
 
             parameters.AddDynamicParams(formDto);
@@ -388,18 +386,9 @@ namespace Services.Concretes
             FormParamsForGetGeneralCommFormsOfOneUser formParams,
             HttpContext httpContext)
         {
-            #region set parameters
-            var parameters = await GetDynamicParametersWithUserIdAsync(httpContext);
-
-            parameters.AddDynamicParams(new
-            {
-                formParams.PageNumber,
-                formParams.PageSize,
-                formParams.GetAnsweredForms
-            });
-            #endregion
-
             #region get "general comm." forms belong to one user in paging List
+            var parameters = new DynamicParameters(formParams);
+
             object pagingList = formParams.GetAnsweredForms switch
             {
                 #region when "answered" forms is wanting
@@ -543,9 +532,44 @@ namespace Services.Concretes
             return pagingList;
         }
 
-        public async Task<object> GetAllGeneralCommFormsAsync()
+        public async Task<object> GetAllGeneralCommFormsAsync(
+            FormParamsForGetAllGeneralCommForms formParams)
         {
-            return null;
+            var parameters = new DynamicParameters(formParams);
+
+            #region when wanting to display which all form types
+            object formViews;
+
+            if (formParams.GetAnsweredForm == null)
+                formViews = _manager.FormRepository.GetAllGeneralCommFormsAsync
+                    <AllGeneralCommFormViewForAllUsers>(parameters);
+
+            else if(formParams.GetAnsweredForm == true)
+                formViews = _manager.FormRepository.GetAllGeneralCommFormsAsync
+                    <AllGeneralCommFormViewForAllUsers>(parameters);
+
+
+            var formViews = formParams.GetAnsweredForm == null?
+                await _manager.FormRepository.GetAllGeneralCommFormsAsync
+                    <AllGeneralCommFormViewForAllUsers>(parameters)
+                : formParams.GetAnsweredForm?
+                    await _manager.FormRepository.GetAllGeneralCommFormsAsync
+                        <AnsweredGeneralCommFormViewForAllUsers>(parameters)
+                    : _manage
+
+                    
+
+
+
+
+            if (formParams.GetAnsweredForm)
+            {
+                await _manager.FormRepository
+                    .GetAllGeneralCommFormsAsync
+                        <AnsweredGeneralCommFormViewForAllUsers(paramaters);
+            }
+
+            formOArams
         }
 
         public async Task<object> GetAllGetOfferFormsAsync()
@@ -556,6 +580,38 @@ namespace Services.Concretes
         public async Task<object> GetAllRentingFormsAsync()
         {
             return null;
+        }
+
+        public async Task AnswerFormAsync(
+            FormParamsForAnswer formParams,
+            FormTypes formType,
+            HttpContext httpContext)
+        {
+            #region set parameters
+            var parameters = new DynamicParameters(new
+            {
+                formParams.Language,
+                #region FormType
+                FormType = formType == FormTypes.GeneralCommunication ?
+                    "GeneralCommunication"
+                    : formType == FormTypes.GetOffer ?
+                        "GetOffer"
+                        : "Renting",
+                #endregion
+                formParams.FormId,
+                AnswererId = await GetUserIdFromClaimsAsync(httpContext),
+                AnsweredDate = DateTime.UtcNow
+            });
+            #endregion
+
+            #region answer the form
+            var errorDto = await _manager.FormRepository
+                .AnswerTheFormAsync(parameters);
+
+            // when any error occured
+            if (errorDto != null)
+                throw new ErrorWithCodeException(errorDto);
+            #endregion
         }
     }
 }

@@ -666,8 +666,42 @@ export async function autoObjectMapperAsync(targetObject, sourceObject, dontAddN
     //#endregion
 }
 
-export async function getPassedTimeInStringAsync(dateTimeInStr) {
+export async function getPassedTimeInStringAsync(utcDateTimeInStr) {
+    //#region convert old date in utc to local date
+    let oldDateInUtc = new Date(utcDateTimeInStr);
+    let oldYear = oldDateInUtc.getFullYear();
+    let oldMonth = oldDateInUtc.getMonth();
+    let oldDay = oldDateInUtc.getDate();
+    let oldHours = oldDateInUtc.getHours();
+    let oldMinutes = oldDateInUtc.getMinutes();
+    let oldSeconds = oldDateInUtc.getSeconds();
+
+    let oldDateInLocal = new Date(
+        oldYear,
+        oldMonth,
+        oldDay,
+        oldHours + 3,
+        oldMinutes,
+        oldSeconds);
+    //#endregion
+
+    //#region get dates in unix
+    let nowDate = new Date();
+    let nowDateInMs = nowDate.getTime();
+    let oldDateInMs = oldDateInLocal.getTime();
+    //#endregion
+
+    //#region return passed time  
+
     //#region set variables
+    let totalSecondAtOneHour = 3600;
+    let totalSecondAtOneDay = totalSecondAtOneHour * 24;
+    let totalSecondAtOneMonth = totalSecondAtOneDay * 30;
+    let totalSecondAtOneYear = (totalSecondAtOneDay * 365) + (totalSecondAtOneHour * 6)  // one year == 365 day 6 hours
+    let dateDifferenceInSn = (nowDateInMs - oldDateInMs) / 10 ** 3;
+    //#endregion
+
+    //#region write passed time as year
     var languagePackage_message = {
         "TR": {
             "year": " yıl önce",
@@ -686,59 +720,47 @@ export async function getPassedTimeInStringAsync(dateTimeInStr) {
             "seconds": " seconds ago"
         }
     };
-    let nowDateInMs = new Date().getTime();
-    let oldDateInMs = new Date(dateTimeInStr).getTime()
+    let yearDifference = Math.floor(dateDifferenceInSn / totalSecondAtOneYear);
 
-    let dateDifferenceInSn = (nowDateInMs - oldDateInMs) / 10 ** 3;
-    let totalSecondOnOneYear = ((365 * 24) + 6) * 3600;  // one year == 365 day 6 hours
-
-    console.log(Math.floor(dateDifferenceInSn / 3600));
-    
+    if (yearDifference > 0)
+        return yearDifference + languagePackage_message[language]["year"];
     //#endregion
 
-    ////#region when year difference is equal or more than one
-    //let yearDifference = nowDate.getMonth() - oldDate.getMonth();
-    //let monthDifference = nowDate.getMonth() - oldDate.getMonth();
+    //#region write passed time as month
+    let monthDifference = Math.floor(dateDifferenceInSn / totalSecondAtOneMonth);
 
-    //if (yearDifference > 0
-    //    && monthDifference >= 12)
-    //    return yearDifference + languagePackage_message[language]["year"];
-    ////#endregion
+    if (monthDifference > 0)
+        return monthDifference + languagePackage_message[language]["month"];
+    //#endregion
 
-    ////#region when month difference is equal or more than one
-    
+    //#region write passed time as day
+    let dayDifference = Math.floor(dateDifferenceInSn / totalSecondAtOneDay);
 
-    //if (monthDifference > 0)
-    //    return monthDifference + languagePackage_message[language]["month"];
-    ////#endregion
+    if (dayDifference > 0)
+        return dayDifference + languagePackage_message[language]["day"];
+    //#endregion
 
-    ////#region when day difference is equal or more than one
-    //let dayDifference = nowDate.getDay() - oldDate.getDay();
+    //#region write passed time as hours
+    let hoursDifference = Math.floor(dateDifferenceInSn / totalSecondAtOneHour);
 
-    //if (dayDifference > 0)
-    //    return dayDifference + languagePackage_message[language]["day"];
-    ////#endregion
+    if (hoursDifference > 0)
+        return hoursDifference + languagePackage_message[language]["hours"];
+    //#endregion
 
-    ////#region when hours difference is equal or more than one
-    //let hoursDifference = nowDate.getHours() - oldDate.getHours();
+    //#region write passed time as minutes
+    let minutesDifference = Math.floor(dateDifferenceInSn / 60);
 
-    //if (hoursDifference > 0)
-    //    return hoursDifference + languagePackage_message[language]["hours"];
-    ////#endregion
+    if (minutesDifference > 0)
+        return monthDifference + languagePackage_message[language]["minutes"];
+    //#endregion
 
-    ////#region when minutes difference is equal or more than one
-    //let minutesDifference = nowDate.getMinutes() - oldDate.getMinutes();
+    //#region write passed time as second
+    let secondsDifference = Math.floor(dateDifferenceInSn / totalSecondAtOneYear);
 
-    //if(minutesDifference > 0)
-    //    return minutesDifference + languagePackage_message[language]["minutes"];
-    ////#endregion
+    return secondsDifference + languagePackage_message[language]["seconds"];
+    //#endregion
 
-    ////#region when second difference is equal or more than one
-    //let secondDifference = nowDate.getSeconds() - oldDate.getSeconds();
-
-    //if (secondDifference > 0)
-    //    return secondDifference + languagePackage_message[language]["second"];
-    ////#endregion
+    //#endregion
 }
 
 async function addEntitiesToTableAsync(

@@ -101,5 +101,48 @@ namespace Presantation.Controllers
 
 			return Ok(allForms);
 		}
-	}
+
+
+		[HttpGet("answer/generalCommunication")]
+		[Authorization("Admin,Editor,Yönetici,Editör")]
+		public async Task<IActionResult> AnswerTheGeneralCommForm(
+			[FromQuery] FormParamsForAnswer formParams)
+		{
+            await _manager.FormService.AnswerFormAsync(
+                formParams,
+                Entities.Enums.FormTypes.GeneralCommunication,
+                HttpContext);
+
+            return NoContent();
+		}
+
+        [HttpGet("answer/getOffer")]
+        [Authorization("Admin,Editor,Yönetici,Editör")]
+        public async Task<IActionResult> AnswerTheGetOfferForm(
+        [FromQuery] FormParamsForAnswer formParams)
+        {
+            await _manager.FormService.AnswerFormAsync(
+                formParams,
+                Entities.Enums.FormTypes.GetOffer,
+                HttpContext);
+
+            return NoContent();
+        }
+
+
+        [HttpGet("answer/renting")]
+        [Authorization("Admin,Editor,Yönetici,Editör")]
+        public async Task<IActionResult> AnswerTheRentingForm(
+        [FromQuery] FormParamsForAnswer formParams)
+        {
+			await _manager.FormService.AnswerFormAsync(
+				formParams,
+				Entities.Enums.FormTypes.Renting,
+				HttpContext);
+
+            return NoContent();
+        }
+
+
+    }
 }

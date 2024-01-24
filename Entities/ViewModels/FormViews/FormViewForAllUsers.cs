@@ -1,5 +1,4 @@
 ﻿using Entities.ViewModels.FormViews;
-using Entities.ViewModels.FormViews.Contracts;
 
 
 namespace Entities.ViewModels

@@ -19,13 +19,15 @@ $(function () {
     const div_backButton = $("#div_backButton");
     const div_ownerInfos = $("#div_ownerInfos");
     const div_answererInfos = $("#div_answererInfos");
-    const div_content = $("#div_content");
+    const div_panelTitle = $("#div_panelTitle");
     const tbl_ownerInfos = div_ownerInfos.children("table");
     const tbl_answererInfos = div_answererInfos.children("table");
     const path_checkedImage = "/images/checked.png";
     const path_questionImage = "/images/question.png";
     const slct_menubar = $("#slct_menubar");
     const btn_complete = $("#btn_complete");
+    const td_message = $("#td_message");
+    const th_subject = $("#th_subject");
     const languagePackage_ownerInfosKeys = {
         "TR": {
             "title": "Gönderen",
@@ -34,6 +36,7 @@ $(function () {
             "company": "Şirket",
             "email": "Email",
             "phone": "Telefon",
+            "createdAt": "Oluşturulma Tarihi"
         },
         "EN": {
             "title": "Senderer",
@@ -42,6 +45,7 @@ $(function () {
             "company": "Company",
             "email": "Email",
             "phone": "Phone",
+            "createdDate": "Created Date"
         }
     }
     const languagePackage_answererInfosKeys = {
@@ -66,21 +70,22 @@ $(function () {
     }
     const languagePackage_panelMenubar = {
         "TR": {
-            "answered": "Tamamlanmış",
             "unanswered": "Tamamlanmamış",
+            "answered": "Tamamlanmış",
             "all": "Hepsi"
         },
         "EN": {
-            "answered": "Completed",
             "unanswered": "Not Completed",
+            "answered": "Completed",
             "all": "All"
         }
     }
     const languagePackage_completeButton = {
-        "TR": "Tamamla",
-        "EN": "Complete"
+        "TR": "Tamamlandı",
+        "EN": "Completed"
     }
     let article_IdsAndFormInfos = {};
+    let displayingMode = "unanswered";
     //#endregion
 
     //#region events
@@ -102,6 +107,7 @@ $(function () {
         await resetFormDetailsPageAsync();
 
         //#region show articles
+        div_panelTitle.css("padding-left", "");
         div_article_details.attr("hidden", "");  // hide form details page
         div_backButton.attr("hidden", "");  // remove back button
         div_article_display.removeAttr("hidden");  // show articles page
@@ -109,7 +115,9 @@ $(function () {
 
         await alignArticlesToCenterAsync();
      })
-    slct_menubar.change(async () => {
+    slct_menubar.change(async (event) => {
+        displayingMode = slct_menubar.val();
+
         await addFormArticlesAsync();
     })
     spn_eventManager.on("click_article", async (_, event) => {
@@ -123,11 +131,16 @@ $(function () {
         div_backButton.removeAttr("hidden");
         //#endregion
 
+        //#region shift panel title to right
+        let btn_back_width = div_backButton.prop("offsetWidth");
+        div_panelTitle.css("padding-left", btn_back_width);
+        //#endregion
+
         //#region add owner infos
         let formInfos = article_IdsAndFormInfos[article_id];
         let ownerInfosKeys = languagePackage_ownerInfosKeys[language];
 
-        // add table title
+        // add owner table title
         tbl_ownerInfos.children("thead")
             .append(`
                 <tr>
@@ -135,7 +148,7 @@ $(function () {
                 </tr>`
             );
 
-        // populate table
+        // populate owner table
         tbl_ownerInfos.children("tbody")
             .append(`
                 <tr>
@@ -163,14 +176,20 @@ $(function () {
                     <td class="td_spaceAfterKey"></td>
                     <td>${formInfos.email}</td>
                 </tr>
+                <tr>
+                    <td>${ownerInfosKeys.createdAt}</td>
+                    <td class="td_spaceAfterKey"></td>
+                    <td>${getDateTimeInString(formInfos.createdAt)}</td >
+                </tr>
             `);
         //#endregion
 
         //#region add answerer infos if form answered
-        if (formInfos.isAnswered) {
+        if (displayingMode == "answered"
+            || (displayingMode == "all" && formInfos.isAnswered == true)  // when all form type is displaying
+        ) {
             let answererInfosKeys = languagePackage_answererInfosKeys[language];
-
-            // add table title
+            // add answerertable title
             tbl_answererInfos.children("thead")
                 .append(`
                     <tr>
@@ -178,7 +197,7 @@ $(function () {
                     </tr>
                 `);
 
-            // populate table
+            // populate answerer table
             tbl_answererInfos.children("tbody")
                 .append(`
                     <tr>
@@ -204,6 +223,11 @@ $(function () {
                 `);
         }
         //#endregion
+
+        //#region add subject and message
+        th_subject.append(formInfos["subject"]);
+        td_message.append(formInfos["message"]);
+        //#endregion
     })
     //#endregion
 
@@ -218,8 +242,8 @@ $(function () {
         div_answererInfos.find("tbody").empty();
 
         // remove subject and message
-        div_content.find("thead").empty();
-        div_content.find("tbody").empty();
+        th_subject.empty();
+        td_message.empty();
 
         // remove button
         btn_complete.reset;
@@ -251,14 +275,16 @@ $(function () {
             beforeSend: () => {
                 // reset articles
                 div_articles.empty();
+
+                setVariablesForArticle({
+                    "div_articles": div_articles
+                })
             },
             success: (response, status, xhr) => {
                 new Promise(async (resolve) => {
                     //#region add <article>s
                     setVariablesForArticle({
-                        "div_articles": div_articles,
                         "totalArticalCount": response.length,
-                        "articleCountOnOneRow": 1,
                         "articleStyle": {
                             "width": 300,
                             "height": 300,
@@ -306,9 +332,6 @@ $(function () {
                                 : path_questionImage  // when unanswered forms displaying
                         //#endregion
 
-                        let x = await getPassedTimeInStringAsync(formInfos.createdAt);
-
-
                         //#region populate articles
                         div_article_info.append(`
                             <div id="${div_identity_id}">
@@ -317,7 +340,7 @@ $(function () {
                                 <h4 style="margin-top:5px;">${formInfos.firstName} ${formInfos.lastName}</h4>
                                 <h4 style="margin-top:25px; margin-bottom:8px">${formInfos.subject}</h4>
                                 <p>${formInfos.message.substring(0, article_maxMessageCount)}...</p>
-                                <h2 style="margin-top:15px">${getDateTimeInString(formInfos.createdAt)}</h2 >
+                                <h4 class="article_passedTime">${await getPassedTimeInStringAsync(formInfos.createdAt) }</h4>
                             </div>
                         `);
                         //#endregion
