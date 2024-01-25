@@ -13,8 +13,8 @@
 	}
 
 	public record AllGeneralCommFormViewForAllUsers
-		: AnsweredGeneralCommFormViewForOneUser
-	{
+		: AllGeneralCommFormViewForOneUser
+    {
         public Guid UserId { get; init; }
 	}
 }

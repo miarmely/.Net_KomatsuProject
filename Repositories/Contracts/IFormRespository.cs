@@ -1,6 +1,6 @@
 ﻿using Dapper;
 using Entities.DtoModels;
-
+using Entities.ViewModels.FormViews;
 
 namespace Repositories.Contracts
 {
@@ -38,7 +38,7 @@ namespace Repositories.Contracts
 		Task<IEnumerable<T>> GetAllRentingFormsAsync<T>(
 			DynamicParameters parameters);
 
-		Task<ErrorDto?> AnswerTheFormAsync(
+		Task<FormViewForAnswerTheForm> AnswerTheFormAsync(
 			DynamicParameters parameters);
     }
 }

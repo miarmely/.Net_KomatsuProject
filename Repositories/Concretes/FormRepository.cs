@@ -1,6 +1,7 @@
 ﻿using Dapper;
 using Entities.ConfigModels.Contracts;
 using Entities.DtoModels;
+using Entities.ViewModels.FormViews;
 using Repositories.Contracts;
 
 
@@ -83,9 +84,9 @@ namespace Repositories.Concretes
 						.User_Form_Renting_GetAll,
 					parameters);
 
-		public async Task<ErrorDto?> AnswerTheFormAsync(
+		public async Task<FormViewForAnswerTheForm> AnswerTheFormAsync(
 			DynamicParameters parameters) =>
-				await base.QuerySingleOrDefaultAsync<ErrorDto>(
+				await base.QuerySingleOrDefaultAsync<FormViewForAnswerTheForm>(
 					base.Configs.DbSettings.ProcedureNames
 						.User_Form_AnswerTheAnyForm,
 					parameters);

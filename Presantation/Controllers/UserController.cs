@@ -98,7 +98,7 @@ namespace Presantation.Controllers
 
 
         [HttpPut("update")]
-        [Authorization("Admin,Yönetici")]
+        [Authorization("Admin,Editor,Yönetici,Editör")]
         public async Task<IActionResult> UpdateUserByTelNoAsync(
             [FromQuery] UserParamsForUpdate userParams,
             [FromBody] UserDtoForUpdate userDto)

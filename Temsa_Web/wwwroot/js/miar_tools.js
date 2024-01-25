@@ -751,13 +751,13 @@ export async function getPassedTimeInStringAsync(utcDateTimeInStr) {
     let minutesDifference = Math.floor(dateDifferenceInSn / 60);
 
     if (minutesDifference > 0)
-        return monthDifference + languagePackage_message[language]["minutes"];
+        return minutesDifference + languagePackage_message[language]["minutes"];
     //#endregion
 
     //#region write passed time as second
-    let secondsDifference = Math.floor(dateDifferenceInSn / totalSecondAtOneYear);
+    let secondDifference = Math.floor(dateDifferenceInSn);
 
-    return secondsDifference + languagePackage_message[language]["seconds"];
+    return secondDifference + languagePackage_message[language]["seconds"];
     //#endregion
 
     //#endregion

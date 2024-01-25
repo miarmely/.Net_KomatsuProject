@@ -9,6 +9,7 @@ using Entities.QueryParameters;
 using Entities.ViewModels;
 using Entities.ViewModels.FormViews;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc.Formatters;
 using Microsoft.AspNetCore.Server.IIS.Core;
 using Repositories;
 using Repositories.Contracts;
@@ -21,7 +22,6 @@ namespace Services.Concretes
 {
     public partial class FormService : IFormService
     {
-
         private readonly IRepositoryManager _manager;
         private readonly IConfigManager _configs;
 
@@ -535,41 +535,36 @@ namespace Services.Concretes
         public async Task<object> GetAllGeneralCommFormsAsync(
             FormParamsForGetAllGeneralCommForms formParams)
         {
-            var parameters = new DynamicParameters(formParams);
-
-            #region when wanting to display which all form types
-            object formViews;
-
-            if (formParams.GetAnsweredForm == null)
-                formViews = _manager.FormRepository.GetAllGeneralCommFormsAsync
-                    <AllGeneralCommFormViewForAllUsers>(parameters);
-
-            else if(formParams.GetAnsweredForm == true)
-                formViews = _manager.FormRepository.GetAllGeneralCommFormsAsync
-                    <AllGeneralCommFormViewForAllUsers>(parameters);
-
-
-            var formViews = formParams.GetAnsweredForm == null?
-                await _manager.FormRepository.GetAllGeneralCommFormsAsync
-                    <AllGeneralCommFormViewForAllUsers>(parameters)
-                : formParams.GetAnsweredForm?
-                    await _manager.FormRepository.GetAllGeneralCommFormsAsync
-                        <AnsweredGeneralCommFormViewForAllUsers>(parameters)
-                    : _manage
-
-                    
-
-
-
-
-            if (formParams.GetAnsweredForm)
+            #region when all form types is wanting
+            var parameters = new DynamicParameters(new
             {
-                await _manager.FormRepository
+                formParams.PageNumber,
+                formParams.PageSize,
+                formParams.GetAnsweredForms
+            });
+            object formViews;
+            
+            if (formParams.GetAnsweredForms == null)
+                formViews = await _manager.FormRepository
                     .GetAllGeneralCommFormsAsync
-                        <AnsweredGeneralCommFormViewForAllUsers(paramaters);
-            }
+                        <AllGeneralCommFormViewForAllUsers>(parameters);
+            #endregion
 
-            formOArams
+            #region when only answered form type is wanting
+            else if (formParams.GetAnsweredForms == true)
+                formViews = await _manager.FormRepository
+                    .GetAllGeneralCommFormsAsync
+                        <AnsweredGeneralCommFormViewForAllUsers>(parameters);
+            #endregion
+
+            #region when only unanswered form type is wanting
+            else  // getAnsweredForm == false
+                formViews = await _manager.FormRepository
+                    .GetAllGeneralCommFormsAsync
+                        <UnansweredGeneralCommFormViewForAllUsers>(parameters);
+            #endregion
+
+            return formViews;
         }
 
         public async Task<object> GetAllGetOfferFormsAsync()
@@ -582,7 +577,7 @@ namespace Services.Concretes
             return null;
         }
 
-        public async Task AnswerFormAsync(
+        public async Task<FormViewForAnswerTheForm> AnswerFormAsync(
             FormParamsForAnswer formParams,
             FormTypes formType,
             HttpContext httpContext)
@@ -600,18 +595,44 @@ namespace Services.Concretes
                 #endregion
                 formParams.FormId,
                 AnswererId = await GetUserIdFromClaimsAsync(httpContext),
-                AnsweredDate = DateTime.UtcNow
+                AnsweredDate = DateTime.UtcNow,
             });
+
+            parameters.Add("StatusCode", 
+                0, 
+                DbType.Int16, 
+                ParameterDirection.Output);
+
+            parameters.Add("ErrorCode", 
+                "", 
+                DbType.String, 
+                ParameterDirection.Output);
+            
+            parameters.Add("ErrorDescription", 
+                "", 
+                DbType.String, 
+                ParameterDirection.Output);
+            
+            parameters.Add("ErrorMessage", 
+                "", 
+                DbType.String, 
+                ParameterDirection.Output);
             #endregion
 
-            #region answer the form
-            var errorDto = await _manager.FormRepository
+            #region answer the form (error)
+            var answererInfos = await _manager.FormRepository
                 .AnswerTheFormAsync(parameters);
 
             // when any error occured
-            if (errorDto != null)
-                throw new ErrorWithCodeException(errorDto);
+            if (answererInfos == null)
+                throw new ErrorWithCodeException(
+                    parameters.Get<Int16>("StatusCode"),
+                    parameters.Get<string>("ErrorCode"),
+                    parameters.Get<string>("ErrorDescription"),
+                    parameters.Get<string>("ErrorMessage"));
             #endregion
+
+            return answererInfos;
         }
     }
 }

@@ -55,7 +55,7 @@ namespace Presantation.Controllers
 		}
 
 
-		[HttpGet("display/oneUser/all")]
+		[HttpGet("display/all")]
 		[Authorization]
 		public async Task<IActionResult> GetAllFormsOfOneUser(
 			[FromQuery] FormParamsForGetAllFormsOfOneUser formParams)
@@ -67,7 +67,7 @@ namespace Presantation.Controllers
 		}
 
 
-		[HttpGet("display/oneUser/generalCommunication")]
+		[HttpGet("display/generalCommunication/oneUser")]
 		[Authorization]
 		public async Task<IActionResult> GetGeneralCommFormsOfOneUser(
 			[FromQuery] FormParamsForGetGeneralCommFormsOfOneUser formParams)
@@ -79,7 +79,7 @@ namespace Presantation.Controllers
 		}
 
 
-		[HttpGet("display/oneUser/getOffer")]
+		[HttpGet("display/getOffer/oneUser")]
 		[Authorization]
 		public async Task<IActionResult> GetGetOfferFormsOfOneUser(
 			[FromQuery] FormParamsForGetGetOfferFormsOfOneUser formParams)
@@ -91,7 +91,7 @@ namespace Presantation.Controllers
 		}
 
 
-		[HttpGet("display/oneUser/renting")]
+		[HttpGet("display/renting/oneUser")]
 		[Authorization]
 		public async Task<IActionResult> GetRentingFormsOfOneUser(
 			[FromQuery] FormParamsForGetRentingFormsOfOneUser formParams)
@@ -103,18 +103,31 @@ namespace Presantation.Controllers
 		}
 
 
+		[HttpGet("display/generalCommunication/")]
+		//[Authorization]
+		public async Task<IActionResult> GetAllGeneralCommForms(
+			[FromQuery] FormParamsForGetAllGeneralCommForms formParams)
+		{
+			var formViews = await _manager.FormService
+				.GetAllGeneralCommFormsAsync(formParams);
+
+			return Ok(formViews);
+		}
+
+
 		[HttpGet("answer/generalCommunication")]
 		[Authorization("Admin,Editor,Yönetici,Editör")]
 		public async Task<IActionResult> AnswerTheGeneralCommForm(
 			[FromQuery] FormParamsForAnswer formParams)
 		{
-            await _manager.FormService.AnswerFormAsync(
+            var answererInfos = await _manager.FormService.AnswerFormAsync(
                 formParams,
                 Entities.Enums.FormTypes.GeneralCommunication,
                 HttpContext);
 
-            return NoContent();
+            return Ok(answererInfos);
 		}
+
 
         [HttpGet("answer/getOffer")]
         [Authorization("Admin,Editor,Yönetici,Editör")]
@@ -142,7 +155,5 @@ namespace Presantation.Controllers
 
             return NoContent();
         }
-
-
     }
 }

@@ -22,7 +22,7 @@
             @*details of one article*@
             <div id="div_article_details" class="div_articleDetails" hidden>
                 <div id="div_userInfos">
-                    <div id="div_ownerInfos" style="float:left">
+                    <div id="div_sendererInfos" style="float:left">
                         <table>
                             <thead></thead>
                             <tbody></tbody>
@@ -38,14 +38,10 @@
                 <div id="div_content">
                     <table>
                         <thead>
-                            <tr>
-                                <th id="th_subject"></th>
-                            </tr>
+                            <tr><th id="th_subject"></th></tr>
                         </thead>
                         <tbody>
-                            <tr>
-                                <td id="td_message"></td>
-                            </tr>
+                            <tr><td id="td_message"></td></tr>
                         </tbody>
                      </table>
                 </div>
@@ -61,6 +57,7 @@
                     <div class="col-sm-5 m-b-xs">
 				        <select id="slct_menubar" class="input-sm form-control w-sm inline v-middle" style="float:left"></select>
                         <div id="div_menubar_button" hidden>
+                            <img id="img_loading" src="~/images/loading.gif" hidden>;
                             <button id="btn_menubar_apply" class="btn btn-sm btn_menubar_apply "></button>
                         </div>
                     </div>

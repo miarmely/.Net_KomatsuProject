@@ -22,7 +22,7 @@ namespace Entities.QueryParameters
 
     public record FormParamsForGetAllGeneralCommForms : LanguageAndPagingParams
     {
-        public bool? GetAnsweredForm { get; init; }
+        public bool? GetAnsweredForms { get; init; }
     }
 
     public record FormParamsForGetAllGetOfferForms : FormParamsForGetAllGeneralCommForms

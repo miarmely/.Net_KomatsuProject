@@ -1,10 +1,9 @@
-﻿using Dapper;
-using Entities.DtoModels;
-using Entities.DtoModels.FormDtos;
+﻿using Entities.DtoModels.FormDtos;
 using Entities.Enums;
 using Entities.QueryParameters;
+using Entities.ViewModels.FormViews;
 using Microsoft.AspNetCore.Http;
-using Repositories;
+
 
 namespace Services.Contracts
 {
@@ -40,9 +39,12 @@ namespace Services.Contracts
 			FormParamsForGetRentingFormsOfOneUser formParams,
 			HttpContext httpContext);
 
-		Task AnswerFormAsync(
+		Task<FormViewForAnswerTheForm> AnswerFormAsync(
 			FormParamsForAnswer formParams,
 			FormTypes formType,
 			HttpContext httpContext);
+
+		Task<object> GetAllGeneralCommFormsAsync(
+			FormParamsForGetAllGeneralCommForms formParams);
     }
 }

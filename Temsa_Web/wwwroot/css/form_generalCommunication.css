@@ -33,7 +33,7 @@
 #div_message {
     height: 200px;
     text-align: center;
-    margin: 20px 150px
+    margin: 20px 150px;
 }
 
 #btn_complete {
@@ -42,12 +42,10 @@
     margin-top: 60px;
 }
 
-.td_spaceAfterKey {
-    padding-left: 50px
+#btn_complete:disabled{
+    background-color: darkgrey
 }
 
-
-.article_passedTime {
-    margin-top: 15px;
-    color: red;
+.td_spaceAfterKey {
+    padding-left: 50px
 }
