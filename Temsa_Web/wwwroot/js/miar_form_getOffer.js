@@ -27,7 +27,8 @@ $(function () {
     const path_checkedImage = "/images/checked.png";
     const path_questionImage = "/images/question.png";
     const slct_menubar = $("#slct_menubar");
-    const btn_complete = $("#btn_complete");
+    const btn_accept = $("#btn_accept");
+    const btn_reject = $("#btn_reject");
     const td_message = $("#td_message");
     const td_subject = $("#td_subject");
     const lbl_passedTime_id = "lbl_passedTime";
@@ -75,8 +76,8 @@ $(function () {
         }
     }
     const languagePackage_panelTitle = {
-        "TR": "GENEL İLETİŞİM FORMU",
-        "EN": "GENERAL COMMUNICATION FORM"
+        "TR": "TEKLİF ALMA FORMU",
+        "EN": "GET OFFER FORM"
     }
     const languagePackage_panelMenubar = {
         "TR": {
@@ -93,6 +94,16 @@ $(function () {
     const languagePackage_completeButton = {
         "TR": "Tamamlandı",
         "EN": "Completed"
+    }
+    const languagePackage_formButtons = {
+        "TR": {
+            "accept": "Kabul Et",
+            "reject": "Reddet"
+        },
+        "EN": {
+            "accept": "Accept",
+            "reject": "Reject"
+        }
     }
     let article_IdsAndFormInfos = {};
     let displayingMode = "unanswered";

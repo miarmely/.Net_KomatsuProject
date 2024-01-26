@@ -22,7 +22,7 @@
 
 #td_subject {
     text-align: center;
-   font-weight: bold;
+    font-weight: bold;
 }
 
 #td_message {
@@ -43,9 +43,9 @@
     margin-top: 60px;
 }
 
-#btn_complete:disabled{
-    background-color: darkgrey
-}
+    #btn_complete:disabled {
+        background-color: darkgrey
+    }
 
 .td_spaceAfterKey {
     padding-left: 50px
