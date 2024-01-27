@@ -1,6 +1,6 @@
 ﻿namespace Entities.ViewModels.FormViews
 {
-	public record UnansweredGeneralCommFormViewForOneUser
+	public record FormViewForUnansweredGeneralCommFormsOfUser 
 	{
 		public int FormId { get; init; }
 		public string FirstName { get; init; }
@@ -15,18 +15,18 @@
 		public DateTime CreatedAt { get; init; }
 	}
 
-	public record AnsweredGeneralCommFormViewForOneUser
-		: UnansweredGeneralCommFormViewForOneUser
-	{
+	public record FormViewForAnsweredGeneralCommFormsOfUser
+        : FormViewForUnansweredGeneralCommFormsOfUser
+    {
 		public string AnswererFirstName { get; init; }
 		public string AnswererLastName { get; init; }
 		public string AnswererEmail { get; init; }
 		public DateTime AnsweredDate { get; init; }
 	}
 
-	public record AllGeneralCommFormViewForOneUser 
-		: AnsweredGeneralCommFormViewForOneUser
-	{
+	public record FormViewForGeneralCommFormsOfUser
+        : FormViewForAnsweredGeneralCommFormsOfUser
+    {
         public bool IsAnswered { get; init; }
 	}
 }

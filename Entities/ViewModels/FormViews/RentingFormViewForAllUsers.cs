@@ -1,20 +1,18 @@
 ﻿namespace Entities.ViewModels.FormViews
 {
-	public record UnansweredRentingFormViewForAllUsers 
-		: UnansweredRentingFormViewForOneUser
-	{
+    public record FormViewForWaitingRentingFormsOfAllUsers
+        : FormViewForWaitingRentingFormOfUser
+    {
         public Guid UserId { get; init; }
     }
 
-	public record AnsweredRentingFormViewForAllUsers
-		: AnsweredRentingFormViewForOneUser
-	{
-		public Guid UserId { get; init; }
-	}
-
-	public record AllRentingFormViewForAllUsers
-		: AnsweredRentingFormViewForOneUser
-	{
+    public record FormViewForAcceptedRentingFormsOfAllUsers
+        : FormViewForAcceptedRentingFormOfUser
+    {
         public Guid UserId { get; init; }
-	}
+    }
+
+    public record FormViewForRejectedRentingFormsOfAllUsers
+        : FormViewForAcceptedRentingFormsOfAllUsers
+    { }
 }

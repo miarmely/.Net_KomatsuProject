@@ -49,6 +49,10 @@
       "PackagePath": "staticwebassets\\css\\form_generalCommunication.css"
     },
     {
+      "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\css\\form_getOffer.css",
+      "PackagePath": "staticwebassets\\css\\form_getOffer.css"
+    },
+    {
       "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\css\\jqvmap.css",
       "PackagePath": "staticwebassets\\css\\jqvmap.css"
     },
@@ -459,6 +463,10 @@
     {
       "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\js\\miar_form_generalCommunication.js",
       "PackagePath": "staticwebassets\\js\\miar_form_generalCommunication.js"
+    },
+    {
+      "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\js\\miar_form_getOffer.js",
+      "PackagePath": "staticwebassets\\js\\miar_form_getOffer.js"
     },
     {
       "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\js\\miar_header.js",

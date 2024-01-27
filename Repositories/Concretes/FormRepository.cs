@@ -33,55 +33,46 @@ namespace Repositories.Concretes
 				base.Configs.DbSettings.ProcedureNames.User_Form_Renting_Create,
 				parameters);
 
-		public async Task<TResult> GetAllFormsOfOneUserAsync<TResult>(
-			string sqlCommand,
-			DynamicParameters parameters,
-			Func<SqlMapper.GridReader, Task<TResult>> funcAsync) =>
-				await base.MultipleQueryAsync(
-					sqlCommand,
-					parameters,
-					funcAsync);
+        public async Task<IEnumerable<TView>> DisplayAllGeneralCommFormsAsync<TView>(
+        DynamicParameters parameters) =>
+            await base.QueryAsync<TView>(
+                base.Configs.DbSettings.ProcedureNames
+                    .User_Form_GeneralCommunication_GetAll,
+                parameters);
 
-		public async Task<IEnumerable<T>> GetGeneralCommFormsOfOneUserAsync<T>(
+        public async Task<IEnumerable<TView>> DisplayAllGetOfferFormsAsync<TView>(
+            DynamicParameters parameters) =>
+                await base.QueryAsync<TView>(
+                    base.Configs.DbSettings.ProcedureNames
+                        .User_Form_GetOffer_GetAll,
+                    parameters);
+
+        public async Task<IEnumerable<TView>> DisplayAllRentingFormsAsync<TView>(
+            DynamicParameters parameters) =>
+                await base.QueryAsync<TView>(
+                    base.Configs.DbSettings.ProcedureNames
+                        .User_Form_Renting_GetAll,
+                    parameters);
+
+        public async Task<IEnumerable<TView>> DisplayGeneralCommFormsOfUserAsync<TView>(
 			DynamicParameters parameters) =>
-				await base.QueryAsync<T>(
+				await base.QueryAsync<TView>(
 					base.Configs.DbSettings.ProcedureNames
 						.User_Form_GeneralCommunication_GetAllOfOneUserByUserId,
 					parameters);
 
-		public async Task<IEnumerable<T>> GetGetOfferFormsOfOneUserAsync<T>(
+		public async Task<IEnumerable<TView>> DisplayGetOfferFormsOfUserAsync<TView>(
 			DynamicParameters parameters) =>
-				await base.QueryAsync<T>(
+				await base.QueryAsync<TView>(
 					base.Configs.DbSettings.ProcedureNames
 						.User_Form_GetOffer_GetAllOfOneUserByUserId,
 					parameters);
 
-		public async Task<IEnumerable<T>> GetRentingFormsOfOneUserAsync<T>(
+		public async Task<IEnumerable<TView>> DisplayRentingFormsOfUserAsync<TView>(
 			DynamicParameters parameters) =>
-				await base.QueryAsync<T>(
+				await base.QueryAsync<TView>(
 					base.Configs.DbSettings.ProcedureNames
 						.User_Form_Renting_GetAllOfOneUserByUserId,
-					parameters);
-
-		public async Task<IEnumerable<T>> GetAllGeneralCommFormsAsync<T>(
-			DynamicParameters parameters) =>
-				await base.QueryAsync<T>(
-					base.Configs.DbSettings.ProcedureNames
-						.User_Form_GeneralCommunication_GetAll,
-					parameters);
-
-		public async Task<IEnumerable<T>> GetAllGetOfferFormsAsync<T>(
-			DynamicParameters parameters) =>
-				await base.QueryAsync<T>(
-					base.Configs.DbSettings.ProcedureNames
-						.User_Form_GetOffer_GetAll,
-					parameters);
-
-		public async Task<IEnumerable<T>> GetAllRentingFormsAsync<T>(
-			DynamicParameters parameters) =>
-				await base.QueryAsync<T>(
-					base.Configs.DbSettings.ProcedureNames
-						.User_Form_Renting_GetAll,
 					parameters);
 
 		public async Task<FormViewForAnswerTheForm> AnswerTheFormAsync(

@@ -7,153 +7,168 @@ using Services.Contracts;
 
 namespace Presantation.Controllers
 {
-	[Route("api/services/[controller]")]
-	[ApiController]
-	public class FormController : ControllerBase
-	{
-		private readonly IServiceManager _manager;
+    [Route("api/services/[controller]")]
+    [ApiController]
+    public class FormController : ControllerBase
+    {
+        private readonly IServiceManager _manager;
 
-		public FormController(IServiceManager manager) =>
-			_manager = manager;
-		
-
-		[HttpPost("create/generalCommunication")]
-		[Authorization("User,Kullanıcı")]
-		public async Task<IActionResult> CreateGeneralCommunicationForm(
-			[FromBody] GeneralCommFormDtoForCreate formDto)
-		{
-			await _manager.FormService
-				.CreateGenaralCommFormAsync(formDto, HttpContext);
-
-			return NoContent();
-		}
+        public FormController(IServiceManager manager) =>
+            _manager = manager;
 
 
-		[HttpPost("create/getOffer")]
-		[Authorization("User,Kullanıcı")]
-		public async Task<IActionResult> CreateGetOfferForm(
-			[FromQuery] LanguageParams languageParams,
-			[FromBody] GetOfferFormDtoForCreate formDto)
-		{
-			await _manager.FormService
-				.CreateGetOfferFormAsync(languageParams, formDto, HttpContext);
-
-			return NoContent();
-		}
-
-
-		[HttpPost("create/renting")]
-		[Authorization("User,Kullanıcı")]
-		public async Task<IActionResult> CreateRentingForm(
-			[FromQuery] LanguageParams languageParams,
-			[FromBody] RentingFormDtoForCreate formDto)
-		{
-			await _manager.FormService
-				.CreateRentingFormAsync(languageParams, formDto, HttpContext);
-
-			return NoContent();
-		}
-
-
-		[HttpGet("display/all")]
-		[Authorization]
-		public async Task<IActionResult> GetAllFormsOfOneUser(
-			[FromQuery] FormParamsForGetAllFormsOfOneUser formParams)
-		{
-			var allForms = await _manager.FormService
-				.GetAllFormTypesOfOneUserAsync(formParams, HttpContext);
-
-			return Ok(allForms);
-		}
-
-
-		[HttpGet("display/generalCommunication/oneUser")]
-		[Authorization]
-		public async Task<IActionResult> GetGeneralCommFormsOfOneUser(
-			[FromQuery] FormParamsForGetGeneralCommFormsOfOneUser formParams)
-		{
-			var allForms = await _manager.FormService
-				.GetGeneralCommFormsOfOneUserAsync(formParams, HttpContext);
-
-			return Ok(allForms);
-		}
-
-
-		[HttpGet("display/getOffer/oneUser")]
-		[Authorization]
-		public async Task<IActionResult> GetGetOfferFormsOfOneUser(
-			[FromQuery] FormParamsForGetGetOfferFormsOfOneUser formParams)
-		{
-			var allForms = await _manager.FormService
-				.GetGetOfferFormsOfOneUserAsync(formParams, HttpContext);
-
-			return Ok(allForms);
-		}
-
-
-		[HttpGet("display/renting/oneUser")]
-		[Authorization]
-		public async Task<IActionResult> GetRentingFormsOfOneUser(
-			[FromQuery] FormParamsForGetRentingFormsOfOneUser formParams)
-		{
-			var allForms = await _manager.FormService
-				.GetRentingFormsOfOneUserAsync(formParams, HttpContext);
-
-			return Ok(allForms);
-		}
-
-
-		[HttpGet("display/generalCommunication/")]
-		//[Authorization]
-		public async Task<IActionResult> GetAllGeneralCommForms(
-			[FromQuery] FormParamsForGetAllGeneralCommForms formParams)
-		{
-			var formViews = await _manager.FormService
-				.GetAllGeneralCommFormsAsync(formParams);
-
-			return Ok(formViews);
-		}
-
-
-		[HttpGet("answer/generalCommunication")]
-		[Authorization("Admin,Editor,Yönetici,Editör")]
-		public async Task<IActionResult> AnswerTheGeneralCommForm(
-			[FromQuery] FormParamsForAnswer formParams)
-		{
-            var answererInfos = await _manager.FormService.AnswerFormAsync(
-                formParams,
-                Entities.Enums.FormTypes.GeneralCommunication,
-                HttpContext);
-
-            return Ok(answererInfos);
-		}
-
-
-        [HttpGet("answer/getOffer")]
-        [Authorization("Admin,Editor,Yönetici,Editör")]
-        public async Task<IActionResult> AnswerTheGetOfferForm(
-        [FromQuery] FormParamsForAnswer formParams)
+        [HttpPost("create/generalCommunication")]
+        [Authorization("User,Kullanıcı")]
+        public async Task<IActionResult> CreateGeneralCommunicationForm(
+            [FromQuery] LanguageParams languageParams,
+            [FromBody] GeneralCommFormDtoForCreate formDto)
         {
-            await _manager.FormService.AnswerFormAsync(
-                formParams,
-                Entities.Enums.FormTypes.GetOffer,
+            await _manager.FormService.CreateGenaralCommFormAsync(
+                languageParams,
+                formDto,
                 HttpContext);
 
             return NoContent();
         }
 
 
+        [HttpPost("create/getOffer")]
+        [Authorization("User,Kullanıcı")]
+        public async Task<IActionResult> CreateGetOfferForm(
+            [FromQuery] LanguageParams languageParams,
+            [FromBody] GetOfferFormDtoForCreate formDto)
+        {
+            await _manager.FormService
+                .CreateGetOfferFormAsync(languageParams, formDto, HttpContext);
+
+            return NoContent();
+        }
+
+
+        [HttpPost("create/renting")]
+        [Authorization("User,Kullanıcı")]
+        public async Task<IActionResult> CreateRentingForm(
+            [FromQuery] LanguageParams languageParams,
+            [FromBody] RentingFormDtoForCreate formDto)
+        {
+            await _manager.FormService
+                .CreateRentingFormAsync(languageParams, formDto, HttpContext);
+
+            return NoContent();
+        }
+
+
+        [HttpGet("display/generalCommunication/all")]
+        //[Authorization]
+        public async Task<IActionResult> DisplayAllGeneralCommForms(
+            [FromQuery] FormParamsForDisplayAllGeneralCommForms formParams)
+        {
+            var formViews = await _manager.FormService
+                .DisplayAllGeneralCommFormsAsync(formParams, HttpContext);
+
+            return Ok(formViews);
+        }
+
+
+        [HttpGet("display/getOffer/all")]
+        //[Authorization]
+        public async Task<IActionResult> DisplayAllGetOfferForms(
+            [FromQuery] FormParamsForDisplayAllGetOfferForms formParams)
+        {
+            var formViews = await _manager.FormService
+                .DisplayAllGetOfferFormsAsync(formParams, HttpContext);
+
+            return Ok(formViews);
+        }
+
+
+        [HttpGet("display/renting/all")]
+        //[Authorization]
+        public async Task<IActionResult> DisplayAllRentingForms(
+            [FromQuery] FormParamsForDisplayAllRentingForms formParams)
+        {
+            var formViews = await _manager.FormService
+                .DisplayAllRentingFormsAsync(formParams, HttpContext);
+
+            return Ok(formViews);
+        }
+
+
+        [HttpGet("display/generalCommunication/oneUser")]
+        [Authorization]
+        public async Task<IActionResult> DisplayGeneralCommFormsOfOneUser(
+            [FromQuery] FormParamsForDisplayGeneralCommFormsOfUser formParams)
+        {
+            var allForms = await _manager.FormService
+                .DisplayGeneralCommFormsOfUserAsync(formParams, HttpContext);
+
+            return Ok(allForms);
+        }
+
+
+        [HttpGet("display/getOffer/oneUser")]
+        [Authorization]
+        public async Task<IActionResult> DisplayGetOfferFormsOfUser(
+            [FromQuery] FormParamsForDisplayGetOfferFormsOfUser formParams)
+        {
+            var allForms = await _manager.FormService
+                .DisplayGetOfferFormsOfUserAsync(formParams, HttpContext);
+
+            return Ok(allForms);
+        }
+
+
+        [HttpGet("display/renting/oneUser")]
+        [Authorization]
+        public async Task<IActionResult> DisplayRentingFormsOfUser(
+            [FromQuery] FormParamsForDisplayRentingFormsOfUser formParams)
+        {
+            var allForms = await _manager.FormService
+                 .DisplayRentingFormsOfUserAsync(formParams, HttpContext);
+
+            return Ok(allForms);
+        }
+
+
+        [HttpGet("answer/generalCommunication")]
+        [Authorization("Admin,Editor,Yönetici,Editör")]
+        public async Task<IActionResult> AnswerTheGeneralCommForm(
+            [FromQuery] FormParamsForAnswerTheForm formParams)
+        {
+            var answererInfos = await _manager.FormService.AnswerTheFormAsync(
+                formParams,
+                Entities.Enums.FormTypes.GeneralCommunication,
+                HttpContext);
+
+            return Ok(answererInfos);
+        }
+
+
+        [HttpGet("answer/getOffer")]
+        [Authorization("Admin,Editor,Yönetici,Editör")]
+        public async Task<IActionResult> AnswerTheGetOfferForm(
+        [FromQuery] FormParamsForAnswerTheForm formParams)
+        {
+            var answererInfos = await _manager.FormService.AnswerTheFormAsync(
+                formParams,
+                Entities.Enums.FormTypes.GetOffer,
+                HttpContext);
+
+            return Ok(answererInfos);
+        }
+
+
         [HttpGet("answer/renting")]
         [Authorization("Admin,Editor,Yönetici,Editör")]
         public async Task<IActionResult> AnswerTheRentingForm(
-        [FromQuery] FormParamsForAnswer formParams)
+        [FromQuery] FormParamsForAnswerTheForm formParams)
         {
-			await _manager.FormService.AnswerFormAsync(
-				formParams,
-				Entities.Enums.FormTypes.Renting,
-				HttpContext);
+            var answererInfos = await _manager.FormService.AnswerTheFormAsync(
+                formParams,
+                Entities.Enums.FormTypes.Renting,
+                HttpContext);
 
-            return NoContent();
+            return Ok(answererInfos);
         }
     }
 }

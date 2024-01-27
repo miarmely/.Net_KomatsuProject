@@ -1,20 +1,20 @@
 ﻿namespace Entities.ViewModels.FormViews
 {
-	public record UnansweredGetOfferFormViewForAllUsers 
-		: UnansweredGetOfferFormViewForOneUser
-	{
+	public record FormViewForWaitingGetOfferFormsOfAllUsers
+        : FormViewForWaitingGetOfferFormOfUser
+    {
         public Guid UserId { get; init; }
     }
 
-	public record AnsweredGetOfferFormViewForAllUsers
-		: AnsweredGetOfferFormViewForOneUser
-	{
+	public record FormViewForAcceptedGetOfferFormsOfAllUsers
+		: FormViewForAcceptedGetOfferFormOfUser
+    {
 		public Guid UserId { get; init; }
 	}
 
-	public record AllGetOfferFormViewForAllUsers
-		: AnsweredGetOfferFormViewForOneUser
-	{
+	public record FormViewForRejectedGetOfferFormsOfAllUsers
+        : FormViewForRejectedGetOfferFormOfUser
+    {
         public Guid UserId { get; init; }
 	}
 }

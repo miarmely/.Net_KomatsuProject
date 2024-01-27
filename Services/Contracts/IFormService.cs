@@ -10,7 +10,8 @@ namespace Services.Contracts
     public interface IFormService
 	{
 		Task CreateGenaralCommFormAsync(
-			GeneralCommFormDtoForCreate formDto,
+            LanguageParams languageParams,
+            GeneralCommFormDtoForCreate formDto,
 			HttpContext httpContext);
 
 		Task CreateGetOfferFormAsync(
@@ -23,28 +24,33 @@ namespace Services.Contracts
 			RentingFormDtoForCreate formDto,
 			HttpContext httpContext);
 
-		Task<object> GetAllFormTypesOfOneUserAsync(
-			FormParamsForGetAllFormsOfOneUser formParams,
+        Task<object> DisplayAllGeneralCommFormsAsync(
+            FormParamsForDisplayAllGeneralCommForms formParams,
+             HttpContext context);
+
+        Task<object> DisplayAllGetOfferFormsAsync(
+            FormParamsForDisplayAllGetOfferForms formParams,
+			HttpContext context);
+
+        Task<object> DisplayAllRentingFormsAsync(
+            FormParamsForDisplayAllRentingForms formParams,
+			HttpContext context);
+
+        Task<object> DisplayGeneralCommFormsOfUserAsync(
+			FormParamsForDisplayGeneralCommFormsOfUser formParams,
 			HttpContext httpContext);
 
-		Task<object> GetGeneralCommFormsOfOneUserAsync(
-			FormParamsForGetGeneralCommFormsOfOneUser formParams,
+		Task<object> DisplayGetOfferFormsOfUserAsync(
+            FormParamsForDisplayGetOfferFormsOfUser formParams,
 			HttpContext httpContext);
 
-		Task<object> GetGetOfferFormsOfOneUserAsync(
-			FormParamsForGetGetOfferFormsOfOneUser formParams,
+		Task<object> DisplayRentingFormsOfUserAsync(
+            FormParamsForDisplayRentingFormsOfUser formParams,
 			HttpContext httpContext);
 
-		Task<object> GetRentingFormsOfOneUserAsync(
-			FormParamsForGetRentingFormsOfOneUser formParams,
-			HttpContext httpContext);
-
-		Task<FormViewForAnswerTheForm> AnswerFormAsync(
-			FormParamsForAnswer formParams,
+        Task<FormViewForAnswerTheForm> AnswerTheFormAsync(
+			FormParamsForAnswerTheForm formParams,
 			FormTypes formType,
 			HttpContext httpContext);
-
-		Task<object> GetAllGeneralCommFormsAsync(
-			FormParamsForGetAllGeneralCommForms formParams);
     }
 }

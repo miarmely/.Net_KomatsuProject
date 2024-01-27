@@ -42,64 +42,99 @@ namespace Services.Concretes
             return userId;
         }
 
-        private async Task<DynamicParameters> GetDynamicParametersWithUserIdAsync(
-            HttpContext httpContext)
-        {
-            #region set parameters with userId
-            var parameters = new DynamicParameters();
-
-            parameters.Add(
-                "UserId",
-                await GetUserIdFromClaimsAsync(httpContext),
-                DbType.Guid);
-            #endregion
-
-            return parameters;
-        }
-
-        private async Task<PagingList<TPagingList>> GetFormViewsInPaginListAsync<TPagingList>(
+        private async Task<PagingList<TFormView>> GetFormsOfUserAsPagingListAsync<TFormView>(
             string language,
             int pageNumber,
             int pageSize,
             string headerKey,
             HttpContext httpContext,
             FormTypes? formType = null,
-            DynamicParameters? dynamicParameters = null,
-            IEnumerable<TPagingList>? formView = null)
-            where TPagingList : class
+            DynamicParameters? parameters = null,
+            IEnumerable<TFormView>? formViews = null)
+            where TFormView : class
         {
-            #region get formView if wasn't add as parameter
-            if (formView == null)
-                formView = formType switch
+            #region get form by form type if not send as parameter
+            if (formViews == null)
+                formViews = formType switch
                 {
-                    #region get general communication formView
-                    FormTypes.GeneralCommunication => await _manager.FormRepository
-                        .GetGeneralCommFormsOfOneUserAsync<TPagingList>(dynamicParameters),
-                    #endregion
+                    FormTypes.GeneralCommunication => await _manager
+                        .FormRepository
+                        .DisplayGeneralCommFormsOfUserAsync<TFormView>(parameters),
 
-                    #region get get offer formView
-                    FormTypes.GetOffer => await _manager.FormRepository
-                        .GetGetOfferFormsOfOneUserAsync<TPagingList>(dynamicParameters),
-                    #endregion
+                    FormTypes.GetOffer => await _manager
+                        .FormRepository
+                        .DisplayGetOfferFormsOfUserAsync<TFormView>(parameters),
 
-                    #region get renting formView
-                    FormTypes.Renting => await _manager.FormRepository
-                        .GetRentingFormsOfOneUserAsync<TPagingList>(dynamicParameters)
-                    #endregion
+                    FormTypes.Renting => await _manager
+                        .FormRepository
+                        .DisplayRentingFormsOfUserAsync<TFormView>(parameters)
                 };
             #endregion
 
             #region when any form not found (throw)
-            if (formView.Count() == 0)
-                throw new ErrorWithCodeException(ErrorDetailsConfig
-                    .ToErrorDto(language, _configs.ErrorDetails.NF_Fo));
+            if (formViews.Count() == 0)
+                throw new ErrorWithCodeException(
+                    ErrorDetailsConfig.ToErrorDto(
+                        language, 
+                        _configs.ErrorDetails.NF_Fo));
             #endregion
 
-            #region get paging list of formView
-            var pagingList = await PagingList<TPagingList>
+            #region get formViews as paging list
+            var pagingList = await PagingList<TFormView>
                 .ToPagingListAsync(
-                    formView,
-                    formView.Count(),
+                    formViews,
+                    formViews.Count(),
+                    pageNumber,
+                    pageSize,
+                    headerKey,
+                    httpContext);
+            #endregion
+
+            return pagingList;
+        }
+
+        private async Task<PagingList<TFormView>> GetAllFormsAsPagingListAsync<TFormView>(
+            string language,
+            int pageNumber,
+            int pageSize,
+            string headerKey,
+            HttpContext httpContext,
+            FormTypes? formType = null,
+            DynamicParameters? parameters = null,
+            IEnumerable<TFormView>? formViews = null)
+            where TFormView : class
+        {
+            #region get form by form type if not send as parameter
+            if (formViews == null)
+                formViews = formType switch
+                {
+                    FormTypes.GeneralCommunication => await _manager
+                        .FormRepository
+                        .DisplayAllGeneralCommFormsAsync<TFormView>(parameters),
+
+                    FormTypes.GetOffer => await _manager
+                        .FormRepository
+                        .DisplayAllGetOfferFormsAsync<TFormView>(parameters),
+
+                    FormTypes.Renting => await _manager
+                        .FormRepository
+                        .DisplayAllRentingFormsAsync<TFormView>(parameters)
+                };
+            #endregion
+
+            #region when any form not found (throw)
+            if (formViews.Count() == 0)
+                throw new ErrorWithCodeException(
+                    ErrorDetailsConfig.ToErrorDto(
+                        language,
+                        _configs.ErrorDetails.NF_Fo));
+            #endregion
+
+            #region get form views as paging list
+            var pagingList = await PagingList<TFormView>
+                .ToPagingListAsync(
+                    formViews,
+                    formViews.Count(),
                     pageNumber,
                     pageSize,
                     headerKey,
@@ -110,17 +145,23 @@ namespace Services.Concretes
         }
     }
 
-    public partial class FormService // main services
+    public partial class FormService // services
     {
+        #region create
         public async Task CreateGenaralCommFormAsync(
+            LanguageParams languageParams,
             GeneralCommFormDtoForCreate formDto,
             HttpContext httpContext)
         {
             #region set parameters
-            var parameters = await
-                GetDynamicParametersWithUserIdAsync(httpContext);
+            var parameters = new DynamicParameters(formDto);
 
-            parameters.AddDynamicParams(formDto);
+            parameters.AddDynamicParams(new
+            {
+                languageParams.Language,
+                UserId = await GetUserIdFromClaimsAsync(httpContext)
+            });
+            
             #endregion
 
             await _manager.UserRepository
@@ -133,10 +174,13 @@ namespace Services.Concretes
             HttpContext httpContext)
         {
             #region set parameters
-            var parameters = await GetDynamicParametersWithUserIdAsync(httpContext);
+            var parameters = new DynamicParameters(formDto);
 
-            parameters.AddDynamicParams(formDto);
-            parameters.Add("Language", languageParams.Language, DbType.String);
+            parameters.AddDynamicParams(new
+            {
+                languageParams.Language,
+                UserId = await GetUserIdFromClaimsAsync(httpContext)
+            });
             #endregion
 
             #region create form (throw)
@@ -154,10 +198,13 @@ namespace Services.Concretes
             HttpContext httpContext)
         {
             #region set parameters
-            var parameters = await GetDynamicParametersWithUserIdAsync(httpContext);
+            var parameters = new DynamicParameters(formDto);
 
-            parameters.AddDynamicParams(formDto);
-            parameters.Add("Language", languageParams.Language, DbType.String);
+            parameters.AddDynamicParams(new
+            {
+                languageParams.Language,
+                UserId = await GetUserIdFromClaimsAsync(httpContext)
+            });
             #endregion
 
             #region create form (throw)
@@ -168,417 +215,292 @@ namespace Services.Concretes
                 throw new ErrorWithCodeException(errorDto);
             #endregion
         }
+        #endregion
 
-        public async Task<object> GetAllFormTypesOfOneUserAsync(
-            FormParamsForGetAllFormsOfOneUser formParams,
-            HttpContext httpContext)
+        #region display
+        public async Task<object> DisplayAllGeneralCommFormsAsync(
+           FormParamsForDisplayAllGeneralCommForms formParams,
+           HttpContext context)
         {
-            #region set parameters and sql command
-            var parameters = new DynamicParameters(formParams);
-            var sqlCommand = $@" 
-					-- get `general communication` forms
-                    EXEC {_configs.DbSettings.ProcedureNames
-                            .User_Form_GeneralCommunication_GetAllOfOneUserByUserId}
-                        @UserId,
-                        @PageNumber,
-                        @PageSize,
-                        @GetAnsweredForms;
-                    
-					-- get `get offer` forms
-                    EXEC {_configs.DbSettings.ProcedureNames
-                            .User_Form_GetOffer_GetAllOfOneUserByUserId}
-                        @Language,
-                        @UserId,
-                        @PageNumber,
-                        @PageSize,
-                        @GetAnsweredForms;
-
-					-- get `renting`forms
-                    EXEC {_configs.DbSettings.ProcedureNames
-                            .User_Form_Renting_GetAllOfOneUserByUserId}
-                        @Language,
-                        @UserId,
-                        @PageNumber,
-                        @PageSize,
-                        @GetAnsweredForms;";
-            #endregion
-
-            #region get all forms of one user in paging list
-            object pagingList = formParams.GetAnsweredForms switch
-            {
-                #region get "answered" forms
-                true => await _manager.UserRepository
-                    .GetAllFormsOfUserAsync(
-                        sqlCommand,
-                        parameters,
-                        async (multiQuery) =>
-                        {
-                            #region get "answered" all forms of one user
-                            var answeredGCFormViews = await multiQuery
-                                .ReadAsync<AnsweredGeneralCommFormViewForOneUser>();
-
-                            var answeredGOFormViews = await multiQuery
-                                .ReadAsync<AnsweredGetOfferFormViewForOneUser>();
-
-                            var answeredRFormViews = await multiQuery
-                                .ReadAsync<AnsweredRentingFormViewForOneUser>();
-                            #endregion
-
-                            #region save paging infos of forms to header
-                            var answeredGCFormPagingList = await
-                                GetFormViewsInPaginListAsync(
-                                    formParams.Language,
-                                    formParams.PageNumber,
-                                    formParams.PageSize,
-                                    "Form-Answered-GeneralCommunication",
-                                    httpContext,
-                                    formView: answeredGCFormViews);
-
-                            var answeredGOFormPagingList = await
-                                GetFormViewsInPaginListAsync(
-                                    formParams.Language,
-                                    formParams.PageNumber,
-                                    formParams.PageSize,
-                                    "Form-Answered-GetOffer",
-                                    httpContext,
-                                    formView: answeredGOFormViews);
-
-                            var answeredRFormPagingList = await
-                                GetFormViewsInPaginListAsync(
-                                    formParams.Language,
-                                    formParams.PageNumber,
-                                    formParams.PageSize,
-                                    "Form-Answered-Renting",
-                                    httpContext,
-                                    formView: answeredRFormViews);
-                            #endregion
-
-                            return new AnsweredFormViewForOneUser()
-                            {
-                                GeneralCommunicationForms =
-                                    answeredGCFormPagingList,
-                                GetOfferForms = answeredGOFormPagingList,
-                                RentingForms = answeredRFormPagingList
-
-                            };
-                        }),
-                #endregion
-
-                #region get "unanswered" forms
-                false => await _manager.UserRepository
-                    .GetAllFormsOfUserAsync(
-                        sqlCommand,
-                        parameters,
-                        async (multiQuery) =>
-                        {
-                            #region get "unanswered" all forms of user
-                            var unansweredGCFormViews = await multiQuery
-                                .ReadAsync<UnansweredGeneralCommFormViewForOneUser>();
-
-                            var unansweredGOFormViews = await multiQuery
-                                .ReadAsync<UnansweredGetOfferFormViewForOneUser>();
-
-                            var unansweredRFormViews = await multiQuery
-                                .ReadAsync<UnansweredRentingFormViewForOneUser>();
-                            #endregion
-
-                            #region save paging infos of forms to header
-                            var unansweredGCFormPagingList = await
-                                GetFormViewsInPaginListAsync(
-                                    formParams.Language,
-                                    formParams.PageNumber,
-                                    formParams.PageSize,
-                                    "Form-Unanswered-GeneralCommunication",
-                                    httpContext,
-                                    formView: unansweredGCFormViews);
-
-                            var unansweredGOFormPagingList = await
-                                GetFormViewsInPaginListAsync(
-                                    formParams.Language,
-                                    formParams.PageNumber,
-                                    formParams.PageSize,
-                                    "Form-Unanswered-GetOffer",
-                                    httpContext,
-                                    formView: unansweredGOFormViews);
-
-                            var unansweredRFormPagingList = await
-                                GetFormViewsInPaginListAsync(
-                                    formParams.Language,
-                                    formParams.PageNumber,
-                                    formParams.PageSize,
-                                    "Form-Unanswered-Renting",
-                                    httpContext,
-                                    formView: unansweredRFormViews);
-                            #endregion
-
-                            return new UnansweredFormViewForOneUser()
-                            {
-                                GeneralCommunicationForms =
-                                    unansweredGCFormPagingList,
-                                GetOfferForms = unansweredGOFormPagingList,
-                                RentingForms = unansweredRFormPagingList
-                            };
-                        }),
-                #endregion
-
-                #region when "answered" and "unanswered" forms is wanted
-                null => await _manager.UserRepository
-                    .GetAllFormsOfUserAsync(
-                        sqlCommand,
-                        parameters,
-                        async (multiQuery) =>
-                        {
-                            #region get "unanswered" all forms of user
-                            var allGCFormViews = await multiQuery
-                                .ReadAsync<AllGeneralCommFormViewForOneUser>();
-
-                            var allGOFormViews = await multiQuery
-                                .ReadAsync<AllGetOfferFormViewForOneUser>();
-
-                            var allRFormViews = await multiQuery
-                                .ReadAsync<AllRentingFormViewForOneUser>();
-                            #endregion
-
-                            #region save paging infos of forms to header
-                            var allGCFormPagingList = await
-                                GetFormViewsInPaginListAsync(
-                                    formParams.Language,
-                                    formParams.PageNumber,
-                                    formParams.PageSize,
-                                    "Form-All-GeneralCommunication",
-                                    httpContext,
-                                    formView: allGCFormViews);
-
-                            var allGOFormPagingList = await
-                                GetFormViewsInPaginListAsync(
-                                    formParams.Language,
-                                    formParams.PageNumber,
-                                    formParams.PageSize,
-                                    "Form-All-GetOffer",
-                                    httpContext,
-                                    formView: allGOFormViews);
-
-                            var allRFormPagingList = await
-                                GetFormViewsInPaginListAsync(
-                                    formParams.Language,
-                                    formParams.PageNumber,
-                                    formParams.PageSize,
-                                    "Form-All-Renting",
-                                    httpContext,
-                                    formView: allRFormViews);
-                            #endregion
-
-                            return new AllFormViewForOneUser()
-                            {
-                                GeneralCommunicationForms = allGCFormPagingList,
-                                GetOfferForms = allGOFormPagingList,
-                                RentingForms = allRFormPagingList
-                            };
-                        }),
-                #endregion
-            };
-            #endregion
-
-            return pagingList;
-        }
-
-        public async Task<object> GetGeneralCommFormsOfOneUserAsync(
-            FormParamsForGetGeneralCommFormsOfOneUser formParams,
-            HttpContext httpContext)
-        {
-            #region get "general comm." forms belong to one user in paging List
-            var parameters = new DynamicParameters(formParams);
-
-            object pagingList = formParams.GetAnsweredForms switch
-            {
-                #region when "answered" forms is wanting
-                true => await GetFormViewsInPaginListAsync
-                    <AnsweredGeneralCommFormViewForOneUser>(
-                        formParams.Language,
-                        formParams.PageNumber,
-                        formParams.PageSize,
-                        "Form-Answered-GeneralCommunication",
-                        httpContext,
-                        FormTypes.GeneralCommunication,
-                        parameters),
-                #endregion
-
-                #region when "unanswered" forms is wanting
-                false => await GetFormViewsInPaginListAsync
-                    <UnansweredGeneralCommFormViewForOneUser>(
-                        formParams.Language,
-                        formParams.PageNumber,
-                        formParams.PageSize,
-                        "Form-Unanswered-GeneralCommunication",
-                        httpContext,
-                        FormTypes.GeneralCommunication,
-                        parameters),
-                #endregion
-
-                #region when "answered" and "unanswered" forms is wanting
-                null => await GetFormViewsInPaginListAsync
-                    <AllGeneralCommFormViewForOneUser>(
-                        formParams.Language,
-                        formParams.PageNumber,
-                        formParams.PageSize,
-                        "Form-All-GeneralCommunication",
-                        httpContext,
-                        FormTypes.GeneralCommunication,
-                        parameters),
-                #endregion
-            };
-            #endregion
-
-            return pagingList;
-        }
-
-        public async Task<object> GetGetOfferFormsOfOneUserAsync(
-            FormParamsForGetGetOfferFormsOfOneUser formParams,
-            HttpContext httpContext)
-        {
-            #region get "get offer" forms belong to one user in paging List
-            var parameters = new DynamicParameters(formParams);
-
-            object pagingList = formParams.GetAnsweredForms switch
-            {
-                #region when "answered" forms is wanting
-                true => await GetFormViewsInPaginListAsync
-                    <AnsweredGetOfferFormViewForOneUser>(
-                        formParams.Language,
-                        formParams.PageNumber,
-                        formParams.PageSize,
-                        "Form-Answered-GetOffer",
-                        httpContext,
-                        FormTypes.GetOffer,
-                        parameters),
-                #endregion
-
-                #region when "unanswered" forms is wanting
-                false => await GetFormViewsInPaginListAsync
-                    <UnansweredGetOfferFormViewForOneUser>(
-                        formParams.Language,
-                        formParams.PageNumber,
-                        formParams.PageSize,
-                        "Form-Unanswered-GetOffer",
-                        httpContext,
-                        FormTypes.GetOffer,
-                        parameters),
-                #endregion
-
-                #region when "answered" and "unanswered" forms is wanting
-                null => await GetFormViewsInPaginListAsync
-                    <AllGetOfferFormViewForOneUser>(
-                        formParams.Language,
-                        formParams.PageNumber,
-                        formParams.PageSize,
-                        "Form-All-GetOffer",
-                        httpContext,
-                        FormTypes.GetOffer,
-                        parameters),
-                #endregion
-            };
-            #endregion
-
-            return pagingList;
-        }
-
-        public async Task<object> GetRentingFormsOfOneUserAsync(
-            FormParamsForGetRentingFormsOfOneUser formParams,
-            HttpContext httpContext)
-        {
-            #region get "renting" forms belong to one user in paging List
-            var parameters = new DynamicParameters(formParams);
-
-            object pagingList = formParams.GetAnsweredForms switch
-            {
-                #region when "answered" forms is wanting
-                true => await GetFormViewsInPaginListAsync
-                    <AnsweredRentingFormViewForOneUser>(
-                        formParams.Language,
-                        formParams.PageNumber,
-                        formParams.PageSize,
-                        "Form-Answered-Renting",
-                        httpContext,
-                        FormTypes.Renting,
-                        parameters),
-                #endregion
-
-                #region when "unanswered" forms is wanting
-                false => await GetFormViewsInPaginListAsync
-                    <UnansweredRentingFormViewForOneUser>(
-                        formParams.Language,
-                        formParams.PageNumber,
-                        formParams.PageSize,
-                        "Form-Unanswered-Renting",
-                        httpContext,
-                        FormTypes.Renting,
-                        parameters),
-                #endregion
-
-                #region when "answered" and "unanswered" forms is wanting
-                null => await GetFormViewsInPaginListAsync
-                    <AllRentingFormViewForOneUser>(
-                        formParams.Language,
-                        formParams.PageNumber,
-                        formParams.PageSize,
-                        "Form-All-Renting",
-                        httpContext,
-                        FormTypes.Renting,
-                        parameters),
-                #endregion
-            };
-            #endregion
-
-            return pagingList;
-        }
-
-        public async Task<object> GetAllGeneralCommFormsAsync(
-            FormParamsForGetAllGeneralCommForms formParams)
-        {
-            #region when all form types is wanting
+            #region set parameters
             var parameters = new DynamicParameters(new
             {
                 formParams.PageNumber,
                 formParams.PageSize,
                 formParams.GetAnsweredForms
             });
-            object formViews;
-            
-            if (formParams.GetAnsweredForms == null)
-                formViews = await _manager.FormRepository
-                    .GetAllGeneralCommFormsAsync
-                        <AllGeneralCommFormViewForAllUsers>(parameters);
             #endregion
 
-            #region when only answered form type is wanting
-            else if (formParams.GetAnsweredForms == true)
-                formViews = await _manager.FormRepository
-                    .GetAllGeneralCommFormsAsync
-                        <AnsweredGeneralCommFormViewForAllUsers>(parameters);
+            #region get forms by form status 
+            object formsInPagingList = formParams.GetAnsweredForms switch
+            {
+                true => await GetAllFormsAsPagingListAsync
+                    <FormViewForAllAnsweredGeneralCommForms>(
+                    formParams.Language,
+                    formParams.PageNumber,
+                    formParams.PageSize,
+                    "Form-GeneralCommunication-Answered",
+                    context,
+                    FormTypes.GeneralCommunication,
+                    parameters),
+
+                false => await GetAllFormsAsPagingListAsync
+                    <FormViewForAllUnansweredGeneralCommForms>(
+                    formParams.Language,
+                    formParams.PageNumber,
+                    formParams.PageSize,
+                    "Form-GeneralCommunication-Unanswered",
+                    context,
+                    FormTypes.GeneralCommunication,
+                    parameters),
+
+                null => await GetAllFormsAsPagingListAsync
+                    <FormViewForAllGeneralCommForms>(
+                    formParams.Language,
+                    formParams.PageNumber,
+                    formParams.PageSize,
+                    "Form-GeneralCommunication-All",
+                    context,
+                    FormTypes.GeneralCommunication,
+                    parameters)
+            };
             #endregion
 
-            #region when only unanswered form type is wanting
-            else  // getAnsweredForm == false
-                formViews = await _manager.FormRepository
-                    .GetAllGeneralCommFormsAsync
-                        <UnansweredGeneralCommFormViewForAllUsers>(parameters);
-            #endregion
-
-            return formViews;
+            return formsInPagingList;
         }
 
-        public async Task<object> GetAllGetOfferFormsAsync()
+        public async Task<object> DisplayAllGetOfferFormsAsync(
+             FormParamsForDisplayAllGetOfferForms formParams,
+             HttpContext context)
         {
-            return null;
+            #region get forms by form status 
+            var parameters = new DynamicParameters(formParams);
+
+            object formsInPagingList = formParams.FormStatus switch
+            {
+                FormStatuses.Waiting => await GetAllFormsAsPagingListAsync
+                    <FormViewForWaitingGetOfferFormsOfAllUsers>(
+                    formParams.Language,
+                    formParams.PageNumber,
+                    formParams.PageSize,
+                    "Form-GetOffer-Waiting",
+                    context,
+                    FormTypes.GetOffer,
+                    parameters),
+
+                FormStatuses.Accepted => await GetAllFormsAsPagingListAsync
+                    <FormViewForAcceptedGetOfferFormsOfAllUsers>(
+                    formParams.Language,
+                    formParams.PageNumber,
+                    formParams.PageSize,
+                    "Form-GetOffer-Accepted",
+                    context,
+                    FormTypes.GetOffer,
+                    parameters),
+
+                FormStatuses.Rejected => await GetAllFormsAsPagingListAsync
+                    <FormViewForRejectedGetOfferFormsOfAllUsers>(
+                    formParams.Language,
+                    formParams.PageNumber,
+                    formParams.PageSize,
+                    "Form-GetOffer-Rejected",
+                    context,
+                    FormTypes.GetOffer,
+                    parameters)
+            };
+            #endregion
+
+            return formsInPagingList;
         }
 
-        public async Task<object> GetAllRentingFormsAsync()
+        public async Task<object> DisplayAllRentingFormsAsync(
+            FormParamsForDisplayAllRentingForms formParams,
+            HttpContext context)
         {
-            return null;
+            #region get forms by form status 
+            var parameters = new DynamicParameters(formParams);
+
+            object formsInPagingList = formParams.FormStatus switch
+            {
+                FormStatuses.Waiting => await GetAllFormsAsPagingListAsync
+                    <FormViewForWaitingRentingFormsOfAllUsers>(
+                        formParams.Language,
+                        formParams.PageNumber,
+                        formParams.PageSize,
+                        "Form-Renting-Waiting",
+                        context,
+                        FormTypes.Renting,
+                        parameters),
+
+                FormStatuses.Accepted => await GetAllFormsAsPagingListAsync
+                    <FormViewForAcceptedRentingFormsOfAllUsers>(
+                        formParams.Language,
+                        formParams.PageNumber,
+                        formParams.PageSize,
+                        "Form-Renting-Accepted",
+                        context,
+                        FormTypes.Renting,
+                        parameters),
+
+                FormStatuses.Rejected => await GetAllFormsAsPagingListAsync
+                    <FormViewForRejectedRentingFormsOfAllUsers>(
+                        formParams.Language,
+                        formParams.PageNumber,
+                        formParams.PageSize,
+                        "Form-Renting-Rejected",
+                        context,
+                        FormTypes.Renting,
+                        parameters)
+            };
+            #endregion
+
+            return formsInPagingList;
         }
 
-        public async Task<FormViewForAnswerTheForm> AnswerFormAsync(
-            FormParamsForAnswer formParams,
+        public async Task<object> DisplayGeneralCommFormsOfUserAsync(
+            FormParamsForDisplayGeneralCommFormsOfUser formParams,
+            HttpContext context)
+        {
+            #region set parameters
+            var parameters = new DynamicParameters(new
+            {
+               formParams.PageNumber,
+               formParams.PageSize,
+               formParams.GetAnsweredForms,
+               UserId = formParams.UserId ?? await GetUserIdFromClaimsAsync(context)
+            });
+            #endregion
+
+            #region get forms by form status 
+            object formsInPagingList = formParams.GetAnsweredForms switch
+            {
+                true => await GetFormsOfUserAsPagingListAsync
+                    <FormViewForAnsweredGeneralCommFormsOfUser>(
+                    formParams.Language,
+                    formParams.PageNumber,
+                    formParams.PageSize,
+                    "Form-GeneralCommunication-Answered",
+                    context,
+                    FormTypes.GeneralCommunication,
+                    parameters),
+
+                false => await GetFormsOfUserAsPagingListAsync
+                    <FormViewForUnansweredGeneralCommFormsOfUser>(
+                    formParams.Language,
+                    formParams.PageNumber,
+                    formParams.PageSize,
+                    "Form-GeneralCommunication-Unanswered",
+                    context,
+                    FormTypes.GeneralCommunication,
+                    parameters),
+
+                null => await GetFormsOfUserAsPagingListAsync
+                    <FormViewForGeneralCommFormsOfUser>(
+                    formParams.Language,
+                    formParams.PageNumber,
+                    formParams.PageSize,
+                    "Form-GeneralCommunication-All",
+                    context,
+                    FormTypes.GeneralCommunication,
+                    parameters)
+            };
+            #endregion
+
+            return formsInPagingList;
+        }
+
+        public async Task<object> DisplayGetOfferFormsOfUserAsync(
+            FormParamsForDisplayGetOfferFormsOfUser formParams,
+            HttpContext httpContext)
+        {
+            #region get "get offer" forms of user as paging List
+            var parameters = new DynamicParameters(formParams);
+
+            object formsInPagingList = formParams.FormStatus switch
+            {
+                FormStatuses.Waiting => await GetFormsOfUserAsPagingListAsync
+                    <FormViewForWaitingGetOfferFormOfUser>(
+                        formParams.Language,
+                        formParams.PageNumber,
+                        formParams.PageSize,
+                        "Form-GetOffer-Waiting",
+                        httpContext,
+                        FormTypes.GetOffer,
+                        parameters),
+
+                FormStatuses.Accepted => await GetFormsOfUserAsPagingListAsync
+                    <FormViewForAcceptedGetOfferFormOfUser>(
+                        formParams.Language,
+                        formParams.PageNumber,
+                        formParams.PageSize,
+                        "Form-GetOffer-Accepted",
+                        httpContext,
+                        FormTypes.GetOffer,
+                        parameters),
+
+                FormStatuses.Rejected => await GetFormsOfUserAsPagingListAsync
+                    <FormViewForRejectedGetOfferFormOfUser>(
+                        formParams.Language,
+                        formParams.PageNumber,
+                        formParams.PageSize,
+                        "Form-GetOffer-Rejected",
+                        httpContext,
+                        FormTypes.GetOffer,
+                        parameters)
+            };
+            #endregion
+
+            return formsInPagingList;
+        }
+
+        public async Task<object> DisplayRentingFormsOfUserAsync(
+            FormParamsForDisplayRentingFormsOfUser formParams,
+            HttpContext httpContext)
+        {
+            #region get "renting" forms of user as paging List
+            var parameters = new DynamicParameters(formParams);
+
+            object formsInPagingList = formParams.FormStatus switch
+            {
+                FormStatuses.Waiting => await GetFormsOfUserAsPagingListAsync
+                    <FormViewForWaitingRentingFormOfUser>(
+                        formParams.Language,
+                        formParams.PageNumber,
+                        formParams.PageSize,
+                        "Form-Renting-Waiting",
+                        httpContext,
+                        FormTypes.Renting,
+                        parameters),
+
+                FormStatuses.Accepted => await GetFormsOfUserAsPagingListAsync
+                    <FormViewForAcceptedRentingFormOfUser>(
+                        formParams.Language,
+                        formParams.PageNumber,
+                        formParams.PageSize,
+                        "Form-Renting-Accepted",
+                        httpContext,
+                        FormTypes.Renting,
+                        parameters),
+
+                FormStatuses.Rejected => await GetFormsOfUserAsPagingListAsync
+                    <FormViewForRejectedRentingFormOfUser>(
+                        formParams.Language,
+                        formParams.PageNumber,
+                        formParams.PageSize,
+                        "Form-Renting-Rejected",
+                        httpContext,
+                        FormTypes.Renting,
+                        parameters)
+            };
+            #endregion
+
+            return formsInPagingList;
+        }
+        #endregion
+
+        #region others
+        public async Task<FormViewForAnswerTheForm> AnswerTheFormAsync(
+            FormParamsForAnswerTheForm formParams,
             FormTypes formType,
             HttpContext httpContext)
         {
@@ -598,24 +520,24 @@ namespace Services.Concretes
                 AnsweredDate = DateTime.UtcNow,
             });
 
-            parameters.Add("StatusCode", 
-                0, 
-                DbType.Int16, 
+            parameters.Add("StatusCode",
+                0,
+                DbType.Int16,
                 ParameterDirection.Output);
 
-            parameters.Add("ErrorCode", 
-                "", 
-                DbType.String, 
+            parameters.Add("ErrorCode",
+                "",
+                DbType.String,
                 ParameterDirection.Output);
-            
-            parameters.Add("ErrorDescription", 
-                "", 
-                DbType.String, 
+
+            parameters.Add("ErrorDescription",
+                "",
+                DbType.String,
                 ParameterDirection.Output);
-            
-            parameters.Add("ErrorMessage", 
-                "", 
-                DbType.String, 
+
+            parameters.Add("ErrorMessage",
+                "",
+                DbType.String,
                 ParameterDirection.Output);
             #endregion
 
@@ -634,5 +556,6 @@ namespace Services.Concretes
 
             return answererInfos;
         }
+        #endregion
     }
 }

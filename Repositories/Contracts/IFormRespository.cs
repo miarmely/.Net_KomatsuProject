@@ -2,6 +2,7 @@
 using Entities.DtoModels;
 using Entities.ViewModels.FormViews;
 
+
 namespace Repositories.Contracts
 {
 	public interface IFormRepository : IRepositoryBase
@@ -15,27 +16,22 @@ namespace Repositories.Contracts
 		Task<ErrorDto?> CreateRentingFormAsync(
 			DynamicParameters parameters);
 
-		Task<TResult> GetAllFormsOfOneUserAsync<TResult>(
-			string sqlCommand,
-			DynamicParameters parameters,
-			Func<SqlMapper.GridReader, Task<TResult>> funcAsync);
+        Task<IEnumerable<TView>> DisplayAllGeneralCommFormsAsync<TView>(
+            DynamicParameters parameters);
 
-		Task<IEnumerable<T>> GetGeneralCommFormsOfOneUserAsync<T>(
+        Task<IEnumerable<TView>> DisplayAllGetOfferFormsAsync<TView>(
+            DynamicParameters parameters);
+
+        Task<IEnumerable<TView>> DisplayAllRentingFormsAsync<TView>(
+            DynamicParameters parameters);
+
+        Task<IEnumerable<TView>> DisplayGeneralCommFormsOfUserAsync<TView>(
 			DynamicParameters parameters);
 
-		Task<IEnumerable<T>> GetGetOfferFormsOfOneUserAsync<T>(
+		Task<IEnumerable<TView>> DisplayGetOfferFormsOfUserAsync<TView>(
 			DynamicParameters parameters);
 
-		Task<IEnumerable<T>> GetRentingFormsOfOneUserAsync<T>(
-			DynamicParameters parameters);
-
-		Task<IEnumerable<T>> GetAllGeneralCommFormsAsync<T>(
-			DynamicParameters parameters);
-
-		Task<IEnumerable<T>> GetAllGetOfferFormsAsync<T>(
-			DynamicParameters parameters);
-
-		Task<IEnumerable<T>> GetAllRentingFormsAsync<T>(
+		Task<IEnumerable<TView>> DisplayRentingFormsOfUserAsync<TView>(
 			DynamicParameters parameters);
 
 		Task<FormViewForAnswerTheForm> AnswerTheFormAsync(
