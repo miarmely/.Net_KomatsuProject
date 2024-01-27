@@ -83,7 +83,7 @@ namespace Services.Concretes
             var pagingList = await PagingList<TFormView>
                 .ToPagingListAsync(
                     formViews,
-                    formViews.Count(),
+                    parameters.Get<int>("TotalCount"),
                     pageNumber,
                     pageSize,
                     headerKey,
@@ -134,7 +134,7 @@ namespace Services.Concretes
             var pagingList = await PagingList<TFormView>
                 .ToPagingListAsync(
                     formViews,
-                    formViews.Count(),
+                    parameters.Get<int>("TotalCount"),
                     pageNumber,
                     pageSize,
                     headerKey,
@@ -161,11 +161,17 @@ namespace Services.Concretes
                 languageParams.Language,
                 UserId = await GetUserIdFromClaimsAsync(httpContext)
             });
-            
+
             #endregion
 
-            await _manager.UserRepository
+            #region create form (throw)
+            var errorDto = await _manager.FormRepository
                 .CreateGeneralCommFormAsync(parameters);
+
+            // when conflict error occured
+            if (errorDto != null)
+                throw new ErrorWithCodeException(errorDto);
+            #endregion
         }
 
         public async Task CreateGetOfferFormAsync(
@@ -184,7 +190,7 @@ namespace Services.Concretes
             #endregion
 
             #region create form (throw)
-            var errorDto = await _manager.UserRepository
+            var errorDto = await _manager.FormRepository
                 .CreateGetOfferFormAsync(parameters);
 
             if (errorDto != null)
@@ -208,7 +214,7 @@ namespace Services.Concretes
             #endregion
 
             #region create form (throw)
-            var errorDto = await _manager.UserRepository
+            var errorDto = await _manager.FormRepository
                 .CreateRentingFormAsync(parameters);
 
             if (errorDto != null)
@@ -229,6 +235,8 @@ namespace Services.Concretes
                 formParams.PageSize,
                 formParams.GetAnsweredForms
             });
+
+            parameters.Add("TotalCount", 0, DbType.Int32, ParameterDirection.Output);
             #endregion
 
             #region get forms by form status 
@@ -281,6 +289,8 @@ namespace Services.Concretes
                 formParams.PageSize,
                 FormStatusId = formParams.FormStatus
             });
+
+            parameters.Add("TotalCount", 0, DbType.Int32, ParameterDirection.Output);
             #endregion
 
             #region get forms by form status 
@@ -333,6 +343,8 @@ namespace Services.Concretes
                 formParams.PageSize,
                 FormStatusId = formParams.FormStatus
             });
+
+            parameters.Add("TotalCount", 0, DbType.Int32, ParameterDirection.Output);
             #endregion
 
             #region get forms by form status 
@@ -385,6 +397,8 @@ namespace Services.Concretes
                formParams.GetAnsweredForms,
                UserId = formParams.UserId ?? await GetUserIdFromClaimsAsync(context)
             });
+
+            parameters.Add("TotalCount", 0, DbType.Int32, ParameterDirection.Output);
             #endregion
 
             #region get forms by form status 
@@ -438,6 +452,8 @@ namespace Services.Concretes
                 formParams.PageSize,
                 FormStatusId = formParams.FormStatus,
             });
+
+            parameters.Add("TotalCount", 0, DbType.Int32, ParameterDirection.Output);
             #endregion
 
             #region get "get offer" forms of user as paging List
@@ -480,11 +496,22 @@ namespace Services.Concretes
 
         public async Task<object> DisplayRentingFormsOfUserAsync(
             FormParamsForDisplayRentingFormsOfUser formParams,
-            HttpContext httpContext)
+            HttpContext context)
         {
-            #region get "renting" forms of user as paging List
-            var parameters = new DynamicParameters(formParams);
+            #region set parameters
+            var parameters = new DynamicParameters(new
+            {
+                formParams.Language,
+                UserId = formParams.UserId ?? await GetUserIdFromClaimsAsync(context),
+                formParams.PageNumber,
+                formParams.PageSize,
+                FormStatusId = formParams.FormStatus,
+            });
 
+            parameters.Add("TotalCount", 0, DbType.Int32, ParameterDirection.Output);
+            #endregion
+
+            #region get "renting" forms of user as paging List
             object formsInPagingList = formParams.FormStatus switch
             {
                 FormStatuses.Waiting => await GetFormsOfUserAsPagingListAsync
@@ -493,7 +520,7 @@ namespace Services.Concretes
                         formParams.PageNumber,
                         formParams.PageSize,
                         "Form-Renting-Waiting",
-                        httpContext,
+                        context,
                         FormTypes.Renting,
                         parameters),
 
@@ -503,7 +530,7 @@ namespace Services.Concretes
                         formParams.PageNumber,
                         formParams.PageSize,
                         "Form-Renting-Accepted",
-                        httpContext,
+                        context,
                         FormTypes.Renting,
                         parameters),
 
@@ -513,7 +540,7 @@ namespace Services.Concretes
                         formParams.PageNumber,
                         formParams.PageSize,
                         "Form-Renting-Rejected",
-                        httpContext,
+                        context,
                         FormTypes.Renting,
                         parameters)
             };

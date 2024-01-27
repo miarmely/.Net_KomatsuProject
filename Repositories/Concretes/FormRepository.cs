@@ -14,18 +14,18 @@ namespace Repositories.Concretes
 			IConfigManager configs) : base(context, configs)
 		{ }
 
-		public async Task CreateGeneralCommFormAsync(
+		public async Task<ErrorDto?> CreateGeneralCommFormAsync(
 			DynamicParameters parameters) =>
-			await base.QuerySingleOrDefaultAsync<int>(
-				base.Configs.DbSettings.ProcedureNames
-					.User_Form_GeneralCommunication_Create,
-				parameters);
+				await base.QuerySingleOrDefaultAsync<ErrorDto>(
+					base.Configs.DbSettings.ProcedureNames
+						.User_Form_GeneralCommunication_Create,
+					parameters);
 
 		public async Task<ErrorDto?> CreateGetOfferFormAsync(
 			DynamicParameters parameters) =>
-			await base.QuerySingleOrDefaultAsync<ErrorDto>(
-				base.Configs.DbSettings.ProcedureNames.User_Form_GetOffer_Create,
-				parameters);
+				await base.QuerySingleOrDefaultAsync<ErrorDto>(
+					base.Configs.DbSettings.ProcedureNames.User_Form_GetOffer_Create,
+					parameters);
 
 		public async Task<ErrorDto?> CreateRentingFormAsync(
 			DynamicParameters parameters) =>

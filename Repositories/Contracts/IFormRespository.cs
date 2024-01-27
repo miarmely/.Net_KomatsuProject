@@ -7,7 +7,7 @@ namespace Repositories.Contracts
 {
 	public interface IFormRepository : IRepositoryBase
 	{
-		Task CreateGeneralCommFormAsync(
+		Task<ErrorDto?> CreateGeneralCommFormAsync(
 			DynamicParameters parameters);
 
 		Task<ErrorDto?> CreateGetOfferFormAsync(

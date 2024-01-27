@@ -18,7 +18,7 @@ namespace Presantation.Controllers
 
 
         [HttpPost("create/generalCommunication")]
-        [Authorization("User,Kullanıcı")]
+        //[Authorization("User,Kullanıcı")]
         public async Task<IActionResult> CreateGeneralCommunicationForm(
             [FromQuery] LanguageParams languageParams,
             [FromBody] GeneralCommFormDtoForCreate formDto)
@@ -33,7 +33,7 @@ namespace Presantation.Controllers
 
 
         [HttpPost("create/getOffer")]
-        [Authorization("User,Kullanıcı")]
+        //[Authorization("User,Kullanıcı")]
         public async Task<IActionResult> CreateGetOfferForm(
             [FromQuery] LanguageParams languageParams,
             [FromBody] GetOfferFormDtoForCreate formDto)
@@ -46,7 +46,7 @@ namespace Presantation.Controllers
 
 
         [HttpPost("create/renting")]
-        [Authorization("User,Kullanıcı")]
+        //[Authorization("User,Kullanıcı")]
         public async Task<IActionResult> CreateRentingForm(
             [FromQuery] LanguageParams languageParams,
             [FromBody] RentingFormDtoForCreate formDto)
@@ -130,7 +130,7 @@ namespace Presantation.Controllers
         }
 
 
-        [HttpGet("answer/generalCommunication")]
+        [HttpPut("answer/generalCommunication")]
         [Authorization("Admin,Editor,Yönetici,Editör")]
         public async Task<IActionResult> AnswerTheGeneralCommForm(
             [FromQuery] FormParamsForAnswerTheForm formParams)
@@ -144,7 +144,7 @@ namespace Presantation.Controllers
         }
 
 
-        [HttpGet("answer/getOffer")]
+        [HttpPut("answer/getOffer")]
         [Authorization("Admin,Editor,Yönetici,Editör")]
         public async Task<IActionResult> AnswerTheGetOfferForm(
         [FromQuery] FormParamsForAnswerTheForm formParams)
@@ -158,7 +158,7 @@ namespace Presantation.Controllers
         }
 
 
-        [HttpGet("answer/renting")]
+        [HttpPut("answer/renting")]
         [Authorization("Admin,Editor,Yönetici,Editör")]
         public async Task<IActionResult> AnswerTheRentingForm(
         [FromQuery] FormParamsForAnswerTheForm formParams)

@@ -32,8 +32,10 @@ namespace Entities.QueryParameters
     { }
 
     public record FormParamsForDisplayRentingFormsOfUser
-        : FormParamsForDisplayAllGetOfferForms
-    { }
+        : FormParamsForDisplayAllRentingForms
+    {
+        public Guid? UserId { get; init; }
+    }
 
     public record FormParamsForAnswerTheForm : LanguageParams
     {
