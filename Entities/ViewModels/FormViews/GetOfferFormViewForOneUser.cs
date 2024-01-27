@@ -12,7 +12,12 @@
 		public string County { get; init; }
 		public string Message { get; init; }
 		public DateTime CreatedAt { get; init; }
-	}
+        public string MainCategoryName { get; init; }
+        public string SubCategoryName { get; init; }
+        public string Model { get; init; }
+        public string BrandName { get; init; }
+		public string ImageName { get; init; }
+    }
 
 	public record FormViewForAcceptedGetOfferFormOfUser
         : FormViewForWaitingGetOfferFormOfUser

@@ -273,9 +273,17 @@ namespace Services.Concretes
              FormParamsForDisplayAllGetOfferForms formParams,
              HttpContext context)
         {
-            #region get forms by form status 
-            var parameters = new DynamicParameters(formParams);
+            #region set parameters
+            var parameters = new DynamicParameters(new
+            {
+                formParams.Language,
+                formParams.PageNumber,
+                formParams.PageSize,
+                FormStatusId = formParams.FormStatus
+            });
+            #endregion
 
+            #region get forms by form status 
             object formsInPagingList = formParams.FormStatus switch
             {
                 FormStatuses.Waiting => await GetAllFormsAsPagingListAsync
@@ -317,9 +325,17 @@ namespace Services.Concretes
             FormParamsForDisplayAllRentingForms formParams,
             HttpContext context)
         {
-            #region get forms by form status 
-            var parameters = new DynamicParameters(formParams);
+            #region set parameters
+            var parameters = new DynamicParameters(new
+            {
+                formParams.Language,
+                formParams.PageNumber,
+                formParams.PageSize,
+                FormStatusId = formParams.FormStatus
+            });
+            #endregion
 
+            #region get forms by form status 
             object formsInPagingList = formParams.FormStatus switch
             {
                 FormStatuses.Waiting => await GetAllFormsAsPagingListAsync
@@ -411,11 +427,20 @@ namespace Services.Concretes
 
         public async Task<object> DisplayGetOfferFormsOfUserAsync(
             FormParamsForDisplayGetOfferFormsOfUser formParams,
-            HttpContext httpContext)
+            HttpContext context)
         {
-            #region get "get offer" forms of user as paging List
-            var parameters = new DynamicParameters(formParams);
+            #region set parameters
+            var parameters = new DynamicParameters(new
+            {
+                formParams.Language,
+                UserId = formParams.UserId ?? await GetUserIdFromClaimsAsync(context),
+                formParams.PageNumber,
+                formParams.PageSize,
+                FormStatusId = formParams.FormStatus,
+            });
+            #endregion
 
+            #region get "get offer" forms of user as paging List
             object formsInPagingList = formParams.FormStatus switch
             {
                 FormStatuses.Waiting => await GetFormsOfUserAsPagingListAsync
@@ -424,7 +449,7 @@ namespace Services.Concretes
                         formParams.PageNumber,
                         formParams.PageSize,
                         "Form-GetOffer-Waiting",
-                        httpContext,
+                        context,
                         FormTypes.GetOffer,
                         parameters),
 
@@ -434,7 +459,7 @@ namespace Services.Concretes
                         formParams.PageNumber,
                         formParams.PageSize,
                         "Form-GetOffer-Accepted",
-                        httpContext,
+                        context,
                         FormTypes.GetOffer,
                         parameters),
 
@@ -444,7 +469,7 @@ namespace Services.Concretes
                         formParams.PageNumber,
                         formParams.PageSize,
                         "Form-GetOffer-Rejected",
-                        httpContext,
+                        context,
                         FormTypes.GetOffer,
                         parameters)
             };
