@@ -264,3 +264,4 @@ C:\Users\Mac\Desktop\SOFTWARE\1__Software_Languages\1__C#\2__API\1__Projects\3__
 C:\Users\Mac\Desktop\SOFTWARE\1__Software_Languages\1__C#\2__API\1__Projects\3__Temsa\Temsa_Web\obj\Debug\net7.0\Temsa_Web.pdb
 C:\Users\Mac\Desktop\SOFTWARE\1__Software_Languages\1__C#\2__API\1__Projects\3__Temsa\Temsa_Web\obj\Debug\net7.0\Temsa_Web.genruntimeconfig.cache
 C:\Users\Mac\Desktop\SOFTWARE\1__Software_Languages\1__C#\2__API\1__Projects\3__Temsa\Temsa_Web\obj\Debug\net7.0\ref\Temsa_Web.dll
+C:\Users\Mac\Desktop\SOFTWARE\1__Software_Languages\1__C#\2__API\1__Projects\3__Temsa\Temsa_Web\obj\Debug\net7.0\Temsa_Web.MvcApplicationPartsAssemblyInfo.cs

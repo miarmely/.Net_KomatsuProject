@@ -11,7 +11,7 @@ export const article_class = "article";
 export let articleBuffer = {
     "div_articles": "",  // should be set
     "path_articleVideos": "",
-    "totalArticalCount": 0,  // should be set
+    "totalArticleCount": 0,  // should be set
     "articleCountOnOneRow" : 0,
     "articleStyle": {  // should be set
         "width": 0,
@@ -171,13 +171,13 @@ export async function ended_articleVideoAsync() {
 //#endregion
 
 //#region functions
-export async function addArticlesAsync(articleType) {
+export async function addArticlesAsync(articleType, autoAlign=true) {
     // articleType: "imageAndText", "videoAndText", "text"
 
     //#region add articles
     article_type = articleType;
 
-    for (let index = 0; index < articleBuffer.totalArticalCount; index++) {
+    for (let index = 0; index < articleBuffer.totalArticleCount; index++) {
         //#region add articles by article type
         let articleId = art_baseId + index;
 
@@ -258,6 +258,13 @@ export async function addArticlesAsync(articleType) {
         "border-width": articleBuffer.articleStyle.border
     });
     //#endregion
+
+    //#region align articles and set height of div_articles
+    if (autoAlign) {
+        await alignArticlesToCenterAsync();
+        await setHeightOfArticlesDivAsync();
+    }
+    //#endregion
 }
 
 export async function controlArticleWidthAsync() {
@@ -332,9 +339,9 @@ export async function alignArticlesToCenterAsync(widthUnit = "px") {
 export async function setHeightOfArticlesDivAsync() {
     //#region set height of articles <div>
     let netArticleHeight = articleBuffer.articleStyle.height + articleBuffer.articleStyle.marginT + articleBuffer.articleStyle.marginB;
-    let totalRowCount = (articleBuffer.totalArticalCount % articleBuffer.articleCountOnOneRow == 0 ?
-        Math.floor(articleBuffer.totalArticalCount / articleBuffer.articleCountOnOneRow)  // when article count of all rows is equal
-        : Math.floor(articleBuffer.totalArticalCount / articleBuffer.articleCountOnOneRow) + 1)  // when article count of last row is different
+    let totalRowCount = (articleBuffer.totalArticleCount % articleBuffer.articleCountOnOneRow == 0 ?
+        Math.floor(articleBuffer.totalArticleCount / articleBuffer.articleCountOnOneRow)  // when article count of all rows is equal
+        : Math.floor(articleBuffer.totalArticleCount / articleBuffer.articleCountOnOneRow) + 1)  // when article count of last row is different
 
     articleBuffer.div_articles.css(
         "height",
@@ -361,6 +368,29 @@ export async function isSidebarOpenAsync() {
     //#endregion
 
     return true;
+}
+
+export async function addMessageToEmptyDivArticlesAsync(imagePath, imageAlt, message) {
+    //#region add message with image to div_articles
+    let div_articles = articleBuffer.div_articles;
+
+    div_articles.append(`
+        <div class="div_articles_message">
+            <img src="${imagePath}"  alt="${imageAlt}"/>
+            <h3>${message}</h3>  
+        </div>`);
+    //#endregion
+
+    //#region add style to div_articles_message
+    let div_articles_message = div_articles.children(".div_articles_message");
+    let div_articles_message_height = div_articles_message.prop("offsetHeight");
+    let div_articles_height = div_articles.prop("offsetHeight");
+
+    div_articles_message.css({
+        "padding-top": (div_articles_height - div_articles_message_height) / 2,
+        "padding-bottom": (div_articles_height - div_articles_message_height) / 2
+    })
+    //#endregion
 }
 
 export function setVariablesForArticle(variables) {
@@ -444,7 +474,7 @@ export function removeArticleVideo(article) {
 
 async function updateArticleAndArticleElementsStylesAsync() {
     //#region update styles
-    for (let no = 0; no < articleBuffer.totalArticalCount; no++) {
+    for (let no = 0; no < articleBuffer.totalArticleCount; no++) {
         //#region update article style
         let article = $("#" + art_baseId + no);
         article.css("width", articleBuffer.articleStyle.width);

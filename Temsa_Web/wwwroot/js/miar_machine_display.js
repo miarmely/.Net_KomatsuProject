@@ -772,7 +772,7 @@ $(function () {
                 setVariablesForArticle({
                     "div_articles": div_articles,
                     "path_articleVideos": path_videoFolderAfterWwwroot,
-                    "totalArticalCount": response.length,
+                    "totalArticleCount": response.length,
                     "articleStyle": {
                         "width": 370,
                         "height": 580,

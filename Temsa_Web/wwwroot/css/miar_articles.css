@@ -1,0 +1,36 @@
+﻿.article {
+    border-style: solid;
+    float: left;
+    border-radius: 25px;
+    cursor: pointer;
+    text-align: center
+}
+
+    .article:hover {
+        background-color: lightgrey;
+    }
+
+.div_articles {
+    min-height: 300px;
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+
+.div_articles_message {
+    text-align: center
+}
+
+    .div_articles_message > img {
+        width: 100px;
+        height: 100px;
+    }
+
+    .div_articles_message > h3 {
+        margin-top: 10px;
+    }
+
+#btn_back {
+    color: black;
+    background-color: red;
+    width: 55px;
+}

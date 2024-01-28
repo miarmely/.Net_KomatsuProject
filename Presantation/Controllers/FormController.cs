@@ -18,7 +18,7 @@ namespace Presantation.Controllers
 
 
         [HttpPost("create/generalCommunication")]
-        //[Authorization("User,Kullanıcı")]
+        [Authorization("User,Kullanıcı")]
         public async Task<IActionResult> CreateGeneralCommunicationForm(
             [FromQuery] LanguageParams languageParams,
             [FromBody] GeneralCommFormDtoForCreate formDto)
@@ -33,7 +33,7 @@ namespace Presantation.Controllers
 
 
         [HttpPost("create/getOffer")]
-        //[Authorization("User,Kullanıcı")]
+        [Authorization("User,Kullanıcı")]
         public async Task<IActionResult> CreateGetOfferForm(
             [FromQuery] LanguageParams languageParams,
             [FromBody] GetOfferFormDtoForCreate formDto)
@@ -46,7 +46,7 @@ namespace Presantation.Controllers
 
 
         [HttpPost("create/renting")]
-        //[Authorization("User,Kullanıcı")]
+        [Authorization("User,Kullanıcı")]
         public async Task<IActionResult> CreateRentingForm(
             [FromQuery] LanguageParams languageParams,
             [FromBody] RentingFormDtoForCreate formDto)
@@ -59,7 +59,7 @@ namespace Presantation.Controllers
 
 
         [HttpGet("display/generalCommunication/all")]
-        //[Authorization]
+        [Authorization]
         public async Task<IActionResult> DisplayAllGeneralCommForms(
             [FromQuery] FormParamsForDisplayAllGeneralCommForms formParams)
         {
@@ -71,7 +71,7 @@ namespace Presantation.Controllers
 
 
         [HttpGet("display/getOffer/all")]
-        //[Authorization]
+        [Authorization]
         public async Task<IActionResult> DisplayAllGetOfferForms(
             [FromQuery] FormParamsForDisplayAllGetOfferForms formParams)
         {
@@ -83,7 +83,7 @@ namespace Presantation.Controllers
 
 
         [HttpGet("display/renting/all")]
-        //[Authorization]
+        [Authorization]
         public async Task<IActionResult> DisplayAllRentingForms(
             [FromQuery] FormParamsForDisplayAllRentingForms formParams)
         {

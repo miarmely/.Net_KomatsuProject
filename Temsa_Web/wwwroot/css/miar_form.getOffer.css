@@ -1,0 +1,26 @@
+﻿#td_subject {
+    text-align: center;
+    font-weight: bold;
+}
+
+#td_message {
+    padding-top: 20px;
+    padding-left: 20%;
+    padding-right: 20%;
+}
+
+#div_message {
+    height: 200px;
+    text-align: center;
+    margin: 20px 150px;
+}
+
+#btn_complete {
+    background-color: #521FFF;
+    color: white;
+    margin-top: 60px;
+}
+
+    #btn_complete:disabled {
+        background-color: darkgrey
+    }

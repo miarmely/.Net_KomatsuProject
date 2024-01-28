@@ -45,14 +45,6 @@
       "PackagePath": "staticwebassets\\css\\font.css"
     },
     {
-      "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\css\\form_generalCommunication.css",
-      "PackagePath": "staticwebassets\\css\\form_generalCommunication.css"
-    },
-    {
-      "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\css\\form_getOffer.css",
-      "PackagePath": "staticwebassets\\css\\form_getOffer.css"
-    },
-    {
       "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\css\\jqvmap.css",
       "PackagePath": "staticwebassets\\css\\jqvmap.css"
     },
@@ -61,12 +53,28 @@
       "PackagePath": "staticwebassets\\css\\lightbox.css"
     },
     {
+      "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\css\\miar_articles.css",
+      "PackagePath": "staticwebassets\\css\\miar_articles.css"
+    },
+    {
+      "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\css\\miar_form.css",
+      "PackagePath": "staticwebassets\\css\\miar_form.css"
+    },
+    {
+      "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\css\\miar_form.generalCommunication.css",
+      "PackagePath": "staticwebassets\\css\\miar_form.generalCommunication.css"
+    },
+    {
+      "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\css\\miar_form.getOffer.css",
+      "PackagePath": "staticwebassets\\css\\miar_form.getOffer.css"
+    },
+    {
       "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\css\\miar_login.css",
       "PackagePath": "staticwebassets\\css\\miar_login.css"
     },
     {
-      "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\css\\miar_tools.css",
-      "PackagePath": "staticwebassets\\css\\miar_tools.css"
+      "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\css\\miar_machine_display.css",
+      "PackagePath": "staticwebassets\\css\\miar_machine_display.css"
     },
     {
       "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\css\\minimal.css",
@@ -457,16 +465,16 @@
       "PackagePath": "staticwebassets\\js\\miar_descriptions.js"
     },
     {
+      "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\js\\miar_form.generalCommunication.js",
+      "PackagePath": "staticwebassets\\js\\miar_form.generalCommunication.js"
+    },
+    {
+      "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\js\\miar_form.getOffer.js",
+      "PackagePath": "staticwebassets\\js\\miar_form.getOffer.js"
+    },
+    {
       "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\js\\miar_form.js",
       "PackagePath": "staticwebassets\\js\\miar_form.js"
-    },
-    {
-      "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\js\\miar_form_generalCommunication.js",
-      "PackagePath": "staticwebassets\\js\\miar_form_generalCommunication.js"
-    },
-    {
-      "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\js\\miar_form_getOffer.js",
-      "PackagePath": "staticwebassets\\js\\miar_form_getOffer.js"
     },
     {
       "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\js\\miar_header.js",
