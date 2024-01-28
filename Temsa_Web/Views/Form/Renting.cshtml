@@ -1,6 +1,10 @@
-﻿<link rel="stylesheet" href="~/css/miar_articles.css"/>
+﻿@{
+    Layout = "_Layout";
+}
+
+<link rel="stylesheet" href="~/css/miar_article.css"/>
 <link rel="stylesheet" href="~/css/miar_form.css"/>
-@*<link rel="stylesheet" href="~/css/miar_form.renting.css"/>*@
+<link rel="stylesheet" href="~/css/miar_form.renting.css"/>
 
 
 <div class="table-agile-info">
@@ -19,28 +23,31 @@
         <div class="panel-body">
             @*details of one article*@
             <div id="div_article_details" class="div_articleDetails" hidden>
-                @*machine image and video*@
-                <div style="text-align:center; float:none">
-                    <video id="vid_machine" controls hidden>
-                        <source id="src_machine"/>
-                    </video>
-                        
-                    @*message label*@
-                    <div style="margin-bottom:30px">
-                        <spn id="spn_fileStatusLabel"></spn>
+                <div id="div_userInfos">
+                    <div id="div_sendererInfos" style="float:left">
+                        <table>
+                            <thead></thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                    <div id="div_answererInfos"  style="float:right">
+                        <table>
+                            <thead></thead>
+                            <tbody></tbody>
+                        </table>
                     </div>
                 </div>
-
-                @*form*@
-                <form>
-                    <div id="div_form" class="form-horizontal bucket-form">
-                    </div>
-                </form>
-
-                @*result label*@
-                <div style="text-align:center">
-                    <p id="p_resultLabel"></p>
-                    <img id="img_loading" src="~/images/loading.gif" style="width:40px; height:40px" hidden/>
+                <div id="div_content">
+                    <table>
+                        <tbody>
+                            <tr> <td><img/></td></tr>  @*machine image*@
+                            <tr><td id="td_message"></td></tr>
+                        </tbody>
+                     </table>
+                </div>
+                <div id="div_buttons">
+                    <button id="btn_accept" class="btn" type="button"></button>
+                    <button id="btn_reject" class="btn" type="button"></button>
                 </div>
             </div>
             
@@ -51,6 +58,7 @@
                     <div class="col-sm-5 m-b-xs">
 				        <select id="slct_menubar" class="input-sm form-control w-sm inline v-middle" style="float:left"></select>
                         <div id="div_menubar_button" hidden>
+                            <img id="img_loading" src="~/images/loading.gif" hidden>;
                             <button id="btn_menubar_apply" class="btn btn-sm btn_menubar_apply "></button>
                         </div>
                     </div>
@@ -90,3 +98,6 @@
         </div>
     </div>
 </div>
+
+
+<script type="module" src="~/js/miar_form.renting.js"></script>

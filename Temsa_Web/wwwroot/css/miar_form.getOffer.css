@@ -1,9 +1,4 @@
-﻿#td_subject {
-    text-align: center;
-    font-weight: bold;
-}
-
-#td_message {
+﻿#td_message {
     padding-top: 20px;
     padding-left: 20%;
     padding-right: 20%;
@@ -24,3 +19,13 @@
     #btn_complete:disabled {
         background-color: darkgrey
     }
+
+#btn_accept {
+    background-color: #521FFF;
+    color: white;
+}
+
+#btn_reject {
+    background-color:red;
+    color: white;
+}

@@ -1,15 +1,16 @@
 ﻿import {
-    updateResultLabel, addPaginationButtonsAsync,
-    controlPaginationBackAndNextButtonsAsync, isAllObjectValuesNullAsync,
-    getFileTypeFromFileName, updateElementText, getBase64StrOfFileAsync,
-    autoObjectMapperAsync,
+    updateResultLabel, addPaginationButtonsAsync, controlPaginationBackAndNextButtonsAsync,
+    isAllObjectValuesNullAsync, getFileTypeFromFileName, updateElementText,
+    getBase64StrOfFileAsync, autoObjectMapperAsync,
 } from "./miar_tools.js";
 
 import {
     addArticlesAsync, alignArticlesToCenterAsync, articleBuffer, art_baseId,
-    click_articleVideoDivAsync, controlArticleWidthAsync, div_article_button_id, div_article_info_id,
-    div_article_video_id, ended_articleVideoAsync, mouseout_articleVideoDivAsync,
-    mouseover_articleVideoAsync, removeLastUploadedArticleVideoAsync, setHeightOfArticlesDivAsync, setVariablesForArticle
+    click_articleVideoDivAsync, controlArticleWidthAsync, div_article_button_id,
+    div_article_info_id, div_article_video_id, ended_articleVideoAsync,
+    mouseout_articleVideoDivAsync, mouseover_articleVideoAsync,
+    removeLastUploadedArticleVideoAsync, setHeightOfArticlesDivAsync,
+    setVariablesForArticleAsync
 } from "./miar_article.js"
 
 import {
@@ -52,6 +53,7 @@ $(function () {
     let machineCountOnPage;
     let idOfLastViewedArticle = null;
     let article_idsToBeDelete = [];
+    let isWindowResizeInCriticalSection = false;
     //#endregion
 
     //#region events
@@ -65,10 +67,22 @@ $(function () {
 
         //#region when machine articles page is open
         else
-            setTimeout(async () => {
-                await controlArticleWidthAsync();
-                await alignArticlesToCenterAsync();
-            }, 400);
+            //#region wait until time out
+            if (isWindowResizeInCriticalSection)
+                return;
+        //#endregion
+
+        //#region update article styles
+        isWindowResizeInCriticalSection = true;
+
+        setTimeout(async () => {
+            await controlArticleWidthAsync();
+            await alignArticlesToCenterAsync();
+            await setHeightOfArticlesDivAsync();
+
+            isWindowResizeInCriticalSection = false;
+        }, 500);
+        //#endregion
         //#endregion
     });
     //#endregion
@@ -769,10 +783,11 @@ $(function () {
             },
             success: (response, status, xhr) => {
                 //#region set variables
-                setVariablesForArticle({
+                setVariablesForArticleAsync({
                     "div_articles": div_articles,
                     "path_articleVideos": path_videoFolderAfterWwwroot,
                     "totalArticleCount": response.length,
+                    "articleType": "videoAndText",
                     "articleStyle": {
                         "width": 370,
                         "height": 580,
@@ -786,11 +801,11 @@ $(function () {
                         "paddingL": 10,
                         "border": 6,
                         "bgColorForDelete": "rgb(220, 0, 0)"
-                    }
+                    },
                 });
                 //#endregion
 
-                addArticlesAsync("videoAndText", div_articles, response.length)
+                addArticlesAsync(true)
                     .then(async () => {
                         await controlArticleWidthAsync();
                         await alignArticlesToCenterAsync();

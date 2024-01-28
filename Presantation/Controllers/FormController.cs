@@ -133,11 +133,10 @@ namespace Presantation.Controllers
         [HttpPut("answer/generalCommunication")]
         [Authorization("Admin,Editor,Yönetici,Editör")]
         public async Task<IActionResult> AnswerTheGeneralCommForm(
-            [FromQuery] FormParamsForAnswerTheForm formParams)
+            [FromQuery] FormParamsForAnswerTheGeneralCommForm formParams)
         {
             var answererInfos = await _manager.FormService.AnswerTheFormAsync(
                 formParams,
-                Entities.Enums.FormTypes.GeneralCommunication,
                 HttpContext);
 
             return Ok(answererInfos);
@@ -147,11 +146,10 @@ namespace Presantation.Controllers
         [HttpPut("answer/getOffer")]
         [Authorization("Admin,Editor,Yönetici,Editör")]
         public async Task<IActionResult> AnswerTheGetOfferForm(
-        [FromQuery] FormParamsForAnswerTheForm formParams)
+            [FromQuery] FormParamsForAnswerTheGetOfferForm formParams)
         {
             var answererInfos = await _manager.FormService.AnswerTheFormAsync(
                 formParams,
-                Entities.Enums.FormTypes.GetOffer,
                 HttpContext);
 
             return Ok(answererInfos);
@@ -161,11 +159,10 @@ namespace Presantation.Controllers
         [HttpPut("answer/renting")]
         [Authorization("Admin,Editor,Yönetici,Editör")]
         public async Task<IActionResult> AnswerTheRentingForm(
-        [FromQuery] FormParamsForAnswerTheForm formParams)
+            [FromQuery] FormParamsForAnswerTheRentingForm formParams)
         {
             var answererInfos = await _manager.FormService.AnswerTheFormAsync(
                 formParams,
-                Entities.Enums.FormTypes.Renting,
                 HttpContext);
 
             return Ok(answererInfos);

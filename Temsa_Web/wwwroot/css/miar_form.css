@@ -24,16 +24,25 @@
     padding-left: 50px
 }
 
-#div_content{
-    text-align:center;
-}
-
-#div_content > table {
-    width: 100%
-}
-
 #td_message {
     padding-top: 20px;
     padding-left: 20%;
     padding-right: 20%;
 }
+
+#div_content {
+    text-align: center;
+}
+
+    #div_content > table {
+        width: 100%
+    }
+
+#div_buttons {
+    text-align: center;
+    margin-top: 50px;
+}
+
+    #div_buttons > button:disabled {
+        background-color: darkgray;
+    }

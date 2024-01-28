@@ -143,6 +143,47 @@ namespace Services.Concretes
 
             return pagingList;
         }
+
+        private async Task<FormViewForAnswerTheForm> AnswerTheFormAsync(
+            DynamicParameters parameters)
+        {
+            #region add error params
+            parameters.Add("StatusCode",
+                0,
+                DbType.Int16,
+                ParameterDirection.Output);
+
+            parameters.Add("ErrorCode",
+                "",
+                DbType.String,
+                ParameterDirection.Output);
+
+            parameters.Add("ErrorDescription",
+                "",
+                DbType.String,
+                ParameterDirection.Output);
+
+            parameters.Add("ErrorMessage",
+                "",
+                DbType.String,
+                ParameterDirection.Output);
+            #endregion
+
+            #region answer the form (error)
+            var answererInfos = await _manager.FormRepository
+                .AnswerTheFormAsync(parameters);
+
+            // when any error occured
+            if (answererInfos == null)
+                throw new ErrorWithCodeException(
+                    parameters.Get<Int16>("StatusCode"),
+                    parameters.Get<string>("ErrorCode"),
+                    parameters.Get<string>("ErrorDescription"),
+                    parameters.Get<string>("ErrorMessage"));
+            #endregion
+
+            return answererInfos;
+        }
     }
 
     public partial class FormService // services
@@ -550,60 +591,64 @@ namespace Services.Concretes
         }
         #endregion
 
-        #region others
+        #region answer
         public async Task<FormViewForAnswerTheForm> AnswerTheFormAsync(
-            FormParamsForAnswerTheForm formParams,
-            FormTypes formType,
+            FormParamsForAnswerTheGeneralCommForm formParams,
             HttpContext httpContext)
         {
-            #region set parameters
+            #region answer the form
             var parameters = new DynamicParameters(new
             {
                 formParams.Language,
-                #region FormType
-                FormType = formType == FormTypes.GeneralCommunication ?
-                    "GeneralCommunication"
-                    : formType == FormTypes.GetOffer ?
-                        "GetOffer"
-                        : "Renting",
-                #endregion
+                FormType = "GeneralCommunication",
                 formParams.FormId,
                 AnswererId = await GetUserIdFromClaimsAsync(httpContext),
                 AnsweredDate = DateTime.UtcNow,
             });
-
-            parameters.Add("StatusCode",
-                0,
-                DbType.Int16,
-                ParameterDirection.Output);
-
-            parameters.Add("ErrorCode",
-                "",
-                DbType.String,
-                ParameterDirection.Output);
-
-            parameters.Add("ErrorDescription",
-                "",
-                DbType.String,
-                ParameterDirection.Output);
-
-            parameters.Add("ErrorMessage",
-                "",
-                DbType.String,
-                ParameterDirection.Output);
+            
+            var answererInfos = await AnswerTheFormAsync(parameters);
             #endregion
 
-            #region answer the form (error)
-            var answererInfos = await _manager.FormRepository
-                .AnswerTheFormAsync(parameters);
+            return answererInfos;
+        }
 
-            // when any error occured
-            if (answererInfos == null)
-                throw new ErrorWithCodeException(
-                    parameters.Get<Int16>("StatusCode"),
-                    parameters.Get<string>("ErrorCode"),
-                    parameters.Get<string>("ErrorDescription"),
-                    parameters.Get<string>("ErrorMessage"));
+        public async Task<FormViewForAnswerTheForm> AnswerTheFormAsync(
+            FormParamsForAnswerTheGetOfferForm formParams,
+            HttpContext httpContext)
+        {
+            #region answer the form
+            var parameters = new DynamicParameters(new
+            {
+                formParams.Language,
+                FormType = "GetOffer",
+                formParams.FormId,
+                FormStatusId = formParams.FormStatus,
+                AnswererId = await GetUserIdFromClaimsAsync(httpContext),
+                AnsweredDate = DateTime.UtcNow,
+            });
+
+            var answererInfos = await AnswerTheFormAsync(parameters);
+            #endregion
+
+            return answererInfos;
+        }
+
+        public async Task<FormViewForAnswerTheForm> AnswerTheFormAsync(
+            FormParamsForAnswerTheRentingForm formParams,
+            HttpContext httpContext)
+        {
+            #region answer the form
+            var parameters = new DynamicParameters(new
+            {
+                formParams.Language,
+                FormType = "Renting",
+                formParams.FormId,
+                FormStatusId = formParams.FormStatus,
+                AnswererId = await GetUserIdFromClaimsAsync(httpContext),
+                AnsweredDate = DateTime.UtcNow,
+            });
+
+            var answererInfos = await AnswerTheFormAsync(parameters);
             #endregion
 
             return answererInfos;

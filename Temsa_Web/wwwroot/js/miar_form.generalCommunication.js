@@ -1,6 +1,6 @@
 ﻿import {
-    addArticlesAsync, alignArticlesToCenterAsync, setVariablesForArticle, art_baseId,
-    div_article_info_id, articleBuffer, addMessageToEmptyDivArticlesAsync
+    addArticlesAsync, alignArticlesToCenterAsync, setVariablesForArticleAsync,
+    art_baseId, div_article_info_id, articleBuffer, addMessageToEmptyDivArticlesAsync
 } from "./miar_article.js";
 
 import { getDateTimeInString, getPassedTimeInStringAsync } from "./miar_tools.js"
@@ -99,15 +99,22 @@ $(function () {
     let article_IdsAndFormInfos = {};
     let displayingMode = "unanswered";
     let lastClickedArticleInfos = {};
+    let isWindowResizeInCriticalSection = false;
     //#endregion
 
     //#region events
     $(window).resize(() => {
         //#region realign articles to center
-        if (articleBuffer.totalArticleCount > 0)
+        if (!isWindowResizeInCriticalSection
+            && articleBuffer.totalArticleCount > 0
+        ) {
+            isWindowResizeInCriticalSection = true;
+
             setTimeout(async () => {
-                await alignArticlesToCenterAsync()
+                await alignArticlesToCenterAsync();
+                isWindowResizeInCriticalSection = false;
             }, 500);
+        }
         //#endregion
     })
     $("#div_sidebarMenuButton").click(async () => {
@@ -171,7 +178,7 @@ $(function () {
 
                 //#region when all articles is answered
                 // reduce total artical count
-                setVariablesForArticle({
+                setVariablesForArticleAsync({
                     "totalArticleCount": articleBuffer.totalArticleCount - 1
                 });
 
@@ -320,7 +327,7 @@ $(function () {
     }
 
     async function addFormArticlesAsync() {
-        //#region set params which "getAnsweredForms"
+        //#region set "getAnsweredForms" param
         let selectedMenubar = slct_menubar.val();
 
         let query_getAnsweredForms = (selectedMenubar == "answered" ?
@@ -347,16 +354,14 @@ $(function () {
                 // reset div_articles
                 div_articles.empty();
                 div_articles.removeAttr("style");
-
-                setVariablesForArticle({
-                    "div_articles": div_articles
-                })
             },
             success: (response, status, xhr) => {
                 new Promise(async (resolve) => {
                     //#region add <article>s
-                    setVariablesForArticle({
+                    setVariablesForArticleAsync({
+                        "div_articles": div_articles,
                         "totalArticleCount": response.length,
+                        "articleType": "text",
                         "articleStyle": {
                             "width": 300,
                             "height": 350,
@@ -372,7 +377,7 @@ $(function () {
                             "bgColorForDelete": "rgb(220, 0, 0)"
                         }
                     });
-                    await addArticlesAsync("text", true);
+                    await addArticlesAsync(true);
                     //#endregion
 
                     //#region declare events
@@ -471,9 +476,7 @@ $(function () {
                         let div_passedTimeLabel = div_article_info.children("#" + div_passedTimeLabel_id);
                         let div_passedTimeLabel_marginT = netArticleHeight - div_identity.prop("offsetHeight") - div_passedTimeLabel.prop("offsetHeight");
 
-                        div_article_info
-                            .children("#" + div_passedTimeLabel_id)
-                            .css("margin-top", div_passedTimeLabel_marginT);
+                        div_passedTimeLabel.css("margin-top", div_passedTimeLabel_marginT);
                         //#endregion
                     }
                     //#endregion

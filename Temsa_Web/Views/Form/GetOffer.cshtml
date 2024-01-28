@@ -2,9 +2,9 @@
     Layout = "_Layout";
 }
 
-<link rel="stylesheet" href="~/css/miar_articles.css"/>
+<link rel="stylesheet" href="~/css/miar_article.css"/>
 <link rel="stylesheet" href="~/css/miar_form.css"/>
-<link rel="stylesheet" href="~/css/miar_form.generalCommunication.css"/>
+<link rel="stylesheet" href="~/css/miar_form.getOffer.css"/>
 
 
 <div class="table-agile-info">
@@ -23,7 +23,6 @@
         <div class="panel-body">
             @*details of one article*@
             <div id="div_article_details" class="div_articleDetails" hidden>
-                @*senderer and answerer infos*@
                 <div id="div_userInfos">
                     <div id="div_sendererInfos" style="float:left">
                         <table>
@@ -38,22 +37,16 @@
                         </table>
                     </div>
                 </div>
-
-                @*image, subject and message*@
                 <div id="div_content">
                     <table>
-                        <thead>
-                            <tr><th id="th_subject"></th></tr>
-                        </thead>
                         <tbody>
+                            <tr> <td><img/></td></tr>  @*machine image*@
                             <tr><td id="td_message"></td></tr>
                         </tbody>
                      </table>
                 </div>
-
-                @*form buttons*@
-                <div style="text-align:center">
-                    <button id="btn_accept" class="btn" type="submit"></button>
+                <div id="div_buttons">
+                    <button id="btn_accept" class="btn" type="button"></button>
                     <button id="btn_reject" class="btn" type="button"></button>
                 </div>
             </div>
@@ -105,5 +98,6 @@
         </div>
     </div>
 </div>
+
 
 <script type="module" src="~/js/miar_form.getOffer.js"></script>

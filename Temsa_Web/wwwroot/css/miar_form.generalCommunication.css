@@ -11,9 +11,4 @@
 #btn_complete {
     background-color: #521FFF;
     color: white;
-    margin-top: 60px;
 }
-
-    #btn_complete:disabled {
-        background-color: darkgrey
-    }

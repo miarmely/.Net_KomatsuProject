@@ -1,11 +1,9 @@
 ﻿import {
-    addArticlesAsync, alignArticlesToCenterAsync, setVariablesForArticle, art_baseId,
-    div_article_info_id,
-    setHeightOfArticlesDivAsync,
-    articleBuffer
+    addArticlesAsync, alignArticlesToCenterAsync, setVariablesForArticleAsync, art_baseId,
+    div_article_info_id, setHeightOfArticlesDivAsync, articleBuffer, div_article_image_id, style_div_img_width_IT, style_div_img_height_IT, style_img_width_IT, style_img_height_IT, style_div_info_height_IT, style_div_info_width_IT
 } from "./miar_article.js";
 
-import { getDateTimeInString, getPassedTimeInStringAsync, updateResultLabel } from "./miar_tools.js"
+import { getDateTimeInString, getPassedTimeInStringAsync } from "./miar_tools.js"
 
 
 $(function () {
@@ -13,7 +11,7 @@ $(function () {
     const div_articles = $("#div_articles");
     const pageNumber = 1;
     const pageSize = 10;
-    const article_maxMessageCount = 100;
+    const article_maxMessageCount = 150;
     const div_identity_id = "div_identity";
     const div_article_display = $("#div_article_display");
     const div_article_details = $("#div_article_details");
@@ -26,19 +24,31 @@ $(function () {
     const tbl_answererInfos = div_answererInfos.children("table");
     const path_checkedImage = "/images/checked.png";
     const path_questionImage = "/images/question.png";
+    const path_cancelImage = "/images/cancel.png";
+    const path_machineImageFolderPath = "/images/machines";
     const slct_menubar = $("#slct_menubar");
     const btn_accept = $("#btn_accept");
     const btn_reject = $("#btn_reject");
     const td_message = $("#td_message");
     const td_subject = $("#td_subject");
     const lbl_passedTime_id = "lbl_passedTime";
-    const style_passedTimeLabel_answered = {
-        "color": "#40C800",
-    }
-    const style_passedTimeLabel_unanswered = {
+    const style_passedTimeLabel_waiting = {
         "color": "red",
     }
+    const style_passedTimeLabel_accepted = {
+        "color": "#40C800"  // green
+    }
+    const style_passedTimeLabel_rejected = {
+        "color": "red"  // green
+    }
     const img_loading = $("#img_loading");
+    const img_machine_id = "img_machine";
+    const img_formStatus_id = "img_formStatus";
+    const img_formStatus_style = {
+        "width": 40,
+        "height": 40,
+        "marginB": 10
+    }
     const languagePackage_sendererInfosKeys = {
         "TR": {
             "title": "Gönderen",
@@ -81,19 +91,15 @@ $(function () {
     }
     const languagePackage_panelMenubar = {
         "TR": {
-            "unanswered": "Tamamlanmamış",
-            "answered": "Tamamlanmış",
-            "all": "Hepsi"
+            "waiting": "Bekleyen",
+            "accepted": "Kabul Edilen",
+            "rejected": "Reddedilen"
         },
         "EN": {
-            "unanswered": "Not Completed",
-            "answered": "Completed",
-            "all": "All"
+            "waiting": "Waiting",
+            "accepted": "Accepted",
+            "rejected": "Rejected"
         }
-    }
-    const languagePackage_completeButton = {
-        "TR": "Tamamlandı",
-        "EN": "Completed"
     }
     const languagePackage_formButtons = {
         "TR": {
@@ -106,7 +112,7 @@ $(function () {
         }
     }
     let article_IdsAndFormInfos = {};
-    let displayingMode = "unanswered";
+    let slct_menubar_value = "waiting";
     let lastClickedArticleInfos = {};
     //#endregion
 
@@ -126,7 +132,7 @@ $(function () {
         //#endregion
     })
     slct_menubar.change(async (event) => {
-        displayingMode = slct_menubar.val();
+        slct_menubar_value = slct_menubar.val();
 
         await addFormArticlesAsync();
     })
@@ -142,58 +148,12 @@ $(function () {
 
         await alignArticlesToCenterAsync();
     })
-    btn_complete.click(async () => {
-        // answer the form
-        $.ajax({
-            method: "GET",
-            url: (baseApiUrl + "/form/answer/generalCommunication" +
-                `?language=${language}` +
-                `&FormId=${lastClickedArticleInfos.formId}`),
-            headers: { "authorization": jwtToken },
-            contentType: "appication/json",
-            dataType: "json",
-            beforeSend: () => {
-                // show loading image
-                img_loading.removeAttr("hidden");
-            },
-            success: (answererInfos) => {
-                img_loading.attr("hidden", "");  // show loading image
-
-                //#region add answerer infos to form
-                btn_complete.attr("disabled", "");
-                addAnswererInfosToFormAsync(answererInfos);
-                //#endregion
-
-                //#region hide article when "unanswered" form is displaying
-                let answeredArticle = div_articles
-                    .find("#" + lastClickedArticleInfos.articleId);
-
-                if (displayingMode == "unanswered")
-                    answeredArticle.attr("hidden", "");
-                //#endregion
-
-                //#region add checked image to article when "all" from is displaying"
-                else if (displayingMode == "all") {
-                    // add checkedImage to article
-                    answeredArticle
-                        .find("img")
-                        .attr("src", path_checkedImage);
-
-                    // change color of lbl_passedTime
-                    answeredArticle
-                        .find("#" + lbl_passedTime_id)
-                        .css("color", style_passedTimeLabel_answered.color)
-                }
-
-                //#endregion
-            },
-            error: () => {
-                alert("An Error Occured, Please Try Again.");
-            }
-        })
-
-        return;
+    btn_accept.click(async () => {
+        await answerTheFormAsync("accepted");
     });
+    btn_reject.click(async () => {
+        await answerTheFormAsync("rejected");
+    })
     spn_eventManager.on("click_article", async (_, event) => {
         //#region save clicked article infos
         let article_id = event.currentTarget.id;
@@ -261,10 +221,13 @@ $(function () {
         //#endregion
 
         //#region add answerer infos if form answered
-        if (displayingMode == "answered"
-            || (displayingMode == "all" && formInfos.isAnswered == true))  // when all form type is displaying
+        if (slct_menubar_value == "accepted"
+            || slct_menubar_value == "rejected")
         {
-            btn_complete.attr("disabled", "");
+            // disable form buttons
+            btn_accept.attr("disabled", "");
+            btn_reject.attr("disabled", "");
+
             await addAnswererInfosToFormAsync();
         }
         //#endregion
@@ -293,54 +256,55 @@ $(function () {
         }
         //#endregion
 
-        //#region populate "complete button"
-        btn_complete.append(
-            languagePackage_completeButton[language]);
+        //#region populate "accept" and "reject" buttons
+        btn_accept.append(
+            languagePackage_formButtons[language]["accept"]);
+
+        btn_reject.append(
+            languagePackage_formButtons[language]["reject"]);
         //#endregion
 
         await addFormArticlesAsync();
     }
 
     async function addFormArticlesAsync() {
-        //#region set params which "getAnsweredForms"
-        let selectedMenubar = slct_menubar.val();
+        //#region set "formStatus" param
+        let selectedOption = slct_menubar.val();
 
-        let query_getAnsweredForms = (selectedMenubar == "answered" ?
-            true  // get answered forms
-            : selectedMenubar == "unanswered" ?
-                false  // get unanswered forms
-                : '');  // get answered and unanswered forms;
+        let param_formStatus = selectedOption == "waiting" ?
+            1
+            : selectedOption == "accepted" ?
+                2 : 3  // formStatuses == "rejected"
         //#endregion
 
         //#region add form articles (ajax)
         $.ajax({
             method: "GET",
-            url: (baseApiUrl + "/form/display/generalCommunication" +
+            url: (baseApiUrl + "/form/display/getOffer/all" +
                 `?language=${language}` +
-                `&PageNumber=${pageNumber}` +
-                `&PageSize=${pageSize}` +
-                `&GetAnsweredForms=${query_getAnsweredForms}`),
+                `&pageNumber=${pageNumber}` +
+                `&pageSize=${pageSize}` +
+                `&formStatus=${param_formStatus}`),
             headers: {
                 "authorization": jwtToken
             },
             contentType: "application/json",
             dataType: "json",
             beforeSend: () => {
-                // reset articles
+                // reset div_articles
                 div_articles.empty();
-
-                setVariablesForArticle({
-                    "div_articles": div_articles
-                })
+                div_articles.removeAttr("style");
             },
             success: (response, status, xhr) => {
                 new Promise(async (resolve) => {
                     //#region add <article>s
-                    setVariablesForArticle({
-                        "totalArticalCount": response.length,
+                    setVariablesForArticleAsync({
+                        "div_articles": div_articles,
+                        "totalArticleCount": response.length,
+                        "articleType": "imageAndText",
                         "articleStyle": {
-                            "width": 300,
-                            "height": 350,
+                            "width": 370,
+                            "height": 560,
                             "marginT": 10,
                             "marginB": 10,
                             "marginR": 20,
@@ -351,11 +315,11 @@ $(function () {
                             "paddingL": 10,
                             "border": 6,
                             "bgColorForDelete": "rgb(220, 0, 0)"
-                        }
+                        },
                     });
-                    await setHeightOfArticlesDivAsync();
-                    await addArticlesAsync("text");
+                    await addArticlesAsync(true);
                     await alignArticlesToCenterAsync();
+                    await setHeightOfArticlesDivAsync();
                     //#endregion
 
                     //#region declare events
@@ -368,8 +332,8 @@ $(function () {
                         //#region set variables
                         let articleId = art_baseId + index;
                         let article = $("#" + articleId);
-                        let div_article_info = article.children("#" + div_article_info_id);
-                        let formType = "unanswered";
+                        let div_article_image = article.find("#" + div_article_image_id);
+                        let div_article_info = article.find("#" + div_article_info_id);
                         //#endregion
 
                         //#region save article infos
@@ -377,86 +341,59 @@ $(function () {
                         article_IdsAndFormInfos[articleId] = formInfos;
                         //#endregion
 
-                        //#region set form type
-
-                        //#region when "all" form types is displaying
-                        if (query_getAnsweredForms == '') {
-                            // when form type is "answered"
-                            if (formInfos.isAnswered)
-                                formType = "answered";
-
-                            // when form type is "unanswered"
-                            else
-                                formType = "unanswered";
-                        }
-                        //#endregion
-
-                        //#region when "answered" form types is displaying
-                        else if (query_getAnsweredForms)
-                            formType = "answered";
-                        //#endregion
-
-                        //#region when "unanswered" form types is displaying
-                        else
-                            formType = "unanswered";
-                        //#endregion
-
-                        //#endregion
-
                         //#region populate articles
+                        // add machine image
+                        div_article_image.append(`
+                            <div>
+                                <img id="${img_formStatus_id}"  style="width:${img_formStatus_style.width}px;  height:${img_formStatus_style.height}px;  margin-bottom:${img_formStatus_style.marginB}px;"  src="" />
+                            </div>
+                            <div>
+                                <img id="${img_machine_id}"  src="${path_machineImageFolderPath}/${formInfos.imageName}"  style="max-width:${style_img_width_IT}px;  max-height:${style_img_height_IT - img_formStatus_style.height - img_formStatus_style.marginB}px"/>
+                            </div>
+                        `);
+
+                        // add form infos
                         div_article_info.append(`
                             <div id="${div_identity_id}">
-                                <img src="" style="width:40px; height:40px; margin-bottom:10px"></img>
-                                <h2 style="margin-top:5px">${formInfos.company}</h2>
-                                <h4 style="margin-top:5px;">${formInfos.firstName} ${formInfos.lastName}</h4>
-                                <h4 style="margin-top:25px; margin-bottom:8px">${formInfos.subject}</h4>
-                                <p>${formInfos.message.substring(0, article_maxMessageCount)}...</p>
-                            </div>                                
+                                <h2 style="margin-bottom: 20px">${formInfos.model}</h2>
+                                <h3 style="margin-bottom: 3px">${formInfos.company}</h3>
+                                <h4 style="margin-bottom: 20px">${formInfos.firstName} ${formInfos.lastName}</h4>
+                                <h5>${formInfos.message.substring(0, article_maxMessageCount)}...</h5>
+                            </div>
                             <div id="${div_passedTimeLabel_id}">
                                 <h4 id="${lbl_passedTime_id}">${await getPassedTimeInStringAsync(formInfos.createdAt)}</h4>
                             </div>
                         `);
                         //#endregion
 
-                        //#region add img to article and style to passedTimeLabel
+                        //#region add form status image and passedTimeLabel style
+                        let img_formStatus = div_article_image.find("#" + img_formStatus_id);
+                        let lbl_passedTime = div_article_info.find("#" + lbl_passedTime_id);
 
-                        //#region when form type is "answered"
-                        if (formType == "answered") {
-                            // add image to article
-                            div_article_info.find("img")
-                                .attr("src", path_checkedImage);
+                        switch (param_formStatus) {
+                            case 1:  // "waiting"
+                                img_formStatus.attr("src", path_questionImage);
+                                lbl_passedTime.css(style_passedTimeLabel_waiting);
+                                break;
 
-                            // add style to "passedTimeLabel"
-                            div_article_info.find("#" + lbl_passedTime_id)
-                                .css(style_passedTimeLabel_answered)
+                            case 2:  // "accepted"
+                                img_formStatus.attr("src", path_checkedImage);
+                                lbl_passedTime.css(style_passedTimeLabel_accepted);
+                                break;
+
+                            case 3:  // "rejected"
+                                img_formStatus.attr("src", path_cancelImage);
+                                lbl_passedTime.css(style_passedTimeLabel_rejected);
+                                break;
                         }
                         //#endregion
 
-                        //#region when form type is "unanswered"
-                        else {
-                            // add image to article
-                            div_article_info.find("img")
-                                .attr("src", path_questionImage);
-
-                            // add style to "passedTimeLabel"
-                            div_article_info.find("#" + lbl_passedTime_id)
-                                .css(style_passedTimeLabel_unanswered)
-
-                        }
-                        //#endregion
-
-                        //#endregion
-
-                        //#region shift lbl_passedTime to end of article
-                        let style = articleBuffer.articleStyle;
-                        let netArticleHeight = style.height - ((style.border * 2) + style.paddingT + style.paddingB);
+                        //#region shift div_passedTimeLabel to end of article
                         let div_identity = div_article_info.children("#" + div_identity_id);
                         let div_passedTimeLabel = div_article_info.children("#" + div_passedTimeLabel_id);
-                        let div_passedTimeLabel_marginT = netArticleHeight - div_identity.prop("offsetHeight") - div_passedTimeLabel.prop("offsetHeight");
+                        let div_article_infos_whiteSpace = style_div_info_height_IT - div_identity.prop("offsetHeight") - div_passedTimeLabel.prop("offsetHeight");
 
-                        div_article_info
-                            .children("#" + div_passedTimeLabel_id)
-                            .css("margin-top", div_passedTimeLabel_marginT);
+                        div_passedTimeLabel.css("margin-top", div_article_infos_whiteSpace);
                         //#endregion
                     }
                     //#endregion
@@ -481,9 +418,9 @@ $(function () {
         td_subject.empty();
         td_message.empty();
 
-        // remove button
-        btn_complete.reset;
-        btn_complete.removeAttr("disabled");
+        // show "accept" and "reject" buttons
+        btn_accept.removeAttr("disabled");
+        btn_reject.removeAttr("disabled");
     }
 
     async function addAnswererInfosToFormAsync(answererInfos = null) {
@@ -528,6 +465,50 @@ $(function () {
                 </tr>
             `);
         //#endregion
+    }
+
+    async function answerTheFormAsync(formStatus) {
+        //#region set form status param
+        let param_formStatus = formStatus == "accepted" ?
+            2 : 3  // rejected
+        //#endregion
+
+        // answer the form
+        $.ajax({
+            method: "PUT",
+            url: (baseApiUrl + "/form/answer/getOffer" +
+                `?language=${language}` +
+                `&FormId=${lastClickedArticleInfos.formId}` +
+                `&FormStatus=${param_formStatus}`),
+            headers: { "authorization": jwtToken },
+            contentType: "appication/json",
+            dataType: "json",
+            beforeSend: () => {
+                // show loading image
+                img_loading.removeAttr("hidden");
+            },
+            success: (answererInfos) => {
+                //#region before start
+                img_loading.attr("hidden", "");
+                btn_accept.attr("disabled", "");
+                btn_reject.attr("disabled", "");
+                //#endregion
+
+                addAnswererInfosToFormAsync(answererInfos);
+
+                //#region hide article when "waiting" forms is displaying
+                if (slct_menubar_value == "waiting") {
+                    let answeredArticle = div_articles
+                        .find("#" + lastClickedArticleInfos.articleId);
+
+                    answeredArticle.attr("hidden", "");
+                }
+                //#endregion
+            },
+            error: () => {
+                alert("An Error Occured, Please Try Again.");
+            }
+        })
     }
     //#endregion
 

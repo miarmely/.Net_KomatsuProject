@@ -48,9 +48,16 @@ namespace Services.Contracts
             FormParamsForDisplayRentingFormsOfUser formParams,
 			HttpContext httpContext);
 
-        Task<FormViewForAnswerTheForm> AnswerTheFormAsync(
-			FormParamsForAnswerTheForm formParams,
-			FormTypes formType,
+		Task<FormViewForAnswerTheForm> AnswerTheFormAsync(
+			FormParamsForAnswerTheGeneralCommForm formParams,
 			HttpContext httpContext);
+
+        Task<FormViewForAnswerTheForm> AnswerTheFormAsync(
+                FormParamsForAnswerTheGetOfferForm formParams,
+                HttpContext httpContext);
+
+        Task<FormViewForAnswerTheForm> AnswerTheFormAsync(
+            FormParamsForAnswerTheRentingForm formParams,
+            HttpContext httpContext);
     }
 }

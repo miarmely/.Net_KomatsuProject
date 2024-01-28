@@ -1,6 +1,6 @@
 ﻿//#region variables
 export const div_article_video_id = "div_article_video";
-export const div_article_image_id = "div_articl_image";
+export const div_article_image_id = "div_article_image";
 export const div_article_info_id = "div_article_info";
 export const div_article_button_id = "div_article_button";
 export const art_baseId = "art_";
@@ -13,6 +13,7 @@ export let articleBuffer = {
     "path_articleVideos": "",
     "totalArticleCount": 0,  // should be set
     "articleCountOnOneRow" : 0,
+    "articleType": "",  // should be set 
     "articleStyle": {  // should be set
         "width": 0,
         "height": 0,
@@ -26,19 +27,17 @@ export let articleBuffer = {
         "paddingL": 0,
         "border": 0,
         "bgColorForDelete": "",
-    }
+    }  // firstly articleType should be set
 }
 let articleInfos_lastUploadedPlayImage = {};
 let articleInfos_lastUploadedVideo = {
     "article": null
 };
-let article_type = "";
 let article_desiredWidth = 0;
 let article_isWidthReduced = false;
 
 //#region article elements styles
-
-//#region when article type is "video and text" (VT)
+// when article type is "video and text" (VT)
 export let style_a_pdfButton_fontSize;
 export let style_a_pdfButton_paddingTB;
 export let style_a_pdfButton_paddingRL;
@@ -57,25 +56,19 @@ export let style_img_play_marginT_VT;
 export let style_img_play_marginB_VT;
 export let style_img_play_marginR_VT;
 export let style_img_play_marginL_VT;
-//#endregion
 
-//#region when article type is "image and text" (IT)
-export const style_div_img_width_IT = style_div_video_width_VT;
-export const style_div_img_height_IT = style_div_video_height_VT;
-export const style_div_img_marginB_IT = style_div_video_marginB_VT;
+// when article type is "image and text" (IT)
+export let style_div_img_width_IT;
+export let style_div_img_height_IT;
+export let style_div_img_marginB_IT;
+export let style_div_info_width_IT;
+export let style_div_info_height_IT;
+export let style_img_width_IT;
+export let style_img_height_IT;
 
-export const style_div_info_width_IT = style_div_info_width_VT;
-export const style_div_info_height_IT = style_div_info_height_VT;
-
-export const style_img_width_IT = style_div_video_width_VT;
-export const style_img_height_IT = style_div_video_height_VT;
-//#endregion
-
-//#region when article type is only "text" (T)
-export const style_div_info_width_T = style_div_info_width_VT;
-export const style_div_info_height_T = style_div_info_height_VT;
-//#endregion
-
+// when article type is "text" (T)
+export let style_div_info_width_T;
+export let style_div_info_height_T;
 //#endregion
 
 //#endregion
@@ -171,41 +164,56 @@ export async function ended_articleVideoAsync() {
 //#endregion
 
 //#region functions
-export async function addArticlesAsync(articleType, autoAlign=true) {
+export async function setVariablesForArticleAsync(variables) {
+    //#region initialize buffer
+    for (let variableName in variables) {
+        //#region when variable name is exists in "articleBuffer"
+        if (articleBuffer[variableName] != undefined)
+            articleBuffer[variableName] = variables[variableName];
+        //#endregion
+
+        //#region when article styles entered
+        if (variableName == "articleStyle") {
+            article_desiredWidth = articleBuffer.articleStyle.width;  // i saved wanting width as extra because width in buffer can be change so if change then i am losing wanting width.
+            setStylesOfArticleElements();
+        }
+        //#endregion
+    }
+    //#endregion
+}
+
+export async function addArticlesAsync(autoAlign=true) {
     // articleType: "imageAndText", "videoAndText", "text"
 
     //#region add articles
-    article_type = articleType;
-
     for (let index = 0; index < articleBuffer.totalArticleCount; index++) {
         //#region add articles by article type
         let articleId = art_baseId + index;
 
-        switch (article_type) {
+        switch (articleBuffer.articleType) {
             case "videoAndText":
                 //#region add article with video and text
-                if (articleType == "videoAndText")
-                    articleBuffer.div_articles.append(`
-                        <article id="${articleId}"  class="${article_class}" style="text-align: center">
-                            <div id="${div_article_video_id}">
-                                <img class="img_play"  hidden/>
-                                <video poster="">
-                                    <source src="" type=""></source>
-                                </video>
-                            </div>
+                articleBuffer.div_articles.append(`
+                    <article id="${articleId}"  class="${article_class}" style="text-align: center">
+                        <div id="${div_article_video_id}">
+                            <img class="img_play"  hidden/>
+                            <video poster="">
+                                <source src="" type=""></source>
+                            </video>
+                        </div>
 
-                            <div id="${div_article_info_id}">
-                            </div>
+                        <div id="${div_article_info_id}">
+                        </div>
 
-                            <div id="${div_article_button_id}">
-                                <ul>
-                                    <li class="btn btn_article">
-                                        <a target="blank">PDF</a>
-                                    </li>
-                                </ul>  
-                            </div>
-                        </article>`
-                    );
+                        <div id="${div_article_button_id}">
+                            <ul>
+                                <li class="btn btn_article">
+                                    <a target="blank">PDF</a>
+                                </li>
+                            </ul>  
+                        </div>
+                    </article>`
+                );
                 //#endregion
 
                 await addStyleToArticleElements($("#" + articleId));
@@ -214,12 +222,8 @@ export async function addArticlesAsync(articleType, autoAlign=true) {
                 //#region add article with image and text
                 articleBuffer.div_articles.append(`
                     <article id="${articleId}"  class="${article_class}">
-                        <div id="${div_article_image_id}" >
-                            <img src=""  alt=""  title="" />
-                        </div>
-
-                        <div id="${div_article_info_id}" >
-                        </div>
+                        <div id="${div_article_image_id}"></div>
+                        <div id="${div_article_info_id}" ></div>
                     </article>`
                 );
                 //#endregion
@@ -393,24 +397,6 @@ export async function addMessageToEmptyDivArticlesAsync(imagePath, imageAlt, mes
     //#endregion
 }
 
-export function setVariablesForArticle(variables) {
-    //#region initialize buffer
-    for (let variableName in variables) {
-        //#region when variable name is exists in "articleBuffer"
-        if (articleBuffer[variableName] != undefined)
-            articleBuffer[variableName] = variables[variableName];
-        //#endregion
-
-        //#region when article styles entered
-        if (variableName == "articleStyle") {
-            article_desiredWidth = articleBuffer.articleStyle.width;  // i saved wanting width as extra because width in buffer can be change so if change then i am losing wanting width.
-            setStylesOfArticleElements();
-        }
-        //#endregion
-    }
-    //#endregion
-}
-
 export function showPlayImage(article) {
     //#region hide video
     article.find("video")
@@ -486,34 +472,59 @@ async function updateArticleAndArticleElementsStylesAsync() {
 }
 
 function setStylesOfArticleElements() {
-    style_a_pdfButton_fontSize = 18;
-    style_a_pdfButton_paddingTB = 6;
-    style_a_pdfButton_paddingRL = 40;
+    //#region initialize variables by article type
+    let article_style = articleBuffer.articleStyle;
+    let article_netWidth = article_style.width - (article_style.border * 2) - article_style.paddingR - article_style.paddingL;
+    let article_netHeight = article_style.height - (article_style.border * 2) - article_style.paddingT - article_style.paddingB;
 
-    style_div_video_marginB_VT = 20;
-    style_div_video_width_VT = articleBuffer.articleStyle.width - (articleBuffer.articleStyle.border * 2) - articleBuffer.articleStyle.paddingR - articleBuffer.articleStyle.paddingL
-    style_div_video_height_VT = (articleBuffer.articleStyle.height - (articleBuffer.articleStyle.border * 2) - articleBuffer.articleStyle.paddingT - articleBuffer.articleStyle.paddingB - style_div_video_marginB_VT) / 2;
+    switch (articleBuffer.articleType) {
+        case 'videoAndText':
+            style_a_pdfButton_fontSize = 18;
+            style_a_pdfButton_paddingTB = 6;
+            style_a_pdfButton_paddingRL = 40;
 
-    style_div_button_width_VT = style_div_video_width_VT;
-    style_div_button_height_VT = (style_a_pdfButton_fontSize + 9) + (style_a_pdfButton_paddingTB * 2);
+            style_div_video_marginB_VT = 20;
+            style_div_video_width_VT = article_netWidth;
+            style_div_video_height_VT = (article_netHeight - style_div_video_marginB_VT) / 2;
 
-    style_div_info_width_VT = style_div_video_width_VT;
-    style_div_info_height_VT = style_div_video_height_VT - style_div_button_height_VT;
+            style_div_button_width_VT = style_div_video_width_VT;
+            style_div_button_height_VT = (style_a_pdfButton_fontSize + 9) + (style_a_pdfButton_paddingTB * 2);
 
-    style_vid_width_VT = style_div_video_width_VT;
-    style_vid_height_VT = style_div_video_height_VT;
+            style_div_info_width_VT = style_div_video_width_VT;
+            style_div_info_height_VT = style_div_video_height_VT - style_div_button_height_VT;
 
-    style_img_play_width_VT = style_vid_width_VT / 2.5;
-    style_img_play_height_VT = style_vid_height_VT / 2.2;
-    style_img_play_marginT_VT = (style_vid_height_VT - style_img_play_height_VT) / 2;
-    style_img_play_marginB_VT = style_img_play_marginT_VT;
-    style_img_play_marginR_VT = (style_vid_width_VT - style_img_play_width_VT) / 2;
-    style_img_play_marginL_VT = style_img_play_marginR_VT;
+            style_vid_width_VT = style_div_video_width_VT;
+            style_vid_height_VT = style_div_video_height_VT;
+
+            style_img_play_width_VT = style_vid_width_VT / 2.5;
+            style_img_play_height_VT = style_vid_height_VT / 2.2;
+            style_img_play_marginT_VT = (style_vid_height_VT - style_img_play_height_VT) / 2;
+            style_img_play_marginB_VT = style_img_play_marginT_VT;
+            style_img_play_marginR_VT = (style_vid_width_VT - style_img_play_width_VT) / 2;
+            style_img_play_marginL_VT = style_img_play_marginR_VT;
+            break;
+        case "imageAndText":
+            style_div_img_width_IT = article_netWidth;
+            style_div_img_height_IT = article_netHeight / 2;
+            style_div_img_marginB_IT = 10;
+
+            style_div_info_width_IT = article_netWidth;
+            style_div_info_height_IT = article_netHeight - style_div_img_height_IT - style_div_img_marginB_IT;
+
+            style_img_width_IT = style_div_img_width_IT;
+            style_img_height_IT = style_div_img_height_IT;
+            break;
+        case "text":
+            style_div_info_width_T = article_netWidth;
+            style_div_info_height_T = article_netHeight;
+            break;
+    }
+    //#endregion
 }
 
 function addStyleToArticleElements(article) {
     //#region add style to one article by article type
-    switch (article_type) {
+    switch (articleBuffer.articleType) {
         case "videoAndText":
             //#region add styles of article elements
             // <video> styles
@@ -574,14 +585,6 @@ function addStyleToArticleElements(article) {
             break;
         case "imageAndText":
             //#region add styles of article elements
-            // <img> styles
-            article
-                .find("img")
-                .css({
-                    "width": style_img_width_IT,
-                    "height": style_img_height_IT
-                });
-
             // image <div> styles
             article
                 .find('#' + div_article_image_id)
