@@ -216,6 +216,79 @@ export function getFileTypeFromFileName(fileName) {
 }
 //#endregion
 
+//#region pagination
+export async function addPaginationButtonsAsync(
+    paginationInfosInJson,
+    paginationButtonQuantity,
+    ul_pagination
+) {
+    //#region set buttonQauntity for pagination
+    let buttonQuantity = paginationInfosInJson.TotalPage < paginationButtonQuantity ?
+        paginationInfosInJson.TotalPage
+        : paginationButtonQuantity
+    //#endregion
+
+    //#region reset paginationButtons if exists
+    if (ul_pagination.children("li").length != 0)
+        ul_pagination.empty()
+    //#endregion
+
+    //#region add paginationBack button as hidden
+    ul_pagination.append(
+        `<li>
+		<a id="a_paginationBack" href="#" hidden>
+			<i class="fa fa-chevron-left"></i>
+		</a>
+	</li>`);
+    //#endregion
+
+    //#region add pagination buttons
+    for (let pageNo = 1; pageNo <= buttonQuantity; pageNo += 1)
+        ul_pagination.append(
+            `<li>
+			<a href="#"> 
+				${pageNo}
+			</a>
+		</li> `
+        );
+    //#endregion
+
+    //#region add paginationNext button as hidden
+    ul_pagination.append(
+        `<li>
+		<a id="a_paginationNext" href="#" hidden>
+			<i class="fa fa-chevron-right"></i>
+		</a>
+	</li>`);
+    //#endregion
+}
+
+export async function controlPaginationBackAndNextButtonsAsync(paginationInfosInJson) {
+    // when total page count more than 1
+    if (paginationInfosInJson.TotalPage > 1) {
+        //#region for paginationBack button
+        // hide
+        if (paginationInfosInJson.CurrentPageNo == 1)
+            $("#a_paginationBack").attr("hidden", "");
+
+        // show
+        else
+            $("#a_paginationBack").removeAttr("hidden");
+        //#endregion
+
+        //#region for paginationNext button
+        // hide
+        if (paginationInfosInJson.CurrentPageNo == paginationInfosInJson.TotalPage)
+            $("#a_paginationNext").attr("hidden", "");
+
+        // show
+        else
+            $("#a_paginationNext").removeAttr("hidden");
+        //#endregion
+    }
+}
+//#endregion
+
 export function getDateTimeInString(dateTime) {
     //#region set year
     let date = new Date(dateTime);
@@ -556,76 +629,6 @@ export async function setDisabledOfButtonsAsync(doDisabled, buttonIds, bgColor) 
         //#endregion
     }
     //#endregion
-}
-
-export async function addPaginationButtonsAsync(
-    paginationInfosInJson,
-    paginationButtonQuantity,
-    ul_pagination) {
-    //#region set buttonQauntity for pagination
-    let buttonQuantity = paginationInfosInJson.TotalPage < paginationButtonQuantity ?
-        paginationInfosInJson.TotalPage
-        : paginationButtonQuantity
-    //#endregion
-
-    //#region reset paginationButtons if exists
-    if (ul_pagination.children("li").length != 0)
-        ul_pagination.empty()
-    //#endregion
-
-    //#region add paginationBack button
-    ul_pagination.append(
-        `<li>
-		<a id="a_paginationBack" href="#" hidden>
-			<i class="fa fa-chevron-left"></i>
-		</a>
-	</li>`);
-    //#endregion
-
-    //#region add pagination buttons
-    for (let pageNo = 1; pageNo <= buttonQuantity; pageNo += 1)
-        ul_pagination.append(
-            `<li>
-			<a href="#"> 
-				${pageNo}
-			</a>
-		</li> `
-        );
-    //#endregion
-
-    //#region add paginationNext button
-    ul_pagination.append(
-        `<li>
-		<a id="a_paginationNext" href="#" hidden>
-			<i class="fa fa-chevron-right"></i>
-		</a>
-	</li>`);
-    //#endregion
-}
-
-export async function controlPaginationBackAndNextButtonsAsync(paginationInfosInJson) {
-    // when total page count more than 1
-    if (paginationInfosInJson.TotalPage > 1) {
-        //#region for paginationBack button
-        // hide
-        if (paginationInfosInJson.CurrentPageNo == 1)
-            $("#a_paginationBack").attr("hidden", "");
-
-        // show
-        else
-            $("#a_paginationBack").removeAttr("hidden");
-        //#endregion
-
-        //#region for paginationNext button
-        // hide
-        if (paginationInfosInJson.CurrentPageNo == paginationInfosInJson.TotalPage)
-            $("#a_paginationNext").attr("hidden", "");
-
-        // show
-        else
-            $("#a_paginationNext").removeAttr("hidden");
-        //#endregion
-    }
 }
 
 export async function isAllObjectValuesNullAsync(object) {

@@ -5,7 +5,12 @@
     addMsgWithImgToDivArticlesAsync
 } from "./miar_article.js";
 
-import { getDateTimeInString, getPassedTimeInStringAsync } from "./miar_tools.js"
+import {
+    addAnswererInfosToFormAsync, addSendererInfosToFormAsync, langPack_answererInfosTable,
+    langPack_sendererInfosTable, resetFormDetailsPageAsync
+} from "./miar_form.js";
+
+import { getPassedTimeInStringAsync } from "./miar_tools.js"
 
 
 $(function () {
@@ -31,8 +36,10 @@ $(function () {
     const slct_menubar = $("#slct_menubar");
     const btn_accept = $("#btn_accept");
     const btn_reject = $("#btn_reject");
+    const td_model = $("#td_model");
+    const td_mainCategory = $("#td_mainCategory");
+    const td_subCategory = $("#td_subCategory");
     const td_message = $("#td_message");
-    const td_subject = $("#td_subject");
     const lbl_passedTime_id = "lbl_passedTime";
     const style_passedTimeLabel_waiting = {
         "color": "red",
@@ -50,42 +57,6 @@ $(function () {
         "width": 40,
         "height": 40,
         "marginB": 10
-    };
-    const langPack_sendererInfosKeys = {
-        "TR": {
-            "title": "Gönderen",
-            "firstName": "Ad",
-            "lastName": "Soyad",
-            "company": "Şirket",
-            "email": "Email",
-            "phone": "Telefon",
-            "createdAt": "Oluşturulma Tarihi"
-        },
-        "EN": {
-            "title": "Senderer",
-            "firstName": "Firstname",
-            "lastName": "Lastname",
-            "company": "Company",
-            "email": "Email",
-            "phone": "Phone",
-            "createdAt": "Created Date"
-        }
-    };
-    const langPack_answererInfosKeys = {
-        "TR": {
-            "title": "Cevaplayan",
-            "firstName": "Ad",
-            "lastName": "Soyad",
-            "email": "Email",
-            "answeredDate": "Cevaplanma Tarihi"
-        },
-        "EN": {
-            "title": "Answerer",
-            "firstName": "Firstname",
-            "lastName": "Lastname",
-            "email": "Email",
-            "answeredDate": "Answered Date"
-        }
     };
     const langPack_panelTitle = {
         "TR": "TEKLİF ALMA FORMU",
@@ -152,21 +123,41 @@ $(function () {
     let article_IdsAndFormInfos = {};
     let slct_menubar_value = "waiting";
     let lastClickedArticleInfos = {};
+    let isWindowResizeInCriticalSection = false;
     //#endregion
 
     //#region events
     $(window).resize(() => {
         //#region realign articles to center
-        setTimeout(async () => {
-            await alignArticlesToCenterAsync()
-        }, 500);
+        if (!isWindowResizeInCriticalSection
+            && articleBuffer.totalArticleCount > 0
+        ) {
+            isWindowResizeInCriticalSection = true;
+
+            // realign
+            setTimeout(async () => {
+                await alignArticlesToCenterAsync();
+                await setHeightOfArticlesDivAsync();
+
+                isWindowResizeInCriticalSection = false;
+            }, 500);
+        }
         //#endregion
     })
     $("#div_sidebarMenuButton").click(async () => {
         //#region realign articles to center
-        setTimeout(async () => {
-            await alignArticlesToCenterAsync()
-        }, 500);
+        if (!isWindowResizeInCriticalSection
+            && articleBuffer.totalArticleCount > 0
+        ) {
+            isWindowResizeInCriticalSection = true;
+
+            setTimeout(async () => {
+                await alignArticlesToCenterAsync()
+                await setHeightOfArticlesDivAsync();
+
+                isWindowResizeInCriticalSection = false;
+            }, 500);
+        }
         //#endregion
     })
     slct_menubar.change(async (event) => {
@@ -175,7 +166,9 @@ $(function () {
         await addFormArticlesAsync();
     })
     div_backButton.click(async () => {
-        await resetFormDetailsPageAsync();
+        await resetFormDetailsPageAsync(
+            div_sendererInfos,
+            div_answererInfos);
 
         //#region show articles
         div_panelTitle.css("padding-left", "");
@@ -185,8 +178,10 @@ $(function () {
         //#endregion
 
         //#region when any unanswered article is exists
-        if (articleBuffer.totalArticleCount > 0)
+        if (articleBuffer.totalArticleCount > 0) {
             await alignArticlesToCenterAsync();
+            await setHeightOfArticlesDivAsync();
+        }
         //#endregion
 
         //#region when all articles is answered
@@ -217,57 +212,15 @@ $(function () {
         //#endregion
 
         //#region shift panel title to right
-        let btn_back_width = div_backButton.prop("offsetWidth");
-        div_panelTitle.css("padding-left", btn_back_width);
+        div_panelTitle.css(
+            "padding-left",
+            div_backButton.prop("offsetWidth"));
         //#endregion
 
-        //#region add senderer infos
-        let formInfos = article_IdsAndFormInfos[article_id];
-        let sendererInfosKeys = langPack_sendererInfosKeys[language];
-
-        // add senderer table title
-        tbl_sendererInfos.children("thead")
-            .append(`
-                <tr>
-                    <th colspan=3;  style="text-align:center">${langPack_sendererInfosKeys[language].title}</th>
-                </tr>`
-            );
-
-        // populate senderer table
-        tbl_sendererInfos.children("tbody")
-            .append(`
-                <tr>
-                    <td>${sendererInfosKeys.firstName}</td>
-                    <td class="td_spaceAfterKey"></td>
-                    <td>${formInfos.firstName}</td>
-                </tr>
-                <tr>
-                    <td>${sendererInfosKeys.lastName}</td>
-                    <td class="td_spaceAfterKey"></td>
-                    <td>${formInfos.lastName}</td>
-                </tr>
-                <tr>
-                    <td>${sendererInfosKeys.company}</td>
-                    <td class="td_spaceAfterKey"></td>
-                    <td>${formInfos.company}</td>
-                </tr>
-                <tr>
-                    <td>${sendererInfosKeys.phone}</td>
-                    <td class="td_spaceAfterKey"></td>
-                    <td>${formInfos.phone}</td>
-                </tr>
-                <tr>
-                    <td>${sendererInfosKeys.email}</td>
-                    <td class="td_spaceAfterKey"></td>
-                    <td>${formInfos.email}</td>
-                </tr>
-                <tr>
-                    <td>${sendererInfosKeys.createdAt}</td>
-                    <td class="td_spaceAfterKey"></td>
-                    <td>${getDateTimeInString(formInfos.createdAt)}</td >
-                </tr>
-            `);
-        //#endregion
+        await addSendererInfosToFormAsync(
+            tbl_sendererInfos,
+            langPack_sendererInfosTable[language],
+            lastClickedArticleInfos,);
 
         //#region add answerer infos if form answered
         if (slct_menubar_value == "accepted"
@@ -276,13 +229,18 @@ $(function () {
             btn_accept.attr("disabled", "");
             btn_reject.attr("disabled", "");
 
-            await addAnswererInfosToFormAsync();
+            await addAnswererInfosToFormAsync(
+                tbl_answererInfos,
+                langPack_answererInfosTable[language],
+                lastClickedArticleInfos);
         }
         //#endregion
 
-        //#region add subject and message
-        td_subject.append(formInfos["subject"]);
-        td_message.append(formInfos["message"]);
+        //#region add form contents
+        td_model.append(lastClickedArticleInfos.model);
+        td_mainCategory.append(lastClickedArticleInfos.mainCategoryName);
+        td_subCategory.append(lastClickedArticleInfos.subCategoryName);
+        td_message.append(lastClickedArticleInfos.message);
         //#endregion
     })
     //#endregion
@@ -469,68 +427,6 @@ $(function () {
         //#endregion
     }
 
-    async function resetFormDetailsPageAsync() {
-        // remove sender infos
-        div_sendererInfos.find("thead").empty();
-        div_sendererInfos.find("tbody").empty();
-
-        // remove answerer infos
-        div_answererInfos.find("thead").empty();
-        div_answererInfos.find("tbody").empty();
-
-        // remove subject and message
-        td_subject.empty();
-        td_message.empty();
-
-        // show "accept" and "reject" buttons
-        btn_accept.removeAttr("disabled");
-        btn_reject.removeAttr("disabled");
-    }
-
-    async function addAnswererInfosToFormAsync(answererInfos = null) {
-        //#region add answerer table title
-        let answererInfosKeys = langPack_answererInfosKeys[language];
-
-        tbl_answererInfos.children("thead")
-            .append(`
-                <tr>
-                    <th colspan=3  style="text-align:center">${langPack_answererInfosKeys[language].title}</th>
-                </tr>
-            `);
-        //#endregion
-
-        //#region populate answerer table
-        // when answererInfos is not entered
-        if (answererInfos == null)
-            answererInfos = lastClickedArticleInfos;
-
-        // populate table
-        tbl_answererInfos.children("tbody")
-            .append(`
-                <tr>
-                    <td>${answererInfosKeys.firstName}</td>
-                    <td class="td_spaceAfterKey"></td>
-                    <td>${answererInfos.answererFirstName}</td>
-                </tr>
-                <tr>
-                    <td>${answererInfosKeys.lastName}</td>
-                    <td class="td_spaceAfterKey"></td>
-                    <td>${answererInfos.answererLastName}</td>
-                </tr>
-                <tr>
-                    <td>${answererInfosKeys.email}</td>
-                    <td class="td_spaceAfterKey"></td>
-                    <td>${answererInfos.answererEmail}</td>
-                </tr>
-                <tr>
-                    <td>${answererInfosKeys.answeredDate}</td>
-                    <td class="td_spaceAfterKey"></td>
-                    <td>${getDateTimeInString(answererInfos.answeredDate)}</td >
-                </tr>
-            `);
-        //#endregion
-    }
-
     async function answerTheFormAsync(formStatus) {
         //#region set form status param
         let param_formStatus = formStatus == "accepted" ?
@@ -552,33 +448,41 @@ $(function () {
                 img_loading.removeAttr("hidden");
             },
             success: (answererInfos) => {
-                //#region before start
-                img_loading.attr("hidden", "");
-                btn_accept.attr("disabled", "");
-                btn_reject.attr("disabled", "");
-                //#endregion
+                new Promise(async resolve => {
+                    //#region before start
+                    img_loading.attr("hidden", "");
+                    btn_accept.attr("disabled", "");
+                    btn_reject.attr("disabled", "");
+                    //#endregion
 
-                //#region when all articles is answered
-                // reduce total artical count
-                setVariablesForArticleAsync({
-                    "totalArticleCount": articleBuffer.totalArticleCount - 1
-                });
+                    //#region when all articles is answered
+                    // reduce total artical count
+                    await setVariablesForArticleAsync({
+                        "totalArticleCount": articleBuffer.totalArticleCount - 1
+                    });
 
-                // reset article style
-                if (articleBuffer.totalArticleCount == 0)
-                    div_articles.removeAttr("style");
-                //#endregion
+                    // reset article style
+                    if (articleBuffer.totalArticleCount == 0)
+                        div_articles.removeAttr("style");
+                    //#endregion
 
-                addAnswererInfosToFormAsync(answererInfos);
+                    await addAnswererInfosToFormAsync(
+                        tbl_answererInfos,
+                        langPack_answererInfosTable[language],
+                        answererInfos
+                    );
 
-                //#region hide article when "waiting" forms is displaying
-                if (slct_menubar_value == "waiting") {
-                    let answeredArticle = div_articles
-                        .find("#" + lastClickedArticleInfos.articleId);
+                    //#region hide article when "waiting" forms is displaying
+                    if (slct_menubar_value == "waiting") {
+                        let answeredArticle = div_articles
+                            .find("#" + lastClickedArticleInfos.articleId);
 
-                    answeredArticle.attr("hidden", "");
-                }
-                //#endregion
+                        answeredArticle.attr("hidden", "");
+                    }
+                    //#endregion
+
+                    resolve();
+                })
             },
             error: () => {
                 alert("An Error Occured, Please Try Again.");

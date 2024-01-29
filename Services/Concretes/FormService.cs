@@ -75,7 +75,7 @@ namespace Services.Concretes
             if (formViews.Count() == 0)
                 throw new ErrorWithCodeException(
                     ErrorDetailsConfig.ToErrorDto(
-                        language, 
+                        language,
                         _configs.ErrorDetails.NF_Fo));
             #endregion
 
@@ -280,7 +280,7 @@ namespace Services.Concretes
             parameters.Add("TotalCount", 0, DbType.Int32, ParameterDirection.Output);
             #endregion
 
-            #region get forms by form status 
+            #region get forms by form status
             object formsInPagingList = formParams.GetAnsweredForms switch
             {
                 true => await GetAllFormsAsPagingListAsync
@@ -288,7 +288,7 @@ namespace Services.Concretes
                     formParams.Language,
                     formParams.PageNumber,
                     formParams.PageSize,
-                    "Form-GeneralCommunication-Answered",
+                    "Form-Gc-Answered",
                     context,
                     FormTypes.GeneralCommunication,
                     parameters),
@@ -298,7 +298,7 @@ namespace Services.Concretes
                     formParams.Language,
                     formParams.PageNumber,
                     formParams.PageSize,
-                    "Form-GeneralCommunication-Unanswered",
+                    "Form-Gc-Unanswered",
                     context,
                     FormTypes.GeneralCommunication,
                     parameters),
@@ -308,7 +308,7 @@ namespace Services.Concretes
                     formParams.Language,
                     formParams.PageNumber,
                     formParams.PageSize,
-                    "Form-GeneralCommunication-All",
+                    "Form-Gc-All",
                     context,
                     FormTypes.GeneralCommunication,
                     parameters)
@@ -342,7 +342,7 @@ namespace Services.Concretes
                     formParams.Language,
                     formParams.PageNumber,
                     formParams.PageSize,
-                    "Form-GetOffer-Waiting",
+                    "Form-Go-Waiting",
                     context,
                     FormTypes.GetOffer,
                     parameters),
@@ -352,7 +352,7 @@ namespace Services.Concretes
                     formParams.Language,
                     formParams.PageNumber,
                     formParams.PageSize,
-                    "Form-GetOffer-Accepted",
+                    "Form-Go-Accepted",
                     context,
                     FormTypes.GetOffer,
                     parameters),
@@ -362,7 +362,7 @@ namespace Services.Concretes
                     formParams.Language,
                     formParams.PageNumber,
                     formParams.PageSize,
-                    "Form-GetOffer-Rejected",
+                    "Form-Go-Rejected",
                     context,
                     FormTypes.GetOffer,
                     parameters)
@@ -396,7 +396,7 @@ namespace Services.Concretes
                         formParams.Language,
                         formParams.PageNumber,
                         formParams.PageSize,
-                        "Form-Renting-Waiting",
+                        "Form-R-Waiting",
                         context,
                         FormTypes.Renting,
                         parameters),
@@ -406,7 +406,7 @@ namespace Services.Concretes
                         formParams.Language,
                         formParams.PageNumber,
                         formParams.PageSize,
-                        "Form-Renting-Accepted",
+                        "Form-R-Accepted",
                         context,
                         FormTypes.Renting,
                         parameters),
@@ -416,7 +416,7 @@ namespace Services.Concretes
                         formParams.Language,
                         formParams.PageNumber,
                         formParams.PageSize,
-                        "Form-Renting-Rejected",
+                        "Form-R-Rejected",
                         context,
                         FormTypes.Renting,
                         parameters)
@@ -433,10 +433,10 @@ namespace Services.Concretes
             #region set parameters
             var parameters = new DynamicParameters(new
             {
-               formParams.PageNumber,
-               formParams.PageSize,
-               formParams.GetAnsweredForms,
-               UserId = formParams.UserId ?? await GetUserIdFromClaimsAsync(context)
+                formParams.PageNumber,
+                formParams.PageSize,
+                formParams.GetAnsweredForms,
+                UserId = formParams.UserId ?? await GetUserIdFromClaimsAsync(context)
             });
 
             parameters.Add("TotalCount", 0, DbType.Int32, ParameterDirection.Output);
@@ -450,7 +450,7 @@ namespace Services.Concretes
                     formParams.Language,
                     formParams.PageNumber,
                     formParams.PageSize,
-                    "Form-GeneralCommunication-Answered",
+                    "Form-Gc-Answered",
                     context,
                     FormTypes.GeneralCommunication,
                     parameters),
@@ -460,7 +460,7 @@ namespace Services.Concretes
                     formParams.Language,
                     formParams.PageNumber,
                     formParams.PageSize,
-                    "Form-GeneralCommunication-Unanswered",
+                    "Form-Gc-Unanswered",
                     context,
                     FormTypes.GeneralCommunication,
                     parameters),
@@ -470,7 +470,7 @@ namespace Services.Concretes
                     formParams.Language,
                     formParams.PageNumber,
                     formParams.PageSize,
-                    "Form-GeneralCommunication-All",
+                    "Form-Gc-All",
                     context,
                     FormTypes.GeneralCommunication,
                     parameters)
@@ -505,7 +505,7 @@ namespace Services.Concretes
                         formParams.Language,
                         formParams.PageNumber,
                         formParams.PageSize,
-                        "Form-GetOffer-Waiting",
+                        "Form-Go-Waiting",
                         context,
                         FormTypes.GetOffer,
                         parameters),
@@ -515,7 +515,7 @@ namespace Services.Concretes
                         formParams.Language,
                         formParams.PageNumber,
                         formParams.PageSize,
-                        "Form-GetOffer-Accepted",
+                        "Form-Go-Accepted",
                         context,
                         FormTypes.GetOffer,
                         parameters),
@@ -525,7 +525,7 @@ namespace Services.Concretes
                         formParams.Language,
                         formParams.PageNumber,
                         formParams.PageSize,
-                        "Form-GetOffer-Rejected",
+                        "Form-Go-Rejected",
                         context,
                         FormTypes.GetOffer,
                         parameters)
@@ -560,7 +560,7 @@ namespace Services.Concretes
                         formParams.Language,
                         formParams.PageNumber,
                         formParams.PageSize,
-                        "Form-Renting-Waiting",
+                        "Form-R-Waiting",
                         context,
                         FormTypes.Renting,
                         parameters),
@@ -570,7 +570,7 @@ namespace Services.Concretes
                         formParams.Language,
                         formParams.PageNumber,
                         formParams.PageSize,
-                        "Form-Renting-Accepted",
+                        "Form-R-Accepted",
                         context,
                         FormTypes.Renting,
                         parameters),
@@ -580,7 +580,7 @@ namespace Services.Concretes
                         formParams.Language,
                         formParams.PageNumber,
                         formParams.PageSize,
-                        "Form-Renting-Rejected",
+                        "Form-R-Rejected",
                         context,
                         FormTypes.Renting,
                         parameters)
@@ -605,7 +605,7 @@ namespace Services.Concretes
                 AnswererId = await GetUserIdFromClaimsAsync(httpContext),
                 AnsweredDate = DateTime.UtcNow,
             });
-            
+
             var answererInfos = await AnswerTheFormAsync(parameters);
             #endregion
 

@@ -233,11 +233,6 @@ $(function () {
         }
     })
     ul_pagination.click(async () => {
-        //#region do unchecked "box_all"
-        if ($("#box_all").is(":checked"))
-            $("#box_all").prop("checked", false);
-        //#endregion
-
         //#region click control of pagination buttons
         let clickedButton = $(":focus");
 

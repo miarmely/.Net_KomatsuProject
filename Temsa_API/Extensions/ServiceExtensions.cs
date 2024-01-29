@@ -95,7 +95,16 @@ namespace Temsa_Api.Extensions
 						.AllowAnyMethod()
 						.WithExposedHeaders(
 							"User-Pagination",
-							"Machine-Pagination"));
+							"Machine-Pagination",
+							"Form-Gc-Answered",
+                            "Form-Gc-Unanswered",
+                            "Form-Gc-All",
+                            "Form-Go-Answered",
+                            "Form-Go-Unanswered",
+                            "Form-Go-All",
+                            "Form-R-Answered",
+                            "Form-R-Unanswered",
+                            "Form-R-All"));
 				#endregion
 			});
 	}

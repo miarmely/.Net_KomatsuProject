@@ -46,3 +46,7 @@
     #div_buttons > button:disabled {
         background-color: darkgray;
     }
+
+#td_message {
+    font-size: 16px;
+}

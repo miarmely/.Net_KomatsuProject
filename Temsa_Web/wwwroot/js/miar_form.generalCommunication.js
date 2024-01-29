@@ -1,17 +1,29 @@
 ﻿import {
-    addArticlesAsync, alignArticlesToCenterAsync, setVariablesForArticleAsync,
-    art_baseId, div_article_info_id, articleBuffer, addMsgWithImgToDivArticlesAsync
+    addArticlesAsync, setVariablesForArticleAsync, art_baseId, div_article_info_id,
+    articleBuffer, addMsgWithImgToDivArticlesAsync, alignArticlesAsync
 } from "./miar_article.js";
 
-import { getDateTimeInString, getPassedTimeInStringAsync } from "./miar_tools.js"
+import {
+    addAnswererInfosToFormAsync, addSendererInfosToFormAsync, langPack_sendererInfosTable,
+    langPack_answererInfosTable
+} from "./miar_form.js";
+
+import { addPaginationButtonsAsync, controlPaginationBackAndNextButtonsAsync, getPassedTimeInStringAsync, updateResultLabel } from "./miar_tools.js"
 
 
 $(function () {
     //#region variables
     const div_articles = $("#div_articles");
     const pageNumber = 1;
-    const pageSize = 10;
+    const pageSize = 3;
+    const pagination_buttonCount = 5;
+    const pagination_headerNames = {
+        "unanswered": "Form-Gc-Unanswered",
+        "answered": "Form-Gc-Answered",
+        "all": "Form-Gc-All"
+    }
     const article_maxMessageCount = 100;
+    const ul_pagination = $("#ul_pagination");
     const div_identity_id = "div_identity";
     const div_article_display = $("#div_article_display");
     const div_article_details = $("#div_article_details");
@@ -28,6 +40,8 @@ $(function () {
     const btn_complete = $("#btn_complete");
     const td_message = $("#td_message");
     const td_subject = $("#td_subject");
+    const lbl_entityQuantity_id = "small_entityQuantity";
+    const lbl_entityQuantity_color = "#7A7A7A";
     const lbl_passedTime_id = "lbl_passedTime";
     const style_passedTimeLabel_answered = {
         "color": "#40C800",
@@ -36,42 +50,6 @@ $(function () {
         "color": "red",
     }
     const img_loading = $("#img_loading");
-    const langPack_sendererInfosKeys = {
-        "TR": {
-            "title": "Gönderen",
-            "firstName": "Ad",
-            "lastName": "Soyad",
-            "company": "Şirket",
-            "email": "Email",
-            "phone": "Telefon",
-            "createdAt": "Oluşturulma Tarihi"
-        },
-        "EN": {
-            "title": "Senderer",
-            "firstName": "Firstname",
-            "lastName": "Lastname",
-            "company": "Company",
-            "email": "Email",
-            "phone": "Phone",
-            "createdAt": "Created Date"
-        }
-    }
-    const langPack_answererInfosKeys = {
-        "TR": {
-            "title": "Cevaplayan",
-            "firstName": "Ad",
-            "lastName": "Soyad",
-            "email": "Email",
-            "answeredDate": "Cevaplanma Tarihi"
-        },
-        "EN": {
-            "title": "Answerer",
-            "firstName": "Firstname",
-            "lastName": "Lastname",
-            "email": "Email",
-            "answeredDate": "Answered Date"
-        }
-    }
     const langPack_panelTitle = {
         "TR": "GENEL İLETİŞİM FORMU",
         "EN": "GENERAL COMMUNICATION FORM"
@@ -122,34 +100,25 @@ $(function () {
             }
         }
     }
+    const langPack_entityQuantityMessage = {
+        "TR": "makine gösteriliyor",
+        "EN": "machine displaying"
+    };
     let article_IdsAndFormInfos = {};
     let slct_menubar_value = "unanswered";
     let lastClickedArticleInfos = {};
-    let isWindowResizeInCriticalSection = false;
     //#endregion
 
     //#region events
-    $(window).resize(() => {
-        //#region realign articles to center
-        if (!isWindowResizeInCriticalSection
-            && articleBuffer.totalArticleCount > 0
-        ) {
-            isWindowResizeInCriticalSection = true;
-
-            setTimeout(async () => {
-                await alignArticlesToCenterAsync();
-                isWindowResizeInCriticalSection = false;
-            }, 500);
-        }
-        //#endregion
+    $(window).resize(async () => {
+        // realign articles
+        if (articleBuffer.totalArticleCount > 0)
+            await alignArticlesAsync()
     })
     $("#div_sidebarMenuButton").click(async () => {
-        //#region realign articles to center
+        // realing articles
         if (articleBuffer.totalArticleCount > 0)
-            setTimeout(async () => {
-                await alignArticlesToCenterAsync()
-            }, 500);
-        //#endregion
+            await alignArticlesAsync();
     })
     slct_menubar.change(async () => {
         slct_menubar_value = slct_menubar.val();
@@ -171,7 +140,7 @@ $(function () {
 
         //#region when any unanswered article is exists
         if (articleBuffer.totalArticleCount > 0)
-            await alignArticlesToCenterAsync();
+            await alignArticlesAsync()
         //#endregion
 
         //#region when all articles is answered
@@ -197,46 +166,53 @@ $(function () {
                 img_loading.removeAttr("hidden");
             },
             success: (answererInfos) => {
-                //#region before start
-                img_loading.attr("hidden", "");
-                btn_complete.attr("disabled", "");
-                //#endregion
+                new Promise(async resolve => {
+                    //#region before start
+                    img_loading.attr("hidden", "");
+                    btn_complete.attr("disabled", "");
+                    //#endregion
 
-                //#region when all articles is answered
-                // reduce total artical count
-                setVariablesForArticleAsync({
-                    "totalArticleCount": articleBuffer.totalArticleCount - 1
+                    //#region when all articles is answered
+                    // reduce total artical count
+                    await setVariablesForArticleAsync({
+                        "totalArticleCount": articleBuffer.totalArticleCount - 1
+                    });
+
+                    // reset article style
+                    if (articleBuffer.totalArticleCount == 0)
+                        div_articles.removeAttr("style");
+                    //#endregion
+
+                    await addAnswererInfosToFormAsync(
+                        tbl_answererInfos,
+                        langPack_answererInfosTable[language],
+                        answererInfos);
+
+                    //#region hide article when "unanswered" form is displaying
+                    let answeredArticle = div_articles
+                        .find("#" + lastClickedArticleInfos.articleId);
+
+                    if (slct_menubar_value == "unanswered")
+                        answeredArticle.attr("hidden", "");
+                    //#endregion
+
+                    //#region add checked image to article when "all" from is displaying"
+                    else if (slct_menubar_value == "all") {
+                        // add checkedImage to article
+                        answeredArticle
+                            .find("img")
+                            .attr("src", path_checkedImage);
+
+                        // change color of lbl_passedTime
+                        answeredArticle
+                            .find("#" + lbl_passedTime_id)
+                            .css("color", style_passedTimeLabel_answered.color)
+                    }
+
+                    //#endregion
+
+                    resolve();
                 });
-
-                // reset article style
-                if (articleBuffer.totalArticleCount == 0)
-                    div_articles.removeAttr("style");
-                //#endregion
-
-                addAnswererInfosToFormAsync(answererInfos);
-
-                //#region hide article when "unanswered" form is displaying
-                let answeredArticle = div_articles
-                    .find("#" + lastClickedArticleInfos.articleId);
-
-                if (slct_menubar_value == "unanswered")
-                    answeredArticle.attr("hidden", "");
-                //#endregion
-
-                //#region add checked image to article when "all" from is displaying"
-                else if (slct_menubar_value == "all") {
-                    // add checkedImage to article
-                    answeredArticle
-                        .find("img")
-                        .attr("src", path_checkedImage);
-
-                    // change color of lbl_passedTime
-                    answeredArticle
-                        .find("#" + lbl_passedTime_id)
-                        .css("color", style_passedTimeLabel_answered.color)
-                }
-
-                //#endregion
             },
             error: () => {
                 alert("An Error Occured, Please Try Again.");
@@ -244,6 +220,40 @@ $(function () {
         })
 
         return;
+    })
+    ul_pagination.click(async () => {
+        //#region click control of pagination buttons
+        let clickedButton = $(":focus");
+
+        switch (clickedButton.attr("id")) {
+            //#region open previous page if previous page exists
+            case "a_paginationBack":
+                if (paginationInfos.HasPrevious) {
+                    pageNumber--;
+                    await addFormArticlesAsync();
+                }
+                break;
+            //#endregion
+
+            //#region open next page if next page exists
+            case "a_paginationNext":
+                if (paginationInfos.HasNext) {
+                    pageNumber++;
+                    await addFormArticlesAsync();
+                }
+                break;
+            //#endregion
+
+            //#region open page that matched with clicked button number
+            default:
+                let clickedPageNo = clickedButton.prop("innerText");
+                pageNumber = clickedPageNo;
+
+                await addFormArticlesAsync();
+                break;
+            //#endregion
+        }
+        //#endregion 
     })
     spn_eventManager.on("click_article", async (_, event) => {
         //#region save clicked article infos
@@ -263,66 +273,27 @@ $(function () {
         div_panelTitle.css("padding-left", btn_back_width);
         //#endregion
 
-        //#region add senderer infos
-        let formInfos = article_IdsAndFormInfos[article_id];
-        let sendererInfosKeys = langPack_sendererInfosKeys[language];
-
-        // add senderer table title
-        tbl_sendererInfos.children("thead")
-            .append(`
-                <tr>
-                    <th colspan=3;  style="text-align:center">${langPack_sendererInfosKeys[language].title}</th>
-                </tr>`
-            );
-
-        // populate senderer table
-        tbl_sendererInfos.children("tbody")
-            .append(`
-                <tr>
-                    <td>${sendererInfosKeys.firstName}</td>
-                    <td class="td_spaceAfterKey"></td>
-                    <td>${formInfos.firstName}</td>
-                </tr>
-                <tr>
-                    <td>${sendererInfosKeys.lastName}</td>
-                    <td class="td_spaceAfterKey"></td>
-                    <td>${formInfos.lastName}</td>
-                </tr>
-                <tr>
-                    <td>${sendererInfosKeys.company}</td>
-                    <td class="td_spaceAfterKey"></td>
-                    <td>${formInfos.company}</td>
-                </tr>
-                <tr>
-                    <td>${sendererInfosKeys.phone}</td>
-                    <td class="td_spaceAfterKey"></td>
-                    <td>${formInfos.phone}</td>
-                </tr>
-                <tr>
-                    <td>${sendererInfosKeys.email}</td>
-                    <td class="td_spaceAfterKey"></td>
-                    <td>${formInfos.email}</td>
-                </tr>
-                <tr>
-                    <td>${sendererInfosKeys.createdAt}</td>
-                    <td class="td_spaceAfterKey"></td>
-                    <td>${getDateTimeInString(formInfos.createdAt)}</td >
-                </tr>
-            `);
-        //#endregion
+        await addSendererInfosToFormAsync(
+            tbl_sendererInfos,
+            langPack_sendererInfosTable[language],
+            lastClickedArticleInfos);
 
         //#region add answerer infos if form answered
         if (slct_menubar_value == "answered"
             || (slct_menubar_value == "all" && formInfos.isAnswered == true))  // when all form type is displaying
         {
             btn_complete.attr("disabled", "");
-            await addAnswererInfosToFormAsync();
+
+            await addAnswererInfosToFormAsync(
+                tbl_answererInfos,
+                langPack_answererInfosTable[language],
+                lastClickedArticleInfos);
         }
         //#endregion
 
         //#region add subject and message
-        td_subject.append(formInfos["subject"]);
-        td_message.append(formInfos["message"]);
+        td_subject.append(lastClickedArticleInfos.subject);
+        td_message.append(lastClickedArticleInfos.message);
         //#endregion
     })
     //#endregion
@@ -405,6 +376,7 @@ $(function () {
                         }
                     });
                     await addArticlesAsync(true);
+                    await alignArticlesAsync();
                     //#endregion
 
                     //#region declare events
@@ -508,6 +480,27 @@ $(function () {
                     }
                     //#endregion
 
+                    //#region update entity quantity label
+                    let paginationInfosInJson = JSON.parse(
+                        xhr.getResponseHeader(pagination_headerNames[slct_menubar_value]));
+
+                    updateResultLabel(
+                        "#" + lbl_entityQuantity_id,
+                        `<b>${paginationInfosInJson.CurrentPageCount}/${pageSize}</b> ${langPack_entityQuantityMessage[language]}`,
+                        lbl_entityQuantity_color
+                    );
+                    //#endregion
+
+                    //#region add pagination buttons
+                    // get pagination infos from header
+                    await addPaginationButtonsAsync(
+                        paginationInfosInJson,
+                        pagination_buttonCount,
+                        ul_pagination);
+
+                    await controlPaginationBackAndNextButtonsAsync(paginationInfosInJson);
+                    //#endregion
+
                     resolve();
                 });
             },
@@ -546,50 +539,6 @@ $(function () {
         // remove button
         btn_complete.reset;
         btn_complete.removeAttr("disabled");
-    }
-
-    async function addAnswererInfosToFormAsync(answererInfos = null) {
-        //#region add answerer table title
-        let answererInfosKeys = langPack_answererInfosKeys[language];
-
-        tbl_answererInfos.children("thead")
-            .append(`
-                <tr>
-                    <th colspan=3  style="text-align:center">${langPack_answererInfosKeys[language].title}</th>
-                </tr>
-            `);
-        //#endregion
-
-        //#region populate answerer table
-        // when answererInfos is not entered
-        if (answererInfos == null)
-            answererInfos = lastClickedArticleInfos;
-
-        // populate table
-        tbl_answererInfos.children("tbody")
-            .append(`
-                <tr>
-                    <td>${answererInfosKeys.firstName}</td>
-                    <td class="td_spaceAfterKey"></td>
-                    <td>${answererInfos.answererFirstName}</td>
-                </tr>
-                <tr>
-                    <td>${answererInfosKeys.lastName}</td>
-                    <td class="td_spaceAfterKey"></td>
-                    <td>${answererInfos.answererLastName}</td>
-                </tr>
-                <tr>
-                    <td>${answererInfosKeys.email}</td>
-                    <td class="td_spaceAfterKey"></td>
-                    <td>${answererInfos.answererEmail}</td>
-                </tr>
-                <tr>
-                    <td>${answererInfosKeys.answeredDate}</td>
-                    <td class="td_spaceAfterKey"></td>
-                    <td>${getDateTimeInString(answererInfos.answeredDate)}</td >
-                </tr>
-            `);
-        //#endregion
     }
     //#endregion
 

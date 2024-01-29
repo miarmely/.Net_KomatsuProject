@@ -35,6 +35,7 @@ let articleInfos_lastUploadedVideo = {
 };
 let article_desiredWidth = 0;
 let article_isWidthReduced = false;
+let isCriticalSection = false;
 
 //#region article elements styles
 // when article type is "video and text" (VT)
@@ -394,6 +395,22 @@ export async function addMsgWithImgToDivArticlesAsync(imagePath, imageAlt, messa
         "padding-top": (div_articles_height - div_articles_message_height) / 2,
         "padding-bottom": (div_articles_height - div_articles_message_height) / 2
     })
+    //#endregion
+}
+
+export async function alignArticlesAsync() {
+    //#region realign articles to center
+    if (!isCriticalSection) {
+        isCriticalSection = true;
+
+        // aling articles
+        setTimeout(async () => {
+            await alignArticlesToCenterAsync();
+            await setHeightOfArticlesDivAsync();
+
+            isCriticalSection = false;
+        }, 500);
+    }
     //#endregion
 }
 
