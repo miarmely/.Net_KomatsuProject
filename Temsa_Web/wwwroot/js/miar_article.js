@@ -374,7 +374,7 @@ export async function isSidebarOpenAsync() {
     return true;
 }
 
-export async function addMessageToEmptyDivArticlesAsync(imagePath, imageAlt, message) {
+export async function addMsgWithImgToDivArticlesAsync(imagePath, imageAlt, message) {
     //#region add message with image to div_articles
     let div_articles = articleBuffer.div_articles;
 

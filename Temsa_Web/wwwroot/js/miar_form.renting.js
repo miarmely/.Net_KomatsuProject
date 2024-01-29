@@ -1,6 +1,8 @@
 ﻿import {
     addArticlesAsync, alignArticlesToCenterAsync, setVariablesForArticleAsync, art_baseId,
-    div_article_info_id, setHeightOfArticlesDivAsync, articleBuffer, div_article_image_id, style_div_img_width_IT, style_div_img_height_IT, style_img_width_IT, style_img_height_IT, style_div_info_height_IT, style_div_info_width_IT
+    div_article_info_id, setHeightOfArticlesDivAsync, articleBuffer, div_article_image_id,
+    style_img_width_IT, style_img_height_IT, style_div_info_height_IT,
+    addMsgWithImgToDivArticlesAsync
 } from "./miar_article.js";
 
 import { getDateTimeInString, getPassedTimeInStringAsync } from "./miar_tools.js"
@@ -49,7 +51,7 @@ $(function () {
         "height": 40,
         "marginB": 10
     }
-    const languagePackage_sendererInfosKeys = {
+    const langPack_sendererInfosKeys = {
         "TR": {
             "title": "Gönderen",
             "firstName": "Ad",
@@ -69,7 +71,7 @@ $(function () {
             "createdAt": "Created Date"
         }
     }
-    const languagePackage_answererInfosKeys = {
+    const langPack_answererInfosKeys = {
         "TR": {
             "title": "Cevaplayan",
             "firstName": "Ad",
@@ -85,11 +87,11 @@ $(function () {
             "answeredDate": "Answered Date"
         }
     }
-    const languagePackage_panelTitle = {
+    const langPack_panelTitle = {
         "TR": "KİRALAMA FORMU",
         "EN": "RENTING FORM"
     }
-    const languagePackage_panelMenubar = {
+    const langPack_panelMenubar = {
         "TR": {
             "waiting": "Bekleyen",
             "accepted": "Kabul Edilen",
@@ -101,7 +103,7 @@ $(function () {
             "rejected": "Rejected"
         }
     }
-    const languagePackage_formButtons = {
+    const langPack_formButtons = {
         "TR": {
             "accept": "Kabul Et",
             "reject": "Reddet"
@@ -110,7 +112,43 @@ $(function () {
             "accept": "Accept",
             "reject": "Reject"
         }
-    }
+    };
+    const langPack_msgWhenFormNotExists = {
+        "TR": {
+            "waiting": {
+                "msg": "Tüm Formlar Cevaplanmış",
+                "imgAlt": "answered",
+                "imgPath": path_checkedImage
+            },
+            "accepted": {
+                "msg": "Form Bulunamadı",
+                "imgAlt": "not found",
+                "imgPath": path_questionImage
+            },
+            "rejected": {
+                "msg": "Form Bulunamadı",
+                "imgAlt": "not found",
+                "imgPath": path_questionImage
+            }
+        },
+        "EN": {
+            "waiting": {
+                "msg": "All Forms Is Answered",
+                "imgAlt": "answered",
+                "imgPath": path_checkedImage
+            },
+            "accepted": {
+                "msg": "Form Not Found",
+                "imgAlt": "not found",
+                "imgPath": path_questionImage
+            },
+            "rejected": {
+                "msg": "Form Not Found",
+                "imgAlt": "not found",
+                "imgPath": path_questionImage
+            }
+        }
+    };
     let article_IdsAndFormInfos = {};
     let slct_menubar_value = "waiting";
     let lastClickedArticleInfos = {};
@@ -146,6 +184,19 @@ $(function () {
         div_article_display.removeAttr("hidden");  // show articles page
         //#endregion
 
+        //#region when any unanswered article is exists
+        if (articleBuffer.totalArticleCount > 0)
+            await alignArticlesToCenterAsync();
+        //#endregion
+
+        //#region when all articles is answered
+        else
+            await addMsgWithImgToDivArticlesAsync(
+                langPack_msgWhenFormNotExists[language][slct_menubar_value]["imgPath"],
+                langPack_msgWhenFormNotExists[language][slct_menubar_value]["imgAlt"],
+                langPack_msgWhenFormNotExists[language][slct_menubar_value]["msg"]);
+        //#endregion
+
         await alignArticlesToCenterAsync();
     })
     btn_accept.click(async () => {
@@ -174,13 +225,13 @@ $(function () {
 
         //#region add senderer infos
         let formInfos = article_IdsAndFormInfos[article_id];
-        let sendererInfosKeys = languagePackage_sendererInfosKeys[language];
+        let sendererInfosKeys = langPack_sendererInfosKeys[language];
 
         // add senderer table title
         tbl_sendererInfos.children("thead")
             .append(`
                 <tr>
-                    <th colspan=3;  style="text-align:center">${languagePackage_sendererInfosKeys[language].title}</th>
+                    <th colspan=3;  style="text-align:center">${langPack_sendererInfosKeys[language].title}</th>
                 </tr>`
             );
 
@@ -242,12 +293,12 @@ $(function () {
     async function populateHtmlAsync() {
         //#region add panel title
         $("#div_panelTitle").append(
-            languagePackage_panelTitle[language])
+            langPack_panelTitle[language])
         //#endregion
 
         //#region populate panel menubar
-        for (let key in languagePackage_panelMenubar[language]) {
-            let option = languagePackage_panelMenubar[language][key];
+        for (let key in langPack_panelMenubar[language]) {
+            let option = langPack_panelMenubar[language][key];
 
             slct_menubar.append(`
                 <option value=${key}>${option}</option>
@@ -257,10 +308,10 @@ $(function () {
 
         //#region populate "accept" and "reject" buttons
         btn_accept.append(
-            languagePackage_formButtons[language]["accept"]);
+            langPack_formButtons[language]["accept"]);
 
         btn_reject.append(
-            languagePackage_formButtons[language]["reject"]);
+            langPack_formButtons[language]["reject"]);
         //#endregion
 
         await addFormArticlesAsync();
@@ -293,12 +344,13 @@ $(function () {
                 // reset div_articles
                 div_articles.empty();
                 div_articles.removeAttr("style");
+
+                setVariablesForArticleAsync({ "div_articles": div_articles });
             },
             success: (response, status, xhr) => {
                 new Promise(async (resolve) => {
                     //#region add <article>s
                     setVariablesForArticleAsync({
-                        "div_articles": div_articles,
                         "totalArticleCount": response.length,
                         "articleType": "imageAndText",
                         "articleStyle": {
@@ -400,6 +452,21 @@ $(function () {
                     resolve();
                 });
             },
+            error: (response) => {
+                new Promise(async resolve => {
+                    //#region when all forms is answered
+                    let errorDetails = JSON.parse(response.responseText);
+
+                    if (errorDetails.errorCode == "NF-Fo")  // NF-Fo: Not Found - Form
+                        await addMsgWithImgToDivArticlesAsync(
+                            langPack_msgWhenFormNotExists[language][slct_menubar_value]["imgPath"],
+                            langPack_msgWhenFormNotExists[language][slct_menubar_value]["imgAlt"],
+                            langPack_msgWhenFormNotExists[language][slct_menubar_value]["msg"]);
+                    //#endregion
+
+                    resolve();
+                })
+            }
         })
         //#endregion
     }
@@ -424,12 +491,12 @@ $(function () {
 
     async function addAnswererInfosToFormAsync(answererInfos = null) {
         //#region add answerer table title
-        let answererInfosKeys = languagePackage_answererInfosKeys[language];
+        let answererInfosKeys = langPack_answererInfosKeys[language];
 
         tbl_answererInfos.children("thead")
             .append(`
                 <tr>
-                    <th colspan=3  style="text-align:center">${languagePackage_answererInfosKeys[language].title}</th>
+                    <th colspan=3  style="text-align:center">${langPack_answererInfosKeys[language].title}</th>
                 </tr>
             `);
         //#endregion
@@ -491,6 +558,17 @@ $(function () {
                 img_loading.attr("hidden", "");
                 btn_accept.attr("disabled", "");
                 btn_reject.attr("disabled", "");
+                //#endregion
+
+                //#region when all articles is answered
+                // reduce total artical count
+                setVariablesForArticleAsync({
+                    "totalArticleCount": articleBuffer.totalArticleCount - 1
+                });
+
+                // reset article style
+                if (articleBuffer.totalArticleCount == 0)
+                    div_articles.removeAttr("style");
                 //#endregion
 
                 addAnswererInfosToFormAsync(answererInfos);

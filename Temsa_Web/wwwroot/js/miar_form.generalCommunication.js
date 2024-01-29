@@ -1,6 +1,6 @@
 ﻿import {
     addArticlesAsync, alignArticlesToCenterAsync, setVariablesForArticleAsync,
-    art_baseId, div_article_info_id, articleBuffer, addMessageToEmptyDivArticlesAsync
+    art_baseId, div_article_info_id, articleBuffer, addMsgWithImgToDivArticlesAsync
 } from "./miar_article.js";
 
 import { getDateTimeInString, getPassedTimeInStringAsync } from "./miar_tools.js"
@@ -36,7 +36,7 @@ $(function () {
         "color": "red",
     }
     const img_loading = $("#img_loading");
-    const languagePackage_sendererInfosKeys = {
+    const langPack_sendererInfosKeys = {
         "TR": {
             "title": "Gönderen",
             "firstName": "Ad",
@@ -56,7 +56,7 @@ $(function () {
             "createdAt": "Created Date"
         }
     }
-    const languagePackage_answererInfosKeys = {
+    const langPack_answererInfosKeys = {
         "TR": {
             "title": "Cevaplayan",
             "firstName": "Ad",
@@ -72,11 +72,11 @@ $(function () {
             "answeredDate": "Answered Date"
         }
     }
-    const languagePackage_panelTitle = {
+    const langPack_panelTitle = {
         "TR": "GENEL İLETİŞİM FORMU",
         "EN": "GENERAL COMMUNICATION FORM"
     }
-    const languagePackage_panelMenubar = {
+    const langPack_panelMenubar = {
         "TR": {
             "unanswered": "Tamamlanmamış",
             "answered": "Tamamlanmış",
@@ -88,16 +88,42 @@ $(function () {
             "all": "All"
         }
     }
-    const languagePackage_completeButton = {
+    const langPack_completeButton = {
         "TR": "Tamamlandı",
         "EN": "Completed"
     }
-    const languagePackage_messageOfEmptyDivArticles = {
-        "TR": "Tüm Formlar Cevaplanmış",
-        "EN": "All Forms Is Answered"
+    const langPack_msgWhenFormNotExists = {
+        "TR": {
+            "unanswered": {
+                "msg": "Tüm Formlar Cevaplanmış",
+                "imgPath": path_checkedImage,
+            },
+            "answered": {
+                "msg": "Form Bulunamadı",
+                "imgPath": path_questionImage,
+            },
+            "all": {
+                "msg": "Form Bulunamadı",
+                "imgPath": path_questionImage,
+            }
+        },
+        "EN": {
+            "unanswered": {
+                "msg": "All Forms Is Answered",
+                "imgPath": path_checkedImage,
+            },
+            "answered": {
+                "msg": "Form Not Found",
+                "imgPath": path_questionImage,
+            },
+            "all": {
+                "msg": "Form Not Found",
+                "imgPath": path_questionImage,
+            }
+        }
     }
     let article_IdsAndFormInfos = {};
-    let displayingMode = "unanswered";
+    let slct_menubar_value = "unanswered";
     let lastClickedArticleInfos = {};
     let isWindowResizeInCriticalSection = false;
     //#endregion
@@ -126,7 +152,7 @@ $(function () {
         //#endregion
     })
     slct_menubar.change(async () => {
-        displayingMode = slct_menubar.val();
+        slct_menubar_value = slct_menubar.val();
 
         await addFormArticlesAsync();
     })
@@ -150,10 +176,10 @@ $(function () {
 
         //#region when all articles is answered
         else
-            await addMessageToEmptyDivArticlesAsync(
-                path_checkedImage,
-                "completed",
-                languagePackage_messageOfEmptyDivArticles[language]);
+            await addMsgWithImgToDivArticlesAsync(
+                langPack_msgWhenFormNotExists[language][slct_menubar_value]["imgPath"],
+                langPack_msgWhenFormNotExists[language][slct_menubar_value]["imgAlt"],
+                langPack_msgWhenFormNotExists[language][slct_menubar_value]["msg"]);
         //#endregion
     })
     btn_complete.click(async () => {
@@ -193,12 +219,12 @@ $(function () {
                 let answeredArticle = div_articles
                     .find("#" + lastClickedArticleInfos.articleId);
 
-                if (displayingMode == "unanswered")
+                if (slct_menubar_value == "unanswered")
                     answeredArticle.attr("hidden", "");
                 //#endregion
 
                 //#region add checked image to article when "all" from is displaying"
-                else if (displayingMode == "all") {
+                else if (slct_menubar_value == "all") {
                     // add checkedImage to article
                     answeredArticle
                         .find("img")
@@ -239,13 +265,13 @@ $(function () {
 
         //#region add senderer infos
         let formInfos = article_IdsAndFormInfos[article_id];
-        let sendererInfosKeys = languagePackage_sendererInfosKeys[language];
+        let sendererInfosKeys = langPack_sendererInfosKeys[language];
 
         // add senderer table title
         tbl_sendererInfos.children("thead")
             .append(`
                 <tr>
-                    <th colspan=3;  style="text-align:center">${languagePackage_sendererInfosKeys[language].title}</th>
+                    <th colspan=3;  style="text-align:center">${langPack_sendererInfosKeys[language].title}</th>
                 </tr>`
             );
 
@@ -286,8 +312,8 @@ $(function () {
         //#endregion
 
         //#region add answerer infos if form answered
-        if (displayingMode == "answered"
-            || (displayingMode == "all" && formInfos.isAnswered == true))  // when all form type is displaying
+        if (slct_menubar_value == "answered"
+            || (slct_menubar_value == "all" && formInfos.isAnswered == true))  // when all form type is displaying
         {
             btn_complete.attr("disabled", "");
             await addAnswererInfosToFormAsync();
@@ -305,12 +331,12 @@ $(function () {
     async function populateHtmlAsync() {
         //#region add panel title
         $("#div_panelTitle").append(
-            languagePackage_panelTitle[language])
+            langPack_panelTitle[language])
         //#endregion
 
         //#region populate panel menubar
-        for (let key in languagePackage_panelMenubar[language]) {
-            let option = languagePackage_panelMenubar[language][key];
+        for (let key in langPack_panelMenubar[language]) {
+            let option = langPack_panelMenubar[language][key];
 
             slct_menubar.append(`
                 <option value=${key}>${option}</option>
@@ -320,7 +346,7 @@ $(function () {
 
         //#region populate "complete button"
         btn_complete.append(
-            languagePackage_completeButton[language]);
+            langPack_completeButton[language]);
         //#endregion
 
         await addFormArticlesAsync();
@@ -337,7 +363,7 @@ $(function () {
                 : '');  // get answered and unanswered forms;
         //#endregion
 
-        //#region add form articles (ajax)
+        //#region add form articles and populate (ajax)
         $.ajax({
             method: "GET",
             url: (baseApiUrl + "/form/display/generalCommunication/all" +
@@ -354,12 +380,13 @@ $(function () {
                 // reset div_articles
                 div_articles.empty();
                 div_articles.removeAttr("style");
+
+                setVariablesForArticleAsync({ "div_articles": div_articles })
             },
             success: (response, status, xhr) => {
                 new Promise(async (resolve) => {
                     //#region add <article>s
                     setVariablesForArticleAsync({
-                        "div_articles": div_articles,
                         "totalArticleCount": response.length,
                         "articleType": "text",
                         "articleStyle": {
@@ -485,15 +512,19 @@ $(function () {
                 });
             },
             error: (response) => {
-                //#region when all forms is answered
-                let errorDetails = JSON.parse(response.responseText);
+                new Promise(async resolve => {
+                    //#region when all forms is answered
+                    let errorDetails = JSON.parse(response.responseText);
 
-                if (errorDetails.errorCode == "NF-Fo")  // NF-Fo: Not Found - Form
-                    addMessageToEmptyDivArticlesAsync(
-                        path_checkedImage,
-                        "completed",
-                        languagePackage_messageOfEmptyDivArticles[language]);
-                //#endregion
+                    if (errorDetails.errorCode == "NF-Fo")  // NF-Fo: Not Found - Form
+                        await addMsgWithImgToDivArticlesAsync(
+                            langPack_msgWhenFormNotExists[language][slct_menubar_value]["imgPath"],
+                            langPack_msgWhenFormNotExists[language][slct_menubar_value]["imgAlt"],
+                            langPack_msgWhenFormNotExists[language][slct_menubar_value]["msg"]);
+                    //#endregion
+
+                    resolve();
+                })
             }
         })
         //#endregion
@@ -519,12 +550,12 @@ $(function () {
 
     async function addAnswererInfosToFormAsync(answererInfos = null) {
         //#region add answerer table title
-        let answererInfosKeys = languagePackage_answererInfosKeys[language];
+        let answererInfosKeys = langPack_answererInfosKeys[language];
 
         tbl_answererInfos.children("thead")
             .append(`
                 <tr>
-                    <th colspan=3  style="text-align:center">${languagePackage_answererInfosKeys[language].title}</th>
+                    <th colspan=3  style="text-align:center">${langPack_answererInfosKeys[language].title}</th>
                 </tr>
             `);
         //#endregion
