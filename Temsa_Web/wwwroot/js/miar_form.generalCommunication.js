@@ -14,7 +14,6 @@ import { addPaginationButtonsAsync, controlPaginationBackAndNextButtonsAsync, ge
 $(function () {
     //#region variables
     const div_articles = $("#div_articles");
-    const pageNumber = 1;
     const pageSize = 3;
     const pagination_buttonCount = 5;
     const pagination_headerNames = {
@@ -22,8 +21,8 @@ $(function () {
         "answered": "Form-Gc-Answered",
         "all": "Form-Gc-All"
     }
-    const article_maxMessageCount = 100;
     const ul_pagination = $("#ul_pagination");
+    const article_maxMessageCount = 100;
     const div_identity_id = "div_identity";
     const div_article_display = $("#div_article_display");
     const div_article_details = $("#div_article_details");
@@ -101,9 +100,11 @@ $(function () {
         }
     }
     const langPack_entityQuantityMessage = {
-        "TR": "makine gösteriliyor",
-        "EN": "machine displaying"
+        "TR": "form gösteriliyor",
+        "EN": "form displaying"
     };
+    let pageNumber = 1;
+    let pagination_formInfos = {};
     let article_IdsAndFormInfos = {};
     let slct_menubar_value = "unanswered";
     let lastClickedArticleInfos = {};
@@ -228,7 +229,7 @@ $(function () {
         switch (clickedButton.attr("id")) {
             //#region open previous page if previous page exists
             case "a_paginationBack":
-                if (paginationInfos.HasPrevious) {
+                if (pagination_formInfos.HasPrevious) {
                     pageNumber--;
                     await addFormArticlesAsync();
                 }
@@ -237,7 +238,7 @@ $(function () {
 
             //#region open next page if next page exists
             case "a_paginationNext":
-                if (paginationInfos.HasNext) {
+                if (pagination_formInfos.HasNext) {
                     pageNumber++;
                     await addFormArticlesAsync();
                 }
@@ -481,12 +482,12 @@ $(function () {
                     //#endregion
 
                     //#region update entity quantity label
-                    let paginationInfosInJson = JSON.parse(
+                    pagination_formInfos = JSON.parse(
                         xhr.getResponseHeader(pagination_headerNames[slct_menubar_value]));
 
                     updateResultLabel(
                         "#" + lbl_entityQuantity_id,
-                        `<b>${paginationInfosInJson.CurrentPageCount}/${pageSize}</b> ${langPack_entityQuantityMessage[language]}`,
+                        `<b>${pagination_formInfos.CurrentPageCount}/${pageSize}</b> ${langPack_entityQuantityMessage[language]}`,
                         lbl_entityQuantity_color
                     );
                     //#endregion
@@ -494,11 +495,11 @@ $(function () {
                     //#region add pagination buttons
                     // get pagination infos from header
                     await addPaginationButtonsAsync(
-                        paginationInfosInJson,
+                        pagination_formInfos,
                         pagination_buttonCount,
                         ul_pagination);
 
-                    await controlPaginationBackAndNextButtonsAsync(paginationInfosInJson);
+                    await controlPaginationBackAndNextButtonsAsync(pagination_formInfos);
                     //#endregion
 
                     resolve();

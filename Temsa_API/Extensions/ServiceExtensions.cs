@@ -96,15 +96,15 @@ namespace Temsa_Api.Extensions
 						.WithExposedHeaders(
 							"User-Pagination",
 							"Machine-Pagination",
-							"Form-Gc-Answered",
+							"Form-Gc-Answered",  // Gc: General Communication
                             "Form-Gc-Unanswered",
                             "Form-Gc-All",
-                            "Form-Go-Answered",
-                            "Form-Go-Unanswered",
-                            "Form-Go-All",
-                            "Form-R-Answered",
-                            "Form-R-Unanswered",
-                            "Form-R-All"));
+                            "Form-Go-Waiting",  // Go: Get Offer
+                            "Form-Go-Accepted",
+                            "Form-Go-Rejected",
+                            "Form-R-Waiting",  // R: Renting
+                            "Form-R-Accepted",
+                            "Form-R-Rejected"));
 				#endregion
 			});
 	}

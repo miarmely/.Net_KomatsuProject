@@ -10,14 +10,23 @@ import {
     langPack_sendererInfosTable, resetFormDetailsPageAsync
 } from "./miar_form.js";
 
-import { getPassedTimeInStringAsync } from "./miar_tools.js"
+import {
+    getPassedTimeInStringAsync, updateResultLabel, addPaginationButtonsAsync,
+    controlPaginationBackAndNextButtonsAsync
+} from "./miar_tools.js"
 
 
 $(function () {
     //#region variables
     const div_articles = $("#div_articles");
-    const pageNumber = 1;
     const pageSize = 10;
+    const pagination_buttonCount = 5;
+    const pagination_headerNames = {
+        "waiting": "Form-Go-Waiting",
+        "accepted": "Form-Go-Accepted",
+        "rejected": "Form-Go-Rejected"
+    }
+    const ul_pagination = $("#ul_pagination");
     const article_maxMessageCount = 150;
     const div_identity_id = "div_identity";
     const div_article_display = $("#div_article_display");
@@ -40,6 +49,8 @@ $(function () {
     const td_mainCategory = $("#td_mainCategory");
     const td_subCategory = $("#td_subCategory");
     const td_message = $("#td_message");
+    const lbl_entityQuantity_id = "small_entityQuantity";
+    const lbl_entityQuantity_color = "#7A7A7A";
     const lbl_passedTime_id = "lbl_passedTime";
     const style_passedTimeLabel_waiting = {
         "color": "red",
@@ -120,6 +131,12 @@ $(function () {
             }
         }
     };
+    const langPack_entityQuantityMessage = {
+        "TR": "form gösteriliyor",
+        "EN": "form displaying"
+    };
+    let pageNumber = 1;
+    let pagination_formInfos = {};
     let article_IdsAndFormInfos = {};
     let slct_menubar_value = "waiting";
     let lastClickedArticleInfos = {};
@@ -197,6 +214,40 @@ $(function () {
     });
     btn_reject.click(async () => {
         await answerTheFormAsync("rejected");
+    })
+    ul_pagination.click(async () => {
+        //#region click control of pagination buttons
+        let clickedButton = $(":focus");
+
+        switch (clickedButton.attr("id")) {
+            //#region open previous page if previous page exists
+            case "a_paginationBack":
+                if (pagination_formInfos.HasPrevious) {
+                    pageNumber--;
+                    await addFormArticlesAsync();
+                }
+                break;
+            //#endregion
+
+            //#region open next page if next page exists
+            case "a_paginationNext":
+                if (pagination_formInfos.HasNext) {
+                    pageNumber++;
+                    await addFormArticlesAsync();
+                }
+                break;
+            //#endregion
+
+            //#region open page that matched with clicked button number
+            default:
+                let clickedPageNo = clickedButton.prop("innerText");
+                pageNumber = clickedPageNo;
+
+                await addFormArticlesAsync();
+                break;
+            //#endregion
+        }
+        //#endregion 
     })
     spn_eventManager.on("click_article", async (_, event) => {
         //#region save clicked article infos
@@ -403,6 +454,27 @@ $(function () {
                         div_passedTimeLabel.css("margin-top", div_article_infos_whiteSpace);
                         //#endregion
                     }
+                    //#endregion
+
+                    //#region update entity quantity label
+                    pagination_formInfos = JSON.parse(xhr
+                        .getResponseHeader(pagination_headerNames[slct_menubar_value]));
+
+                    updateResultLabel(
+                        "#" + lbl_entityQuantity_id,
+                        `<b>${pagination_formInfos.CurrentPageCount}/${pageSize}</b> ${langPack_entityQuantityMessage[language]}`,
+                        lbl_entityQuantity_color
+                    );
+                    //#endregion
+
+                    //#region add pagination buttons
+                    // get pagination infos from header
+                    await addPaginationButtonsAsync(
+                        pagination_formInfos,
+                        pagination_buttonCount,
+                        ul_pagination);
+
+                    await controlPaginationBackAndNextButtonsAsync(pagination_formInfos);
                     //#endregion
 
                     resolve();
