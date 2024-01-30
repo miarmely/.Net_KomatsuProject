@@ -1,4 +1,4 @@
-﻿import { getDateTimeInString } from "./miar_tools.js";
+﻿import { getDateTimeInString, updateElementText } from "./miar_tools.js";
 
 //#region variables
 export const langPack_sendererInfosTable = {
@@ -164,5 +164,20 @@ export async function resetFormDetailsPageAsync(
 
     // show form buttons
     $("#div_buttons button").removeAttr("disabled");
+}
+
+export async function resetPanelFooterAsync(
+    lbl_entityQuantity,
+    pageSize,
+    entityQuantityMessage,
+    ul_pagination
+) {
+    // reset entity quantity label
+    updateElementText(
+        lbl_entityQuantity,
+        `0/${pageSize} ${entityQuantityMessage}`)
+
+    // remove pagination buttons
+    ul_pagination.empty();
 }
 //#endregion

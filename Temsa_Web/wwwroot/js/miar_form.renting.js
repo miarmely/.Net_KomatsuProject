@@ -6,7 +6,7 @@
 
 import {
     addAnswererInfosToFormAsync, addSendererInfosToFormAsync, resetFormDetailsPageAsync,
-    langPack_sendererInfosTable, langPack_answererInfosTable
+    langPack_sendererInfosTable, langPack_answererInfosTable, resetPanelFooterAsync
 } from "./miar_form.js";
 
 import {
@@ -18,7 +18,7 @@ import {
 $(function () {
     //#region variables
     const div_articles = $("#div_articles");
-    const pageSize = 10;
+    const pageSize = 3;
     const pagination_buttonCount = 5;
     const pagination_headerNames = {
         "waiting": "Form-R-Waiting",
@@ -44,6 +44,7 @@ $(function () {
     const slct_menubar = $("#slct_menubar");
     const btn_accept = $("#btn_accept");
     const btn_reject = $("#btn_reject");
+    const btn_back = $("#btn_back");
     const td_model = $("#td_model");
     const td_mainCategory = $("#td_mainCategory");
     const td_subCategory = $("#td_subCategory");
@@ -139,6 +140,7 @@ $(function () {
     let article_IdsAndFormInfos = {};
     let slct_menubar_value = "waiting";
     let lastClickedArticleInfos = {};
+    let isLastFormAnswered = false;
     //#endregion
 
     //#region events
@@ -167,22 +169,58 @@ $(function () {
         div_article_display.removeAttr("hidden");  // show articles page
         //#endregion
 
-        //#region align articles
-        if (articleBuffer.totalArticleCount > 0)
-            await alignArticlesAsync();
+        //#region when any form on page is exists
+        if (articleBuffer.totalArticleCount > 0) {
+            //#region when last form is answered
+            if (isLastFormAnswered) {
+                isLastFormAnswered = false;  // reset
+
+                await addFormArticlesAsync();
+            }
+            //#endregion
+
+            //#region when last closed form isn't answered
+            else
+                await alignArticlesAsync();
+            //#endregion
+        }
         //#endregion
 
-        //#region when all articles is answered
-        else
-            await addMsgWithImgToDivArticlesAsync(
-                langPack_msgWhenFormNotExists[language][slct_menubar_value]["imgPath"],
-                langPack_msgWhenFormNotExists[language][slct_menubar_value]["imgAlt"],
-                langPack_msgWhenFormNotExists[language][slct_menubar_value]["msg"]);
+        //#region when all forms on page is answered
+        else {
+            //#region when previous page is exists
+            isLastFormAnswered = false;  // reset
+
+            if (pagination_formInfos.HasPrevious) {
+                pageNumber--;
+                await addFormArticlesAsync();
+            }
+            //#endregion
+
+            //#region when all form is answered
+            else {
+                //#region reset div_articles
+                div_articles.empty();
+                div_articles.removeAttr("style");
+                //#endregion
+
+                await resetPanelFooterAsync(
+                    $("#" + lbl_entityQuantity_id),
+                    pageSize,
+                    langPack_entityQuantityMessage[language],
+                    ul_pagination);
+                await addMsgWithImgToDivArticlesAsync(
+                    langPack_msgWhenFormNotExists[language][slct_menubar_value]["imgPath"],
+                    langPack_msgWhenFormNotExists[language][slct_menubar_value]["imgAlt"],
+                    langPack_msgWhenFormNotExists[language][slct_menubar_value]["msg"]);
+            }
+            //#endregion
+        }
         //#endregion
     })
     btn_accept.click(async () => {
         await answerTheFormAsync("accepted");
-    });
+    })
     btn_reject.click(async () => {
         await answerTheFormAsync("rejected");
     })
@@ -318,11 +356,25 @@ $(function () {
             contentType: "application/json",
             dataType: "json",
             beforeSend: () => {
-                // reset div_articles
-                div_articles.empty();
-                div_articles.removeAttr("style");
+                new Promise(async resolve => {
+                    //#region reset div_articles
+                    div_articles.empty();
+                    div_articles.removeAttr("style");
+                    //#endregion
 
-                setVariablesForArticleAsync({ "div_articles": div_articles });
+                    new Promise(async resolve => {
+                        //#region reset div_articles
+                        div_articles.empty();
+                        div_articles.removeAttr("style");
+                        //#endregion
+
+                        await resetFormDetailsPageAsync(div_sendererInfos, div_answererInfos);
+                        await setVariablesForArticleAsync({ "div_articles": div_articles });
+                        resolve();
+                    })
+                    await setVariablesForArticleAsync({ "div_articles": div_articles });
+                    resolve();
+                })
             },
             success: (response, status, xhr) => {
                 new Promise(async (resolve) => {
@@ -437,12 +489,10 @@ $(function () {
                     //#endregion
 
                     //#region add pagination buttons
-                    // get pagination infos from header
                     await addPaginationButtonsAsync(
                         pagination_formInfos,
                         pagination_buttonCount,
                         ul_pagination);
-
                     await controlPaginationBackAndNextButtonsAsync(pagination_formInfos);
                     //#endregion
 
@@ -491,9 +541,12 @@ $(function () {
             success: (answererInfos) => {
                 new Promise(async resolve => {
                     //#region before start
-                    img_loading.attr("hidden", "");  // hide
-                    btn_accept.attr("disabled", "");  // hide
-                    btn_reject.attr("disabled", "");  // hide
+                    isLastFormAnswered = true;
+
+                    // disable the buttons
+                    img_loading.attr("hidden", "");
+                    btn_accept.attr("disabled", "");
+                    btn_reject.attr("disabled", "");
                     //#endregion
 
                     //#region when all articles is answered
@@ -511,21 +564,13 @@ $(function () {
                         tbl_answererInfos,
                         langPack_answererInfosTable[language],
                         answererInfos);
-
-                    //#region hide article when "waiting" forms is displaying
-                    if (slct_menubar_value == "waiting") {
-                        let answeredArticle = div_articles
-                            .find("#" + lastClickedArticleInfos.articleId);
-
-                        answeredArticle.attr("hidden", "");
-                    }
-                    //#endregion
-
+                    
                     resolve();
                 });
             },
             error: () => {
-                alert("An Error Occured, Please Try Again.");
+                // hide loading image
+                img_loading.attr("hidden", "");
             }
         })
     }

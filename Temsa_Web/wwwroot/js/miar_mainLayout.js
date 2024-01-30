@@ -9,28 +9,48 @@ $(function() {
     const sidebar_mainMenus = sidebar_mainMenus_byLanguages[language];
     const sidebar_allSubMenus = sidebar_subMenus_byLanguages[language];
     const ul_languages_id = "ul_languages";
+    const profileOption_profile_id = "a_profile";
+    const profileOption_logout_id = "a_logout";
     //#endregion
 
     //#region events
     $("#ul_userSettingsMenu").click(() => {
         let selectedMenu = $(":focus");
 
+        switch (selectedMenu.attr("id")) {
+            case profileOption_profile_id:
+                $.ajax({
+                    method: "GET",
+                    url: "/profileOption/profile",
+                    success: () => { }
+
+                })
+
+                break;      
+            case profileOption_logout_id:
+                //#region reset all local
+                localStorage.clear();
+                localStorage.setItem("language", language);  // add language again
+                //#endregion
+
+                //#region logout and redirect to login (ajax)
+                $.ajax({
+                    method: "GET",
+                    url: "/authentication/logout",
+                    contentType: "application/json",
+                    success: () => {
+                        // open login page
+                        location.replace(`/`);
+                    }
+                })
+                //#endregion
+
+                break;
+        }
+
         //#region when logout selected (ajax)
-        if (selectedMenu.attr("id") == "a_logout") {
-            //#region reset local
-            localStorage.clear();
-            localStorage.setItem("language", language);  // add language again
-            //#endregion
+        if (selectedMenu.attr("id") == profileOption_logout_id) {
             
-            // logout and redirect to login
-            $.ajax({
-                method: "GET",
-                url: "/authentication/logout",
-                success: () => {
-                    // open login page
-                    location.replace(`/`);
-                }
-            })
         }
         //#endregion
     })

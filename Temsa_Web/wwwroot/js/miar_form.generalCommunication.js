@@ -5,10 +5,14 @@
 
 import {
     addAnswererInfosToFormAsync, addSendererInfosToFormAsync, langPack_sendererInfosTable,
-    langPack_answererInfosTable
+    langPack_answererInfosTable,
+    resetPanelFooterAsync
 } from "./miar_form.js";
 
-import { addPaginationButtonsAsync, controlPaginationBackAndNextButtonsAsync, getPassedTimeInStringAsync, updateResultLabel } from "./miar_tools.js"
+import {
+    addPaginationButtonsAsync, controlPaginationBackAndNextButtonsAsync, updateResultLabel,
+    getPassedTimeInStringAsync
+} from "./miar_tools.js"
 
 
 $(function () {
@@ -108,6 +112,7 @@ $(function () {
     let article_IdsAndFormInfos = {};
     let slct_menubar_value = "unanswered";
     let lastClickedArticleInfos = {};
+    let isLastFormAnswered = false;
     //#endregion
 
     //#region events
@@ -124,32 +129,75 @@ $(function () {
     slct_menubar.change(async () => {
         slct_menubar_value = slct_menubar.val();
 
+        await resetPanelFooterAsync(
+            $("#" + lbl_entityQuantity_id),
+            pageSize,
+            langPack_entityQuantityMessage[language],
+            ul_pagination);
         await addFormArticlesAsync();
     })
     div_backButton.click(async () => {
-        await resetFormDetailsPageAsync();
+        await resetFormDetailsPageAsync(
+            div_sendererInfos,
+            div_answererInfos);
 
         //#region show articles
-        // hide article details
+        // hide form details
         div_panelTitle.css("padding-left", "");
         div_article_details.attr("hidden", "");
         div_backButton.attr("hidden", "");
 
-        // show articles
+        // show articles pages
         div_article_display.removeAttr("hidden");
         //#endregion
 
-        //#region when any unanswered article is exists
-        if (articleBuffer.totalArticleCount > 0)
-            await alignArticlesAsync()
+        //#region when any form on page is exists
+        if (articleBuffer.totalArticleCount > 0) {
+            //#region when last form is answered
+            if (isLastFormAnswered) {
+                isLastFormAnswered = false;  // reset
+
+                await addFormArticlesAsync();
+            }
+            //#endregion
+
+            //#region when last closed form isn't answered
+            else
+                await alignArticlesAsync();
+            //#endregion
+        }
         //#endregion
 
-        //#region when all articles is answered
-        else
-            await addMsgWithImgToDivArticlesAsync(
-                langPack_msgWhenFormNotExists[language][slct_menubar_value]["imgPath"],
-                langPack_msgWhenFormNotExists[language][slct_menubar_value]["imgAlt"],
-                langPack_msgWhenFormNotExists[language][slct_menubar_value]["msg"]);
+        //#region when all forms on page is answered
+        else {
+            //#region when previous page is exists
+            isLastFormAnswered = false;  // reset
+
+            if (pagination_formInfos.HasPrevious) {
+                pageNumber--;
+                await addFormArticlesAsync();
+            }
+            //#endregion
+
+            //#region when all form is answered
+            else {
+                //#region reset div_articles
+                div_articles.empty();
+                div_articles.removeAttr("style");
+                //#endregion
+
+                await resetPanelFooterAsync(
+                    $("#" + lbl_entityQuantity_id),
+                    pageSize,
+                    langPack_entityQuantityMessage[language],
+                    ul_pagination);
+                await addMsgWithImgToDivArticlesAsync(
+                    langPack_msgWhenFormNotExists[language][slct_menubar_value]["imgPath"],
+                    langPack_msgWhenFormNotExists[language][slct_menubar_value]["imgAlt"],
+                    langPack_msgWhenFormNotExists[language][slct_menubar_value]["msg"]);
+            }
+            //#endregion
+        }
         //#endregion
     })
     btn_complete.click(async () => {
@@ -171,6 +219,7 @@ $(function () {
                     //#region before start
                     img_loading.attr("hidden", "");
                     btn_complete.attr("disabled", "");
+                    isLastFormAnswered = true;
                     //#endregion
 
                     //#region when all articles is answered
@@ -189,16 +238,10 @@ $(function () {
                         langPack_answererInfosTable[language],
                         answererInfos);
 
-                    //#region hide article when "unanswered" form is displaying
-                    let answeredArticle = div_articles
-                        .find("#" + lastClickedArticleInfos.articleId);
-
-                    if (slct_menubar_value == "unanswered")
-                        answeredArticle.attr("hidden", "");
-                    //#endregion
-
                     //#region add checked image to article when "all" from is displaying"
-                    else if (slct_menubar_value == "all") {
+                    let answeredArticle = $("#" + lastClickedArticleInfos.articleId);
+
+                    if (slct_menubar_value == "all") {
                         // add checkedImage to article
                         answeredArticle
                             .find("img")
@@ -216,7 +259,8 @@ $(function () {
                 });
             },
             error: () => {
-                alert("An Error Occured, Please Try Again.");
+                // hide loading image
+                img_loading.attr("hidden", "");
             }
         })
 
@@ -281,7 +325,7 @@ $(function () {
 
         //#region add answerer infos if form answered
         if (slct_menubar_value == "answered"
-            || (slct_menubar_value == "all" && formInfos.isAnswered == true))  // when all form type is displaying
+            || (slct_menubar_value == "all" && lastClickedArticleInfos.isAnswered == true))  // when all form type is displaying
         {
             btn_complete.attr("disabled", "");
 

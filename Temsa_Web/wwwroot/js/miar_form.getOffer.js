@@ -2,12 +2,13 @@
     addArticlesAsync, alignArticlesToCenterAsync, setVariablesForArticleAsync, art_baseId,
     div_article_info_id, setHeightOfArticlesDivAsync, articleBuffer, div_article_image_id,
     style_img_width_IT, style_img_height_IT, style_div_info_height_IT,
-    addMsgWithImgToDivArticlesAsync
+    addMsgWithImgToDivArticlesAsync,
+    alignArticlesAsync
 } from "./miar_article.js";
 
 import {
     addAnswererInfosToFormAsync, addSendererInfosToFormAsync, langPack_answererInfosTable,
-    langPack_sendererInfosTable, resetFormDetailsPageAsync
+    langPack_sendererInfosTable, resetFormDetailsPageAsync, resetPanelFooterAsync
 } from "./miar_form.js";
 
 import {
@@ -19,7 +20,7 @@ import {
 $(function () {
     //#region variables
     const div_articles = $("#div_articles");
-    const pageSize = 10;
+    const pageSize = 3;
     const pagination_buttonCount = 5;
     const pagination_headerNames = {
         "waiting": "Form-Go-Waiting",
@@ -49,9 +50,9 @@ $(function () {
     const td_mainCategory = $("#td_mainCategory");
     const td_subCategory = $("#td_subCategory");
     const td_message = $("#td_message");
+    const lbl_passedTime_id = "lbl_passedTime";
     const lbl_entityQuantity_id = "small_entityQuantity";
     const lbl_entityQuantity_color = "#7A7A7A";
-    const lbl_passedTime_id = "lbl_passedTime";
     const style_passedTimeLabel_waiting = {
         "color": "red",
     };
@@ -140,46 +141,26 @@ $(function () {
     let article_IdsAndFormInfos = {};
     let slct_menubar_value = "waiting";
     let lastClickedArticleInfos = {};
-    let isWindowResizeInCriticalSection = false;
+    let isLastFormAnswered = false;
     //#endregion
 
     //#region events
-    $(window).resize(() => {
-        //#region realign articles to center
-        if (!isWindowResizeInCriticalSection
-            && articleBuffer.totalArticleCount > 0
-        ) {
-            isWindowResizeInCriticalSection = true;
-
-            // realign
-            setTimeout(async () => {
-                await alignArticlesToCenterAsync();
-                await setHeightOfArticlesDivAsync();
-
-                isWindowResizeInCriticalSection = false;
-            }, 500);
-        }
-        //#endregion
+    $(window).resize(async () => {
+        if (articleBuffer.totalArticleCount > 0)
+            await alignArticlesAsync();
     })
     $("#div_sidebarMenuButton").click(async () => {
-        //#region realign articles to center
-        if (!isWindowResizeInCriticalSection
-            && articleBuffer.totalArticleCount > 0
-        ) {
-            isWindowResizeInCriticalSection = true;
-
-            setTimeout(async () => {
-                await alignArticlesToCenterAsync()
-                await setHeightOfArticlesDivAsync();
-
-                isWindowResizeInCriticalSection = false;
-            }, 500);
-        }
-        //#endregion
+        if (articleBuffer.totalArticleCount > 0)
+            await alignArticlesAsync();
     })
-    slct_menubar.change(async (event) => {
+    slct_menubar.change(async () => {
         slct_menubar_value = slct_menubar.val();
 
+        await resetPanelFooterAsync(
+            $("#" + lbl_entityQuantity_id),
+            pageSize,
+            langPack_entityQuantityMessage[language],
+            ul_pagination);
         await addFormArticlesAsync();
     })
     div_backButton.click(async () => {
@@ -188,25 +169,62 @@ $(function () {
             div_answererInfos);
 
         //#region show articles
+        // hide form details
         div_panelTitle.css("padding-left", "");
-        div_article_details.attr("hidden", "");  // hide form details page
-        div_backButton.attr("hidden", "");  // remove back button
-        div_article_display.removeAttr("hidden");  // show articles page
+        div_article_details.attr("hidden", "");
+        div_backButton.attr("hidden", "");
+
+        // show articles pages
+        div_article_display.removeAttr("hidden");
         //#endregion
 
-        //#region when any unanswered article is exists
+        //#region when any form on page is exists
         if (articleBuffer.totalArticleCount > 0) {
-            await alignArticlesToCenterAsync();
-            await setHeightOfArticlesDivAsync();
+            //#region when last form is answered
+            if (isLastFormAnswered) {
+                isLastFormAnswered = false;  // reset
+
+                await addFormArticlesAsync();
+            }
+            //#endregion
+
+            //#region when last closed form isn't answered
+            else
+                await alignArticlesAsync();
+            //#endregion
         }
         //#endregion
 
-        //#region when all articles is answered
-        else
-            await addMsgWithImgToDivArticlesAsync(
-                langPack_msgWhenFormNotExists[language][slct_menubar_value]["imgPath"],
-                langPack_msgWhenFormNotExists[language][slct_menubar_value]["imgAlt"],
-                langPack_msgWhenFormNotExists[language][slct_menubar_value]["msg"]);
+        //#region when all forms on page is answered
+        else {
+            //#region when previous page is exists
+            isLastFormAnswered = false;  // reset
+
+            if (pagination_formInfos.HasPrevious) {
+                pageNumber--;
+                await addFormArticlesAsync();
+            }
+            //#endregion
+
+            //#region when all form is answered
+            else {
+                //#region reset div_articles
+                div_articles.empty();
+                div_articles.removeAttr("style");
+                //#endregion
+
+                await resetPanelFooterAsync(
+                    $("#" + lbl_entityQuantity_id),
+                    pageSize,
+                    langPack_entityQuantityMessage[language],
+                    ul_pagination);
+                await addMsgWithImgToDivArticlesAsync(
+                    langPack_msgWhenFormNotExists[language][slct_menubar_value]["imgPath"],
+                    langPack_msgWhenFormNotExists[language][slct_menubar_value]["imgAlt"],
+                    langPack_msgWhenFormNotExists[language][slct_menubar_value]["msg"]);
+            }
+            //#endregion
+        }
         //#endregion
     })
     btn_accept.click(async () => {
@@ -348,11 +366,20 @@ $(function () {
             contentType: "application/json",
             dataType: "json",
             beforeSend: () => {
-                // reset div_articles
-                div_articles.empty();
-                div_articles.removeAttr("style");
+                new Promise(async resolve => {
+                    //#region reset div_articles
+                    div_articles.empty();
+                    div_articles.removeAttr("style");
+                    //#endregion
 
-                setVariablesForArticleAsync({ "div_articles": div_articles });
+                    await resetPanelFooterAsync(
+                        $("#" + lbl_entityQuantity_id),
+                        pageSize,
+                        langPack_entityQuantityMessage[language],
+                        ul_pagination);
+                    await setVariablesForArticleAsync({ "div_articles": div_articles });
+                    resolve();
+                })
             },
             success: (response, status, xhr) => {
                 new Promise(async (resolve) => {
@@ -522,6 +549,9 @@ $(function () {
             success: (answererInfos) => {
                 new Promise(async resolve => {
                     //#region before start
+                    isLastFormAnswered = true;
+
+                    // disable the buttons
                     img_loading.attr("hidden", "");
                     btn_accept.attr("disabled", "");
                     btn_reject.attr("disabled", "");
@@ -544,20 +574,12 @@ $(function () {
                         answererInfos
                     );
 
-                    //#region hide article when "waiting" forms is displaying
-                    if (slct_menubar_value == "waiting") {
-                        let answeredArticle = div_articles
-                            .find("#" + lastClickedArticleInfos.articleId);
-
-                        answeredArticle.attr("hidden", "");
-                    }
-                    //#endregion
-
                     resolve();
                 })
             },
             error: () => {
-                alert("An Error Occured, Please Try Again.");
+                // hide loading image
+                img_loading.attr("hidden", "");
             }
         })
     }

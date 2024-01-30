@@ -7,7 +7,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Entities.ConfigModels.Contracts;
 using Presantation.Attributes;
-
+using System.Reflection.Metadata.Ecma335;
 
 namespace Temsa_Web.Controllers
 {
@@ -18,7 +18,7 @@ namespace Temsa_Web.Controllers
         public AuthenticationController(IConfigManager configs) =>   
             _configs = configs;
         
-        public async Task<IActionResult> Login()
+        public IActionResult Login()
         {
             return View("Login");
         }
@@ -53,9 +53,13 @@ namespace Temsa_Web.Controllers
 
 
 		[Authorization("Editor,Admin,Editör,Yönetici")]
-		public async Task Logout() =>
+		public async Task<IActionResult> Logout()
+		{
             await HttpContext.SignOutAsync(
                 CookieAuthenticationDefaults.AuthenticationScheme);
+
+        }
+            
 
         #region private
 
