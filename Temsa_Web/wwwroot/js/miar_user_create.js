@@ -1,4 +1,6 @@
-﻿import {
+﻿import { createInputFormAsync, div_form, populateInputFormAsync } from "./miar_module_inputForm.js";
+
+import {
     populateElementByAjaxOrLocalAsync, populateSelectAsync, updateResultLabel
 } from "./miar_tools.js";
 
@@ -6,8 +8,8 @@
 $(function () {
     //#region variables
     const resultLabel_id = "#p_resultLabel";
-    const div_form = $("#div_form");
     const img_loading = $("#img_loading");
+    const slct_roles_id = "slct_roles";
     //#endregion
 
     //#region events
@@ -47,11 +49,11 @@ $(function () {
                     resultLabel_successColor,
                     "30px",
                     img_loading);
-                 //#endregion
+                //#endregion
             },
             error: (response) => {
                 //#region get errorMessage
-                let errorMessage= JSON
+                let errorMessage = JSON
                     .parse(response.responseText)
                     .errorMessage
                 //#endregion
@@ -76,52 +78,54 @@ $(function () {
             formTitleByLanguages[language]);
         //#endregion
 
-        //#region add labels and <input>'s or <select>'s
-        for (let formLabelName in formLabelNamesAndFeaturesByLanguages[language]) {
-            //#region add labels and inputs without role
-            let formLabel = formLabelNamesAndFeaturesByLanguages[language][formLabelName];
+        await createInputFormAsync($("form"), 7);
 
-            if (formLabelName != "roles")
-                div_form.append(
-                    `<div class="form-group">
-                    <label class="col-sm-3 control-label">${formLabel.label}</label>
-                    <div class="col-sm-6">
-                        <input id="inpt_${formLabelName}" type="${formLabel.type}" class="form-control" required>
-                            <span class="help-block">${formLabel.helpMessage}</span>
-                    </div>
-                </div>`
-                );
-            //#endregion
+        //#region populate input form
+        let formLabelNamesAndFeatures = formLabelNamesAndFeaturesByLanguages[language];
 
-            //#region add role label and <select>
-            else {
-                //#region add role <select>
-                let slct_roleName_id = `slct_${formLabelName}`;
+        await populateInputFormAsync(1,
+            formLabelNamesAndFeatures.firstName.label,
+            `<input id="inpt_firstName" type="${formLabelNamesAndFeatures.firstName.type}" class="form-control" required>
+             <span class="help-block">${formLabelNamesAndFeatures.firstName.helpMessage}</span>`
+        ); // firstName
+        await populateInputFormAsync(2,
+            formLabelNamesAndFeatures.lastName.label,
+            `<input id="inpt_lastName" type="${formLabelNamesAndFeatures.lastName.type}" class="form-control" required>
+             <span class="help-block">${formLabelNamesAndFeatures.lastName.helpMessage}</span>`
+        ); // lastName
+        await populateInputFormAsync(3,
+            formLabelNamesAndFeatures.telNo.label,
+            `<input id="inpt_telNo" type="${formLabelNamesAndFeatures.telNo.type}" class="form-control" required>
+             <span class="help-block">${formLabelNamesAndFeatures.telNo.helpMessage}</span>`
+        ); // telNo
+        await populateInputFormAsync(4,
+            formLabelNamesAndFeatures.email.label,
+            `<input id="inpt_email" type="${formLabelNamesAndFeatures.email.type}" class="form-control" required>
+             <span class="help-block">${formLabelNamesAndFeatures.email.helpMessage}</span>`
+        ); // email
+        await populateInputFormAsync(5,
+            formLabelNamesAndFeatures.companyName.label,
+            `<input id="inpt_companyName" type="${formLabelNamesAndFeatures.companyName.type}" class="form-control" required>
+             <span class="help-block">${formLabelNamesAndFeatures.companyName.helpMessage}</span>`
+        ); // companyName
+        await populateInputFormAsync(6,
+            formLabelNamesAndFeatures.roles.label,
+            `<select id="${slct_roles_id}" class="form-control m-bot15">             
+            </select>`); // roles
+        await populateInputFormAsync(7,
+            formLabelNamesAndFeatures.password.label,
+            `<input id="inpt_password" type="${formLabelNamesAndFeatures.password.type}" class="form-control" required>
+             <span class="help-block">${formLabelNamesAndFeatures.password.helpMessage}</span>`); // password
 
-                $("#div_form").append(
-                    `<div class="form-group">
-                        <label class="col-sm-3 control-label">${formLabel.label}</label>
-                        <div class="col-sm-6">
-                            <select id="${slct_roleName_id}" class="form-control m-bot15">             
-                                </select>
-                        </div>
-                    </div>`
-                );
-                //#endregion
-
-                //#region populate role <select>
-                await populateElementByAjaxOrLocalAsync(
-                    localKeys_allRoles,
-                    `/user/display/role?language=${language}`,
-                    (data) => {
-                        populateSelectAsync(
-                            $("#slct_roles"),
-                            data);
-                    });
-                //#endregion
-            }
-            //#endregion
-        }
+        // populate roles <select>
+        await populateElementByAjaxOrLocalAsync(
+            localKeys_allRoles,
+            `/user/display/role?language=${language}`,
+            (data) => {
+                populateSelectAsync(
+                    $("#" + slct_roles_id),
+                    data);
+            });
         //#endregion
 
         //#region add save button

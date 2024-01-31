@@ -897,7 +897,16 @@ $(function () {
                 break;
         }
     }
+
+    async function saveClaimInfosToLocalAsync() {
+        // if not exists on local
+        if (localStorage.getItem(localKeys_claimInfos) == undefined)
+            localStorage.setItem(
+                localKeys_claimInfos,
+                JSON.stringify(claimInfos));
+    }
     //#endregion
 
+    saveClaimInfosToLocalAsync();  // temporary!!!!! (until homepage ready)
     populateHtmlAsync();
 })

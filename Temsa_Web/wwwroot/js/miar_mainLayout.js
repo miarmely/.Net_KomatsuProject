@@ -2,57 +2,32 @@
 import { updateDefaultFlagAndLanguage, populateLanguageDropdown, clicked_languageDropdown } from "./miar_header.js";
 
 
-$(function() {
+$(function () {
     //#region variables
     const ul_sidebar_mainMenus = $("#nav-accordion");
     const ul_languages = $("#ul_languages");
+    const ul_profileOptions = $("#ul_profileOptions");
     const sidebar_mainMenus = sidebar_mainMenus_byLanguages[language];
     const sidebar_allSubMenus = sidebar_subMenus_byLanguages[language];
     const ul_languages_id = "ul_languages";
-    const profileOption_profile_id = "a_profile";
     const profileOption_logout_id = "a_logout";
     //#endregion
 
     //#region events
-    $("#ul_userSettingsMenu").click(() => {
+    ul_profileOptions.click(() => {
         let selectedMenu = $(":focus");
 
         switch (selectedMenu.attr("id")) {
-            case profileOption_profile_id:
-                $.ajax({
-                    method: "GET",
-                    url: "/profileOption/profile",
-                    success: () => { }
-
-                })
-
-                break;      
+            //#region when clicked to "logout"
             case profileOption_logout_id:
                 //#region reset all local
                 localStorage.clear();
                 localStorage.setItem("language", language);  // add language again
                 //#endregion
 
-                //#region logout and redirect to login (ajax)
-                $.ajax({
-                    method: "GET",
-                    url: "/authentication/logout",
-                    contentType: "application/json",
-                    success: () => {
-                        // open login page
-                        location.replace(`/`);
-                    }
-                })
-                //#endregion
-
                 break;
+            //#endregion
         }
-
-        //#region when logout selected (ajax)
-        if (selectedMenu.attr("id") == profileOption_logout_id) {
-            
-        }
-        //#endregion
     })
     $(".sidebar-menu").click(() => {
         //#region control whether click to main menu that have sub menus
@@ -84,20 +59,17 @@ $(function() {
     //#endregion
 
     //#region functions
-    async function populateUserSettingsMenuAsync() {
+    async function populateProfileOptionsAsync() {
         // #region add menus of user settings
-        let userSettingsMenu = userSettingsMenuByLanguages[language];
+        let profileOptions = profileOptionsByLanguages[language];
 
-        for (let menuName in userSettingsMenu) {
-            let iconClass = userSettingsMenu[menuName]["icon"];
-            let label = userSettingsMenu[menuName]["label"];
-
-            $("#ul_userSettingsMenu").append(
+        for (let profileOption in profileOptions) {
+            let optionInfos = profileOptions[profileOption];
+            let a_option_id = "a_" + profileOption;
+            
+            ul_profileOptions.append(
                 `<li>
-				    <a id="a_${menuName}" href="#">
-					    <i class="${iconClass}"></i>
-					    ${label}
-				    </a>
+				    <a id="${a_option_id}" href="${optionInfos["href"]}"> <i class="${optionInfos["icon"]}"></i>${optionInfos["label"]}</a>
 			    </li>`
             );
         }
@@ -205,7 +177,7 @@ $(function() {
 
     async function populateHtmlAsync() {
         await populateElementsOnHeaderAsync();
-        await populateUserSettingsMenuAsync();
+        await populateProfileOptionsAsync();
         await populateSideBarMenuAsync();
         await populateFooterAsync();
     }
@@ -213,6 +185,3 @@ $(function() {
 
     populateHtmlAsync();
 });
-
-
-

@@ -1,4 +1,8 @@
-﻿@model IServiceManager;
+﻿@model IEnumerable<Claim>;
+
+@{
+    Layout = "_Layout";
+}
 
 
 <div class="form-w3layouts">
@@ -22,95 +26,6 @@
     </div>
 </div>
 
-<script type="module" src="~/js/miar_user_create.js"></script>
 
-<script>
-    let formTitleByLanguages = {
-        "TR": "PROFİLE",
-        "EN": "PROFILE"
-    }
-    let formLabelNamesAndFeaturesByLanguages = {
-        "TR": {
-            "firstName": {
-                "label": "Ad",
-                "type": "text",
-                "helpMessage": ""
-            },
-            "lastName": {
-                "label": "Soyad",
-                "type": "text",
-                "helpMessage": ""
-            },
-            "telNo": {
-                "label": "Telefon",
-                "type": "phone",
-                "helpMessage": "* Başında sıfır olmadan 10 haneli olarak giriniz."
-            },
-            "email": {
-                "label": "Email",
-                "type": "email",
-                "helpMessage": ""
-            },
-            "companyName": {
-                "label": "Şirket",
-                "type": "text",
-                "helpMessage": ""
-            },
-            "roles": {
-                "label": "Rol",
-                "type": null,
-                "helpMessage": ""
-            },
-            "password": {
-                "label": "Şifre",
-                "type": "text",
-                "helpMessage": "* 6 ile 16 karakter arasında giriniz."
-            }
-        },
-        "EN": {
-            "firstName": {
-                "label": "Firstname",
-                "type": "text",
-                "helpMessage": ""
-            },
-            "lastName": {
-                "label": "Lastname",
-                "type": "text",
-                "helpMessage": ""
-            },
-            "telNo": {
-                "label": "Telephone",
-                "type": "phone",
-                "helpMessage": "* enter as 10 digits without zero at head"
-            },
-            "email": {
-                "label": "Email",
-                "type": "email",
-                "helpMessage": ""
-            },
-            "companyName": {
-                "label": "Company",
-                "type": "text",
-                "helpMessage": ""
-            },
-            "roles": {
-                "label": "Role",
-                "type": null,
-                "helpMessage": ""
-            },
-            "password": {
-                "label": "Password",
-                "type": "text",
-                "helpMessage": "* enter between 6 and 16 chars"
-            }
-        }
-    }
-    let saveButtonNameByLanguages = {
-        "TR": "Kaydet",
-        "EN": "Save"
-    }
-    let resultLabel_successMessageByLanguages = {
-        "TR": "başarıyla kaydedildi",
-        "EN": "save successfull"
-    }
-</script>
+<script></script>
+<script type="module" src="~/js/miar_profileOption_profile.js"></script>

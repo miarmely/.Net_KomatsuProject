@@ -60,6 +60,9 @@ namespace Services.Concretes
 				new (ClaimTypes.NameIdentifier, userView.UserId.ToString()),
 				new (ClaimTypes.Name, userView.FirstName),
 				new (ClaimTypes.Surname, userView.LastName),
+				new (ClaimTypes.MobilePhone, userView.TelNo),
+				new (ClaimTypes.Email, userView.Email),
+				new ("CompanyName", userView.CompanyName),
 			};
 
 			#region add roles of user to claims
@@ -273,17 +276,17 @@ namespace Services.Concretes
 			var parameters = new DynamicParameters(new
 			{
 				TelNoForValidation = telNo,
-				FirstName = userDto.FirstName,
-				LastName = userDto.LastName,
-				CompanyName = userDto.CompanyName,
-				TelNo = userDto.TelNo,
-				Email = userDto.Email,
+				userDto.FirstName,
+				userDto.LastName,
+				userDto.CompanyName,
+				userDto.TelNo,
+				userDto.Email,
 				#region Password
 				Password = userDto.Password == null ?
 					null
 					: await ComputeMd5Async(userDto.Password),
 				#endregion
-				RoleNames = userDto.RoleNames
+				userDto.RoleNames
 			});
 
 			parameters.Add("Language", language, DbType.String);

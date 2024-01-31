@@ -33,7 +33,7 @@ $(function () {
             }),
             dataType: "json",
             success: (response) => {
-                //#region add token and language to local
+                //#region save token and language to local
                 // reset all inputs
                 $("form")[0].reset();
 

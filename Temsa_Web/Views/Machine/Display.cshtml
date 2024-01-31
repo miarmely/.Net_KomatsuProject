@@ -1,4 +1,7 @@
-﻿<link rel="stylesheet"  href="~/css/miar_article.css"/>
+﻿@model IEnumerable<Claim>
+
+
+<link rel="stylesheet"  href="~/css/miar_article.css"/>
 <link rel="stylesheet" href="~/css/miar_machine_display.css"/>
 
 
@@ -156,6 +159,15 @@
             "pdfSizeOverflow": "pdf size can be max 20mb"
         }
     }
+    const claimInfos = {
+        "firstName": "@Html.Raw(Model.FirstOrDefault(c => c.Type.Equals(ClaimTypes.Name)).Value)",
+        "lastName": "@Html.Raw(Model.FirstOrDefault(c => c.Type.Equals(ClaimTypes.Surname)).Value)",
+        "telNo": "@Html.Raw(Model.FirstOrDefault(c => c.Type.Equals(ClaimTypes.MobilePhone)).Value)",
+        "email": "@Html.Raw(Model.FirstOrDefault(c => c.Type.Equals(ClaimTypes.Email)).Value)",
+        "companyName": "@Html.Raw(Model.FirstOrDefault(c => c.Type.Equals("CompanyName")).Value)",
+        "roleNames": "@Html.Raw(Model.FirstOrDefault(c => c.Type.Equals(ClaimTypes.Role)).Value)"
+        "claimsLanguage": language
+    };
     let article_idsAndMachineInfos = {};  // id == article Id
     let pageMode = "display";
 </script>

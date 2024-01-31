@@ -7,7 +7,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Entities.ConfigModels.Contracts;
 using Presantation.Attributes;
-using System.Reflection.Metadata.Ecma335;
+
 
 namespace Temsa_Web.Controllers
 {
@@ -58,9 +58,10 @@ namespace Temsa_Web.Controllers
             await HttpContext.SignOutAsync(
                 CookieAuthenticationDefaults.AuthenticationScheme);
 
+			return RedirectToAction("Login");
         }
             
-
+            
         #region private
 
         private async Task<bool> IsTokenInvalidAsync(string token)

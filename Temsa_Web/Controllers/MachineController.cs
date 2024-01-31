@@ -20,7 +20,7 @@ namespace Temsa_Web.Controllers
 
 		public IActionResult Display()
 		{
-			return View("Display", _manager);
+			return View("Display", HttpContext.User.Claims);
 		}
 	}
 }

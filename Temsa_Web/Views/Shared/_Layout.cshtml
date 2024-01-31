@@ -64,7 +64,7 @@
 							</ul>
 						</li>
 						<!-- language dropdown -->
-						<!-- user settings dropdown start -->
+						<!-- profile options dropdown start -->
 						<li class="dropdown">
 							<a data-toggle="dropdown" class="dropdown-toggle" href="#">
 								<img alt="" src="~/images/user.png">
@@ -73,10 +73,9 @@
 								</span>
 								<b class="caret"></b>
 							</a>
-							<ul id="ul_userSettingsMenu" class="dropdown-menu extended logout">
-							</ul>
+							<ul id="ul_profileOptions" class="dropdown-menu extended logout"></ul>
 						</li>
-						<!-- user settings dropdown start -->
+						<!-- profile options dropdown start -->
 					</ul>
 				</div>
 			</header>
@@ -123,32 +122,36 @@
 		<script src="~/js/jquery.scrollTo.js"></script>
 
 		<script>
-			let language = localStorage.getItem("language"); // language was add at "login.cshtml".
 			const baseApiUrl = "https://localhost:7091/api/services";
-			const jwtToken = "Bearer " + localStorage.getItem("token");
+			const token = localStorage.getItem("token");
+			const jwtToken = "Bearer " + token;
 			const searchBarPlaceHolderByLanguages = {
 				"TR": "Ara",
 				"EN": "Search"
 			};
-			const userSettingsMenuByLanguages = {
+			const profileOptionsByLanguages = {
 				"TR": {
 					"profile": {
 						"icon": "fa fa-user",
-						"label": " Profil"
+						"label": " Profil",
+						"href": `/profileOption/profile`
 					},
 					"logout": {
 						"icon": "fa fa-close",
-						"label": " Çıkıp Yap"
+						"label": " Çıkıp Yap",
+						"href": "/authentication/logout"
 					},
 				},
 				"EN": {
 					"profile": {
 						"icon": "fa fa-user",
-						"label": " Profile"
+						"label": " Profile",
+						"href": `/profileOption/profile`
 					},
 					"logout": {
 						"icon": "fa fa-close",
-						"label": " Logout"
+						"label": " Logout",
+						"href": "/authentication/logout"
 					},
 				}
 			}
@@ -283,6 +286,7 @@
 			const localKeys_allLanguages = "allLanguages";
 			const localKeys_sliderNoAndPaths = "sliderNoAndPaths"
 			const localKeys_handStatuses = "allHandStatuses";
+			const localKeys_claimInfos = "claimInfos";
 			const descriptions_unsavedColor = "red";
 			const descriptions_savedColor = "lightgreen";
 			const img_displayingFlag_id = "img_displayingFlag";
@@ -308,9 +312,10 @@
 				},
 				"EN": {
 					"invalidFileType": "invalid file type",
-					"nullArguments": "any changes wasn't do"
+					"nullArguments": "no changes were made"
 				}
 			}
+			let language = localStorage.getItem("language"); // language was add at "login.cshtml".
 		</script>
 	</body>
 </html>
