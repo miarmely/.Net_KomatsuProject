@@ -18,16 +18,20 @@
         <div class="panel-body">
             <div id="div_article_update" class="div_articleDetails" hidden>
                 @*machine image and video*@
-                <div style="text-align:center; float:none">
+                <div style="text-align:center">
                     <video id="vid_machine" controls hidden>
                         <source id="src_machine"/>
                     </video>
-                        
-                    @*message label*@
-                    <div style="margin-bottom:30px">
-                        <spn id="spn_fileStatusLabel"></spn>
-                    </div>
                 </div>
+                <div style="text-align:center">
+                    <button id="btn_showImage" type="button" class="btn btn_imageAndVideo"></button>
+                    <button id="btn_showVideo" type="button" class="btn btn_imageAndVideo"></button>
+                </div>
+                    @*message label*@
+@*                    <div style="margin-bottom:30px">
+                        <spn id="spn_fileStatusLabel"></spn>
+                    </div>*@
+                
 
                 @*form*@
                 <form>
@@ -89,6 +93,15 @@
 
 
 <script>
+    const claimInfos = {
+        "firstName": "@Html.Raw(Model.FirstOrDefault(c => c.Type.Equals(ClaimTypes.Name)).Value)",
+        "lastName": "@Html.Raw(Model.FirstOrDefault(c => c.Type.Equals(ClaimTypes.Surname)).Value)",
+        "telNo": "@Html.Raw(Model.FirstOrDefault(c => c.Type.Equals(ClaimTypes.MobilePhone)).Value)",
+        "email": "@Html.Raw(Model.FirstOrDefault(c => c.Type.Equals(ClaimTypes.Email)).Value)",
+        "companyName": "@Html.Raw(Model.FirstOrDefault(c => c.Type.Equals("CompanyName")).Value)",
+        "roleNames": "@Html.Raw(Model.FirstOrDefault(c => c.Type.Equals(ClaimTypes.Role)).Value)",
+        "roleLanguage": ""  // it will be add in "machine_display.js"
+    };
     const panelTitleByLanguages = {
         "TR": "KAYITLI MAKİNELER",
         "EN": "REGISTERED MACHINES"
@@ -159,15 +172,16 @@
             "pdfSizeOverflow": "pdf size can be max 20mb"
         }
     }
-    const claimInfos = {
-        "firstName": "@Html.Raw(Model.FirstOrDefault(c => c.Type.Equals(ClaimTypes.Name)).Value)",
-        "lastName": "@Html.Raw(Model.FirstOrDefault(c => c.Type.Equals(ClaimTypes.Surname)).Value)",
-        "telNo": "@Html.Raw(Model.FirstOrDefault(c => c.Type.Equals(ClaimTypes.MobilePhone)).Value)",
-        "email": "@Html.Raw(Model.FirstOrDefault(c => c.Type.Equals(ClaimTypes.Email)).Value)",
-        "companyName": "@Html.Raw(Model.FirstOrDefault(c => c.Type.Equals("CompanyName")).Value)",
-        "roleNames": "@Html.Raw(Model.FirstOrDefault(c => c.Type.Equals(ClaimTypes.Role)).Value)",
-        "roleLanguage": ""  // it will be add in "machine_display.js"
-    };
+    const langPack_imageAndVideoButtons = {
+        "TR": {
+            "imageButton": "Resim",
+            "videoButton": "Video"
+        },
+        "EN": {
+            "imageButton": "Image",
+            "videoButton": "Video"
+        }
+    }
     let article_idsAndMachineInfos = {};  // id == article Id
     let pageMode = "display";
 </script>

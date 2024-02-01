@@ -21,6 +21,7 @@ import {
     path_videoFolderAfterWwwroot, selectedImageInfos, selectedPdfInfos, resultLabel_id,
     img_loading, selectedVideoInfos, path_pdfFolderAfterWwwroot, removePosterAttrAsync,
     removeVideoAttrAsync,
+    btn_chooseImage_id,
 } from "./miar_machine_inputForm.js";
 
 import {
@@ -48,7 +49,13 @@ $(function () {
     const descriptions_charQuantityToBeDisplayOnArticle = 200;
     const btn_back = $("#btn_back");
     const btn_menubar_apply = $("#btn_menubar_apply")
+    const btn_showImage = $("#btn_showImage");
+    const btn_showVideo = $("#btn_showVideo");
     const slct_menubar = $("#slct_menubar");
+    const imageAndVideoButtons_checkedCss = {
+        "color": "lightGreen",
+        "font-weight": "bolder"
+    };
     let paginationInfos = {};
     let machineCountOnPage;
     let idOfLastViewedArticle = null;
@@ -275,6 +282,16 @@ $(function () {
         }
         //#endregion 
     })
+    btn_showImage.click(() => {
+        // add css to show button
+        btn_showImage.css(imageAndVideoButtons_checkedCss);
+        btn_showVideo.removeAttr("style");  // reset
+    })
+    btn_showVideo.click(() => {
+        // add css to video button
+        btn_showVideo.css(imageAndVideoButtons_checkedCss);
+        btn_showImage.removeAttr("style");  // reset
+    })
     spn_eventManager.on("click_articleVideoDiv", async (_, event) => {
         //#region when page mode is "delete"
         if (pageMode == "delete")
@@ -388,6 +405,14 @@ $(function () {
         );
         //#endregion
 
+        //#region add name of image and video buttons
+        btn_showImage.append(
+            langPack_imageAndVideoButtons[language]["imageButton"]);
+
+        btn_showVideo.append(
+            langPack_imageAndVideoButtons[language]["videoButton"]);
+        //#endregion
+
         await addMachineArticlesAsync(pageNumber, pageSize, true);
     }
 
@@ -428,13 +453,10 @@ $(function () {
         });
     }
 
-    async function updateArticleAsync(
-        articleId,
-        data
-    ) {
+    async function updateArticleAsync(articleId, data) {
+        //#region when image is changed
         let article = $("#" + articleId);
 
-        //#region when image is changed
         if (data.imageName != null)
             article
                 .find("#" + div_article_video_id + " video")
@@ -908,7 +930,7 @@ $(function () {
             localStorage.setItem(
                 localKeys_claimInfos,
                 JSON.stringify(claimInfos));
-        }            
+        }
     }
     //#endregion
 
