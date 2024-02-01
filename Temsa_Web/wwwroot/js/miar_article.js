@@ -26,6 +26,8 @@ export let articleBuffer = {
         "paddingR": 0,
         "paddingL": 0,
         "border": 0,
+        "borderColor": "",
+        "boxShadow": "",
         "bgColorForDelete": "",
     }  // firstly articleType should be set
 }
@@ -260,7 +262,9 @@ export async function addArticlesAsync(autoAlign=true) {
         "padding-bottom": articleBuffer.articleStyle.paddingB,
         "padding-right": articleBuffer.articleStyle.paddingR,
         "padding-left": articleBuffer.articleStyle.paddingL,
-        "border-width": articleBuffer.articleStyle.border
+        "border-width": articleBuffer.articleStyle.border,
+        "border-color": articleBuffer.articleStyle.borderColor,
+        "box-shadow": articleBuffer.articleStyle.boxShadow
     });
     //#endregion
 
@@ -513,7 +517,7 @@ function setStylesOfArticleElements() {
             style_vid_width_VT = style_div_video_width_VT;
             style_vid_height_VT = style_div_video_height_VT;
 
-            style_img_play_width_VT = style_vid_width_VT / 2.5;
+            style_img_play_width_VT = style_vid_width_VT / 2.7;
             style_img_play_height_VT = style_vid_height_VT / 2.2;
             style_img_play_marginT_VT = (style_vid_height_VT - style_img_play_height_VT) / 2;
             style_img_play_marginB_VT = style_img_play_marginT_VT;

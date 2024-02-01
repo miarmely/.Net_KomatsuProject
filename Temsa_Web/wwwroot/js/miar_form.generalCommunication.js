@@ -18,7 +18,7 @@ import {
 $(function () {
     //#region variables
     const div_articles = $("#div_articles");
-    const pageSize = 3;
+    const pageSize = 10;
     const pagination_buttonCount = 5;
     const pagination_headerNames = {
         "unanswered": "Form-Gc-Unanswered",

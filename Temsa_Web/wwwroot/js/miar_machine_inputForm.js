@@ -4,7 +4,7 @@
     removeObjectUrlFromElementAsync, getFileTypeFromFileName, isFileSizeValidAsync
 } from "./miar_tools.js"
 
-import { ul_descriptions_id, uploadDescriptionsEvents } from "./miar_descriptions.js"
+import { changeDescriptionsButtonColorAsync, ul_descriptions_id, uploadDescriptionsEvents } from "./miar_descriptions.js"
 
 //#region variables
 export const resultLabel_id = "#p_resultLabel";
@@ -611,7 +611,7 @@ export async function addDefaultValuesToFormAsync(machineInfos) {
     //#region upload video
     await setMachineVideoSizeAsync();
 
-    //#region upload video attributes
+    //#region add poster, src and type attributes
     vid_machine.attr(
         "poster",
         "/" + path_imageFolderAfterWwwroot + "/" + machineInfos["imageName"],);
@@ -644,6 +644,10 @@ export async function addDefaultValuesToFormAsync(machineInfos) {
     $("#" + inpt_choosePdf_id).val(machineInfos["pdfName"]);
     $("#" + txt_descriptions_id).val(machineInfos.descriptions[language]);
     //#endregion
+
+    await changeDescriptionsButtonColorAsync(
+        $("#" + btn_descriptions_id),
+        descriptions_savedColor);  // change descriptions color as "saved" color
 }
 
 export async function removePosterAttrAsync() {

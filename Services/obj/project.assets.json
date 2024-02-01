@@ -964,6 +964,19 @@
           "bin/placeholder/Entities.dll": {}
         }
       },
+      "MicroServices/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v7.0",
+        "dependencies": {
+          "Microsoft.AspNetCore.Http.Abstractions": "2.2.0"
+        },
+        "compile": {
+          "bin/placeholder/MicroServices.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/MicroServices.dll": {}
+        }
+      },
       "Repositories/1.0.0": {
         "type": "project",
         "framework": ".NETCoreApp,Version=v7.0",
@@ -2611,6 +2624,11 @@
       "path": "../Entities/Entities.csproj",
       "msbuildProject": "../Entities/Entities.csproj"
     },
+    "MicroServices/1.0.0": {
+      "type": "project",
+      "path": "../MicroServices/MicroServices.csproj",
+      "msbuildProject": "../MicroServices/MicroServices.csproj"
+    },
     "Repositories/1.0.0": {
       "type": "project",
       "path": "../Repositories/Repositories.csproj",
@@ -2621,6 +2639,7 @@
     "net7.0": [
       "AutoMapper.Extensions.Microsoft.DependencyInjection >= 12.0.1",
       "MailKit >= 4.1.0",
+      "MicroServices >= 1.0.0",
       "Microsoft.AspNetCore.Authentication.JwtBearer >= 7.0.13",
       "Repositories >= 1.0.0",
       "System.IdentityModel.Tokens.Jwt >= 6.32.2"
@@ -2653,6 +2672,9 @@
         "net7.0": {
           "targetAlias": "net7.0",
           "projectReferences": {
+            "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\MicroServices\\MicroServices.csproj": {
+              "projectPath": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\MicroServices\\MicroServices.csproj"
+            },
             "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Repositories\\Repositories.csproj": {
               "projectPath": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Repositories\\Repositories.csproj"
             }

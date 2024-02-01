@@ -964,6 +964,19 @@
           "bin/placeholder/Entities.dll": {}
         }
       },
+      "MicroServices/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v7.0",
+        "dependencies": {
+          "Microsoft.AspNetCore.Http.Abstractions": "2.2.0"
+        },
+        "compile": {
+          "bin/placeholder/MicroServices.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/MicroServices.dll": {}
+        }
+      },
       "Repositories/1.0.0": {
         "type": "project",
         "framework": ".NETCoreApp,Version=v7.0",
@@ -987,6 +1000,7 @@
         "dependencies": {
           "AutoMapper.Extensions.Microsoft.DependencyInjection": "12.0.1",
           "MailKit": "4.1.0",
+          "MicroServices": "1.0.0",
           "Microsoft.AspNetCore.Authentication.JwtBearer": "7.0.13",
           "Repositories": "1.0.0",
           "System.IdentityModel.Tokens.Jwt": "6.32.2"
@@ -2627,6 +2641,11 @@
       "type": "project",
       "path": "../Entities/Entities.csproj",
       "msbuildProject": "../Entities/Entities.csproj"
+    },
+    "MicroServices/1.0.0": {
+      "type": "project",
+      "path": "../MicroServices/MicroServices.csproj",
+      "msbuildProject": "../MicroServices/MicroServices.csproj"
     },
     "Repositories/1.0.0": {
       "type": "project",

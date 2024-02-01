@@ -6,6 +6,7 @@ using Entities.DtoModels.UserDtos;
 using Entities.Exceptions;
 using Entities.QueryParameters;
 using Entities.ViewModels;
+using MicroServices;
 using Microsoft.AspNetCore.Http;
 using Microsoft.IdentityModel.Tokens;
 using Repositories;
@@ -14,8 +15,8 @@ using Services.Contracts;
 using System.Collections.ObjectModel;
 using System.Data;
 using System.IdentityModel.Tokens.Jwt;
+using System.Runtime.InteropServices;
 using System.Security.Claims;
-using System.Security.Cryptography;
 using System.Text;
 
 
@@ -26,31 +27,18 @@ namespace Services.Concretes
 		private readonly IRepositoryManager _manager;
 		private readonly IConfigManager _configs;
 		private readonly IMapper _mapper;
+		private readonly IMicroService _micro;
 
 		public UserService(IRepositoryManager manager,
 			IConfigManager config,
-			IMapper mapper)
+			IMapper mapper,
+			IMicroService microServices)
 		{
 			_manager = manager;
 			_configs = config;
 			_mapper = mapper;
+			_micro = microServices;
 		}
-
-		private async Task<string> ComputeMd5Async(string input) =>
-			await Task.Run(() =>
-			{
-				using (var md5 = MD5.Create())
-				{
-					#region do hash to input
-					var hashInBytes = md5.ComputeHash(Encoding.UTF8
-						.GetBytes(input));
-
-					var hashAsString = Convert.ToBase64String(hashInBytes);
-					#endregion
-
-					return hashAsString;
-				}
-			});
 
 		private async Task<string> GenerateTokenForUserAsync(UserView userView)
 		{
@@ -67,9 +55,8 @@ namespace Services.Concretes
 
 			#region add roles of user to claims
 			foreach (var roleName in userView.RoleNames)
-				claims.Add(new Claim(
-					ClaimTypes.Role,
-					roleName));
+				claims.Add(
+					new Claim(ClaimTypes.Role, roleName));
 			#endregion
 
 			#endregion
@@ -102,7 +89,7 @@ namespace Services.Concretes
 		{
 			#region set paramaters
 			var parameters = new DynamicParameters();
-			var hashedPassword = await ComputeMd5Async(userDto.Password);
+			var hashedPassword = await _micro.ComputeMd5Async(userDto.Password);
 
 			parameters.Add("Language", language, DbType.String);
 			parameters.Add("TelNo", userDto.TelNo, DbType.String);
@@ -193,7 +180,7 @@ namespace Services.Concretes
 				CompanyName = userDto.CompanyName,
 				TelNo = userDto.TelNo,
 				Email = userDto.Email,
-				Password = await ComputeMd5Async(userDto.Password),
+				Password = await _micro.ComputeMd5Async(userDto.Password),
 				RoleNames = string.Join(",", userDto.RoleNames) // list to string 
 			});
 
@@ -219,7 +206,18 @@ namespace Services.Concretes
 			#region set parameters
 			var parameters = new DynamicParameters(queryParams);
 
-			parameters.Add("TotalCount", 0, DbType.Int32, ParameterDirection.Output);
+			parameters.Add(
+				"AccountId",
+				await _micro.GetUserIdFromClaimsAsync(
+					response.HttpContext,
+					ClaimTypes.NameIdentifier),
+				DbType.Guid);
+
+			parameters.Add(
+				"TotalCount", 
+				0, 
+				DbType.Int32, 
+				ParameterDirection.Output);
 			#endregion
 
 			#region get userViews
@@ -284,7 +282,7 @@ namespace Services.Concretes
 				#region Password
 				Password = userDto.Password == null ?
 					null
-					: await ComputeMd5Async(userDto.Password),
+					: await _micro.ComputeMd5Async(userDto.Password),
 				#endregion
 				userDto.RoleNames
 			});

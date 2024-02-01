@@ -36,7 +36,6 @@ export function uploadDescriptionsEvents() {
 
         if (newDescription == descriptions.byLanguages[descriptions.language])
             return;
-            
         //#endregion
 
         //#region when changed
@@ -47,15 +46,18 @@ export function uploadDescriptionsEvents() {
         //#endregion
     })
     $("#" + ul_descriptions_id).click(async (event) => {
+        //#region when clicked element class isn't "a_descriptions"
         event.preventDefault();
-        descriptions.language = event.target.innerText;
+        
+        if (event.target.id == ul_descriptions_id)
+            return;
+        //#endregion
 
-        //#region change descriptions <button> color as "unsaved_color"
+        //#region before start
         txt_descriptions.val("");
 
-        await changeDescriptionsButtonColorAsync(
-            btn_descriptions,
-            descriptions_unsavedColor);
+        descriptions.language = event.target.innerText;
+        console.log(event.target.innerText);
         //#endregion
 
         //#region change descriptions <button> name
@@ -64,10 +66,31 @@ export function uploadDescriptionsEvents() {
             `<b>${descriptions_baseButtonNameByLanguages[language]} (${descriptions.language})</b>`);
         //#endregion
 
-        //#region add description to <textarea> if exists
-        if (descriptions.byLanguages[descriptions.language] != null)
+        //#region add description to <textarea> and change description button color
+
+        //#region add description and change button color as "saved" color
+        let descriptionByLanguage = descriptions.byLanguages[descriptions.language];
+
+        if (descriptionByLanguage != undefined  // when description was added
+            && descriptionByLanguage.trim() != ""  // control the blank char and space
+        ){
+           // add description
             txt_descriptions.val(
                 descriptions.byLanguages[descriptions.language]);
+
+            await changeDescriptionsButtonColorAsync(
+                btn_descriptions,
+                descriptions_savedColor);
+        }
+        //#endregion
+
+        //#region change button color as "unsaved" color
+        else
+            await changeDescriptionsButtonColorAsync(
+                btn_descriptions,
+                descriptions_unsavedColor);
+        //#endregion
+
         //#endregion
     })
     $("#" + txt_descriptions_id).on("input", async () => {
@@ -87,13 +110,6 @@ export function uploadDescriptionsEvents() {
 //#endregion
 
 //#region functions
-export function resetDescriptionsBuffer() {
-    descriptions.currentColor = null;
-    descriptions.language = null;
-    descriptions.byLanguages = {};
-    descriptions.isChanged = false;
-}
-
 export async function setVariablesForDescriptionsAsync(bufferName, variables) {
     //#region set variables as dynamic
     switch (bufferName) {
@@ -107,6 +123,13 @@ export async function setVariablesForDescriptionsAsync(bufferName, variables) {
             break;
     }
     //#endregion
+}
+
+export function resetDescriptionsBuffer() {
+    descriptions.currentColor = null;
+    descriptions.language = null;
+    descriptions.byLanguages = {};
+    descriptions.isChanged = false;
 }
 
 export async function getDescriptionKeyForSessionAsync(descriptionBaseKeyForSession) {

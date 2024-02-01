@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Entities.ConfigModels.Contracts;
+using MicroServices;
 using Microsoft.AspNetCore.Http;
 using Repositories.Contracts;
 using Services.Contracts;
@@ -25,10 +26,11 @@ namespace Services.Concretes
 		public ServiceManager(
 			IRepositoryManager manager,
 			IConfigManager configs,
-			IMapper mapper)
+			IMapper mapper,
+			IMicroService microServices)
         {
 			_userService = new Lazy<IUserService>(() => 
-				new UserService(manager, configs, mapper));
+				new UserService(manager, configs, mapper, microServices));
 			_mailService = new Lazy<IMailService>(() =>
 				new MailService(configs));
 			_machineService = new Lazy<IMachineService>(() => 

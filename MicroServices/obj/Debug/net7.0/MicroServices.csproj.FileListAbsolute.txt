@@ -1,0 +1,12 @@
+C:\Users\Mac\Desktop\SOFTWARE\1__Software_Languages\1__C#\2__API\1__Projects\3__Temsa\MicroServices\bin\Debug\net7.0\MicroServices.deps.json
+C:\Users\Mac\Desktop\SOFTWARE\1__Software_Languages\1__C#\2__API\1__Projects\3__Temsa\MicroServices\bin\Debug\net7.0\MicroServices.dll
+C:\Users\Mac\Desktop\SOFTWARE\1__Software_Languages\1__C#\2__API\1__Projects\3__Temsa\MicroServices\bin\Debug\net7.0\MicroServices.pdb
+C:\Users\Mac\Desktop\SOFTWARE\1__Software_Languages\1__C#\2__API\1__Projects\3__Temsa\MicroServices\obj\Debug\net7.0\MicroServices.csproj.AssemblyReference.cache
+C:\Users\Mac\Desktop\SOFTWARE\1__Software_Languages\1__C#\2__API\1__Projects\3__Temsa\MicroServices\obj\Debug\net7.0\MicroServices.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\Mac\Desktop\SOFTWARE\1__Software_Languages\1__C#\2__API\1__Projects\3__Temsa\MicroServices\obj\Debug\net7.0\MicroServices.AssemblyInfoInputs.cache
+C:\Users\Mac\Desktop\SOFTWARE\1__Software_Languages\1__C#\2__API\1__Projects\3__Temsa\MicroServices\obj\Debug\net7.0\MicroServices.AssemblyInfo.cs
+C:\Users\Mac\Desktop\SOFTWARE\1__Software_Languages\1__C#\2__API\1__Projects\3__Temsa\MicroServices\obj\Debug\net7.0\MicroServices.csproj.CoreCompileInputs.cache
+C:\Users\Mac\Desktop\SOFTWARE\1__Software_Languages\1__C#\2__API\1__Projects\3__Temsa\MicroServices\obj\Debug\net7.0\MicroServices.dll
+C:\Users\Mac\Desktop\SOFTWARE\1__Software_Languages\1__C#\2__API\1__Projects\3__Temsa\MicroServices\obj\Debug\net7.0\refint\MicroServices.dll
+C:\Users\Mac\Desktop\SOFTWARE\1__Software_Languages\1__C#\2__API\1__Projects\3__Temsa\MicroServices\obj\Debug\net7.0\MicroServices.pdb
+C:\Users\Mac\Desktop\SOFTWARE\1__Software_Languages\1__C#\2__API\1__Projects\3__Temsa\MicroServices\obj\Debug\net7.0\ref\MicroServices.dll

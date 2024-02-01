@@ -20,7 +20,7 @@ import {
 $(function () {
     //#region variables
     const div_articles = $("#div_articles");
-    const pageSize = 3;
+    const pageSize = 10;
     const pagination_buttonCount = 5;
     const pagination_headerNames = {
         "waiting": "Form-Go-Waiting",
@@ -398,7 +398,9 @@ $(function () {
                             "paddingB": 10,
                             "paddingR": 10,
                             "paddingL": 10,
-                            "border": 6,
+                            "border": 1,
+                            "borderColor": "blue",
+                            "boxShadow": "5px 5px 10px rgba(0, 0, 0, 0.3)",
                             "bgColorForDelete": "rgb(220, 0, 0)"
                         },
                     });

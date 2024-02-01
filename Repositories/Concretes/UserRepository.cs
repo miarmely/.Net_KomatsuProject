@@ -59,28 +59,29 @@ namespace Repositories.Concretes
 			#region get userViews
 			var userViewDict = new Dictionary<Guid, UserView>();
 
-			var userViews = await base.QueryAsync<UserView, RolePartForUserView, UserView>(
-				base.Configs.DbSettings.ProcedureNames.User_DisplayAll,
-				parameters,
-				(userViewPart, rolePart) =>
-				{
-					#region add userView to dict if not exists
-					if (!userViewDict.TryGetValue(
-						key: userViewPart.UserId,
-						value: out var currentUserView))
+			var userViews = await base.QueryAsync
+				<UserView, RolePartForUserView, UserView>(
+					base.Configs.DbSettings.ProcedureNames.User_DisplayAll,
+					parameters,
+					(userViewPart, rolePart) =>
 					{
-						currentUserView = userViewPart;
-						userViewDict.Add(userViewPart.UserId, currentUserView);
-					}
-					#endregion
+						#region add userView to dict if not exists
+						if (!userViewDict.TryGetValue(
+							key: userViewPart.UserId,
+							value: out var currentUserView))
+						{
+							currentUserView = userViewPart;
+							userViewDict.Add(userViewPart.UserId, currentUserView);
+						}
+						#endregion
 
-					#region add roleName to userView
-					currentUserView.RoleNames.Add(rolePart.RoleName);
-					#endregion
+						#region add roleName to userView
+						currentUserView.RoleNames.Add(rolePart.RoleName);
+						#endregion
 
-					return currentUserView;
-				},
-				"RoleId");
+						return currentUserView;
+					},
+					"RoleId");
 			#endregion
 
 			return userViewDict.Values;

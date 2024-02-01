@@ -1,5 +1,6 @@
 ﻿using Entities.ConfigModels;
 using Entities.ConfigModels.Contracts;
+using MicroServices;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Presantation;
@@ -25,6 +26,7 @@ namespace Temsa_Api.Extensions
 		public static void ConfigureServices(this IServiceCollection services)
 		{
 			services.AddSingleton<RepositoryContext>();
+			services.AddScoped<IMicroService, MicroService>();
         }
 
 		public static void ConfigureConfigModels(

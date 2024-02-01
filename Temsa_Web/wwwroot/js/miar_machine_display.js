@@ -794,7 +794,9 @@ $(function () {
                         "paddingB": 10,
                         "paddingR": 10,
                         "paddingL": 10,
-                        "border": 6,
+                        "border": 1,
+                        "borderColor": "blue",
+                        "boxShadow": "5px 5px 10px rgba(0, 0, 0, 0.3)",
                         "bgColorForDelete": "rgb(220, 0, 0)"
                     },
                 });

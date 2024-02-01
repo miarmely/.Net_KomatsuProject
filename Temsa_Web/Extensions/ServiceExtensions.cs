@@ -1,5 +1,6 @@
 ﻿using Entities.ConfigModels;
 using Entities.ConfigModels.Contracts;
+using MicroServices;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Repositories;
 using Repositories.Concretes;
@@ -18,9 +19,12 @@ namespace Temsa_Web.Extensions
 			services.AddScoped<IConfigManager, ConfigManager>();
 		}
 
-		public static void ConfigureServices(this IServiceCollection services) =>
-			services.AddScoped<RepositoryContext>();
-
+		public static void ConfigureServices(this IServiceCollection services)
+		{
+            services.AddScoped<RepositoryContext>();
+			services.AddScoped<IMicroService, MicroService>();
+        }
+			
 		public static void ConfigureCookie(this IServiceCollection services)
 		{
 			services
