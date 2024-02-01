@@ -21,7 +21,15 @@ $(function () {
             //#region when clicked to "logout"
             case profileOption_logout_id:
                 //#region reset all local
+                // reset all local
+                let telNoForLogin = localStorage.getItem(localKeys_telNoForLogin);
                 localStorage.clear();
+
+                // add "telNo" to local again
+                if (telNoForLogin != null)
+                    localStorage.setItem(localKeys_telNoForLogin, telNoForLogin);
+
+                // add "language" to local again
                 localStorage.setItem("language", language);  // add language again
                 //#endregion
 

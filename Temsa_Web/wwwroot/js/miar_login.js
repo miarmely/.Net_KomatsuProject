@@ -5,9 +5,10 @@ $(function () {
     //#region variables
     const resultLabelId = "#p_resultLabel";
     const errorMessageColor = "red";
-    const inputPlaceHolders = inputPlaceHoldersByLanguages[language];
     const img_loading = $("#img_loading");
     const spn_rememberMe = $("#spn_rememberMe");
+    const inpt_telNo = $("#inpt_telNo");
+    const check_rememberMe = $("#check_rememberMe");
     //#endregion
 
     //#region events
@@ -28,24 +29,37 @@ $(function () {
             url: baseApiUrl + `/user/login/web?language=${language}`,
             contentType: "application/json",
             data: JSON.stringify({
-                "TelNo": $("#inpt_telNo").val().trim(),
+                "TelNo": inpt_telNo.val().trim(),
                 "Password": $("#inpt_password").val().trim()
             }),
             dataType: "json",
             success: (response) => {
-                //#region save token and language to local
-                // reset all inputs
-                $("form")[0].reset();
+                //#region update local
 
-                // save to local
-                let token = response["token"];
-                localStorage.setItem("token", token);
-                localStorage.setItem("language", language);
+                //#region add token and language
+                localStorage.setItem(localKeys_token, response["token"]);
+                localStorage.setItem(localKeys_language, language);
+                //#endregion
+
+                //#region add/remove telNo
+                // when "remember me" is checked (add)
+                if (check_rememberMe.prop("checked"))
+                    localStorage.setItem(
+                        localKeys_telNoForLogin,
+                        inpt_telNo.val())
+
+                // when "remember me" is unchecked (remove)
+                else 
+                    localStorage.removeItem(localKeys_telNoForLogin)
+                //#endregion
+
+                $("form")[0].reset();  
+
                 //#endregion
 
                 //#region call afterLogin action
                 location.replace("/authentication/afterLogin" +
-                    `?token=${token}`);
+                    `?token=${response["token"]}`);
                 //#endregion
             },
             error: () => {
@@ -67,9 +81,21 @@ $(function () {
 
     //#region functions
     async function populateHtmlAsync() {
-        //#region populate <form> elements
-        $("#inpt_telNo").attr("placeholder", inputPlaceHolders.telNo)
-        $("#inpt_password").attr("placeholder", inputPlaceHolders.password)
+        //#region populate telNo input
+        const inputPlaceHolders = inputPlaceHoldersByLanguages[language];
+        let savedTelNo = localStorage.getItem(localKeys_telNoForLogin);
+
+        // when telNo is saved previously
+        if (savedTelNo != null)
+            inpt_telNo.val(savedTelNo);
+
+        // when telNo isn't saved
+        else
+            inpt_telNo.attr("placeholder", inputPlaceHolders.telNo);
+        //#endregion
+
+        //#region populate other elements
+        $("#inpt_password").attr("placeholder", inputPlaceHolders.password);
         spn_rememberMe.append(rememberMeByLanguages[language]);
         $("#a_forgotPassword").append(forgotPasswordByLanguages[language])
         $("#btn_login").append(loginButtonNameByLanguages[language]);
