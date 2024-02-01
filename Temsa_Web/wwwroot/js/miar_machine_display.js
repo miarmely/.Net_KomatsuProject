@@ -900,10 +900,13 @@ $(function () {
 
     async function saveClaimInfosToLocalAsync() {
         // if not exists on local
-        if (localStorage.getItem(localKeys_claimInfos) == undefined)
+        if (localStorage.getItem(localKeys_claimInfos) == undefined) {
+            claimInfos["roleLanguage"] = language;
+
             localStorage.setItem(
                 localKeys_claimInfos,
                 JSON.stringify(claimInfos));
+        }            
     }
     //#endregion
 

@@ -14,6 +14,18 @@ $(function () {
     const inpt_companyName_id = "inpt_companyName";
     const inpt_password_id = "inpt_password";
     const slct_roles_id = "slct_roles";
+    const roleTranslator = {
+        "TR": {
+            "Kullanıcı": "User",
+            "Editör": "Editor",
+            "Yönetici": "Admin"
+        },  // From TR to EN
+        "EN": {
+            "User": "Kullanıcı",
+            "Editor": "Editör",
+            "Admin": "Yönetici"
+        }  // From EN to TR
+    }
     const langPack_formTitle = {
         "TR": "PROFİLE",
         "EN": "PROFILE"
@@ -102,8 +114,8 @@ $(function () {
         "TR": "başarıyla kaydedildi",
         "EN": "save successfull"
     }
-    let claimInfos = JSON.parse(
-        localStorage.getItem(localKeys_claimInfos));
+    let claimInfos = JSON.parse(localStorage
+        .getItem(localKeys_claimInfos));
     //#endregion
 
     //#region events
@@ -294,7 +306,20 @@ $(function () {
                 case "email": $("#" + inpt_email_id).val(claimValue); break;
                 case "companyName": $("#" + inpt_companyName_id).val(claimValue); break;
                 case "roleNames":
-                    $("#" + slct_roles_id).val(claimValue);
+                    //#region when role language isn't equal to page language
+                    if (claimInfos.roleLanguage != language) {
+                        // update role of claim infos object according page language
+                        claimInfos.roleNames = roleTranslator[claimInfos.roleLanguage][claimInfos.roleNames];
+                        claimInfos.roleLanguage = language;
+
+                        // update claim infos in local
+                        localStorage.setItem(
+                            localKeys_claimInfos,
+                            JSON.stringify(claimInfos));
+                    }
+                    //#endregion
+
+                    $("#" + slct_roles_id).val(claimInfos.roleNames);  // display role
                     break;
                 case "password": $("#" + inpt_password_id).val(claimValue); break;
             }

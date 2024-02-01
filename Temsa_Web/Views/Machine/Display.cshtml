@@ -165,8 +165,8 @@
         "telNo": "@Html.Raw(Model.FirstOrDefault(c => c.Type.Equals(ClaimTypes.MobilePhone)).Value)",
         "email": "@Html.Raw(Model.FirstOrDefault(c => c.Type.Equals(ClaimTypes.Email)).Value)",
         "companyName": "@Html.Raw(Model.FirstOrDefault(c => c.Type.Equals("CompanyName")).Value)",
-        "roleNames": "@Html.Raw(Model.FirstOrDefault(c => c.Type.Equals(ClaimTypes.Role)).Value)"
-        "claimsLanguage": language
+        "roleNames": "@Html.Raw(Model.FirstOrDefault(c => c.Type.Equals(ClaimTypes.Role)).Value)",
+        "roleLanguage": ""  // it will be add in "machine_display.js"
     };
     let article_idsAndMachineInfos = {};  // id == article Id
     let pageMode = "display";
