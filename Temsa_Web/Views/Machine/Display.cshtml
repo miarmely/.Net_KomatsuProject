@@ -1,8 +1,8 @@
 ﻿@model IEnumerable<Claim>
 
-
-<link rel="stylesheet"  href="~/css/miar_article.css"/>
-<link rel="stylesheet" href="~/css/miar_machine_display.css"/>
+<link rel="stylesheet" href="~/css/miar_article.css"/>
+<link rel="stylesheet" href="~/css/miar_machine.css"/>
+<link rel="stylesheet" href="~/css/miar_machine.display.css"/>
 
 
 <div class="table-agile-info">
@@ -19,28 +19,125 @@
             <div id="div_article_update" class="div_articleDetails" hidden>
                 @*machine image and video*@
                 <div style="text-align:center">
-                    <video id="vid_machine" controls hidden>
+                    <video id="vid_machine" hidden>
                         <source id="src_machine"/>
                     </video>
+                    @*message label*@
+                    <div style="margin:30px 0px" hidden>
+                        <spn id="spn_fileStatusLabel"></spn>
+                    </div>
                 </div>
                 <div style="text-align:center">
                     <button id="btn_showImage" type="button" class="btn btn_imageAndVideo"></button>
                     <button id="btn_showVideo" type="button" class="btn btn_imageAndVideo"></button>
                 </div>
-                    @*message label*@
-@*                    <div style="margin-bottom:30px">
-                        <spn id="spn_fileStatusLabel"></spn>
-                    </div>*@
                 
-
-                @*form*@
                 <form>
-                    <div id="div_form" class="form-horizontal bucket-form">
+                    <div id="div_form" class="form-horizontal bucket-form"> 
+                        @*image input*@
+                        <div id="div_imageInput" class="form-group">
+                            <label class="col-sm-3 control-label"></label>
+                            <div class="col-sm-6">
+                                <input id="inpt_chooseImage"  type="text"  class="form-control  form_file_input"  readonly/>
+                                <span id="spn_help_inpt_chooseImage" class="help-block"></span>
+                                <div hidden>
+                                    <input id="inpt_image"  type="file"  class=""  accept="image/*">
+                                </div>
+                            </div>
+                        </div>
+                        @*video input*@
+                        <div id="div_videoInput" class="form-group">
+                            <label class="col-sm-3 control-label"></label>
+                            <div class="col-sm-6">
+                                <input id="inpt_chooseVideo"  type="text"  class="form-control  form_file_input"  readonly/>
+                                <span id="spn_help_inpt_chooseVideo" class="help-block"></span>
+                                <div hidden>
+                                    <input  id="inpt_video"  type= "file"  accept= "video/*"/>
+                                </div>
+                            </div>
+                        </div>
+                        @*main category*@
+                        <div id="div_mainCategory" class="form-group">
+                            <label class="col-sm-3 control-label"></label>
+                            <div class="col-sm-6">
+                                <select id="slct_mainCategory" class="form-control m-bot15"></select>
+                                <span id="spn_help_slct_mainCategory" class="help-block"></span>
+                            </div>
+                        </div>
+                        @*subcategory*@
+                         <div id="div_subCategory" class="form-group">
+                            <label class="col-sm-3 control-label"></label>
+                            <div class="col-sm-6">
+                                <select id="slct_subCategory" class="form-control m-bot15"></select>
+                                <span id="spn_help_slct_subCategory" class="help-block"></span>
+                            </div>
+                        </div>
+
+                        @{ 
+                            #region add model, brand, year, stock 
+                            var labelNamesOfInputs = new string[]
+                            {
+                                "model",
+                                "brand",
+                                "year",
+                                "stock",
+                                "sold",
+                                "rented",
+                            };
+
+                            foreach(var labelName in labelNamesOfInputs){
+                                <div id="div_@labelName" class="form-group">
+                                    <label class="col-sm-3 control-label"></label>
+                                    <div class="col-sm-6">
+                                        <input id="inpt_@labelName" type="text" class="form-control" required>
+                                        <span id="spn_help_inpt_@labelName" class="help-block"></span>
+                                    </div>
+                                </div>
+                            }
+                            #endregion
+                        }
+
+                        @*pdf*@
+                        <div class="form-group">
+                            <label class="colsm-3 control-label"></label>
+                            <div class="col-sm-6">
+                                <input id="${inpt_choosePdf_id}"  type="text"  class="form-control  form_file_input"  readonly>
+                                <span id="spn_help_${inpt_choosePdf_id}" class="help-block"></span>
+                                <div hidden>
+                                    <input id="${inpt_pdf_id}" type="file" class="form-control" accept="application/pdf"  name="pdf">
+                                </div>
+                            </div>
+                        </div>       
+                        @*description*@
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label">
+                                <div class="input-group m-bot15">
+                                    <div class="input-group-btn">
+                                        <button id="${btn_descriptions_id}" style="background-color:darkblue; color:red" tabindex="-1" class="btn btn-info" type="button">
+                                            <b></b>
+                                        </button>
+                                        <button tabindex="-1" style="background-color: darkblue;" data-toggle="dropdown" class="btn btn-info dropdown-toggle" type="button">
+                                            <span class="caret"></span>
+                                        </button>
+                                        <ul id="ul_descriptions"  role="menu" class="dropdown-menu pull-right" style="text-align:center">
+                                        </ul>
+                                    </div>
+                                </div>
+                            </label>
+                            <div class="col-sm-6">
+                                <textarea id="${txt_descriptions_id}"  style="resize:none"  type="text"  class="form-control"  rows="10"  required></textarea>
+                            </div>
+                        </div>
                     </div>
                 </form>
+                
+                @*save button*@
                 <div style="text-align:center">
-                    <p id="p_resultLabel"></p>
-                    <img id="img_loading" src="~/images/loading.gif" style="width:40px; height:40px" hidden/>
+                    <button id="btn_save" type="submit" class="btn btn-danger" style="background-color: darkblue"></button>
+                    <div>
+                        <p id="p_resultLabel"></p>
+                        <img id="img_loading" src="~/images/loading.gif" style="width:40px; height:40px" hidden/>
+                    </div>
                 </div>
             </div>
             <div id="div_article_display">
@@ -182,8 +279,54 @@
             "videoButton": "Video"
         }
     }
+    const langPack_formLabelNames = {
+        "TR": {
+            "mainCategory": "Kategori",
+            "subCategory": "Alt Kategori",
+            "brand": "Marka",
+            "model": "Model",
+            "year": "Yıl",
+            "handStatus": {
+                "label": "El Durumu",
+                "radio1": "Sıfır",
+                "radio2": "İkinci El"
+            },
+            "stock": "Stok Adedi",
+            "sold": "Satılan",
+            "rented": "Kiralanan",
+            "image": "Resim",
+            "video": "Video",
+            "pdf": "Pdf"
+        },
+        "EN": {
+            "mainCategory": "Category",
+            "subCategory": "Subcategory",
+            "brand": "Brand",
+            "model": "Model",
+            "year": "Year",
+            "handStatus": {
+                "label": "Hand Status",
+                "radio1": "Zero",
+                "radio2": "Second Hand"
+            },
+            "stock": "Stock",
+            "sold": "Sold",
+            "rented": "Rented",
+            "image": "Image",
+            "video": "Video",
+            "pdf": "Pdf"
+        },
+    }
+    const langPack_saveButton = {
+        "TR": "KAYDET",
+        "EN": "SAVE"
+    }
     let article_idsAndMachineInfos = {};  // id == article Id
     let pageMode = "display";
 </script>
-<script type="module" src="~/js/miar_machine_display.js"></script>
+
+
+<script type="module" src="~/js/miar_machine.js"></script>
+<script type="module" src="~/js/miar_machine.display.js"></script>
 <script type="module" src="~/js/miar_descriptions.js"></script>
+

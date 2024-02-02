@@ -1,6 +1,9 @@
 ﻿@model IServiceManager;
 
 
+<link rel="stylesheet" href="~/css/miar_machine.css"/>
+
+
 <div class="form-w3layouts">
     <div class="row">
         <div class="col-lg-12">    
@@ -19,7 +22,10 @@
                             <spn id="spn_fileStatusLabel"></spn>
                         </div>
                     </div>
-
+                    <div style="text-align:center">
+                        <button id="btn_showImage" type="button" class="btn btn_imageAndVideo"></button>
+                        <button id="btn_showVideo" type="button" class="btn btn_imageAndVideo"></button>
+                    </div>
                     @*form*@
                     <form>
                         <div id="div_form" class="form-horizontal bucket-form">
@@ -35,7 +41,6 @@
     </div>
 </div>
 
-<script type="module"  src="~/js/miar_machine_create.js"></script>
 
 <script>
     const tableTitleByLanguages = {
@@ -74,4 +79,9 @@
             "unsuccessfulPdfUpload": "an error occured when pdf uploading",
         }
     }
+    //const langPack_imageAndVideoButtons = 
 </script>
+
+
+<script type="module" src="~/js/miar_machine.js"></script>
+<script type="module"  src="~/js/miar_machine.create.js"></script>

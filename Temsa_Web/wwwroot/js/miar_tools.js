@@ -11,13 +11,12 @@ export async function displayImageByNormalUrlAsync(
     fileName,
     imgForAddUrl,
     inputForAddFileName,
-    fileStatusLabel) {
-    //#region before start
+    fileStatusLabel
+) {
     await resetBeforeAddUrlAsync(
         imgForAddUrl,
         "#" + fileStatusLabel.attr("id"),
         inputForAddFileName);
-    //#endregion
 
     //#region display image
     // add src to <img>
@@ -28,10 +27,9 @@ export async function displayImageByNormalUrlAsync(
 
     // write file name to <input>
     inputForAddFileName.val(fileName);
-
-    // reset file status label
-    fileStatusLabel.empty();
     //#endregion
+
+    await removeFileStatusLabelAsync(fileStatusLabel);
 }
 
 export async function displayFileByDataUrlAsync(
@@ -83,15 +81,46 @@ export async function displayFileByDataUrlAsync(
         }
         //#endregion
 
-        //#region reset "file loading..." message  
-        fileStatusLabel.empty();
+        //#region add previous messages and styles to file status label
+        removeFileStatusLabelAsync(fileStatusLabel);
+        showFileStatusLabelAsync(fileStatusLabel, fileStatusLabel_oldMessage);
 
-        // add previous messages and styles to file status label
         fileStatusLabel.attr("style", fileStatusLabel_oldStyle);
-        fileStatusLabel.append(fileStatusLabel_oldMessage);
         //#endregion
     }
     //#endregion
+}
+
+export async function displayFileByObjectUrlAsync(
+    selectedFileInfos,
+    elementForAddUrl,
+    attributeName,
+    fileStatusLabel,
+    beforeDisplay = null,
+    afterDisplay = null
+) {
+    //#region call beforeDisplay()
+    if (beforeDisplay != null)
+        beforeDisplay();
+    //#endregion
+
+    await removeObjectUrlFromElementAsync(elementForAddUrl, attributeName);
+    await showFileStatusLabelAsync(
+        fileStatusLabel,
+        partnerInformationMessagesByLanguages[language]["fileLoading"],
+        fileStatusLabel_color);
+
+    //#region add object url to element
+    let newObjectUrl = URL.createObjectURL(selectedFileInfos);
+    elementForAddUrl.attr(attributeName, newObjectUrl);
+    //#endregion
+
+    //#region call afterDisplay()
+    if (afterDisplay != null)
+        afterDisplay();
+    //#endregion
+
+    await removeFileStatusLabelAsync(fileStatusLabel);
 }
 
 export async function getBase64StrOfFileAsync(selectedFileInfos) {
@@ -116,41 +145,6 @@ export async function getBase64StrOfFileAsync(selectedFileInfos) {
     //#endregion
 }
 
-export async function displayFileByObjectUrlAsync(
-    selectedFileInfos,
-    elementForAddUrl,
-    attributeName,
-    fileStatusLabel,
-    beforeDisplay = null,
-    afterDisplay = null
-) {
-    await removeObjectUrlFromElementAsync(elementForAddUrl, attributeName);
-
-    //#region write "file loading..." message
-    updateResultLabel(
-        '#' + fileStatusLabel.attr("id"),
-        partnerInformationMessagesByLanguages[language]["fileLoading"],
-        fileStatusLabel_color);
-    //#endregion
-
-    //#region add new url to attribute
-    // when any process to be do exists before display
-    if (beforeDisplay != null)
-        beforeDisplay();
-
-    // add object url
-    let newObjectUrl = URL.createObjectURL(selectedFileInfos);
-    elementForAddUrl.attr(attributeName, newObjectUrl);
-
-    // reset file status label
-    fileStatusLabel.empty();
-
-    // when any process to be do exists after display
-    if (afterDisplay != null)
-        afterDisplay();
-    //#endregion
-}
-
 export async function removeObjectUrlFromElementAsync(
     element,
     attributeName,
@@ -172,17 +166,17 @@ export async function resetBeforeAddUrlAsync(
     elementForAddUrl,
     fileStatusLabelId,
     inputForAddFileName = null,
-    attributeName = "src") {
+    attributeName = "src"
+) {
     // remove old url
     elementForAddUrl.removeAttr(attributeName);
 
-    // reset file name <input>
+    // reset file name on <input>
     if (inputForAddFileName != null)
         inputForAddFileName.val("");
 
-    // write "file loading..." message
-    updateResultLabel(
-        fileStatusLabelId,
+    await showFileStatusLabelAsync(
+        $(fileStatusLabelId),
         partnerInformationMessagesByLanguages[language]["fileLoading"],
         fileStatusLabel_color);
 }
@@ -213,6 +207,28 @@ export async function isFileSizeValidAsync(fileSizeInByte, limitInMb) {
 export function getFileTypeFromFileName(fileName) {
     return fileName.substring(
         fileName.lastIndexOf(".") + 1);
+}
+
+async function showFileStatusLabelAsync(fileStatusLabel, msg, msgColor) {
+    // show file status
+    fileStatusLabel
+        .parent("div")
+        .removeAttr("hidden");
+
+    // show message
+    updateResultLabel(
+        '#' + fileStatusLabel.attr("id"),
+        msg,
+        msgColor);
+}
+
+async function removeFileStatusLabelAsync(fileStatusLabel) {
+    // hide
+    fileStatusLabel
+        .parent("div")
+        .attr("hidden", "");
+
+    fileStatusLabel.empty();
 }
 //#endregion
 

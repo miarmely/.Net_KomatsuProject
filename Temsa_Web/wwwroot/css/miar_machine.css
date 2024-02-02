@@ -1,0 +1,16 @@
+﻿.btn_imageAndVideo {
+    background-color: darkblue;
+    color: white;
+    margin-bottom: 30px;
+    width: 100px;
+    font-size: 14.3px;
+}
+
+    .btn_imageAndVideo:hover {
+        color: white;
+        font-weight: bold;
+    }
+
+    .btn_imageAndVideo:disabled {
+        background-color: darkgrey
+    }

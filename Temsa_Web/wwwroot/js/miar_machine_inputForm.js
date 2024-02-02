@@ -5,10 +5,14 @@
 } from "./miar_tools.js"
 
 import { changeDescriptionsButtonColorAsync, ul_descriptions_id, uploadDescriptionsEvents } from "./miar_descriptions.js"
+import { vid_machine } from "./miar_machine.js";
+import { div_form } from "./miar_module_inputForm.js";
 
 //#region variables
 export const resultLabel_id = "#p_resultLabel";
 export const btn_descriptions_id = "btn_descriptions";
+export const btn_showImage = $("#btn_showImage");
+export const btn_showVideo = $("#btn_showVideo");
 export const txt_descriptions_id = "txt_descriptions";
 export const slct_mainCategory_id = "slct_mainCategory";
 export const slct_subCategory_id = "slct_subCategory";
@@ -24,65 +28,20 @@ export const inpt_rented_id = "inpt_rented";
 export const inpt_chooseImage_id = "inpt_chooseImage";
 export const inpt_chooseVideo_id = "inpt_chooseVideo";
 export const inpt_choosePdf_id = "inpt_choosePdf";
-export const vid_machine_id = "vid_machine";
-export const src_machine_id = "src_machine";
 export const a_descriptions_class = "a_descriptions";
 export const btn_chooseImage_id = "btn_chooseImage";
 export const btn_chooseVideo_id = "btn_chooseVideo";
 export const btn_choosePdf_id = "btn_choosePdf";
 export const btn_save_id = "btn_save";
-export const div_form = $("#div_form");
 export const spn_fileStatusLabel = $("#spn_fileStatusLabel");
 export const path_imageFolderAfterWwwroot = "images\\machines";
 export const path_videoFolderAfterWwwroot = "videos\\machines";
 export const path_pdfFolderAfterWwwroot = "pdfs";
 export const img_loading = $("#img_loading");
-export const vid_machine = $("#" + vid_machine_id);
-export const src_machine = $("#" + src_machine_id);
-export let selectedImageInfos;
-export let selectedPdfInfos;
-export let selectedVideoInfos;
-export let imageSizeLimitInMb = 20;
-export let videoSizeLimitInMb = 20;
-export let pdfSizeLimitInMb = 20;
-const formLabelNamesByLanguages = {
-    "TR": {
-        "mainCategory": "Kategori",
-        "subCategory": "Alt Kategori",
-        "brand": "Marka",
-        "model": "Model",
-        "year": "Yıl",
-        "handStatus": {
-            "label": "El Durumu",
-            "radio1": "Sıfır",
-            "radio2": "İkinci El"
-        },
-        "stock": "Stok Adedi",
-        "sold": "Satılan",
-        "rented": "Kiralanan",
-        "image": "Resim",
-        "video": "Video",
-        "pdf": "Pdf"
-    },
-    "EN": {
-        "mainCategory": "Category",
-        "subCategory": "Subcategory",
-        "brand": "Brand",
-        "model": "Model",
-        "year": "Year",
-        "handStatus": {
-            "label": "Hand Status",
-            "radio1": "Zero",
-            "radio2": "Second Hand"
-        },
-        "stock": "Stock",
-        "sold": "Sold",
-        "rented": "Rented",
-        "image": "Image",
-        "video": "Video",
-        "pdf": "Pdf"
-    },
-}
+const imageAndVideoButtons_checkedCss = {
+    "color": "yellow",
+    "font-weight": "bolder"
+};
 const saveButtonNameByLanguages = {
     "TR": "KAYDET",
     "EN": "SAVE"
@@ -94,6 +53,27 @@ const description_baseButtonNameByLanguages = {
 //#endregion
 
 //#region events
+btn_showImage.click(() => {
+    // add css to show button
+    btn_showImage.css(imageAndVideoButtons_checkedCss);
+    btn_showVideo.removeAttr("style");  // reset
+
+    // remove video attributes
+    vid_machine.removeAttr("controls autoplay");
+    vid_machine.load();
+})
+btn_showVideo.click(() => {
+    // add css to video button
+    btn_showVideo.css(imageAndVideoButtons_checkedCss);
+    btn_showImage.removeAttr("style");  // reset
+
+    // show video controls
+    vid_machine.attr({
+        "controls": "",
+        "autoplay": ""
+    });
+    vid_machine.load();
+})
 function uploadEvents() {
     //#region set variables
     let inpt_chooseImage = $("#" + inpt_chooseImage_id);
@@ -180,7 +160,10 @@ function uploadEvents() {
             vid_machine,
             "poster",
             spn_fileStatusLabel,
-            null,
+            () => {
+                // hide machine video
+                vid_machine.attr("hidden", "");
+            },
             () => {
                 // show video and set video sizes
                 vid_machine.removeAttr("hidden");
@@ -242,6 +225,9 @@ function uploadEvents() {
             "src",
             spn_fileStatusLabel,
             () => {
+                // hide machine video
+                vid_machine.attr("hidden", "");
+
                 // set type of video <source>
                 src_machine.attr("type", selectedVideoInfos.type);
             },
@@ -321,6 +307,14 @@ export async function populateFormAsync(addTableTitle = true) {
     if (addTableTitle)
         $(".panel-heading").append(
             tableTitleByLanguages[language]);
+    //#endregion
+
+    //#region add name of image and video button (update page)
+    btn_showImage.append(
+        langPack_imageAndVideoButtons[language]["imageButton"]);
+
+    btn_showVideo.append(
+        langPack_imageAndVideoButtons[language]["videoButton"]);
     //#endregion
 
     //#region add image input
@@ -440,14 +434,14 @@ export async function populateFormAsync(addTableTitle = true) {
     //#region add brand input
     div_form.append(
         `<div class="form-group">
-                <label class="col-sm-3 control-label">
-                    ${formLabelNamesByLanguages[language].brand}
-                </label>
-                <div class="col-sm-6">
-                    <input id="${inpt_brand_id}" type="text" class="form-control" required>
-                    <span id="spn_help_${inpt_brand_id}" class="help-block"></span>
-                </div>
-            </div>`
+            <label class="col-sm-3 control-label">
+                ${formLabelNamesByLanguages[language].brand}
+            </label>
+            <div class="col-sm-6">
+                <input id="${inpt_brand_id}" type="text" class="form-control" required>
+                <span id="spn_help_${inpt_brand_id}" class="help-block"></span>
+            </div>
+        </div>`
     );
     //#endregion
 
@@ -508,9 +502,7 @@ export async function populateFormAsync(addTableTitle = true) {
 
     div_form.append(
         `<div class="form-group">
-            <label class="col-sm-3 control-label">
-                ${handStatus.label}
-            </label>
+            <label class="col-sm-3 control-label">${handStatus.label}</label>
             <div class="col-sm-6">
                 <div class="radio">
                     <label style="margin-right:10px">
@@ -609,12 +601,14 @@ export async function populateFormAsync(addTableTitle = true) {
 
 export async function addDefaultValuesToFormAsync(machineInfos) {
     //#region upload video
+
     await setMachineVideoSizeAsync();
 
     //#region add poster, src and type attributes
-    vid_machine.attr(
-        "poster",
-        "/" + path_imageFolderAfterWwwroot + "/" + machineInfos["imageName"],);
+    vid_machine.attr({
+        "poster": "/" + path_imageFolderAfterWwwroot + "/" + machineInfos["imageName"],
+        "controls": ""
+    });
 
     src_machine.attr({
         "src": "/" + path_videoFolderAfterWwwroot + "/" + machineInfos["videoName"],
@@ -682,15 +676,18 @@ export async function removeVideoAttrAsync() {
                 if (vid_machine.attr("poster") == undefined)
                     vid_machine.attr("hidden", "");  // hide <video>
 
-                // remove video type 
+                // remove attr
+                vid_machine.removeAttr("control");
                 src_machine.removeAttr("type");
                 vid_machine.load();
             });
     //#endregion
 
     //#region when video is normal url
-    else
+    else {
+        vid_machine.removeAttr("controls");
         src_machine.removeAttr("src type");
+    }
     //#endregion
 }
 

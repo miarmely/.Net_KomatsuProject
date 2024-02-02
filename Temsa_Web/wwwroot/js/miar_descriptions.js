@@ -54,10 +54,8 @@ export function uploadDescriptionsEvents() {
         //#endregion
 
         //#region before start
-        txt_descriptions.val("");
-
+        txt_descriptions.val("");  // reset textarea
         descriptions.language = event.target.innerText;
-        console.log(event.target.innerText);
         //#endregion
 
         //#region change descriptions <button> name
@@ -125,13 +123,6 @@ export async function setVariablesForDescriptionsAsync(bufferName, variables) {
     //#endregion
 }
 
-export function resetDescriptionsBuffer() {
-    descriptions.currentColor = null;
-    descriptions.language = null;
-    descriptions.byLanguages = {};
-    descriptions.isChanged = false;
-}
-
 export async function getDescriptionKeyForSessionAsync(descriptionBaseKeyForSession) {
     return descriptionBaseKeyForSession + '-' + descriptions.language;
 }
@@ -139,5 +130,12 @@ export async function getDescriptionKeyForSessionAsync(descriptionBaseKeyForSess
 export async function changeDescriptionsButtonColorAsync(btn_descriptions, color) {
     btn_descriptions.css("color", color);
     descriptions.currentColor = color;
+}
+
+export function resetDescriptionsBuffer() {
+    descriptions.currentColor = null;
+    descriptions.language = null;
+    descriptions.byLanguages = {};
+    descriptions.isChanged = false;
 }
 //#endregion

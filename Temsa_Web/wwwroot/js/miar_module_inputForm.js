@@ -29,13 +29,13 @@ export async function createInputFormAsync(form, rowCount) {
     //#endregion
 }
 
-export async function populateInputFormAsync(rowNo, labelName, html_input) {
-    //#region add label name
+export async function populateInputFormAsync(rowNo, html_label, html_input) {
+    //#region add label
     let div_row = div_form.children("." + div_row_class + `:nth-child(${rowNo})`);
 
     div_row
         .children("label")
-        .append(labelName);
+        .append(html_label);
     //#endregion
 
     //#region add input
@@ -46,7 +46,7 @@ export async function populateInputFormAsync(rowNo, labelName, html_input) {
 }
 
 export async function addValueToInputAsync(rowNo, inputType, value) {
-    //#region add value to by input tpye
+    //#region add value to by input type
     let div_row = div_form.children("." + div_row_class + `:nth-child(${rowNo})`);
 
     switch (inputType) {

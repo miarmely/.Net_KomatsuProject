@@ -3,8 +3,6 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.5.33516.290
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Repositories", "Repositories\Repositories.csproj", "{A2F6F234-FF53-4736-B771-4BF61D5B5530}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Entities", "Entities\Entities.csproj", "{170D063A-D24A-4BCF-B8C1-1A45E68C2E32}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Presantation", "Presantation\Presantation.csproj", "{C10D095B-2F42-4D44-8FD7-47C8853B281C}"
@@ -15,7 +13,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Services", "Services\Servic
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Temsa_Api", "Temsa_Api\Temsa_Api.csproj", "{B90EA2E8-9858-40C7-A80E-AB02F61E1D5E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MicroServices", "MicroServices\MicroServices.csproj", "{C4041211-211A-4990-B482-57F1068C024F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MicroServices", "MicroServices\MicroServices.csproj", "{C4041211-211A-4990-B482-57F1068C024F}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Repositories", "Repositories\Repositories.csproj", "{EF33F3E4-CC54-4DCC-BD87-9BB507F1E083}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -23,10 +23,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{A2F6F234-FF53-4736-B771-4BF61D5B5530}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{A2F6F234-FF53-4736-B771-4BF61D5B5530}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{A2F6F234-FF53-4736-B771-4BF61D5B5530}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{A2F6F234-FF53-4736-B771-4BF61D5B5530}.Release|Any CPU.Build.0 = Release|Any CPU
 		{170D063A-D24A-4BCF-B8C1-1A45E68C2E32}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{170D063A-D24A-4BCF-B8C1-1A45E68C2E32}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{170D063A-D24A-4BCF-B8C1-1A45E68C2E32}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -51,6 +47,10 @@ Global
 		{C4041211-211A-4990-B482-57F1068C024F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C4041211-211A-4990-B482-57F1068C024F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C4041211-211A-4990-B482-57F1068C024F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EF33F3E4-CC54-4DCC-BD87-9BB507F1E083}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EF33F3E4-CC54-4DCC-BD87-9BB507F1E083}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EF33F3E4-CC54-4DCC-BD87-9BB507F1E083}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EF33F3E4-CC54-4DCC-BD87-9BB507F1E083}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

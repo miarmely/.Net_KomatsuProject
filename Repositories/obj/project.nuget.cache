@@ -1,7 +1,7 @@
 {
   "version": 2,
-  "dgSpecHash": "D/688wGxySPu2SAdGs+ShkheS/PiKRMWuxsabI40zN9S/DvEUApx9tngDDUenglrgON0WWBEe/b9wbuN5NGpNw==",
-  "success": true,
+  "dgSpecHash": "VB6wvpaY5owNDNIeKE9Gb/zpxaho5ZMmZCMYPaM2bAw/UnfcAQ2vVXC6lAyyHauW0Tiuh0nMCNfSMd4zlAtFng==",
+  "success": false,
   "projectFilePath": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Repositories\\Repositories.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\Mac\\.nuget\\packages\\azure.core\\1.25.0\\azure.core.1.25.0.nupkg.sha512",
@@ -52,5 +52,15 @@
     "C:\\Users\\Mac\\.nuget\\packages\\system.threading.tasks.extensions\\4.5.4\\system.threading.tasks.extensions.4.5.4.nupkg.sha512",
     "C:\\Users\\Mac\\.nuget\\packages\\system.windows.extensions\\6.0.0\\system.windows.extensions.6.0.0.nupkg.sha512"
   ],
-  "logs": []
+  "logs": [
+    {
+      "code": "NU1108",
+      "level": "Error",
+      "message": "Cycle detected. \r\n  Repositories -> Services -> Repositories.",
+      "libraryId": "Repositories",
+      "targetGraphs": [
+        "net7.0"
+      ]
+    }
+  ]
 }
