@@ -99,7 +99,7 @@ export async function click_articleVideoDivAsync(article) {
 
 export async function mouseover_articleVideoAsync(event, article) {
     //#region when page mode is "delete"
-    if (pageMode == "delete")
+    if (slct_menubar_value == "delete")
         return;
     //#endregion
 
@@ -131,7 +131,7 @@ export async function mouseover_articleVideoAsync(event, article) {
 
 export async function mouseout_articleVideoDivAsync(event, article) {
     //#region when page mode is "delete"
-    if (pageMode == "delete")
+    if (slct_menubar_value == "delete")
         return;
     //#endregion
 

@@ -829,32 +829,17 @@
           }
         }
       },
-      "MicroServices/1.0.0": {
+      "Entities/1.0.0": {
         "type": "project",
         "framework": ".NETCoreApp,Version=v7.0",
         "dependencies": {
-          "Microsoft.AspNetCore.Http.Abstractions": "2.2.0"
+          "Microsoft.Extensions.Options": "7.0.1"
         },
         "compile": {
-          "bin/placeholder/MicroServices.dll": {}
+          "bin/placeholder/Entities.dll": {}
         },
         "runtime": {
-          "bin/placeholder/MicroServices.dll": {}
-        }
-      },
-      "Services/1.0.0": {
-        "type": "project",
-        "framework": ".NETCoreApp,Version=v7.0",
-        "dependencies": {
-          "MicroServices": "1.0.0",
-          "Microsoft.Extensions.Options": "7.0.1",
-          "Repositories": "1.0.0"
-        },
-        "compile": {
-          "bin/placeholder/Services.dll": {}
-        },
-        "runtime": {
-          "bin/placeholder/Services.dll": {}
+          "bin/placeholder/Entities.dll": {}
         }
       }
     }
@@ -2297,12 +2282,7 @@
         "useSharedDesignerContext.txt"
       ]
     },
-    "MicroServices/1.0.0": {
-      "type": "project",
-      "path": "../MicroServices/MicroServices.csproj",
-      "msbuildProject": "../MicroServices/MicroServices.csproj"
-    },
-    "Services/1.0.0": {
+    "Entities/1.0.0": {
       "type": "project",
       "path": "../Entities/Entities.csproj",
       "msbuildProject": "../Entities/Entities.csproj"
@@ -2311,10 +2291,10 @@
   "projectFileDependencyGroups": {
     "net7.0": [
       "Dapper >= 2.0.151",
+      "Entities >= 1.0.0",
       "Microsoft.AspNetCore.Http.Abstractions >= 2.2.0",
       "Microsoft.Data.SqlClient >= 5.1.1",
-      "Microsoft.Extensions.Configuration.Abstractions >= 7.0.0",
-      "Services >= 1.0.0"
+      "Microsoft.Extensions.Configuration.Abstractions >= 7.0.0"
     ]
   },
   "packageFolders": {
@@ -2396,16 +2376,5 @@
         "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.202\\RuntimeIdentifierGraph.json"
       }
     }
-  },
-  "logs": [
-    {
-      "code": "NU1108",
-      "level": "Error",
-      "message": "Cycle detected. \r\n  Repositories -> Services -> Repositories.",
-      "libraryId": "Repositories",
-      "targetGraphs": [
-        "net7.0"
-      ]
-    }
-  ]
+  }
 }

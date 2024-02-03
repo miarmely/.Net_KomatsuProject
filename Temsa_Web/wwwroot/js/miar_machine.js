@@ -1,531 +1,243 @@
-﻿import { btn_descriptions_id, txt_descriptions_id, a_descriptions_class, descriptions_baseButtonNameByLanguages, setVariablesForDescriptionsAsync, ul_descriptions_id, uploadDescriptionsEvents }
-    from "./miar_descriptions.js"
-import { createInputFormAsync, div_form, populateInputFormAsync }
-    from "./miar_module_inputForm.js"
-import { displayFileByObjectUrlAsync, populateSelectAsync, populateElementByAjaxOrLocalAsync, isFileTypeValidAsync, isFileSizeValidAsync }
-    from "./miar_tools.js"
-
-//#region varibles
-//export const btn_showImage = $("#btn_showImage");
-//export const btn_showVideo = $("#btn_showVideo");
-//export const btn_back = $("#btn_back");
-//export const div_backButton = $("#div_backButton");
-//export const div_panelTitle = $("#div_panelTitle");
-//export const inpt_image_id = "inpt_image";
-//export const inpt_video_id = "inpt_video";
-//export const inpt_pdf_id = "inpt_pdf";
-//export const inpt_model_id = "inpt_model";
-//export const inpt_brand_id = "inpt_brand";
-//export const inpt_year_id = "inpt_year";
-//export const inpt_stock_id = "inpt_stock";
-//export const inpt_sold_id = "inpt_sold";
-//export const inpt_rented_id = "inpt_rented";
-//export const inpt_chooseImage_id = "inpt_chooseImage";
-//export const inpt_chooseVideo_id = "inpt_chooseVideo";
-//export const inpt_choosePdf_id = "inpt_choosePdf";
-//export const slct_mainCategory_id = "slct_mainCategory";
-//export const slct_subCategory_id = "slct_subCategory";
-//export const vid_machine = $("#vid_machine");
-//export const src_machine = $("#src_machine");
-//export const p_resultLabel_id = "p_resultLabel";
-//export const p_resultLabel = $("#" + p_resultLabel_id);
-//export const imageSizeLimitInMb = 20;
-//export const videoSizeLimitInMb = 20;
-//export const pdfSizeLimitInMb = 20;
-//export const path_imageFolderAfterWwwroot = "images\\machines";
-//export const path_videoFolderAfterWwwroot = "videos\\machines";
-//export const path_pdfFolderAfterWwwroot = "pdfs";
-//export const img_loading = $("#img_loading");
-//export let selectedImageInfos;
-//export let selectedPdfInfos;
-//export let selectedVideoInfos;
-//const spn_fileStatusLabel = $("#spn_fileStatusLabel");
-//#endregion
+﻿import {
+    displayFileByObjectUrlAsync, populateSelectAsync, isFileSizeValidAsync,
+    isFileTypeValidAsync, populateElementByAjaxOrLocalAsync
+} from "./miar_tools.js"
 
 //#region events
-function uploadEvents(
-    inpt_chooseImage,
-    inpt_chooseVideo,
-    inpt_choosePdf,
-    inpt_image,
-    inpt_video,
-    inpt_pdf,
-    vid_machine
-) {
-    $("input").click((event) => {
-        //#region reset help label of clicked <input>
-        let clickedInputId = event.target.id;
-        let spn_help = $(`#spn_help_${clickedInputId}`);
+export async function click_showImageButtonAsync() {
+    // add css to show button
+    btn_showImage.css(css_imageAndVideoButtons_checked);
+    btn_showVideo.removeAttr("style");  // reset
 
-        spn_help.removeAttr("style"); // rese style
-        spn_help.empty();  // reset input
-        //#endregion
+    // remove video attributes
+    vid_machine.removeAttr("controls autoplay");
+    vid_machine.load();
+}
+export async function click_showVideoButtonAsync() {
+    // add css to video button
+    btn_showVideo.css(css_imageAndVideoButtons_checked);
+    btn_showImage.removeAttr("style");  // reset
 
-        p_resultLabel.empty();
-    })
-    $("textarea").click(() => {
-        p_resultLabel.empty();
-    })
-    inpt_chooseImage.click(() => {
-        inpt_image.trigger("click");
-    })
-    inpt_chooseVideo.click(() => {
-        inpt_video.trigger("click");
-    })
-    inpt_choosePdf.click(() => {
-        inpt_pdf.trigger("click");
-    })
-    inpt_image.change(async (event) => {
-        //#region control selected file (error)
-
-        //#region when any file not selected (return)
-        let selectedFileInfos = event.target.files[0];
-
-        if (selectedFileInfos == undefined)
-            return;
-        //#endregion
-
-        //#region when file type is not image (error)
-        if (!await isFileTypeValidAsync(selectedFileInfos, "image")) {
-            // write error
-            updateResultLabel(
-                `#spn_help_${inpt_chooseImage_id}`,
-                partnerErrorMessagesByLanguages[language]["invalidFileType"],
-                resultLabel_errorColor,
-                "10px");
-
-            // reset file input
-            inpt_image.val("");
-            return;
-        }
-        //#endregion
-
-        //#region when file size is invalid (error)
-        if (!await isFileSizeValidAsync(selectedFileInfos.size, imageSizeLimitInMb)) {
-            // write error
-            updateResultLabel(
-                "#spn_help_" + inpt_chooseImage_id,
-                errorMessagesByLanguages[language]["imageSizeOverflow"],
-                resultLabel_errorColor,
-                "30px",
-                img_loading);
-
-            // reset file input
-            inpt_image.val("");
-            return;
-        }
-        //#endregion
-
-        //#endregion
-
-        //#region display image
-        // change image name on <input>
-        selectedImageInfos = selectedFileInfos;
-        inpt_chooseImage.val(selectedImageInfos.name);
-
-        await displayFileByObjectUrlAsync(
-            selectedImageInfos,
-            vid_machine,
-            "poster",
-            spn_fileStatusLabel,
-            () => {
-                // hide machine video
-                vid_machine.attr("hidden", "");
-            },
-            () => {
-                // show video and set video sizes
-                vid_machine.removeAttr("hidden");
-                setMachineVideoSizeAsync();
-                vid_machine.load();
-            });
-        //#endregion
-    })
-    inpt_video.change(async (event) => {
-        //#region control selected file (error)
-
-        //#region when any file not selected (return)
-        let selectedFileInfos = event.target.files[0];
-
-        if (selectedFileInfos == undefined)
-            return;
-        //#endregion
-
-        //#region when file type isn't video (error)
-        if (!await isFileTypeValidAsync(selectedFileInfos, "video/")) {
-            // write error
-            updateResultLabel(
-                "#spn_help_" + inpt_chooseVideo_id,
-                partnerErrorMessagesByLanguages[language]["invalidFileType"],
-                resultLabel_errorColor,
-                "10px");
-
-            // reset file input
-            inpt_video.val("");
-            return;
-        }
-        //#endregion
-
-        //#region when file size is invalid (error)
-        if (!await isFileSizeValidAsync(selectedFileInfos.size, videoSizeLimitInMb)) {
-            updateResultLabel(
-                "#spn_help_" + inpt_chooseVideo_id,
-                errorMessagesByLanguages[language]["videoSizeOverflow"],
-                resultLabel_errorColor,
-                "30px",
-                img_loading);
-
-            // reset file input
-            inpt_video.val("");
-            return;
-        }
-        //#endregion
-
-        //#endregion
-
-        //#region display video
-        // add new video name to <input>
-        selectedVideoInfos = selectedFileInfos;
-        inpt_chooseVideo.val(selectedVideoInfos.name)
-
-        await displayFileByObjectUrlAsync(
-            selectedVideoInfos,
-            src_machine,
-            "src",
-            spn_fileStatusLabel,
-            () => {
-                // hide machine video
-                vid_machine.attr("hidden", "");
-
-                // set type of video <source>
-                src_machine.attr("type", selectedVideoInfos.type);
-            },
-            () => {
-                // show video and set sizes
-                vid_machine.removeAttr("hidden");
-                setMachineVideoSizeAsync();
-                vid_machine.load();
-            });
-        //#endregion
-    })
-    inpt_pdf.change(async (event) => {
-        //#region control selected file (error)
-
-        //#region when any file not selected (return)
-        let selectedFileInfos = event.target.files[0];
-
-        if (selectedFileInfos == undefined)
-            return;
-        //#endregion
-
-        //#region when file type is not "pdf" (error)
-        if (!await isFileTypeValidAsync(selectedFileInfos, "application/pdf")) {
-            // write error
-            updateResultLabel(
-                "#spn_help_" + inpt_choosePdf_id,
-                partnerErrorMessagesByLanguages[language]["invalidFileType"],
-                resultLabel_errorColor,
-                "10px",
-                img_loading);
-
-            // reset file input
-            inpt_pdf.val("");
-            return;
-        }
-        //#endregion
-
-        //#region when file size is invalid (error)
-        if (!await isFileSizeValidAsync(selectedFileInfos.size, pdfSizeLimitInMb)) {
-            // write error
-            updateResultLabel(
-                "#spn_help_" + inpt_choosePdf_id,
-                errorMessagesByLanguages[language]["pdfSizeOverflow"],
-                resultLabel_errorColor,
-                "30px",
-                img_loading);
-
-            // reset file input
-            inpt_pdf.val("");
-            return;
-        }
-        //#endregion
-
-        //#endregion
-
-        //#region add new pdf name to <input>
-        selectedPdfInfos = selectedFileInfos;
-        inpt_choosePdf.val(selectedPdfInfos.name);
-        //#endregion
-    })
-    vid_machine.on("ended", async () => {
-        // restart video
-        vid_machine.load();
+    // show video controls
+    vid_machine.attr({
+        "controls": "",
+        "autoplay": ""
     });
+    vid_machine.load();
+}
+export async function click_inputAsync(event) {
+    //#region reset help label of clicked <input>
+    let clickedInputId = event.target.id;
+    let spn_help = $(`#spn_help_${clickedInputId}`);
 
-    uploadDescriptionsEvents();
+    spn_help.removeAttr("style"); // rese style
+    spn_help.empty();  // reset input
+    //#endregion
+
+    spn_resultLabel.empty();
+}
+export async function click_textAreaAsync() {
+    spn_resultLabel.empty();
+}
+export async function click_chooseImageInput() {
+    inpt_image.trigger("click");
+}
+export async function click_chooseVideoInput() {
+    inpt_video.trigger("click");
+}
+export async function click_choosePdfInput() {
+    inpt_pdf.trigger("click");
+}
+export async function change_imageInput(event) {
+    //#region control selected file (error)
+
+    //#region when any file not selected (return)
+    let selectedFileInfos = event.target.files[0];
+
+    if (selectedFileInfos == undefined)
+        return;
+    //#endregion
+
+    //#region when file type is not image (error)
+    if (!await isFileTypeValidAsync(selectedFileInfos, "image")) {
+        // write error
+        updateResultLabel(
+            "#" + inpt_chooseImage.attr("id"),
+            partnerErrorMessagesByLanguages[language]["invalidFileType"],
+            resultLabel_errorColor,
+            "10px",
+            img_loading);
+
+        // reset image file input
+        inpt_image.val("");
+        return;
+    }
+    //#endregion
+
+    //#region when file size is invalid (error)
+    if (!await isFileSizeValidAsync(selectedFileInfos.size, imageSizeLimitInMb)) {
+        // write error
+        updateResultLabel(
+            "#" + inpt_chooseImage.attr("id"),
+            errorMessagesByLanguages[language]["imageSizeOverflow"],
+            resultLabel_errorColor,
+            "30px",
+            img_loading);
+
+        // reset file input
+        inpt_image.val("");
+        return;
+    }
+    //#endregion
+
+    //#endregion
+
+    //#region display image
+    // change image name on <input>
+    selectedImageInfos = selectedFileInfos;
+    inpt_chooseImage.val(selectedImageInfos.name);
+
+    await displayFileByObjectUrlAsync(
+        selectedImageInfos,
+        vid_machine,
+        "poster",
+        spn_fileStatus,
+        () => {
+            // hide machine video
+            vid_machine.attr("hidden", "");
+        },
+        () => {
+            // show video and set video sizes
+            vid_machine.removeAttr("hidden");
+            setMachineVideoSizeAsync();
+            vid_machine.load();
+        });
+    //#endregion
+}
+export async function change_videoInput(event) {
+    //#region control selected file (error)
+
+    //#region when any file not selected (return)
+    let selectedFileInfos = event.target.files[0];
+
+    if (selectedFileInfos == undefined)
+        return;
+    //#endregion
+
+    //#region when file type isn't video (error)
+    let inpt_chooseVideo_id = inpt_chooseVideo.attr("id");
+
+    if (!await isFileTypeValidAsync(selectedFileInfos, "video/")) {
+        // write error
+        updateResultLabel(
+            "#" + inpt_chooseVideo_id,
+            partnerErrorMessagesByLanguages[language]["invalidFileType"],
+            resultLabel_errorColor,
+            "10px",
+            img_loading);
+
+        // reset video file input
+        inpt_video.val("");
+        return;
+    }
+    //#endregion
+
+    //#region when file size is invalid (error)
+    if (!await isFileSizeValidAsync(selectedFileInfos.size, videoSizeLimitInMb)) {
+        updateResultLabel(
+            "#" + inpt_chooseVideo_id,
+            errorMessagesByLanguages[language]["videoSizeOverflow"],
+            resultLabel_errorColor,
+            "30px",
+            img_loading);
+
+        // reset video file input
+        inpt_video.val("");
+        return;
+    }
+    //#endregion
+
+    //#endregion
+
+    //#region display video
+    // add new video name to <input>
+    selectedVideoInfos = selectedFileInfos;
+    inpt_chooseVideo.val(selectedVideoInfos.name)
+
+    await displayFileByObjectUrlAsync(
+        selectedVideoInfos,
+        src_machine,
+        "src",
+        spn_fileStatus,
+        () => {
+            // hide machine video
+            vid_machine.attr("hidden", "");
+
+            // set type of video <source>
+            src_machine.attr("type", selectedVideoInfos.type);
+        },
+        () => {
+            // show video and set sizes
+            vid_machine.removeAttr("hidden");
+            setMachineVideoSizeAsync();
+            vid_machine.load();
+        });
+    //#endregion
+}
+export async function change_pdfInput(event) {
+    //#region control selected file (error)
+
+    //#region when any file not selected (return)
+    let selectedFileInfos = event.target.files[0];
+
+    if (selectedFileInfos == undefined)
+        return;
+    //#endregion
+
+    //#region when file type is not "pdf" (error)
+    let inpt_choosePdf_id = inpt_choosePdf.attr("id");
+
+    if (!await isFileTypeValidAsync(selectedFileInfos, "application/pdf")) {
+        // write error
+        updateResultLabel(
+            "#" + inpt_choosePdf_id,
+            partnerErrorMessagesByLanguages[language]["invalidFileType"],
+            resultLabel_errorColor,
+            "10px",
+            img_loading);
+
+        // reset file input
+        inpt_pdf.val("");
+        return;
+    }
+    //#endregion
+
+    //#region when file size is invalid (error)
+    if (!await isFileSizeValidAsync(selectedFileInfos.size, pdfSizeLimitInMb)) {
+        // write error
+        updateResultLabel(
+            "#" + inpt_choosePdf_id,
+            errorMessagesByLanguages[language]["pdfSizeOverflow"],
+            resultLabel_errorColor,
+            "30px",
+            img_loading);
+
+        // reset file input
+        inpt_pdf.val("");
+        return;
+    }
+    //#endregion
+
+    //#endregion
+
+    //#region add new pdf name to <input>
+    selectedPdfInfos = selectedFileInfos;
+    inpt_choosePdf.val(selectedPdfInfos.name);
+    //#endregion
 }
 //#endregion
 
 //#region functions
-export async function createMachineFormPageAsync(descriptions) {
-    //#region before start
-    div_form.empty();
-    window.scrollTo(0, 0);  // scroll the page to start of page
-    //#endregion
-
-    //#region add panel title
-    div_panelTitle.append(
-        langPack_panelTitle[language]);
-    //#endregion
-
-    //#region create form
-    let formLabelNames = langPack_formLabelNames[language];
-
-    await createInputFormAsync($("form"), 14);
-    await populateInputFormAsync(1,
-        formLabelNames["image"],
-        `<input id="${inpt_chooseImage_id}"  type="text"  class="form-control  form_file_input"  readonly/>
-        <span id="spn_help_${inpt_chooseImage_id}" class="help-block"></span>
-        <div hidden>
-            <input id="${inpt_image_id}"  type="file"  class=""  accept="image/*">
-        </div>`
-    );  // image input
-    await populateInputFormAsync(2,
-        formLabelNames["video"],
-        `<input id="${inpt_chooseVideo_id}"  type="text"  class="form-control  form_file_input"  readonly/>
-        <span id="spn_help_${inpt_chooseVideo_id}" class="help-block"></span>
-        <div hidden>
-            <input  id="${inpt_video_id}"  type= "file"  accept= "video/*"/>
-        </div>`
-    );  // video input
-    await populateInputFormAsync(3,
-        formLabelNames["mainCategory"],
-        `<select id="${slct_mainCategory_id}" class="form-control m-bot15"></select>
-         <span id="spn_help_${slct_mainCategory_id}" class="help-block"></span>`
-    );  // mainCategory
-    await populateInputFormAsync(4,
-        formLabelNames["subCategory"],
-        `<select id="${slct_subCategory_id}" class="form-control m-bot15">
-        </select>
-        <span id="spn_help_${slct_subCategory_id}" class="help-block"></span>`
-    );  // subCategory
-    await populateInputFormAsync(5,
-        formLabelNames["model"],
-        `<input id="${inpt_model_id}" type="text" class="form-control" required>
-        <span id="spn_help_${inpt_model_id}" class="help-block"></span>`
-    );  // model
-    await populateInputFormAsync(6,
-        formLabelNames["brand"],
-        `<input id="${inpt_brand_id}" type="text" class="form-control" required>
-         <span id="spn_help_${inpt_brand_id}" class="help-block"></span>`
-    );  // brand
-    await populateInputFormAsync(7,
-        formLabelNames["year"],
-        `<input id="${inpt_year_id}" type="number" class="form-control" min=1900 max=2099 required>
-         <span id="spn_help_${inpt_year_id}" class="help-block"></span>`
-    );  // year
-    await populateInputFormAsync(8,
-        formLabelNames["stock"],
-        `<input id="${inpt_stock_id}" type="number" class="form-control" min=0 max=5000 required>
-        <span id="spn_help_${inpt_stock_id}" class="help-block"></span>`
-    );  // stock
-    await populateInputFormAsync(9,
-        formLabelNames["sold"],
-        `<input id="${inpt_sold_id}" type="number" class="form-control" min=0 max=5000 required>
-        <span id="spn_help_${inpt_sold_id}" class="help-block"></span>`
-    );  // sold
-    await populateInputFormAsync(10,
-        formLabelNames["rented"],
-        `<input id="${inpt_rented_id}" type="number" class="form-control" min=0 max=5000 required>
-        <span id="spn_help_${inpt_rented_id}" class="help-block"></span>`
-    );  // rented
-    await populateInputFormAsync(11,
-        formLabelNames["pdf"],
-        `<input id="${inpt_choosePdf_id}"  type="text"  class="form-control  form_file_input"  readonly>
-        <span id="spn_help_${inpt_choosePdf_id}" class="help-block"></span>
-        <div hidden>
-            <input id="${inpt_pdf_id}" type="file" class="form-control" accept="application/pdf"  name="pdf">
-        </div>`
-    );  // pdf
-    await populateInputFormAsync(12,
-        formLabelNames.handStatus.labelName,
-        `<div class="radio">
-            <label style="margin-right:10px">
-                <input type="radio" name="handStatus" value="${formLabelNames.handStatus.radio1}"  checked="">
-                    ${formLabelNames.handStatus.radio1}
-            </label>
-            <label>
-                <input type="radio" name="handStatus" value="${formLabelNames.handStatus.radio2}">
-                    ${formLabelNames.handStatus.radio2}
-            </label>
-        </div>`
-    );  // handStatus
-    await populateInputFormAsync(13,
-        `<div class="input-group m-bot15">
-            <div class="input-group-btn">
-                <button id="${btn_descriptions_id}" style="background-color:darkblue; color:red" tabindex="-1" class="btn btn-info" type="button">
-                    <b>${descriptions_baseButtonNameByLanguages[language]} (${language})</b>
-                </button>
-
-                <button tabindex="-1" style="background-color: darkblue;" data-toggle="dropdown" class="btn btn-info dropdown-toggle" type="button">
-                    <span class="caret"></span>
-                </button>
-
-                <ul id="${ul_descriptions_id}"  role="menu" class="dropdown-menu pull-right" style="text-align:center">
-                </ul>
-            </div>
-        </div>`,
-        `<textarea id="${txt_descriptions_id}"  style="resize:none"  type="text"  class="form-control"  rows="10"  required></textarea>`
-    );  // description
-
-    $("form").append(
-        `<div style="text-align:center">
-            <button id="btn_save" type="submit" class="btn btn-danger" style="background-color: darkblue">${langPack_saveButton[language]}</button>
-        </div>`
-    );  // save button
-    //#endregion
-
-    //#region populate form
-    // add name to image and video buttons
-    btn_showImage.append(
-        langPack_imageAndVideoButtons[language]["imageButton"]);
-    btn_showVideo.append(
-        langPack_imageAndVideoButtons[language]["videoButton"]);
-
-    // populate dropdowns
-    await setVariablesForDescriptionsAsync(
-        "descriptions",
-        { "byLanguages": descriptions });
-    await populateElementByAjaxOrLocalAsync(
-        localKeys_allMainCategories,
-        `/machine/display/mainCategory?language=${language}`,
-        (data) => {
-            //#region populate mainCategory <select>
-            populateSelectAsync(
-                $("#" + slct_mainCategory_id),
-                data);
-            //#endregion
-
-            //#region !!!!!!!!!!!!!!! disable mainCategoryNames !!!!!!!!!!!!!!! (TEMPORARY)
-            for (let index = 2; index <= data.length; index += 1) {
-                let option = $("#" + slct_mainCategory_id)
-                    .children(`option:nth-child(${index})`)
-
-                option.attr("disabled", "")
-                option.attr("style", "color:darkgrey")
-            }
-            //#endregion
-        },
-        () => {
-            //#region populate subCategory <select> after mainCategory populated
-            let selectedMainCategory = $("#" + slct_mainCategory_id).val();
-
-            populateElementByAjaxOrLocalAsync(
-                localKeys_allSubCategories,
-                `/machine/display/subCategory?language=${language}&mainCategoryName=${selectedMainCategory}`,
-                (data) => {
-                    populateSelectAsync(
-                        $("#" + slct_subCategory_id),
-                        data);
-                }
-            );
-            //#endregion
-        }
-    );  // mainCategory and subCategory
-    await populateElementByAjaxOrLocalAsync(
-        localKeys_allLanguages,
-        "/machine/display/language",
-        (data) => {
-            //#region add languages as <li>
-            for (let index in data) {
-                let languageInData = data[index];
-
-                $("#" + ul_descriptions_id).append(
-                    `<li>
-                        <a class="${a_descriptions_class}" href="#">${languageInData}</a>
-                     </li>`
-                );
-            }
-            //#endregion
-        }
-    );  // description
-    //#endregion
-
-    await uploadEvents();
-}
-
-export async function showOrHideBackButtonAsync(
-    div_backButton,
-    div_panelTitle,
-    btn_back,
-    mode
-) {
-    switch (mode) {
-        case "show":
-            // show back button
-            div_backButton.removeAttr("hidden");
-
-            // shift the panel title to right
-            div_panelTitle.css(
-                "padding-left",
-                btn_back.css("width"));
-
-            break;
-        case "hide":
-            // hide back button
-            div_backButton.attr("hidden", "");
-
-            // shift the panel title to left
-            div_panelTitle.css("padding-left", "");
-
-            break;
-    }
-}
-
-export async function addDefaultValuesToFormAsync(machineInfos) {
-    //#region upload video
-
-    await setMachineVideoSizeAsync();
-
-    //#region add poster, src and type attributes
-    vid_machine.attr({
-        "poster": "/" + path_imageFolderAfterWwwroot + "/" + machineInfos["imageName"],
-        "controls": ""
-    });
-
-    src_machine.attr({
-        "src": "/" + path_videoFolderAfterWwwroot + "/" + machineInfos["videoName"],
-        "type": "video/" + getFileTypeFromFileName(machineInfos["videoName"])
-    });
-    //#endregion
-
-    //#region display video
-    vid_machine.removeAttr("hidden");
-    vid_machine.load();
-    //#endregion
-
-    //#endregion
-
-    //#region populate inputs
-    $("#" + inpt_chooseImage_id).val(machineInfos["imageName"]);
-    $("#" + inpt_chooseVideo_id).val(machineInfos["videoName"]);
-    $("#" + slct_mainCategory_id).val(machineInfos["mainCategoryName"]);
-    $("#" + slct_subCategory_id).val(machineInfos["subCategoryName"]);
-    $("#" + inpt_model_id).val(machineInfos["model"]);
-    $("#" + inpt_brand_id).val(machineInfos["brandName"]);
-    $("#" + inpt_year_id).val(machineInfos["year"]);
-    $("#" + inpt_stock_id).val(machineInfos["stock"]);
-    $("#" + inpt_sold_id).val(machineInfos["sold"]);
-    $("#" + inpt_rented_id).val(machineInfos["rented"]);
-    $(`input[name= "handStatus"][value= "${machineInfos.handStatus}"]`).attr("checked", "");
-    $("#" + inpt_choosePdf_id).val(machineInfos["pdfName"]);
-    $("#" + txt_descriptions_id).val(machineInfos.descriptions[language]);
-    //#endregion
-
-    await changeDescriptionsButtonColorAsync(
-        $("#" + btn_descriptions_id),
-        descriptions_savedColor);  // change descriptions color as "saved" color
-}
-
 export async function removePosterAttrAsync() {
     //#region when poster is object url
     if (vid_machine.attr("poster").startsWith("blob:"))
@@ -546,7 +258,6 @@ export async function removePosterAttrAsync() {
         vid_machine.removeAttr("poster");
     //#endregion
 }
-
 export async function removeVideoAttrAsync() {
     //#region when video is object url
     if (src_machine.attr("src").startsWith("blob:"))
@@ -572,15 +283,207 @@ export async function removeVideoAttrAsync() {
     }
     //#endregion
 }
+export async function showOrHideBackButtonAsync(mode) {
+    switch (mode) {
+        case "show":
+            // show back button
+            div_backButton.removeAttr("hidden");
 
-export async function setMachineVideoSizeAsync() {
+            // shift the panel title to right
+            div_panelTitle.css(
+                "padding-left",
+                btn_back.css("width"));
+
+            break;
+        case "hide":
+            // hide back button
+            div_backButton.attr("hidden", "");
+
+            // shift the panel title to left
+            div_panelTitle.css("padding-left", "");
+
+            break;
+    }
+}
+export async function setMachineVideoSizeAsync(vid_machine) {
     //#region set width and max-height
-    let panelBodyWidth = $(".panel-body").prop("clientWidth");
+    let panelBody_width = $(".panel-body").prop("clientWidth");
 
+    // set as square
     vid_machine.css({
-        "width": panelBodyWidth - (panelBodyWidth * (60 / 100)),
-        "max-height": panelBodyWidth - (panelBodyWidth * (60 / 100))
+        "width": panelBody_width - (panelBody_width * (60 / 100)),
+        "max-height": panelBody_width - (panelBody_width * (60 / 100))
     });
     //#endregion
+}
+export async function machineForm_addElementNamesAsync() {
+    //#region show image button
+    let formElementNames = langPack_formElementNames[language];
+
+    $("#btn_showImage").append(
+        langPack_imageAndVideoButtons[language]["image"]);
+    //#endregion
+
+    //#region show video button
+    $("#btn_showVideo").append(
+        langPack_imageAndVideoButtons[language]["video"]);
+    //#endregion
+
+    //#region image input
+    $("#div_imageInput")
+        .children("label")
+        .append(formElementNames["imageInput"]);
+    //#endregion
+
+    //#region video input
+    $("#div_videoInput")
+        .children("label")
+        .append(formElementNames["videoInput"]);
+    //#endregion
+
+    //#region pdf input
+    $("#div_pdfInput")
+        .children("label")
+        .append(formElementNames["pdfInput"]);
+    //#endregion
+
+    //#region mainCategory
+    $("#div_mainCategory")
+        .children("label")
+        .append(formElementNames["mainCategory"]);
+    //#endregion
+
+    //#region subCategory
+    $("#div_subCategory")
+        .children("label")
+        .append(formElementNames["subCategory"]);
+    //#endregion
+
+    //#region model
+    $("#div_model")
+        .children("label")
+        .append(formElementNames["model"]);
+    //#endregion
+
+    //#region brand
+    $("#div_brand")
+        .children("label")
+        .append(formElementNames["brand"]);
+    //#endregion
+
+    //#region year
+    $("#div_year")
+        .children("label")
+        .append(formElementNames["year"]);
+    //#endregion
+
+    //#region stock
+    $("#div_stock")
+        .children("label")
+        .append(formElementNames["stock"]);
+    //#endregion
+
+    //#region sold
+    $("#div_sold")
+        .children("label")
+        .append(formElementNames["sold"]);
+    //#endregion
+
+    //#region rented
+    $("#div_rented")
+        .children("label")
+        .append(formElementNames["rented"]);
+    //#endregion
+
+    //#region handStatus
+    // label
+    $("#div_handStatus")
+        .children("label")
+        .append(formElementNames["handStatus"]["name"]);
+
+    // radioL
+    let radioL = $("#div_handStatus .radio label:nth-child(1)");
+    radioL.append(formElementNames["handStatus"]["radioL"]);
+
+    radioL.children("input")
+        .val(formElementNames["handStatus"]["radioL"]);
+
+    // radioR
+    let radioR = $("#div_handStatus .radio label:nth-child(2)");
+    radioR.append(formElementNames["handStatus"]["radioR"]);
+
+    radioR.children("input")
+        .val(formElementNames["handStatus"]["radioR"])
+    //#endregion
+
+    //#region description
+    $("#btn_descriptions b").append(
+        `${formElementNames.descriptions} (${language})`);
+    //#endregion
+
+    //#region save button
+    $("#btn_save").append(
+        langPack_saveButton[language]);
+    //#endregion
+}
+export async function machineForm_populateSelectsAsync() {
+    let slct_mainCategory = $("#slct_mainCategory");
+
+    // populate main category and subcategory selects
+    await populateElementByAjaxOrLocalAsync(
+        localKeys_allMainCategories,
+        `/machine/display/mainCategory?language=${language}`,
+        (mainCategories) => {
+            //#region add main categories
+            populateSelectAsync(
+                slct_mainCategory,
+                mainCategories);
+            //#endregion
+
+            //#region !!!!!!!!!!!!!!! disable mainCategoryNames !!!!!!!!!!!!!!! (TEMPORARY)
+            for (let index = 2; index <= mainCategories.length; index += 1) {
+                let option = slct_mainCategory
+                    .children(`option:nth-child(${index})`)
+
+                option.attr("disabled", "")
+                option.attr("style", "color:darkgrey")
+            }
+            //#endregion
+        },
+        () => {
+            //#region populate subCategories after mainCategory populated
+            let selectedMainCategory = slct_mainCategory.val();
+
+            populateElementByAjaxOrLocalAsync(
+                localKeys_allSubCategories,
+                `/machine/display/subCategory?language=${language}&mainCategoryName=${selectedMainCategory}`,
+                (subCategories) => {
+                    populateSelectAsync(
+                        $("#slct_subCategory"),
+                        subCategories);
+                }
+            );
+            //#endregion
+        }
+    )
+
+    // populate description select
+    await populateElementByAjaxOrLocalAsync(
+        localKeys_allLanguages,
+        "/machine/display/language",
+        (languages) => {
+            //#region add languages as <li>
+            for (let index in languages) {
+                let languageInData = languages[index];
+
+                $("#ul_descriptions").append(
+                    `<li>
+                        <a class="a_descriptions" href="#">${languageInData}</a>
+                     </li>`
+                );
+            }
+            //#endregion
+        }
+    )
 }
 //#endregion

@@ -532,13 +532,13 @@ export async function setDisabledOfOtherUpdateButtonsAsync(rowId, pageSize, doDi
 }
 
 export async function populateElementByAjaxOrLocalAsync(
-    dataNameInLocal,
-    apiUrl,
+    keyNameInLocal,
+    specialApiUrl,
     func_populate,
     func_afterPopulated = null) {
     //#region get data from local
     let dataInLocal = JSON.parse(
-        localStorage.getItem(dataNameInLocal));
+        localStorage.getItem(keyNameInLocal));
     //#endregion
 
     //#region get data by ajax if not exists in local (ajax)
@@ -546,7 +546,7 @@ export async function populateElementByAjaxOrLocalAsync(
         || dataInLocal[language] == null)  // data belong to language not exists in local
         $.ajax({
             method: "GET",
-            url: baseApiUrl + apiUrl,
+            url: baseApiUrl + specialApiUrl,
             headers: {
                 "Authorization": jwtToken
             },
@@ -566,7 +566,7 @@ export async function populateElementByAjaxOrLocalAsync(
 
                 //#region add to local
                 localStorage.setItem(
-                    dataNameInLocal,
+                    keyNameInLocal,
                     JSON.stringify(dataInLocal));
                 //#endregion
 

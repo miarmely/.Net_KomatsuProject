@@ -24,96 +24,83 @@
                     </video>
                     @*message label*@
                     <div style="margin:30px 0px" hidden>
-                        <spn id="spn_fileStatusLabel"></spn>
+                        <spn id="spn_fileStatus"></spn>
                     </div>
                 </div>
                 <div style="text-align:center">
-                    <button id="btn_showImage" type="button" class="btn btn_imageAndVideo"></button>
+                    <button id="btn_showImage" type="button" style="color:yellow" class="btn btn_imageAndVideo"></button>
                     <button id="btn_showVideo" type="button" class="btn btn_imageAndVideo"></button>
                 </div>
                 
                 <form>
                     <div id="div_form" class="form-horizontal bucket-form"> 
-                        @*image input*@
-                        <div id="div_imageInput" class="form-group">
-                            <label class="col-sm-3 control-label"></label>
-                            <div class="col-sm-6">
-                                <input id="inpt_chooseImage"  type="text"  class="form-control  form_file_input"  readonly/>
-                                <span id="spn_help_inpt_chooseImage" class="help-block"></span>
-                                <div hidden>
-                                    <input id="inpt_image"  type="file"  class=""  accept="image/*">
-                                </div>
-                            </div>
-                        </div>
-                        @*video input*@
-                        <div id="div_videoInput" class="form-group">
-                            <label class="col-sm-3 control-label"></label>
-                            <div class="col-sm-6">
-                                <input id="inpt_chooseVideo"  type="text"  class="form-control  form_file_input"  readonly/>
-                                <span id="spn_help_inpt_chooseVideo" class="help-block"></span>
-                                <div hidden>
-                                    <input  id="inpt_video"  type= "file"  accept= "video/*"/>
-                                </div>
-                            </div>
-                        </div>
-                        @*main category*@
-                        <div id="div_mainCategory" class="form-group">
-                            <label class="col-sm-3 control-label"></label>
-                            <div class="col-sm-6">
-                                <select id="slct_mainCategory" class="form-control m-bot15"></select>
-                                <span id="spn_help_slct_mainCategory" class="help-block"></span>
-                            </div>
-                        </div>
-                        @*subcategory*@
-                         <div id="div_subCategory" class="form-group">
-                            <label class="col-sm-3 control-label"></label>
-                            <div class="col-sm-6">
-                                <select id="slct_subCategory" class="form-control m-bot15"></select>
-                                <span id="spn_help_slct_subCategory" class="help-block"></span>
-                            </div>
-                        </div>
-
-                        @{ 
-                            #region add model, brand, year, stock 
-                            var labelNamesOfInputs = new string[]
+                        @{
+                            #region add image, video and pdf inputs
+                            var fileInputInfos = new string[][]
                             {
-                                "model",
-                                "brand",
-                                "year",
-                                "stock",
-                                "sold",
-                                "rented",
+                                new string[] { "div_imageInput", "inpt_chooseImage",  "inpt_image", "image/*"},
+                                new string[] { "div_videoInput", "inpt_chooseVideo",  "inpt_video",  "video/*"},
+                                new string[] { "div_pdfInput", "inpt_choosePdf",  "inpt_pdf",  "application/pdf"}
                             };
 
-                            foreach(var labelName in labelNamesOfInputs){
-                                <div id="div_@labelName" class="form-group">
+                            foreach(var fileInputInput in fileInputInfos)
+                            {
+                                <div id="@fileInputInput[0]" class="form-group">
                                     <label class="col-sm-3 control-label"></label>
                                     <div class="col-sm-6">
-                                        <input id="inpt_@labelName" type="text" class="form-control" required>
-                                        <span id="spn_help_inpt_@labelName" class="help-block"></span>
+                                        <input id="@fileInputInput[1]"  type="text"  class="form-control  form_file_input"  readonly/>
+                                        <span id="spn_help_@fileInputInput[1]" class="help-block"></span>
+                                        <div hidden>
+                                            <input id="@fileInputInput[2]"  type="file"  class=""  accept="@fileInputInput[3]">
+                                        </div>
                                     </div>
                                 </div>
                             }
                             #endregion
                         }
+                        @{
+                            #region add mainCategory and subCategory select
+                            var selectTypes = new string[] { "mainCategory", "subCategory"};
 
-                        @*pdf*@
-                        <div class="form-group">
-                            <label class="colsm-3 control-label"></label>
+                            foreach(var selectType in selectTypes)
+                            {
+                                <div id="div_@selectType" class="form-group">
+                                    <label class="col-sm-3 control-label"></label>
+                                    <div class="col-sm-6">
+                                        <select id="slct_@selectType" class="form-control m-bot15"></select>
+                                        <span id="spn_help_slct_@selectType" class="help-block"></span>
+                                    </div>
+                                </div>
+                            }
+                            #endregion
+                        }
+                        <div id="div_@formElementInfos[row, 0]" class="form-group">
+                            <label class="col-sm-3 control-label"></label>
                             <div class="col-sm-6">
-                                <input id="${inpt_choosePdf_id}"  type="text"  class="form-control  form_file_input"  readonly>
-                                <span id="spn_help_${inpt_choosePdf_id}" class="help-block"></span>
-                                <div hidden>
-                                    <input id="${inpt_pdf_id}" type="file" class="form-control" accept="application/pdf"  name="pdf">
+                                <input id="inpt_@formElementInfos[row, 0]" type="@formElementInfos[row, 1]" class="form-control" required>
+                                <span id="spn_help_inpt_@formElementInfos[row, 0]" class="help-block"></span>
+                            </div>
+                        </div>
+                        @*handStatus*@
+                        <div id="div_handStatus" class="form-group">
+                            <label class="col-sm-3 control-label"></label>
+                            <div class="col-sm-6">
+                                <div class="radio">
+                                    <label style="margin-right:10px">
+                                        <input type="radio" name="handStatus">
+                                    </label>
+                                    <label>
+                                        <input type="radio" name="handStatus">
+                                    </label>
                                 </div>
                             </div>
-                        </div>       
+                        </div>
                         @*description*@
-                        <div class="form-group">
+                        <div id="div_descriptions" class="form-group">
                             <label class="col-sm-3 control-label">
                                 <div class="input-group m-bot15">
                                     <div class="input-group-btn">
-                                        <button id="${btn_descriptions_id}" style="background-color:darkblue; color:red" tabindex="-1" class="btn btn-info" type="button">
+                                        <button id="btn_descriptions" style="background-color:darkblue; color:red" tabindex="-1" class="btn btn-info" type="button">
                                             <b></b>
                                         </button>
                                         <button tabindex="-1" style="background-color: darkblue;" data-toggle="dropdown" class="btn btn-info dropdown-toggle" type="button">
@@ -125,17 +112,17 @@
                                 </div>
                             </label>
                             <div class="col-sm-6">
-                                <textarea id="${txt_descriptions_id}"  style="resize:none"  type="text"  class="form-control"  rows="10"  required></textarea>
+                                <textarea id="txt_descriptions"  style="resize:none"  type="text"  class="form-control"  rows="10"  required></textarea>
                             </div>
                         </div>
                     </div>
                 </form>
-                
+
                 @*save button*@
                 <div style="text-align:center">
                     <button id="btn_save" type="submit" class="btn btn-danger" style="background-color: darkblue"></button>
                     <div>
-                        <p id="p_resultLabel"></p>
+                        <span id="spn_resultLabel"></span>
                         <img id="img_loading" src="~/images/loading.gif" style="width:40px; height:40px" hidden/>
                     </div>
                 </div>
@@ -199,27 +186,9 @@
         "roleNames": "@Html.Raw(Model.FirstOrDefault(c => c.Type.Equals(ClaimTypes.Role)).Value)",
         "roleLanguage": ""  // it will be add in "machine_display.js"
     };
-    const panelTitleByLanguages = {
-        "TR": "KAYITLI MAKİNELER",
-        "EN": "REGISTERED MACHINES"
-    };
-    const entityQuantity_messageByLanguages = {
+    const langPack_entityQuantity = {
         "TR": "makine gösteriliyor",
         "EN": "machine displaying"
-    };
-    const menubar_optionsByLanguages = {
-        "TR": [
-            "Görüntüle",
-            "Sil"
-        ],
-        "EN": [
-            "Display",
-            "Delete"
-        ]
-    };
-    const menubar_applyButtonName = {
-        "TR": "Uygula",
-        "EN": "Apply"
     };
     const updateButtonNameByLanguages = {
         "TR": "Güncelle",
@@ -269,60 +238,114 @@
             "pdfSizeOverflow": "pdf size can be max 20mb"
         }
     }
+    let article_idsAndMachineInfos = {};  // id == article Id
+    let slct_menubar_value = "display";
+
+    const path_imageFolderAfterWwwroot = "images\\machines";
+    const path_videoFolderAfterWwwroot = "videos\\machines";
+    const path_pdfFolderAfterWwwroot = "pdfs";   
+    const css_imageAndVideoButtons_checked = {
+        "color": "yellow",
+        "background-color": "darkblue",
+        "font-weight": "bolder"
+    };
+    const langPack_panelTitle = {
+        "TR": "KAYITLI MAKİNELER",
+        "EN": "REGISTERED MACHINES"
+    };
+    const langPack_menubarOptions = {
+        "TR": [
+            "Görüntüle",
+            "Sil"
+        ],
+        "EN": [
+            "Display",
+            "Delete"
+        ]
+    };
+    const langPack_applyButton = {
+        "TR": "Uygula",
+        "EN": "Apply"
+    };
     const langPack_imageAndVideoButtons = {
         "TR": {
-            "imageButton": "Resim",
-            "videoButton": "Video"
+            "image": "Resim",
+            "video": "Video"
         },
         "EN": {
-            "imageButton": "Image",
-            "videoButton": "Video"
+            "image": "Image",
+            "video": "Video"
         }
     }
-    const langPack_formLabelNames = {
+    const langPack_formElementNames = {
         "TR": {
+            "imageInput": "Resim",
+            "videoInput": "Video",
+            "pdfInput": "Pdf",
             "mainCategory": "Kategori",
             "subCategory": "Alt Kategori",
-            "brand": "Marka",
             "model": "Model",
+            "brand": "Marka",
             "year": "Yıl",
-            "handStatus": {
-                "label": "El Durumu",
-                "radio1": "Sıfır",
-                "radio2": "İkinci El"
-            },
             "stock": "Stok Adedi",
             "sold": "Satılan",
             "rented": "Kiralanan",
-            "image": "Resim",
-            "video": "Video",
-            "pdf": "Pdf"
+            "handStatus": {
+                "name": "El Durumu",
+                "radioL": "Sıfır",
+                "radioR": "İkinci El"
+            },
+            "descriptions": "Açıklama"
         },
         "EN": {
+            "imageInput": "Image",
+            "videoInput": "Video",
+            "pdfInput": "Pdf",
             "mainCategory": "Category",
             "subCategory": "Subcategory",
-            "brand": "Brand",
             "model": "Model",
+            "brand": "Brand",
             "year": "Year",
-            "handStatus": {
-                "label": "Hand Status",
-                "radio1": "Zero",
-                "radio2": "Second Hand"
-            },
             "stock": "Stock",
             "sold": "Sold",
             "rented": "Rented",
-            "image": "Image",
-            "video": "Video",
-            "pdf": "Pdf"
+            "handStatus": {
+                "name": "Hand Status",
+                "radioL": "Zero",
+                "radioR": "Second Hand"
+            },
+            "descriptions": "Description"
         },
     }
     const langPack_saveButton = {
         "TR": "KAYDET",
         "EN": "SAVE"
     }
-    let article_idsAndMachineInfos = {};  // id == article Id
-    let pageMode = "display";
+    let selectedImageInfos;
+    let selectedPdfInfos;
+    let selectedVideoInfos;
+
+    // miar_machine_display.js + miar_machine.js
+    const vid_machine = $("#vid_machine");
+    const src_machine = $("#src_machine");
+    const spn_resultLabel_id = "spn_resultLabel";
+    const spn_resultLabel = $("#" + spn_resultLabel_id);
+    const spn_fileStatus = $("#spn_fileStatus");
+    const btn_showImage = $("#btn_showImage");
+    const btn_showVideo = $("#btn_showVideo");
+    const btn_back = $("#btn_back");
+    const inpt_image = $("#inpt_image");
+    const inpt_video = $("#inpt_video");
+    const inpt_pdf = $("#inpt_pdf");
+    const inpt_chooseImage = $("#inpt_chooseImage");
+    const inpt_chooseVideo = $("#inpt_chooseVideo");
+    const inpt_choosePdf = $("#inpt_choosePdf");
+    const img_loading = $("#img_loading");
+    const div_backButton = $("#div_backButton");
+    const div_panelTitle = $("#div_panelTitle");
+    const imageSizeLimitInMb = 20;
+    const videoSizeLimitInMb = 20;
+    const pdfSizeLimitInMb = 20;
 </script>
 
 

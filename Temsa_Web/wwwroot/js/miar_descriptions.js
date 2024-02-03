@@ -16,7 +16,7 @@ export const descriptions_baseButtonNameByLanguages = {
 //#endregion
 
 //#region events
-export function uploadDescriptionsEvents() {
+export async function uploadDescriptionsEventsAsync() {
     //#region set variables
     const btn_descriptions = $("#" + btn_descriptions_id);
     const txt_descriptions = $("#" + txt_descriptions_id);
