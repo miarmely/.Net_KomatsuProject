@@ -1,5 +1,18 @@
 ﻿@model IEnumerable<Claim>
 
+@{
+    #region set limits of number inputs
+    var minYearValue = 1900;
+    var minStockValue = 0;
+    var minSoldValue = 0; 
+    var minRentedValue = 0; 
+    var maxYearValue = DateTime.UtcNow.Year;
+    var maxStockValue = 5000;
+    var maxSoldValue = 5000;
+    var maxRentedValue = 5000;
+    #endregion
+}
+
 <link rel="stylesheet" href="~/css/miar_article.css"/>
 <link rel="stylesheet" href="~/css/miar_machine.css"/>
 <link rel="stylesheet" href="~/css/miar_machine.display.css"/>
@@ -27,6 +40,7 @@
                         <spn id="spn_fileStatus"></spn>
                     </div>
                 </div>
+                @*image and video buttons*@
                 <div style="text-align:center">
                     <button id="btn_showImage" type="button" style="color:yellow" class="btn btn_imageAndVideo"></button>
                     <button id="btn_showVideo" type="button" class="btn btn_imageAndVideo"></button>
@@ -74,11 +88,52 @@
                             }
                             #endregion
                         }
-                        <div id="div_@formElementInfos[row, 0]" class="form-group">
+                        @*model*@
+                        <div id="div_model" class="form-group">
                             <label class="col-sm-3 control-label"></label>
                             <div class="col-sm-6">
-                                <input id="inpt_@formElementInfos[row, 0]" type="@formElementInfos[row, 1]" class="form-control" required>
-                                <span id="spn_help_inpt_@formElementInfos[row, 0]" class="help-block"></span>
+                                <input id="inpt_model" type="text" class="form-control" required>
+                                <span id="spn_help_inpt_model" class="help-block"></span>
+                            </div>
+                        </div>
+                        @*brand*@
+                        <div id="div_brand" class="form-group">
+                            <label class="col-sm-3 control-label"></label>
+                            <div class="col-sm-6">
+                                <input id="inpt_brand" type="text" class="form-control" required>
+                                <span id="spn_help_inpt_brand" class="help-block"></span>
+                            </div>
+                        </div>
+                        @*year*@
+                        <div id="div_year" class="form-group">
+                            <label class="col-sm-3 control-label"></label>
+                            <div class="col-sm-6">
+                                <input id="inpt_year" type="number" class="form-control" min=@minYearValue max=@maxYearValue required>
+                                <span id="spn_help_inpt_year" class="help-block"></span>
+                            </div>
+                        </div>
+                        @*stock*@
+                        <div id="div_stock" class="form-group">
+                            <label class="col-sm-3 control-label"></label>
+                            <div class="col-sm-6">
+                                <input id="inpt_stock" type="number" class="form-control" min=@minStockValue max=@maxStockValue required>
+                                <span id="spn_help_inpt_stock" class="help-block"></span>
+                            </div>
+                        </div>
+                        @*sold*@
+                        <div id="div_sold" class="form-group">
+                            <label class="col-sm-3 control-label"></label>
+                            <div class="col-sm-6">
+                                <input id="inpt_sold" type="number" class="form-control" min=@minSoldValue max=@maxSoldValue required>
+                                <span id="spn_help_inpt_sold" class="help-block"></span>
+                            </div>
+                        </div>
+                        @*rented*@
+                        <div id="div_rented" class="form-group">
+                            <label class="col-sm-3 control-label"></label>
+                            <div class="col-sm-6">
+                                <input id="inpt_rented" type="number" class="form-control" min=@minRentedValue max=@maxRentedValue required>
+                                <span id="spn_help_inpt_rented" class="help-block"></span>
                             </div>
                         </div>
                         @*handStatus*@
@@ -120,10 +175,10 @@
 
                 @*save button*@
                 <div style="text-align:center">
-                    <button id="btn_save" type="submit" class="btn btn-danger" style="background-color: darkblue"></button>
+                    <button id="btn_save" type="button" class="btn btn-danger" style="background-color: darkblue"></button>
                     <div>
-                        <span id="spn_resultLabel"></span>
-                        <img id="img_loading" src="~/images/loading.gif" style="width:40px; height:40px" hidden/>
+                        <p id="p_resultLabel"></p>
+                        <img id="img_loading" src="~/images/loading.gif" style="width:40px; height:40px; margin-top:30px" hidden/>
                     </div>
                 </div>
             </div>
@@ -175,7 +230,6 @@
     </div>
 </div>
 
-
 <script>
     const claimInfos = {
         "firstName": "@Html.Raw(Model.FirstOrDefault(c => c.Type.Equals(ClaimTypes.Name)).Value)",
@@ -186,36 +240,22 @@
         "roleNames": "@Html.Raw(Model.FirstOrDefault(c => c.Type.Equals(ClaimTypes.Role)).Value)",
         "roleLanguage": ""  // it will be add in "machine_display.js"
     };
-    const langPack_entityQuantity = {
-        "TR": "makine gösteriliyor",
-        "EN": "machine displaying"
-    };
-    const updateButtonNameByLanguages = {
-        "TR": "Güncelle",
-        "EN": "Update"
-    };
-    const description_baseButtonNameByLanguages = {
-        "TR": "Açıklama",
-        "EN": "Description"
-    };
-    const pdfButtonNameByLanguages = {
-        "TR": "PDF değiştir",        
-        "EN": "Change PDF"
-    }
-    const machineImageButtonNameByLanguages = {
-        "TR": "Resim Değiştir",
-        "EN": "Change Image"
-    }
-    const playImageAltAndTitleByLanguages = {
-        "TR": "Oynat",
-        "EN": "Play"
-    }
-    const successMessagesByLanguages = {
-        "TR": {
-            "successfulUpdate": "başarıyla güncellendi",
+    const numberInputLimits = {
+        "year": {
+            "min": @minYearValue,
+            "max": @maxYearValue
         },
-        "EN": {
-            "successfulUpdate": "updated successfully",
+        "stock": {
+            "min": @minStockValue,
+            "max": @maxStockValue
+        },
+        "sold": {
+            "min": @minSoldValue,
+            "max": @maxSoldValue
+        },
+        "rented": {
+            "min": @minRentedValue,
+            "max": @maxRentedValue
         }
     }
     const errorMessagesByLanguages = {
@@ -240,112 +280,9 @@
     }
     let article_idsAndMachineInfos = {};  // id == article Id
     let slct_menubar_value = "display";
-
-    const path_imageFolderAfterWwwroot = "images\\machines";
-    const path_videoFolderAfterWwwroot = "videos\\machines";
-    const path_pdfFolderAfterWwwroot = "pdfs";   
-    const css_imageAndVideoButtons_checked = {
-        "color": "yellow",
-        "background-color": "darkblue",
-        "font-weight": "bolder"
-    };
-    const langPack_panelTitle = {
-        "TR": "KAYITLI MAKİNELER",
-        "EN": "REGISTERED MACHINES"
-    };
-    const langPack_menubarOptions = {
-        "TR": [
-            "Görüntüle",
-            "Sil"
-        ],
-        "EN": [
-            "Display",
-            "Delete"
-        ]
-    };
-    const langPack_applyButton = {
-        "TR": "Uygula",
-        "EN": "Apply"
-    };
-    const langPack_imageAndVideoButtons = {
-        "TR": {
-            "image": "Resim",
-            "video": "Video"
-        },
-        "EN": {
-            "image": "Image",
-            "video": "Video"
-        }
-    }
-    const langPack_formElementNames = {
-        "TR": {
-            "imageInput": "Resim",
-            "videoInput": "Video",
-            "pdfInput": "Pdf",
-            "mainCategory": "Kategori",
-            "subCategory": "Alt Kategori",
-            "model": "Model",
-            "brand": "Marka",
-            "year": "Yıl",
-            "stock": "Stok Adedi",
-            "sold": "Satılan",
-            "rented": "Kiralanan",
-            "handStatus": {
-                "name": "El Durumu",
-                "radioL": "Sıfır",
-                "radioR": "İkinci El"
-            },
-            "descriptions": "Açıklama"
-        },
-        "EN": {
-            "imageInput": "Image",
-            "videoInput": "Video",
-            "pdfInput": "Pdf",
-            "mainCategory": "Category",
-            "subCategory": "Subcategory",
-            "model": "Model",
-            "brand": "Brand",
-            "year": "Year",
-            "stock": "Stock",
-            "sold": "Sold",
-            "rented": "Rented",
-            "handStatus": {
-                "name": "Hand Status",
-                "radioL": "Zero",
-                "radioR": "Second Hand"
-            },
-            "descriptions": "Description"
-        },
-    }
-    const langPack_saveButton = {
-        "TR": "KAYDET",
-        "EN": "SAVE"
-    }
     let selectedImageInfos;
     let selectedPdfInfos;
     let selectedVideoInfos;
-
-    // miar_machine_display.js + miar_machine.js
-    const vid_machine = $("#vid_machine");
-    const src_machine = $("#src_machine");
-    const spn_resultLabel_id = "spn_resultLabel";
-    const spn_resultLabel = $("#" + spn_resultLabel_id);
-    const spn_fileStatus = $("#spn_fileStatus");
-    const btn_showImage = $("#btn_showImage");
-    const btn_showVideo = $("#btn_showVideo");
-    const btn_back = $("#btn_back");
-    const inpt_image = $("#inpt_image");
-    const inpt_video = $("#inpt_video");
-    const inpt_pdf = $("#inpt_pdf");
-    const inpt_chooseImage = $("#inpt_chooseImage");
-    const inpt_chooseVideo = $("#inpt_chooseVideo");
-    const inpt_choosePdf = $("#inpt_choosePdf");
-    const img_loading = $("#img_loading");
-    const div_backButton = $("#div_backButton");
-    const div_panelTitle = $("#div_panelTitle");
-    const imageSizeLimitInMb = 20;
-    const videoSizeLimitInMb = 20;
-    const pdfSizeLimitInMb = 20;
 </script>
 
 

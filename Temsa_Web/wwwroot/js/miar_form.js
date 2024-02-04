@@ -104,7 +104,6 @@ export async function addSendererInfosToFormAsync(
         );
     //#endregion
 }
-
 export async function addAnswererInfosToFormAsync(
     tbl_answererInfos,
     langPack_answererInfosTable,
@@ -145,7 +144,6 @@ export async function addAnswererInfosToFormAsync(
         );
     //#endregion
 }
-
 export async function resetFormDetailsPageAsync(
     div_sendererInfos,
     div_answererInfos
@@ -165,7 +163,6 @@ export async function resetFormDetailsPageAsync(
     // show form buttons
     $("#div_buttons button").removeAttr("disabled");
 }
-
 export async function resetPanelFooterAsync(
     lbl_entityQuantity,
     pageSize,

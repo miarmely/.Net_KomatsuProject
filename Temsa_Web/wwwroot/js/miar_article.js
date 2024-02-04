@@ -78,7 +78,7 @@ export let style_div_info_height_T;
 
 //#region events
 export async function click_articleVideoDivAsync(article) {
-    removeLastUploadedArticleVideoAsync();
+    await removeLastUploadedArticleVideoAsync();
     hidePlayImage(article);
 
     //#region load article video
@@ -96,7 +96,6 @@ export async function click_articleVideoDivAsync(article) {
     articleInfos_lastUploadedVideo["article"] = article;
     //#endregion
 }
-
 export async function mouseover_articleVideoAsync(event, article) {
     //#region when page mode is "delete"
     if (slct_menubar_value == "delete")
@@ -128,7 +127,6 @@ export async function mouseover_articleVideoAsync(event, article) {
 
     showPlayImage(article);
 }
-
 export async function mouseout_articleVideoDivAsync(event, article) {
     //#region when page mode is "delete"
     if (slct_menubar_value == "delete")
@@ -160,7 +158,6 @@ export async function mouseout_articleVideoDivAsync(event, article) {
     hidePlayImage(article);
     //#endregion
 }
-
 export async function ended_articleVideoAsync() {
     removeArticleVideo(articleInfos_lastUploadedVideo["article"]);
 }
@@ -184,7 +181,6 @@ export async function setVariablesForArticleAsync(variables) {
     }
     //#endregion
 }
-
 export async function addArticlesAsync(autoAlign=true) {
     // articleType: "imageAndText", "videoAndText", "text"
 
@@ -275,7 +271,6 @@ export async function addArticlesAsync(autoAlign=true) {
     }
     //#endregion
 }
-
 export async function controlArticleWidthAsync() {
     //#region when article width bigger than div_articles width (reduce)
 
@@ -324,7 +319,6 @@ export async function controlArticleWidthAsync() {
     }
     //#endregion
 }
-
 export async function alignArticlesToCenterAsync(widthUnit = "px") {
     //#region set variables
     let article_style = articleBuffer.articleStyle;
@@ -344,7 +338,6 @@ export async function alignArticlesToCenterAsync(widthUnit = "px") {
     });
     //#endregion
 }
-
 export async function setHeightOfArticlesDivAsync() {
     //#region set height of articles <div>
     let netArticleHeight = articleBuffer.articleStyle.height + articleBuffer.articleStyle.marginT + articleBuffer.articleStyle.marginB;
@@ -357,7 +350,6 @@ export async function setHeightOfArticlesDivAsync() {
         netArticleHeight * totalRowCount);
     //#endregion
 }
-
 export async function removeLastUploadedArticleVideoAsync() {
     //#region remove last uploaded article video if exists
     let article = articleInfos_lastUploadedVideo["article"];
@@ -367,7 +359,6 @@ export async function removeLastUploadedArticleVideoAsync() {
         removeArticleVideo(article);
     //#endregion
 }
-
 export async function isSidebarOpenAsync() {
     //#region when sidebar is closed
     let closedSidebarClass = "nav-collapse hide-left-bar";
@@ -378,7 +369,6 @@ export async function isSidebarOpenAsync() {
 
     return true;
 }
-
 export async function addMsgWithImgToDivArticlesAsync(imagePath, imageAlt, message) {
     //#region add message with image to div_articles
     let div_articles = articleBuffer.div_articles;
@@ -401,8 +391,7 @@ export async function addMsgWithImgToDivArticlesAsync(imagePath, imageAlt, messa
     })
     //#endregion
 }
-
-export async function alignArticlesAsync() {
+export async function alignArticlesAsAutoAsync() {
     //#region realign articles to center
     if (!isCriticalSection) {
         isCriticalSection = true;
@@ -417,7 +406,6 @@ export async function alignArticlesAsync() {
     }
     //#endregion
 }
-
 export function showPlayImage(article) {
     //#region hide video
     article.find("video")
@@ -445,7 +433,6 @@ export function showPlayImage(article) {
 
     img_play.removeAttr("hidden"); // show play <img>
 }
-
 export function hidePlayImage(article) {
     // remove attributes of play image
     let img_play = article.find("img");
@@ -459,7 +446,6 @@ export function hidePlayImage(article) {
         .find("video")
         .removeAttr("hidden");
 }
-
 export function isVideoExists(article) {
     let src = article
         .find("video")
@@ -467,7 +453,6 @@ export function isVideoExists(article) {
 
     return src != undefined;
 }
-
 export function removeArticleVideo(article) {
     //#region remove attributes article video
     let video = article
@@ -478,7 +463,6 @@ export function removeArticleVideo(article) {
 
     video.load();
 }
-
 async function updateArticleAndArticleElementsStylesAsync() {
     //#region update styles
     for (let no = 0; no < articleBuffer.totalArticleCount; no++) {
@@ -491,7 +475,6 @@ async function updateArticleAndArticleElementsStylesAsync() {
     }
     //#endregion
 }
-
 function setStylesOfArticleElements() {
     //#region initialize variables by article type
     let article_style = articleBuffer.articleStyle;
@@ -542,7 +525,6 @@ function setStylesOfArticleElements() {
     }
     //#endregion
 }
-
 function addStyleToArticleElements(article) {
     //#region add style to one article by article type
     switch (articleBuffer.articleType) {

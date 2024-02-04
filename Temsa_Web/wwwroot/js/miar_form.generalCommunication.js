@@ -1,6 +1,6 @@
 ﻿import {
     addArticlesAsync, setVariablesForArticleAsync, art_baseId, div_article_info_id,
-    articleBuffer, addMsgWithImgToDivArticlesAsync, alignArticlesAsync
+    articleBuffer, addMsgWithImgToDivArticlesAsync, alignArticlesAsAutoAsync
 } from "./miar_article.js";
 
 import {
@@ -119,12 +119,12 @@ $(function () {
     $(window).resize(async () => {
         // realign articles
         if (articleBuffer.totalArticleCount > 0)
-            await alignArticlesAsync()
+            await alignArticlesAsAutoAsync()
     })
     $("#div_sidebarMenuButton").click(async () => {
         // realing articles
         if (articleBuffer.totalArticleCount > 0)
-            await alignArticlesAsync();
+            await alignArticlesAsAutoAsync();
     })
     slct_menubar.change(async () => {
         slct_menubar_value = slct_menubar.val();
@@ -163,7 +163,7 @@ $(function () {
 
             //#region when last closed form isn't answered
             else
-                await alignArticlesAsync();
+                await alignArticlesAsAutoAsync();
             //#endregion
         }
         //#endregion
@@ -421,7 +421,7 @@ $(function () {
                         }
                     });
                     await addArticlesAsync(true);
-                    await alignArticlesAsync();
+                    await alignArticlesAsAutoAsync();
                     //#endregion
 
                     //#region declare events

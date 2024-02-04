@@ -28,7 +28,6 @@ export async function createInputFormAsync(form, rowCount) {
             </div>`);
     //#endregion
 }
-
 export async function populateInputFormAsync(rowNo, html_label, html_input) {
     //#region add label
     let div_row = div_form.children("." + div_row_class + `:nth-child(${rowNo})`);
@@ -44,7 +43,6 @@ export async function populateInputFormAsync(rowNo, html_label, html_input) {
         .append(html_input);
     //#endregion
 }
-
 export async function addValueToInputAsync(rowNo, inputType, value) {
     //#region add value to by input type
     let div_row = div_form.children("." + div_row_class + `:nth-child(${rowNo})`);
@@ -61,6 +59,19 @@ export async function addValueToInputAsync(rowNo, inputType, value) {
                 .value(value);
             break;
     }
+    //#endregion
+}
+export async function checkValueOfNumberInputAsync(inpt, minValue, maxValue) {
+    //#region when current value smaller than min value
+    let inpt_val = inpt.val();
+
+    if (inpt_val < minValue)
+        inpt.val(minValue);
+    //#endregion
+
+    //#region when current value bigger than max value
+    else if (inpt_val > maxValue)
+        inpt.val(maxValue);
     //#endregion
 }
 //#endregion

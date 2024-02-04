@@ -1,7 +1,7 @@
 ﻿import {
     addArticlesAsync, setVariablesForArticleAsync, art_baseId, div_article_info_id,
     articleBuffer, div_article_image_id, style_img_width_IT, style_img_height_IT,
-    style_div_info_height_IT, addMsgWithImgToDivArticlesAsync, alignArticlesAsync
+    style_div_info_height_IT, addMsgWithImgToDivArticlesAsync, alignArticlesAsAutoAsync
 } from "./miar_article.js";
 
 import {
@@ -146,11 +146,11 @@ $(function () {
     //#region events
     $(window).resize(async () => {
         if (articleBuffer.totalArticleCount > 0)
-            await alignArticlesAsync();
+            await alignArticlesAsAutoAsync();
     })
     $("#div_sidebarMenuButton").click(async () => {
         if (articleBuffer.totalArticleCount > 0)
-            await alignArticlesAsync();
+            await alignArticlesAsAutoAsync();
     })
     slct_menubar.change(async () => {
         slct_menubar_value = slct_menubar.val();
@@ -181,7 +181,7 @@ $(function () {
 
             //#region when last closed form isn't answered
             else
-                await alignArticlesAsync();
+                await alignArticlesAsAutoAsync();
             //#endregion
         }
         //#endregion
@@ -398,7 +398,7 @@ $(function () {
                         },
                     });
                     await addArticlesAsync(true);
-                    await alignArticlesAsync();
+                    await alignArticlesAsAutoAsync();
                     //#endregion
 
                     //#region declare events

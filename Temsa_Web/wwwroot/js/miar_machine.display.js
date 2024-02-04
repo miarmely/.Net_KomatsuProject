@@ -1,29 +1,33 @@
 ﻿import {
-    updateResultLabel, addPaginationButtonsAsync, controlPaginationBackAndNextButtonsAsync,
-    isAllObjectValuesNullAsync, getFileTypeFromFileName, updateElementText,
-    getBase64StrOfFileAsync, autoObjectMapperAsync
+    updateResultLabel, addPaginationButtonsAsync, getFileTypeFromFileName,
+    controlPaginationBackAndNextButtonsAsync, isAllObjectValuesNullAsync,
+    updateElementText, getBase64StrOfFileAsync, autoObjectMapperAsync
 } from "./miar_tools.js";
 
 import {
-    addArticlesAsync, alignArticlesToCenterAsync, articleBuffer, art_baseId,
-    click_articleVideoDivAsync, controlArticleWidthAsync, div_article_button_id,
-    div_article_info_id, div_article_video_id, ended_articleVideoAsync,
-    mouseout_articleVideoDivAsync, mouseover_articleVideoAsync,
-    setHeightOfArticlesDivAsync, setVariablesForArticleAsync,
+    addArticlesAsync, articleBuffer, art_baseId, setVariablesForArticleAsync,
+    mouseover_articleVideoAsync, click_articleVideoDivAsync, controlArticleWidthAsync,
+    div_article_button_id, div_article_info_id, div_article_video_id,
+    ended_articleVideoAsync, alignArticlesAsAutoAsync, mouseout_articleVideoDivAsync,
     removeLastUploadedArticleVideoAsync
 } from "./miar_article.js"
 
 import {
-    setMachineVideoSizeAsync, removeVideoAttrAsync, removePosterAttrAsync,
+    machineForm_setMachineVideoSizeAsync, machineForm_removeVideoAttrAsync,
+    change_pdfInputAsync, machineForm_removePosterAttrAsync,
     machineForm_addElementNamesAsync, machineForm_populateSelectsAsync,
-    click_showImageButtonAsync, click_showVideoButtonAsync, showOrHideBackButtonAsync
+    click_showImageButtonAsync, click_showVideoButtonAsync,
+    machineForm_showOrHideBackButtonAsync, click_inputAsync, click_textAreaAsync,
+    change_imageInputAsync, change_videoInputAsync
 } from "./miar_machine.js";
 
 import {
-    changeDescriptionsButtonColorAsync,
-    descriptions, setVariablesForDescriptionsAsync,
+    btn_descriptions_id,
+    changeDescriptionsButtonColorAsync, descriptions, setVariablesForDescriptionsAsync,
     uploadDescriptionsEventsAsync
 } from "./miar_descriptions.js";
+
+import { checkValueOfNumberInputAsync } from "./miar_module_inputForm.js";
 
 
 $(function () {
@@ -36,13 +40,19 @@ $(function () {
     const ul_pagination = $("#ul_pagination");
     const entityQuantity_id = "#small_entityQuantity";
     const entityQuantity_color = "#7A7A7A";
-    const path_pdfs = "pdfs";
-    const div_article_display = $("#div_article_display");
     const div_articles = $("#div_articles");
-    const div_article_update = $("#div_article_update");
+    const div_article_display = $("#div_article_display");
+    const div_article_update_id = "div_article_update";
+    const div_article_update = $("#" + div_article_update_id);
     const div_menubar_button = $("#div_menubar_button");
+    const div_backButton = $("#div_backButton");
+    const div_panelTitle = $("#div_panelTitle");
     const descriptions_charQuantityToBeDisplayOnArticle = 200;
-    const btn_menubar_apply = $("#btn_menubar_apply")
+    const btn_menubar_apply = $("#btn_menubar_apply");
+    const btn_save = $("#btn_save");
+    const btn_showImage = $("#btn_showImage");
+    const btn_showVideo = $("#btn_showVideo");
+    const btn_back = $("#btn_back");
     const slct_menubar = $("#slct_menubar");
     const inpt_model_id = "inpt_model";
     const inpt_brand_id = "inpt_brand";
@@ -50,50 +60,132 @@ $(function () {
     const inpt_stock_id = "inpt_stock";
     const inpt_sold_id = "inpt_sold";
     const inpt_rented_id = "inpt_rented";
+    const inpt_image = $("#inpt_image");
+    const inpt_video = $("#inpt_video");
+    const inpt_pdf = $("#inpt_pdf");
+    const inpt_chooseImage = $("#inpt_chooseImage");
+    const inpt_chooseVideo = $("#inpt_chooseVideo");
+    const inpt_choosePdf = $("#inpt_choosePdf");
     const slct_mainCategory_id = "slct_mainCategory";
     const slct_subCategory_id = "slct_subCategory";
+    const path_imageFolderAfterWwwroot = "images\\machines";
+    const path_videoFolderAfterWwwroot = "videos\\machines";
+    const path_pdfFolderAfterWwwroot = "pdfs";
+    const vid_machine = $("#vid_machine");
+    const src_machine = $("#src_machine");
+    const spn_resultLabel_id = "p_resultLabel";
+    const spn_resultLabel = $("#" + spn_resultLabel_id);
+    const spn_fileStatus = $("#spn_fileStatus");
+    const img_loading = $("#img_loading");
+    const langPack_menubarOptions = {
+        "TR": [
+            "Görüntüle",
+            "Sil"
+        ],
+        "EN": [
+            "Display",
+            "Delete"
+        ]
+    };
+    const langPack_applyButton = {
+        "TR": "Uygula",
+        "EN": "Apply"
+    };
+    const langPack_entityQuantity = {
+        "TR": "makine gösteriliyor",
+        "EN": "machine displaying"
+    };
+    const langPack_successMessage = {
+        "TR": "başarıyla güncellendi",
+        "EN": "update successfully",
+    };
+    const langPack_panelTitle = {
+        "TR": "KAYITLI MAKİNELER",
+        "EN": "REGISTERED MACHINES"
+    }
     let paginationInfos = {};
     let machineCountOnPage;
     let idOfLastClickedArticle = null;
     let article_idsToBeDelete = [];
     let isWindowResizeInCriticalSection = false;
+    let isUpdatePageOpenedBefore = false;
     //#endregion
 
     //#region events
 
-    //#region partner
+    //#region partnerc
     $(window).resize(async () => {
         //#region when machine update page is open
         if (div_article_update.attr("hidden") == undefined)
-            await setMachineVideoSizeAsync(vid_machine);
+            await machineForm_setMachineVideoSizeAsync(vid_machine);
         //#endregion
 
         //#region when machine articles page is open
-        else
+        else {
             //#region wait until time out
             if (isWindowResizeInCriticalSection)
                 return;
-        //#endregion
+            //#endregion
 
-        //#region update article styles
-        isWindowResizeInCriticalSection = true;
+            //#region update article styles
+            isWindowResizeInCriticalSection = true;
 
-        setTimeout(async () => {
-            await controlArticleWidthAsync();
-            await alignArticlesToCenterAsync();
-            await setHeightOfArticlesDivAsync();
+            setTimeout(async () => {
+                await controlArticleWidthAsync();
+                await alignArticlesAsAutoAsync();
 
-            isWindowResizeInCriticalSection = false;
-        }, 500);
-        //#endregion
+                isWindowResizeInCriticalSection = false;
+            }, 500);
+            //#endregion
+        }
         //#endregion
     });
     //#endregion
 
     //#region for update page
-    $("form").submit(async (event) => {
+    $("#" + div_article_update_id + " input").click(async (event) => {
+        await click_inputAsync(event, spn_resultLabel);
+    })
+    $("#" + div_article_update_id + " textarea").click(async () => {
+        await click_textAreaAsync(spn_resultLabel);
+    })
+    $("#" + div_article_update_id + " input[type= number]").change(async (event) => {
+        //#region check number input whether max or min value violation
+        let inpt_id = event.target.id;
+
+        switch (inpt_id) {
+            case inpt_year_id:
+                await checkValueOfNumberInputAsync(
+                    $("#" + event.target.id),
+                    numberInputLimits.year.min,
+                    numberInputLimits.year.max);
+                break;
+            case inpt_stock_id:
+                await checkValueOfNumberInputAsync(
+                    $("#" + event.target.id),
+                    numberInputLimits.stock.min,
+                    numberInputLimits.stock.max);
+                break;
+            case inpt_sold_id:
+                await checkValueOfNumberInputAsync(
+                    $("#" + event.target.id),
+                    numberInputLimits.sold.min,
+                    numberInputLimits.sold.max);
+                break;
+            case inpt_rented_id:
+                await checkValueOfNumberInputAsync(
+                    $("#" + event.target.id),
+                    numberInputLimits.rented.min,
+                    numberInputLimits.rented.max);
+                break;
+        }
+        //#endregion
+    })
+    btn_save.click(async (event) => {
         //#region show loading image
         event.preventDefault();
+        spn_resultLabel.empty();
+        spn_resultLabel.removeAttr("style");
         img_loading.removeAttr("hidden");
         //#endregion
 
@@ -172,7 +264,7 @@ $(function () {
             //#region write successful message
             updateResultLabel(
                 "#" + spn_resultLabel_id,
-                successMessagesByLanguages[language]["successfulUpdate"],
+                langPack_successMessage[language],
                 resultLabel_successColor,
                 "30px",
                 img_loading);
@@ -189,10 +281,10 @@ $(function () {
     btn_back.click(async () => {
         //#region reset form
         $("form")[0].reset();
-        $(resultLabel_id).empty();
+        spn_resultLabel.empty();
 
-        await removePosterAttrAsync();
-        await removeVideoAttrAsync();
+        await machineForm_removePosterAttrAsync(vid_machine, src_machine);
+        await machineForm_removeVideoAttrAsync(vid_machine, src_machine);
         //#endregion
 
         //#region show articles
@@ -200,25 +292,65 @@ $(function () {
         div_article_display.removeAttr("hidden");
         //#endregion
 
-        await showOrHideBackButtonAsync("hide");
-        await controlArticleWidthAsync();
-        await alignArticlesToCenterAsync();
+        await machineForm_showOrHideBackButtonAsync(
+            "hide",
+            div_backButton,
+            div_panelTitle,
+            btn_back);
+        await alignArticlesAsAutoAsync();
     })
     btn_showImage.click(async () => {
-        await click_showImageButtonAsync();
+        await click_showImageButtonAsync(btn_showImage, btn_showVideo, vid_machine);
     })
     btn_showVideo.click(async () => {
-        await click_showVideoButtonAsync();
+        await click_showVideoButtonAsync(btn_showImage, btn_showVideo, vid_machine);
+    })
+    inpt_chooseImage.click(() => {
+        inpt_image.trigger("click");
+    })
+    inpt_chooseVideo.click(() => {
+        inpt_video.trigger("click");
+    })
+    inpt_choosePdf.click(() => {
+        inpt_pdf.trigger("click");
+    })
+    inpt_image.change(async (event) => {
+        await change_imageInputAsync(
+            event,
+            inpt_chooseImage,
+            img_loading,
+            inpt_image,
+            vid_machine,
+            spn_fileStatus);
+    })
+    inpt_video.change(async (event) => {
+        await change_videoInputAsync(
+            event,
+            inpt_chooseVideo,
+            img_loading,
+            inpt_video,
+            src_machine,
+            vid_machine,
+            spn_fileStatus);
+    })
+    inpt_pdf.change(async (event) => {
+        await change_pdfInputAsync(
+            event,
+            inpt_choosePdf,
+            img_loading,
+            inpt_pdf);
     })
     //#endregion
 
     //#region for articles page
     $("#div_sidebarMenuButton").click(async () => {
-        // wait 0.3sn until sidebar closed
-        setTimeout(async () => {
-            await controlArticleWidthAsync();
-            await alignArticlesToCenterAsync();
-        }, 450);
+        //#region when articles page is opened
+        if (div_article_display.attr("hidden") == undefined)
+            setTimeout(async () => {
+                await controlArticleWidthAsync();
+                await alignArticlesAsAutoAsync();
+            }, 500);
+        //#endregion
     });
     slct_menubar.change(async () => {
         //#region set page mode
@@ -303,20 +435,6 @@ $(function () {
         }
         //#endregion 
     })
-    spn_eventManager.on("click_articleVideoDiv", async (_, event) => {
-        //#region when page mode is "delete"
-        if (slct_menubar_value == "delete")
-            return;
-        //#endregion
-
-        //#region get article id of clicked play <img>
-        let articleId = event.target
-            .closest("article")
-            .id;
-        //#endregion
-
-        await click_articleVideoDivAsync($("#" + articleId));
-    })
     spn_eventManager.on("click_article", async (_, event) => {
         //#region when click to video, play image or pdf (return)
         if (event.target.id == div_article_video_id  // when article video clicked
@@ -327,6 +445,7 @@ $(function () {
 
         //#region when click to other places
         let articleId = event.currentTarget.closest("article").id;
+        idOfLastClickedArticle = articleId;
 
         switch (slct_menubar_value) {
             case "display":
@@ -338,16 +457,38 @@ $(function () {
                 div_article_update.removeAttr("hidden");
                 //#endregion
 
-                //#region get machine infos of clicked article
-                idOfLastClickedArticle = articleId;
-                let machineInfosOfClickedArticle = article_idsAndMachineInfos[articleId];
+                //#region set update page
+                if (!isUpdatePageOpenedBefore) {
+                    await machineForm_addElementNamesAsync(
+                        btn_showImage,
+                        btn_showVideo,
+                        $("#div_imageInput"),
+                        $("#div_videoInput"),
+                        $("#div_pdfInput"),
+                        $("#div_mainCategory"),
+                        $("#div_subCategory"),
+                        $("#div_model"),
+                        $("#div_brand"),
+                        $("#div_year"),
+                        $("#div_stock"),
+                        $("#div_sold"),
+                        $("#div_rented"),
+                        $("#div_handStatus"),
+                        btn_descriptions_id,
+                        btn_save);
+                    await machineForm_populateSelectsAsync(
+                        $("#" + slct_mainCategory_id));
+
+                    isUpdatePageOpenedBefore = true;
+                }
                 //#endregion
 
-                await machineForm_addElementNamesAsync();
-                await machineForm_populateSelectsAsync();
                 await addDefaultValueToInputsAsync();
-                await uploadDescriptionsEventsAsync();
-                await showOrHideBackButtonAsync("show");
+                await machineForm_showOrHideBackButtonAsync(
+                    "show",
+                    div_backButton,
+                    div_panelTitle,
+                    btn_back);
                 //#endregion
 
                 break;
@@ -379,6 +520,20 @@ $(function () {
         }
         //#endregion
     })
+    spn_eventManager.on("click_articleVideoDiv", async (_, event) => {
+        //#region when page mode is "delete"
+        if (slct_menubar_value == "delete")
+            return;
+        //#endregion
+
+        //#region get article id of clicked play <img>
+        let articleId = event.target
+            .closest("article")
+            .id;
+        //#endregion
+
+        await click_articleVideoDivAsync($("#" + articleId));
+    })
     spn_eventManager.on("ended_articleVideo", async () => {
         await ended_articleVideoAsync();
     })
@@ -389,7 +544,7 @@ $(function () {
     //#region functions
     async function populateHtmlAsync() {
         //#region add panel title
-        $("#div_panelTitle").append(
+        div_panelTitle.append(
             langPack_panelTitle[language]);
         //#endregion
 
@@ -415,8 +570,8 @@ $(function () {
         //#endregion
 
         await addMachineArticlesAsync(pageNumber, pageSize, true);
+        await uploadDescriptionsEventsAsync();
     }
-
     async function addMachineArticlesAsync(pageNumber, pageSize, refreshPaginationButtons) {
         $.ajax({
             method: "GET",
@@ -460,8 +615,7 @@ $(function () {
                 addArticlesAsync(true)
                     .then(async () => {
                         await controlArticleWidthAsync();
-                        await alignArticlesToCenterAsync();
-                        await setHeightOfArticlesDivAsync();
+                        await alignArticlesAsAutoAsync();
                         await populateArticlesAsync(response);
 
                         //#region get pagination infos from headers
@@ -502,7 +656,6 @@ $(function () {
             },
         });
     }
-
     async function populateArticlesAsync(response) {
         //#region add machines to <article>
         article_idsAndMachineInfos = {};  // reset
@@ -568,7 +721,6 @@ $(function () {
         })
         //#endregion
     }
-
     async function updateMachineAsync(
         data,
         oldMachineId,
@@ -605,7 +757,6 @@ $(function () {
             });
         });
     }
-
     async function updateMachineImageOnFolderAsync(oldMachineInfos, newMachineInfos) {
         return new Promise(async resolve => {
             //#region when machine image not changed
@@ -647,7 +798,6 @@ $(function () {
             });
         });
     }
-
     async function updateMachineVideoOnFolderAsync(oldMachineInfos, newMachineInfos) {
         return new Promise(async resolve => {
             //#region when machine video not changed
@@ -675,7 +825,7 @@ $(function () {
                 success: () => {
                     resolve(true);
                 },
-                error: (response) => {
+                error: () => {
                     // write error
                     updateResultLabel(
                         "#" + spn_resultLabel_id,
@@ -689,7 +839,6 @@ $(function () {
             })
         });
     }
-
     async function updateMachinePdfOnFolderAsync(oldMachineInfos, newMachineInfos) {
         return new Promise(async resolve => {
             //#region when pdf not changed
@@ -731,7 +880,6 @@ $(function () {
             });
         });
     }
-
     async function updateArticleAsync(articleId, data) {
         //#region when image is changed
         let article = $("#" + articleId);
@@ -783,7 +931,6 @@ $(function () {
                 data.descriptions[language].substring(0, descriptions_charQuantityToBeDisplayOnArticle));
         //#endregion
     }
-
     async function deleteSelectedMachinesAsync() {
         //#region set data
         let data = [];  // [{}, {}, ...]
@@ -806,7 +953,7 @@ $(function () {
                 `?language=${language}` +
                 `&imageFolderPathAfterWwwroot=${path_imageFolderAfterWwwroot}` +
                 `&videoFolderPathAfterWwwroot=${path_videoFolderAfterWwwroot}` +
-                `&pdfFolderPathAfterWwwroot=${path_pdfs}`),
+                `&pdfFolderPathAfterWwwroot=${path_pdfFolderAfterWwwroot}`),
             headers: { "Authorization": jwtToken },
             data: JSON.stringify(data),
             contentType: "application/json",
@@ -870,7 +1017,6 @@ $(function () {
 
 
     }
-
     async function saveClaimInfosToLocalAsync() {
         // if not exists on local
         if (localStorage.getItem(localKeys_claimInfos) == undefined) {
@@ -881,7 +1027,6 @@ $(function () {
                 JSON.stringify(claimInfos));
         }
     }
-
     async function addDefaultValueToInputsAsync() {
         //#region machine image and video
 
@@ -903,7 +1048,7 @@ $(function () {
         //#endregion
 
         //#region show machine image
-        await setMachineVideoSizeAsync(vid_machine);
+        await machineForm_setMachineVideoSizeAsync(vid_machine);
         vid_machine.removeAttr("hidden");
         //#endregion
 
@@ -926,11 +1071,13 @@ $(function () {
 
         //#region descriptions
         $("#txt_descriptions").val(infosOFLastClickedArticle.descriptions[language]);
-
-        // change descriptions color as "saved" color
+        
         await changeDescriptionsButtonColorAsync(
             $("#btn_descriptions"),
-            descriptions_savedColor);  
+            descriptions_savedColor);
+        await setVariablesForDescriptionsAsync("descriptions", {
+            "byLanguages": infosOFLastClickedArticle.descriptions
+        })
         //#endregion
     }
     //#endregion

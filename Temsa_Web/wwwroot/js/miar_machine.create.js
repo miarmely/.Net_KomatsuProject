@@ -1,19 +1,17 @@
 ﻿import {
     btn_descriptions_id, changeDescriptionsButtonColorAsync, descriptions,
-    resetDescriptionsBuffer
+    resetDescriptionsBuffer, uploadDescriptionsEventsAsync
 } from "./miar_descriptions.js";
 
 import {
-    inpt_brand_id, inpt_model_id, inpt_stock_id, inpt_year_id,
-    path_imageFolderAfterWwwroot, path_pdfFolderAfterWwwroot,
-    path_videoFolderAfterWwwroot, populateFormAsync, removePosterAttrAsync,
-    removeVideoAttrAsync, selectedImageInfos, selectedPdfInfos, selectedVideoInfos,
-    slct_mainCategory_id, slct_subCategory_id, vid_machine
+    inpt_brand_id, inpt_model_id, inpt_stock_id, inpt_year_id, removeVideoAttrAsync,
+    path_videoFolderAfterWwwroot, removePosterAttrAsync, selectedVideoInfos,
+    selectedImageInfos, selectedPdfInfos, slct_mainCategory_id, vid_machine,
+    slct_subCategory_id
 } from "./miar_machine_inputForm.js";
 
-import {
-    updateResultLabel, getBase64StrOfFileAsync
-} from "./miar_tools.js"
+import { machineForm_addElementNamesAsync } from "./miar_machine.js";
+import { updateResultLabel, getBase64StrOfFileAsync } from "./miar_tools.js"
 
 
 $(function () {
@@ -124,6 +122,17 @@ $(function () {
     //#endregion
 
     //#region functions
+    async function populateHtmlAsync() {
+        //#region add panel title
+        div_panelTitle.append(
+            langPack_panelTitle[language]);
+        //#endregion
+
+        await machineForm_addElementNamesAsync();
+        
+        await uploadDescriptionsEventsAsync();
+    }
+
     async function setMachineVideoSizeAsync() {
         //#region set width and height
         let panelBodyWidth = $(".panel-body").prop("clientWidth");
@@ -280,5 +289,5 @@ $(function () {
     }
     //#endregion
 
-    populateFormAsync(true);
+    populateHtmlAsync();
 })
