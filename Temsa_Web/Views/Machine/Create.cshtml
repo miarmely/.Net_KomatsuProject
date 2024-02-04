@@ -6,7 +6,7 @@
     var minStockValue = 0;
     var minSoldValue = 0; 
     var minRentedValue = 0; 
-    var maxYearValue = 2099;
+    var maxYearValue = DateTime.UtcNow.Year;
     var maxStockValue = 5000;
     var maxSoldValue = 5000;
     var maxRentedValue = 5000;
@@ -14,6 +14,7 @@
 }
 
 <link rel="stylesheet" href="~/css/miar_machine.css"/>
+<link rel="stylesheet" href="~/css/miar_machine.create.css"/>
 
 
 <div class="form-w3layouts">
@@ -23,7 +24,7 @@
                 <header class="panel-heading"></header>
                 <div class="panel-body">
                     @*machine image and video*@
-                    <div style="text-align:center">
+                    <div style="text-align:center; margin-top:15px">
                         <video id="vid_machine" hidden>
                             <source id="src_machine"/>
                         </video>
@@ -32,12 +33,13 @@
                             <spn id="spn_fileStatus"></spn>
                         </div>
                     </div>
+                    
                     @*image and video buttons*@
                     <div style="text-align:center">
-                        <button id="btn_showImage" type="button" style="color:yellow" class="btn btn_imageAndVideo"></button>
-                        <button id="btn_showVideo" type="button" class="btn btn_imageAndVideo"></button>
+                        <button id="btn_showImage" type="button" hidden></button>
+                        <button id="btn_showVideo" type="button" hidden></button>
                     </div>
-                
+
                     <form>
                         <div id="div_form" class="form-horizontal bucket-form"> 
                             @{
@@ -162,17 +164,16 @@
                                     <textarea id="txt_descriptions"  style="resize:none"  type="text"  class="form-control"  rows="10"  required></textarea>
                                 </div>
                             </div>
+                             @*save button*@
+                            <div style="text-align:center" class="form-group">
+                                <button id="btn_save" type="submit" class="btn btn-danger" style="background-color: darkblue"></button>
+                                <div>
+                                    <p id="p_resultLabel"></p>
+                                    <img id="img_loading" src="~/images/loading.gif" style="width:40px; height:40px; margin-top:30px" hidden/>
+                                </div>
+                            </div>
                         </div>
                     </form>
-
-                    @*save button*@
-                    <div style="text-align:center">
-                        <button id="btn_save" type="button" class="btn btn-danger" style="background-color: darkblue"></button>
-                        <div>
-                            <p id="p_resultLabel"></p>
-                            <img id="img_loading" src="~/images/loading.gif" style="width:40px; height:40px" hidden/>
-                        </div>
-                    </div>
                 </div>
             </section>
         </div>
@@ -181,13 +182,27 @@
 
 
 <script>
+    const numberInputLimits = {
+        "year": {
+            "min": @minYearValue,
+            "max": @maxYearValue
+        },
+        "stock": {
+            "min": @minStockValue,
+            "max": @maxStockValue
+        },
+        "sold": {
+            "min": @minSoldValue,
+            "max": @maxSoldValue
+        },
+        "rented": {
+            "min": @minRentedValue,
+            "max": @maxRentedValue
+        }
+    }
     const path_imageFolderAfterWwwroot = "images\\machines";
     const path_videoFolderAfterWwwroot = "videos\\machines";
-    const path_pdfFolderAfterWwwroot = "pdfs";   
-    const langPack_panelTitle = {
-        "TR": "YENİ MAKİNE OLUŞTUR",
-        "EN": "CREATE NEW MACHINE"
-    }
+    const path_pdfFolderAfterWwwroot = "pdfs";
     const successMessagesByLanguages = {
         "TR": {
             "saveSuccessful": "başarıyla kaydedildi",
@@ -220,29 +235,9 @@
             "unsuccessfulPdfUpload": "an error occured when pdf uploading",
         }
     }
-    
-    
-    // for "miar_machine.js" + "miar_machine_create"
-    const vid_machine = $("#vid_machine");
-    const src_machine = $("#src_machine");
-    const spn_resultLabel_id = "p_resultLabel";
-    const spn_resultLabel = $("#" + spn_resultLabel_id);
-    const spn_fileStatus = $("#spn_fileStatus");
-    const btn_showImage = $("#btn_showImage");
-    const btn_showVideo = $("#btn_showVideo");
-    const btn_back = $("#btn_back");
-    const inpt_image = $("#inpt_image");
-    const inpt_video = $("#inpt_video");
-    const inpt_pdf = $("#inpt_pdf");
-    const inpt_chooseImage = $("#inpt_chooseImage");
-    const inpt_chooseVideo = $("#inpt_chooseVideo");
-    const inpt_choosePdf = $("#inpt_choosePdf");
-    const img_loading = $("#img_loading");
-    const div_backButton = $("#div_backButton");
-    const div_panelTitle = $("#div_panelTitle");
-    const imageSizeLimitInMb = 20;
-    const videoSizeLimitInMb = 20;
-    const pdfSizeLimitInMb = 20;
+    let selectedImageInfos;
+    let selectedPdfInfos;
+    let selectedVideoInfos;
 </script>
 
 

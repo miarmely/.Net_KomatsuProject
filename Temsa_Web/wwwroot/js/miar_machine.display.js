@@ -113,7 +113,7 @@ $(function () {
 
     //#region events
 
-    //#region partnerc
+    //#region partner
     $(window).resize(async () => {
         //#region when machine update page is open
         if (div_article_update.attr("hidden") == undefined)
@@ -122,7 +122,7 @@ $(function () {
 
         //#region when machine articles page is open
         else {
-            //#region wait until time out
+            //#region wait until the previous resize event finishes
             if (isWindowResizeInCriticalSection)
                 return;
             //#endregion

@@ -132,7 +132,7 @@ export async function change_imageInputAsync(
     let selectedFileInfos = event.target.files[0];
 
     if (selectedFileInfos == undefined)
-        return;
+        return false;
     //#endregion
 
     //#region when file type is not image (error)
@@ -147,7 +147,7 @@ export async function change_imageInputAsync(
 
         // reset file input
         inpt_image.val("");
-        return;
+        return false;
     }
     //#endregion
 
@@ -163,7 +163,7 @@ export async function change_imageInputAsync(
 
         // reset file input
         inpt_image.val("");
-        return;
+        return false;
     }
     //#endregion
 
@@ -190,6 +190,8 @@ export async function change_imageInputAsync(
             vid_machine.load();
         });
     //#endregion
+
+    return true;
 }
 export async function change_videoInputAsync(
     event,
@@ -206,7 +208,7 @@ export async function change_videoInputAsync(
     let selectedFileInfos = event.target.files[0];
 
     if (selectedFileInfos == undefined)
-        return;
+        return false;
     //#endregion
 
     //#region when file type isn't video (error)
@@ -221,7 +223,7 @@ export async function change_videoInputAsync(
 
         // reset file input
         inpt_video.val("");
-        return;
+        return false;
     }
     //#endregion
 
@@ -236,7 +238,7 @@ export async function change_videoInputAsync(
 
         // reset file input
         inpt_video.val("");
-        return;
+        return false;
     }
     //#endregion
 
@@ -266,6 +268,8 @@ export async function change_videoInputAsync(
             vid_machine.load();
         });
     //#endregion
+
+    return true;
 }
 export async function change_pdfInputAsync(
     event,

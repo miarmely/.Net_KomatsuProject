@@ -4,20 +4,71 @@
 } from "./miar_descriptions.js";
 
 import {
-    inpt_brand_id, inpt_model_id, inpt_stock_id, inpt_year_id, removeVideoAttrAsync,
-    path_videoFolderAfterWwwroot, removePosterAttrAsync, selectedVideoInfos,
-    selectedImageInfos, selectedPdfInfos, slct_mainCategory_id, vid_machine,
-    slct_subCategory_id
-} from "./miar_machine_inputForm.js";
+    machineForm_setMachineVideoSizeAsync, machineForm_removeVideoAttrAsync,
+    change_pdfInputAsync, machineForm_removePosterAttrAsync,
+    machineForm_addElementNamesAsync, machineForm_populateSelectsAsync,
+    click_showImageButtonAsync, click_showVideoButtonAsync,
+    machineForm_showOrHideBackButtonAsync, click_inputAsync, click_textAreaAsync,
+    change_imageInputAsync, change_videoInputAsync
+} from "./miar_machine.js";
 
-import { machineForm_addElementNamesAsync } from "./miar_machine.js";
 import { updateResultLabel, getBase64StrOfFileAsync } from "./miar_tools.js"
+import { checkValueOfNumberInputAsync } from "./miar_module_inputForm.js";
 
 
 $(function () {
     //#region variables
-    const resultLabel_id = "#p_resultLabel";
     const img_loading = $("#img_loading");
+    const vid_machine = $("#vid_machine");
+    const src_machine = $("#src_machine");
+    const spn_resultLabel_id = "p_resultLabel";
+    const spn_resultLabel = $("#" + spn_resultLabel_id);
+    const spn_fileStatus = $("#spn_fileStatus");
+    const btn = {
+        "showImage": $("#btn_showImage"),
+        "showVideo": $("#btn_showVideo"),
+        "save": $("#btn_save")
+    };
+    const div = {
+        "form_id": "div_form",
+        "panelTitle": $("#div_panelTitle"),
+        "imageInput": $("#div_imageInput"),
+        "videoInput": $("#div_videoInput"),
+        "pdfInput": $("#div_pdfInput"),
+        "mainCategory": $("#div_mainCategory"),
+        "subCategory": $("#div_subCategory"),
+        "model": $("#div_model"),
+        "brand": $("#div_brand"),
+        "year": $("#div_year"),
+        "stock": $("#div_stock"),
+        "sold": $("#div_sold"),
+        "rented": $("#div_rented"),
+        "handStatus": $("#div_handStatus")
+    };
+    const slct = {
+        "mainCategory": $("#slct_mainCategory"),
+        "subCategory": $("#slct_subCategory")
+    };
+    const inpt = {
+        "model_id": "inpt_model",
+        "brand_id": "inpt_brand",
+        "year_id": "inpt_year",
+        "stock_id": "inpt_stock",
+        "sold_id": "inpt_sold",
+        "rented_id": "inpt_rented",
+        "image": $("#inpt_image"),
+        "video": $("#inpt_video"),
+        "pdf": $("#inpt_pdf"),
+        "chooseImage": $("#inpt_chooseImage"),
+        "chooseVideo": $("#inpt_chooseVideo"),
+        "choosePdf": $("#inpt_choosePdf"),
+    };
+    const langPack_panelTitle = {
+        "TR": "YENİ MAKİNE OLUŞTUR",
+        "EN": "CREATE NEW MACHINE"
+    };
+    let isWindowResizeInCriticalSection = false;
+    let imageAndVideoButtons_activeButton = "";
     //#endregion
 
     //#region events
@@ -25,7 +76,7 @@ $(function () {
         //#region resets
         // reset result label
         event.preventDefault();
-        $(resultLabel_id).empty();
+        spn_resultLabel.empty();
 
         // display loading gif
         img_loading.removeAttr("hidden");
@@ -37,7 +88,7 @@ $(function () {
         if (!descriptions.isChanged) {
             // write error
             updateResultLabel(
-                resultLabel_id,
+                "#" + spn_resultLabel_id,
                 errorMessagesByLanguages[language]["descriptionNotEntered"],
                 resultLabel_errorColor,
                 "30px",
@@ -62,7 +113,7 @@ $(function () {
             ) {
                 // write error
                 updateResultLabel(
-                    resultLabel_id,
+                    "#" + spn_resultLabel_id,
                     `"${languageInSession}" ${errorMessagesByLanguages[language]["descriptionNotEntered"]}`,
                     resultLabel_errorColor,
                     "30px",
@@ -95,8 +146,8 @@ $(function () {
             //#region reset form
             $("form")[0].reset();
 
-            await removePosterAttrAsync();
-            await removeVideoAttrAsync();
+            await machineForm_removePosterAttrAsync(vid_machine, src_machine);
+            await machineForm_removeVideoAttrAsync(vid_machine, src_machine);
             await changeDescriptionsButtonColorAsync(
                 $("#" + btn_descriptions_id),
                 descriptions_unsavedColor);
@@ -105,7 +156,7 @@ $(function () {
 
             //#region write successfull message
             updateResultLabel(
-                resultLabel_id,
+                "#" + spn_resultLabel_id,
                 successMessagesByLanguages[language]["saveSuccessful"],
                 resultLabel_successColor,
                 "30px",
@@ -116,33 +167,200 @@ $(function () {
 
         //#endregion 
     })
+    $("#" + div.form_id + " input").click(async (event) => {
+        await click_inputAsync(event, spn_resultLabel);
+    })
+    $("#" + div.form_id + " textarea").click(async () => {
+        await click_textAreaAsync(spn_resultLabel);
+    })
+    $("#" + div.form_id + " input[type= number]").change(async (event) => {
+        //#region check number input whether max or min value violation
+        let input = $("#" + event.target.id);
+
+        switch (event.target.id) {
+            case inpt.year_id:
+                await checkValueOfNumberInputAsync(
+                    input,
+                    numberInputLimits.year.min,
+                    numberInputLimits.year.max);
+                break;
+            case inpt.stock_id:
+                await checkValueOfNumberInputAsync(
+                    input,
+                    numberInputLimits.stock.min,
+                    numberInputLimits.stock.max);
+                break;
+            case inpt.sold_id:
+                await checkValueOfNumberInputAsync(
+                    input,
+                    numberInputLimits.sold.min,
+                    numberInputLimits.sold.max);
+                break;
+            case inpt.rented_id:
+                await checkValueOfNumberInputAsync(
+                    input,
+                    numberInputLimits.rented.min,
+                    numberInputLimits.rented.max);
+                break;
+        }
+        //#endregion
+    })
     $(window).resize(async () => {
-        await setMachineVideoSizeAsync();
+        //#region wait until the previous resize event finishes
+        if (isWindowResizeInCriticalSection)
+            return;
+        //#endregion
+
+        //#region set machine video size 
+        isWindowResizeInCriticalSection = true;
+
+        setTimeout(async () => {
+            await machineForm_setMachineVideoSizeAsync(vid_machine);
+
+            isWindowResizeInCriticalSection = false;
+        }, 500);
+        //#endregion
+    })
+    btn.showImage.click(async () => {
+        //#region active/passive the image and video buttons
+        //passive the video button
+        btn.showVideo.addClass("btn_imageAndVideo_passive");
+        btn.showVideo.removeClass("btn_imageAndVideo_active");
+        
+        // active the image button
+        btn.showImage.addClass("btn_imageAndVideo_active");
+        btn.showImage.removeClass("btn_imageAndVideo_passive");
+        //#endregion
+
+        //#region show image if video shows
+        if (imageAndVideoButtons_activeButton != "image")
+            await click_showImageButtonAsync(btn.showImage, btn.showVideo, vid_machine);
+
+        imageAndVideoButtons_activeButton = "image";
+        //#endregion        
+    })
+    btn.showVideo.click(async () => {
+        //#region active/passive the image and video buttons
+        // passive the image button
+        btn.showImage.addClass("btn_imageAndVideo_passive");
+        btn.showImage.removeClass("btn_imageAndVideo_active");
+
+        // active the video button
+        btn.showVideo.addClass("btn_imageAndVideo_active");
+        btn.showVideo.removeClass("btn_imageAndVideo_passive");
+        //#endregion
+
+        //#region show video if image shows
+        if (imageAndVideoButtons_activeButton != "video")
+            await click_showVideoButtonAsync(btn.showImage, btn.showVideo, vid_machine);
+
+        imageAndVideoButtons_activeButton = "video";
+        //#endregion
+    })
+    inpt.chooseImage.click(() => {
+        inpt.image.trigger("click");
+    })
+    inpt.chooseVideo.click(() => {
+        inpt.video.trigger("click");
+    })
+    inpt.choosePdf.click(() => {
+        inpt.pdf.trigger("click");
+    })
+    inpt.image.change(async (event) => {
+        let isSuccess = await change_imageInputAsync(
+            event,
+            inpt.chooseImage,
+            img_loading,
+            inpt.image,
+            vid_machine,
+            spn_fileStatus);
+
+        //#region when unsuccessful
+        if (!isSuccess)
+            return;
+        //#endregion
+
+        //#region display image button
+        // when video is added
+        if (btn.showVideo.attr("hidden") == undefined)
+            btn.showImage.addClass("btn btn_imageAndVideo btn_imageAndVideo_passive")
+
+
+        // when video is not added
+        else {
+            btn.showImage.addClass("btn btn_imageAndVideo btn_imageAndVideo_active");
+            imageAndVideoButtons_activeButton = "image";
+        }
+           
+        btn.showImage.removeAttr("hidden");
+        //#endregion
+    })
+    inpt.video.change(async (event) => {
+        let isSuccess = await change_videoInputAsync(
+            event,
+            inpt.chooseVideo,
+            img_loading,
+            inpt.video,
+            src_machine,
+            vid_machine,
+            spn_fileStatus);
+
+        //#region when unsuccessful
+        if (!isSuccess)
+            return;
+        //#endregion
+
+        //#region display video button
+        // when image is added
+        if (btn.showImage.attr("hidden") == undefined)
+            btn.showVideo.addClass("btn btn_imageAndVideo btn_imageAndVideo_passive")
+
+        // when image is not added
+        else {
+            btn.showVideo.addClass("btn btn_imageAndVideo btn_imageAndVideo_active");
+            imageAndVideoButtons_activeButton = "video";
+        }
+            
+        btn.showVideo.removeAttr("hidden");
+        //#endregion
+    })
+    inpt.pdf.change(async (event) => {
+        await change_pdfInputAsync(
+            event,
+            inpt.choosePdf,
+            img_loading,
+            inpt.pdf);
     })
     //#endregion
 
     //#region functions
     async function populateHtmlAsync() {
         //#region add panel title
-        div_panelTitle.append(
+        div.panelTitle.append(
             langPack_panelTitle[language]);
         //#endregion
 
-        await machineForm_addElementNamesAsync();
-        
+        await machineForm_addElementNamesAsync(
+            btn.showImage,
+            btn.showVideo,
+            div.imageInput,
+            div.videoInput,
+            div.pdfInput,
+            div.mainCategory,
+            div.subCategory,
+            div.model,
+            div.brand,
+            div.year,
+            div.stock,
+            div.sold,
+            div.rented,
+            div.handStatus,
+            btn_descriptions_id,
+            btn.save
+        );
+        await machineForm_populateSelectsAsync(slct.mainCategory);
         await uploadDescriptionsEventsAsync();
     }
-
-    async function setMachineVideoSizeAsync() {
-        //#region set width and height
-        let panelBodyWidth = $(".panel-body").prop("clientWidth");
-
-        vid_machine.css(
-            "width",
-            panelBodyWidth - (panelBodyWidth * (60 / 100)));
-        //#endregion
-    }
-
     async function createMachineAsync() {
         return new Promise(resolve => {
             $.ajax({
@@ -152,14 +370,14 @@ $(function () {
                 data: JSON.stringify({
                     "ImageName": selectedImageInfos.name,
                     "VideoName": selectedVideoInfos.name,
-                    "MainCategoryName": $("#" + slct_mainCategory_id).val(),
-                    "SubCategoryName": $("#" + slct_subCategory_id).val(),
-                    "Model": $("#" + inpt_model_id).val(),
-                    "BrandName": $("#" + inpt_brand_id).val(),
-                    "HandStatus": $("input[name = handStatus]:checked").val(),
+                    "MainCategoryName": slct.mainCategory.val(),
+                    "SubCategoryName": slct.subCategory.val(),
+                    "Model": $("#" + inpt.model_id).val(),
+                    "BrandName": $("#" + inpt.brand_id).val(),
+                    "HandStatus": $("input[name= handStatus]:checked").val(),
                     "PdfName": selectedPdfInfos.name,
-                    "Stock": $("#" + inpt_stock_id).val(),
-                    "Year": $("#" + inpt_year_id).val(),
+                    "Stock": $("#" + inpt.stock_id).val(),
+                    "Year": $("#" + inpt.year_id).val(),
                     "Descriptions": {
                         "TR": descriptions.byLanguages.TR,
                         "EN": descriptions.byLanguages.EN
@@ -173,7 +391,7 @@ $(function () {
                 error: (response) => {
                     //#region write error
                     updateResultLabel(
-                        resultLabel_id,
+                        "#" + spn_resultLabel_id,
                         JSON.parse(response.responseText).errorMessage,
                         resultLabel_errorColor,
                         "30px",
@@ -185,7 +403,6 @@ $(function () {
             });
         });
     }
-
     async function uploadMachineImageToFolderAsync() {
         return new Promise(async resolve => {
             $.ajax({
@@ -208,7 +425,7 @@ $(function () {
                 error: () => {
                     // write error
                     updateResultLabel(
-                        resultLabel_id,
+                        "#" + spn_resultLabel_id,
                         errorMessagesByLanguages[language]["unsuccessfulImageUpload"],
                         resultLabel_errorColor,
                         "30px",
@@ -219,7 +436,6 @@ $(function () {
             });
         });
     }
-
     async function uploadMachineVideoToFolderAsync() {
         return new Promise(async resolve => {
             $.ajax({
@@ -242,7 +458,7 @@ $(function () {
                 error: () => {
                     // write error
                     updateResultLabel(
-                        resultLabel_id,
+                        "#" + spn_resultLabel_id,
                         errorMessagesByLanguages[language]["unsuccessfulVideoUpload"],
                         resultLabel_errorColor,
                         "30px",
@@ -253,7 +469,6 @@ $(function () {
             });
         });
     }
-
     async function uploadMachinePdfToFolderAsync() {
         return new Promise(async resolve => {
             $.ajax({
@@ -276,7 +491,7 @@ $(function () {
                 error: () => {
                     // write error
                     updateResultLabel(
-                        resultLabel_id,
+                        "#" + spn_resultLabel_id,
                         errorMessagesByLanguages[language]["unsuccessfulPdfUpload"],
                         resultLabel_errorColor,
                         "30px",
