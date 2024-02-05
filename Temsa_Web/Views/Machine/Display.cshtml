@@ -42,8 +42,8 @@
                 </div>
                 @*image and video buttons*@
                 <div style="text-align:center">
-                    <button id="btn_showImage" type="button" style="color:yellow" class="btn btn_imageAndVideo"></button>
-                    <button id="btn_showVideo" type="button" class="btn btn_imageAndVideo"></button>
+                    <button id="btn_showImage" type="button" class="btn btn_imageAndVideo btn_imageAndVideo_active"></button>
+                    <button id="btn_showVideo" type="button" class="btn btn_imageAndVideo btn_imageAndVideo_passive"></button>
                 </div>
                 
                 <form>
@@ -68,6 +68,7 @@
                                             <input id="@fileInputInput[2]"  type="file"  class=""  accept="@fileInputInput[3]">
                                         </div>
                                     </div>
+                                    <div class="col-sm-7">I</div>
                                 </div>
                             }
                             #endregion
@@ -168,6 +169,7 @@
                             </label>
                             <div class="col-sm-6">
                                 <textarea id="txt_descriptions"  style="resize:none"  type="text"  class="form-control"  rows="10"  required></textarea>
+                                <span id="spn_help_txt_descriptions" class="help-block"></span>
                             </div>
                         </div>
                     </div>
@@ -266,7 +268,8 @@
             "unsuccessfulPdfUpdating": "pdf güncellenirken bir hata oluştu",
             "imageSizeOverflow": "resim boyutu en fazla 20mb olabilir",
             "videoSizeOverflow": "video boyutu en fazla 20mb olabilir",
-            "pdfSizeOverflow": "pdf boyutu en fazla 20mb olabilir"
+            "pdfSizeOverflow": "pdf boyutu en fazla 20mb olabilir",
+            "blankInput": "bu alanı doldurmalısın"
         },
         "EN":{
             "unsuccessfulInfosUpdating": "an error occured when informations updating",
@@ -275,7 +278,8 @@
             "unsuccessfulPdfUpdating": "an error occured when pdf updating",
             "imageSizeOverflow": "image size can be max 20mb",
             "videoSizeOverflow": "video size can be max 20mb",
-            "pdfSizeOverflow": "pdf size can be max 20mb"
+            "pdfSizeOverflow": "pdf size can be max 20mb",
+            "blankInput": "you must fill in this field"
         }
     }
     let article_idsAndMachineInfos = {};  // id == article Id

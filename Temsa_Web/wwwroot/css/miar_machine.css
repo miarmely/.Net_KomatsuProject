@@ -15,7 +15,18 @@
         background-color: darkgrey
     }
 
-.help-block{
+.btn_imageAndVideo_active {
+    background-color: darkblue;
+    color: yellow;
+    font-weight: bolder;
+}
+
+.btn_imageAndVideo_passive {
+    background-color: darkgray;
+    color: white;
+}
+
+.help-block {
     color: red;
     text-align: center
 }

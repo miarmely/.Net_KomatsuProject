@@ -5,14 +5,3 @@
     .form_file_input:hover {
         font-weight: bold
     }
-
-.btn_imageAndVideo_active {
-    background-color: darkblue;
-    color: yellow;
-    font-weight: bolder;
-}
-
-.btn_imageAndVideo_passive {
-    background-color: darkgray;
-    color: white;
-}

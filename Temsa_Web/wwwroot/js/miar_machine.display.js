@@ -18,12 +18,13 @@ import {
     machineForm_addElementNamesAsync, machineForm_populateSelectsAsync,
     click_showImageButtonAsync, click_showVideoButtonAsync,
     machineForm_showOrHideBackButtonAsync, click_inputAsync, click_textAreaAsync,
-    change_imageInputAsync, change_videoInputAsync
+    change_imageInputAsync, change_videoInputAsync, machineForm_activeOrPassiveTheImageOrVideoBtnAsync, machineForm_checkWhetherBlankTheInputsAsync
 } from "./miar_machine.js";
 
 import {
     btn_descriptions_id,
     changeDescriptionsButtonColorAsync, descriptions, setVariablesForDescriptionsAsync,
+    txt_descriptions_id,
     uploadDescriptionsEventsAsync
 } from "./miar_descriptions.js";
 
@@ -109,6 +110,7 @@ $(function () {
     let article_idsToBeDelete = [];
     let isWindowResizeInCriticalSection = false;
     let isUpdatePageOpenedBefore = false;
+    let imageAndVideoButtons_activeButton = "image";
     //#endregion
 
     //#region events
@@ -182,6 +184,25 @@ $(function () {
         //#endregion
     })
     btn_save.click(async (event) => {
+        //#region check whether blank that inputs
+        let isAnyInputBlank = await machineForm_checkWhetherBlankTheInputsAsync(
+            errorMessagesByLanguages[language]["blankInput"],
+            [
+                inpt_chooseImage,
+                inpt_chooseVideo,
+                inpt_choosePdf,
+                $("#" + inpt_model_id),
+                $("#" + inpt_brand_id),
+                $("#" + inpt_year_id),
+                $("#" + inpt_stock_id),
+                $("#" + inpt_sold_id),
+                $("#" + inpt_rented_id)
+            ]);
+
+        if (isAnyInputBlank)
+            return;
+        //#endregion
+
         //#region show loading image
         event.preventDefault();
         spn_resultLabel.empty();
@@ -300,10 +321,32 @@ $(function () {
         await alignArticlesAsAutoAsync();
     })
     btn_showImage.click(async () => {
+        await machineForm_activeOrPassiveTheImageOrVideoBtnAsync(
+            "image",
+            btn_showImage,
+            btn_showVideo);
+
+        //#region show image if video shows
+        if (imageAndVideoButtons_activeButton != "image")
+            await click_showImageButtonAsync(btn_showImage, btn_showVideo, vid_machine);
+
+        imageAndVideoButtons_activeButton = "image";
+        //#endregion
+
         await click_showImageButtonAsync(btn_showImage, btn_showVideo, vid_machine);
     })
     btn_showVideo.click(async () => {
-        await click_showVideoButtonAsync(btn_showImage, btn_showVideo, vid_machine);
+        await machineForm_activeOrPassiveTheImageOrVideoBtnAsync(
+            "video",
+            btn_showImage,
+            btn_showVideo);
+
+        //#region show video if image shows
+        if (imageAndVideoButtons_activeButton != "video")
+            await click_showVideoButtonAsync(btn_showImage, btn_showVideo, vid_machine);
+
+        imageAndVideoButtons_activeButton = "video";
+        //#endregion
     })
     inpt_chooseImage.click(() => {
         inpt_image.trigger("click");
@@ -739,11 +782,11 @@ $(function () {
                 success: () => {
                     resolve(true);
                 },
-                error: () => {
+                error: (response) => {
                     //#region write error
                     updateResultLabel(
                         "#" + spn_resultLabel_id,
-                        errorMessagesByLanguages[language]["unsuccessfulInfosUpdating"],
+                        JSON.parse(response.responseText).errorMessage,
                         resultLabel_errorColor,
                         "30px",
                         img_loading);

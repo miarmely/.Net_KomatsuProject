@@ -4,7 +4,7 @@
     removeObjectUrlFromElementAsync, updateResultLabel
 } from "./miar_tools.js"
 
-import { a_descriptions_class, ul_descriptions_id } from "./miar_descriptions.js";
+import { a_descriptions_class, descriptions, txt_descriptions_id, ul_descriptions_id } from "./miar_descriptions.js";
 
 
 //#region variables
@@ -165,7 +165,7 @@ export async function change_imageInputAsync(
         await machineForm_writeErrorToBelowOfInputAsync(
             inpt_chooseImage,
             errorMessagesByLanguages[language]["imageSizeOverflow"]);
-        
+
         // reset file input
         inpt_image.val("");
         return false;
@@ -473,13 +473,13 @@ export async function machineForm_addElementNamesAsync(
     //#endregion
 
     //#region sold
-    if(div_sold != null)
+    if (div_sold != null)
         div_sold.children("label")
             .append(formElementNames["sold"]);
     //#endregion
 
     //#region rented
-    if(div_rented != null)
+    if (div_rented != null)
         div_rented.children("label")
             .append(formElementNames["rented"]);
     //#endregion
@@ -596,7 +596,7 @@ export async function machineForm_activeOrPassiveTheImageOrVideoBtnAsync(
             // active the video button
             btn_showVideo.addClass(class_imageAndVideoButtons_active);
             btn_showVideo.removeClass(class_iamgeAndVideoButtons_passive);
-        //#endregion
+            //#endregion
             break;
     }
 }
@@ -611,5 +611,39 @@ export async function machineForm_writeErrorToBelowOfInputAsync(input, error) {
     let spn_help = input.siblings("span");
     spn_help.empty();
     spn_help.append(error);
+}
+export async function machineForm_checkWhetherBlankTheInputsAsync(
+    errorMessage_blankInput,
+    inputList
+) {
+    //#region check whether blank of inputs
+    let isAnyInputBlank = false;
+
+    for (let index in inputList) {
+        //#region when input is blank
+        let input = inputList[index];
+
+        if (input.val() == '') {
+            await machineForm_writeErrorToBelowOfInputAsync(
+                input,
+                errorMessage_blankInput);
+
+            isAnyInputBlank = true;
+        }
+        //#endregion
+    }
+    //#endregion
+
+    //#region when description in page language is blank
+    if (descriptions.byLanguages[language] == '') {
+        await machineForm_writeErrorToBelowOfInputAsync(
+            $("#" + txt_descriptions_id),
+            errorMessage_blankInput);
+
+        isAnyInputBlank = true;
+    }
+    //#endregion
+
+    return isAnyInputBlank;
 }
 //#endregion

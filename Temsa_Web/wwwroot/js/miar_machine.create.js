@@ -9,7 +9,7 @@ import {
     machineForm_addElementNamesAsync, machineForm_populateSelectsAsync,
     click_showImageButtonAsync, click_showVideoButtonAsync,
     machineForm_showOrHideBackButtonAsync, click_inputAsync, click_textAreaAsync,
-    change_imageInputAsync, change_videoInputAsync, machineForm_activeOrPassiveTheImageOrVideoBtnAsync, machineForm_writeErrorToBelowOfInputAsync
+    change_imageInputAsync, change_videoInputAsync, machineForm_activeOrPassiveTheImageOrVideoBtnAsync, machineForm_writeErrorToBelowOfInputAsync, machineForm_checkWhetherBlankTheInputsAsync
 } from "./miar_machine.js";
 
 import { updateResultLabel, getBase64StrOfFileAsync, getKeysOfBlankValuesAsync } from "./miar_tools.js"
@@ -87,28 +87,20 @@ $(function () {
         //#endregion
 
         //#region check whether blank that inputs
-        let isAnyInputBlank = await checkWhetherBlankTheInputsAsync();
+        let isAnyInputBlank = await machineForm_checkWhetherBlankTheInputsAsync(
+            errorMessagesByLanguages[language]["blankInput"],
+            [
+                inpt.chooseImage,
+                inpt.chooseVideo,
+                inpt.choosePdf,
+                inpt.model,
+                inpt.brand,
+                inpt.year,
+                inpt.stock
+            ]);
 
         if (isAnyInputBlank)
             return;
-        //#endregşon
-
-        let data = {
-            "imageName": selectedImageInfos == null ? null : selectedImageInfos.name,
-            "videoName": selectedVideoInfos == null ? null : selectedVideoInfos.name,
-            "pdfName": selectedPdfInfos == null ? null : selectedPdfInfos.name,
-            "mainCategoryName": slct.mainCategory.val(),
-            "subCategoryName": slct.subCategory.val(),
-            "model": inpt.model.val(),
-            "brandName": inpt.brand.val(),
-            "year": inpt.year.val(),
-            "stock": inpt.stock.val(),
-            "handStatus": $("input[name= handStatus]:checked").val(),
-            "descriptions": {
-                "TR": descriptions.byLanguages.TR,
-                "EN": descriptions.byLanguages.EN
-            }
-        };
         //#endregion
 
         //#region control the descriptions whether entered (error)
@@ -233,7 +225,7 @@ $(function () {
             await click_showImageButtonAsync(btn.showImage, btn.showVideo, vid_machine);
 
         imageAndVideoButtons_activeButton = "image";
-        //#endregion        
+        //#endregion
     })
     btn.showVideo.click(async () => {
         await machineForm_activeOrPassiveTheImageOrVideoBtnAsync(
@@ -511,94 +503,6 @@ $(function () {
             $("#" + btn_descriptions_id),
             descriptions_unsavedColor);
         resetDescriptionsBuffer();
-    }
-    async function checkWhetherBlankTheInputsAsync() {
-        //#region image input
-        let errorMessage_blankInput = errorMessagesByLanguages[language]["blankInput"];
-        let isAnyInputBlank = false;
-
-        if (inpt.chooseImage.val() == '') {
-            await machineForm_writeErrorToBelowOfInputAsync(
-                inpt.chooseImage,
-                errorMessage_blankInput);
-
-            isAnyInputBlank = true;
-        }
-        //#endregion
-
-        //#region video input
-        if (inpt.chooseVideo.val() == '') {
-            await machineForm_writeErrorToBelowOfInputAsync(
-                inpt.chooseVideo,
-                errorMessage_blankInput);
-
-            isAnyInputBlank = true;
-        }
-        //#endregion
-
-        //#region pdf input
-        if (inpt.choosePdf.val() == '') {
-            await machineForm_writeErrorToBelowOfInputAsync(
-                inpt.choosePdf,
-                errorMessage_blankInput);
-
-            isAnyInputBlank = true;
-        }
-        //#endregion
-
-        //#region model
-        if (inpt.model.val() == '') {
-            await machineForm_writeErrorToBelowOfInputAsync(
-                inpt.model,
-                errorMessage_blankInput);
-
-            isAnyInputBlank = true;
-        }
-        //#endregion
-
-        //#region brand
-        if (inpt.brand.val() == '') {
-            await machineForm_writeErrorToBelowOfInputAsync(
-                inpt.brand,
-                errorMessage_blankInput);
-
-            isAnyInputBlank = true;
-        }
-        //#endregion
-
-        //#region year
-        if (inpt.year.val() == '') {
-            await machineForm_writeErrorToBelowOfInputAsync(
-                inpt.year,
-                errorMessage_blankInput);
-
-            isAnyInputBlank = true;
-        }
-        //#endregion
-
-        //#region stock
-        if (inpt.stock.val() == '') {
-            await machineForm_writeErrorToBelowOfInputAsync(
-                inpt.stock,
-                errorMessage_blankInput);
-
-            isAnyInputBlank = true;
-        }
-        //#endregion
-
-        //#region descriptions
-        let txt_descriptions = $("#" + txt_descriptions_id);
-
-        if (txt_descriptions.val() == "") {
-            await machineForm_writeErrorToBelowOfInputAsync(
-                txt_descriptions,
-                errorMessage_blankInput);
-
-            isAnyInputBlank = true;
-        }
-        //#endregion
-
-        return isAnyInputBlank;
     }
     //#endregion
 
