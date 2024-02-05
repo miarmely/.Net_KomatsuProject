@@ -8,6 +8,16 @@ import { a_descriptions_class, descriptions, txt_descriptions_id, ul_description
 
 
 //#region variables
+const css_imageAndVideoButtons_checked = {
+    "color": "yellow",
+    "background-color": "darkblue",
+    "font-weight": "bolder"
+};
+const imageSizeLimitInMb = 20;
+const videoSizeLimitInMb = 20;
+const pdfSizeLimitInMb = 20;
+const class_imageAndVideoButtons_active = "btn_imageAndVideo_active";
+const class_iamgeAndVideoButtons_passive = "btn_imageAndVideo_passive";
 const langPack_formElementNames = {
     "TR": {
         "imageInput": "Resim",
@@ -62,16 +72,50 @@ const langPack_saveButton = {
     "TR": "KAYDET",
     "EN": "SAVE"
 }
-const css_imageAndVideoButtons_checked = {
-    "color": "yellow",
-    "background-color": "darkblue",
-    "font-weight": "bolder"
-};
-const imageSizeLimitInMb = 20;
-const videoSizeLimitInMb = 20;
-const pdfSizeLimitInMb = 20;
-const class_imageAndVideoButtons_active = "btn_imageAndVideo_active";
-const class_iamgeAndVideoButtons_passive = "btn_imageAndVideo_passive";
+const langPack_infoMessages = {
+    "TR": {
+        "div_imageInput": [
+            "Max 50 karakter uzunluğunda olmalı."
+        ],
+        "div_videoInput": [
+            "Max 50 karakter uzunluğunda olmalı."
+        ],
+        "div_pdfInput": [
+            "Max 50 karakter uzunluğunda olmalı."
+        ],
+        "div_model": [
+            "Max 50 karakter uzunluğunda olmalı."
+        ],
+        "div_brand": [
+            "Max 50 karakter uzunluğunda olmalı."
+        ],
+        "div_descriptions": [
+            "TR ve EN Açıklama girilmeli.",
+            "Max 2000 karakter uzunluğunda olmalı."
+        ],
+    },
+    "EN": {
+        "div_imageInput": [
+            "It must be max 50 chars length."
+        ],
+        "div_videoInput": [
+            "It must be max 50 chars length."
+        ],
+        "div_pdfInput": [
+            "It must be max 50 chars length."
+        ],
+        "div_model": [
+            "It must be max 50 chars length."
+        ],
+        "div_brand": [
+            "It must be max 50 chars length."
+        ],
+        "div_descriptions": [
+            "TR and EN Description must be filled out",
+            "It must be max 2000 chars length."
+        ],
+    }
+}
 //#endregion
 
 //#region events
@@ -635,7 +679,8 @@ export async function machineForm_checkWhetherBlankTheInputsAsync(
     //#endregion
 
     //#region when description in page language is blank
-    if (descriptions.byLanguages[language] == '') {
+    if (descriptions.byLanguages[language] == null  // when any description isn't added
+        || descriptions.byLanguages[language] == '') {  // when blank description added.
         await machineForm_writeErrorToBelowOfInputAsync(
             $("#" + txt_descriptions_id),
             errorMessage_blankInput);
@@ -645,5 +690,18 @@ export async function machineForm_checkWhetherBlankTheInputsAsync(
     //#endregion
 
     return isAnyInputBlank;
+}
+export async function machineForm_populateInfoMessagesAsync() {
+    //#region fill in info messages
+    let infoMessages = langPack_infoMessages[language];
+
+    for (let div_id in infoMessages)
+        for (let index in infoMessages[div_id]) {
+            let message = infoMessages[div_id][index];
+        
+            $("#" + div_id + " .div_infoMessage" + " ul")
+                .append(`<li>* ${message}</li>`);
+        }
+    //#endregion
 }
 //#endregion

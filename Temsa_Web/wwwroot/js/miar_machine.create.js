@@ -9,7 +9,7 @@ import {
     machineForm_addElementNamesAsync, machineForm_populateSelectsAsync,
     click_showImageButtonAsync, click_showVideoButtonAsync,
     machineForm_showOrHideBackButtonAsync, click_inputAsync, click_textAreaAsync,
-    change_imageInputAsync, change_videoInputAsync, machineForm_activeOrPassiveTheImageOrVideoBtnAsync, machineForm_writeErrorToBelowOfInputAsync, machineForm_checkWhetherBlankTheInputsAsync
+    change_imageInputAsync, change_videoInputAsync, machineForm_activeOrPassiveTheImageOrVideoBtnAsync, machineForm_writeErrorToBelowOfInputAsync, machineForm_checkWhetherBlankTheInputsAsync, machineForm_populateInfoMessagesAsync
 } from "./miar_machine.js";
 
 import { updateResultLabel, getBase64StrOfFileAsync, getKeysOfBlankValuesAsync } from "./miar_tools.js"
@@ -338,6 +338,7 @@ $(function () {
             btn.save
         );
         await machineForm_populateSelectsAsync(slct.mainCategory);
+        await machineForm_populateInfoMessagesAsync();
         await uploadDescriptionsEventsAsync();
     }
     async function createMachineAsync() {
