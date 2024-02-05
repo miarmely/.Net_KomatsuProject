@@ -341,7 +341,6 @@ $(function () {
 
         await addFormArticlesAsync();
     }
-
     async function addFormArticlesAsync() {
         //#region set "formStatus" param
         let selectedOption = slct_menubar.val();
@@ -462,12 +461,10 @@ $(function () {
                                 img_formStatus.attr("src", path_questionImage);
                                 lbl_passedTime.css(style_passedTimeLabel_waiting);
                                 break;
-
                             case 2:  // "accepted"
                                 img_formStatus.attr("src", path_checkedImage);
                                 lbl_passedTime.css(style_passedTimeLabel_accepted);
                                 break;
-
                             case 3:  // "rejected"
                                 img_formStatus.attr("src", path_cancelImage);
                                 lbl_passedTime.css(style_passedTimeLabel_rejected);
@@ -478,7 +475,7 @@ $(function () {
                         //#region shift div_passedTimeLabel to end of article
                         let div_identity = div_article_info.children("#" + div_identity_id);
                         let div_passedTimeLabel = div_article_info.children("#" + div_passedTimeLabel_id);
-                        let div_article_infos_whiteSpace = style_div_info_height_IT - div_identity.prop("offsetHeight") - div_passedTimeLabel.prop("offsetHeight");
+                        let div_article_infos_whiteSpace = style_div_info_height_IT - div_identity.prop("offsetHeight") - div_passedTimeLabel.prop("offsetHeight") * 2;
 
                         div_passedTimeLabel.css("margin-top", div_article_infos_whiteSpace);
                         //#endregion
@@ -527,7 +524,6 @@ $(function () {
         })
         //#endregion
     }
-
     async function answerTheFormAsync(formStatus) {
         //#region set form status param
         let param_formStatus = formStatus == "accepted" ?

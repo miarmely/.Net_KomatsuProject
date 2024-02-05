@@ -27,7 +27,7 @@ $(function () {
                 "Max 50 karakter uzunluğunda olmalı."
             ],
             "div_phone": [
-                "Başında 0 olmadan girilmeli."
+                "Başında 0 olmadan girilmeli. (5xxxxxxxxx)"
             ],
             "div_email": [
                 "Uzantısı hariç max 50 karakter uzunluğunda olmalı."
@@ -47,7 +47,7 @@ $(function () {
                 "It must be max 50 chars length."
             ],
             "div_phone": [
-                "You must enter without leading zero."
+                "You must enter without leading zero. (5xxxxxxxxx)"
             ],
             "div_email": [
                 "It must be max 50 chars length except extension."

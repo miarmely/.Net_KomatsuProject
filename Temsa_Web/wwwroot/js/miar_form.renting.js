@@ -331,7 +331,6 @@ $(function () {
 
         await addFormArticlesAsync();
     }
-
     async function addFormArticlesAsync() {
         //#region set "formStatus" param
         let selectedOption = slct_menubar.val();
@@ -362,16 +361,7 @@ $(function () {
                     div_articles.removeAttr("style");
                     //#endregion
 
-                    new Promise(async resolve => {
-                        //#region reset div_articles
-                        div_articles.empty();
-                        div_articles.removeAttr("style");
-                        //#endregion
-
-                        await resetFormDetailsPageAsync(div_sendererInfos, div_answererInfos);
-                        await setVariablesForArticleAsync({ "div_articles": div_articles });
-                        resolve();
-                    })
+                    await resetFormDetailsPageAsync(div_sendererInfos, div_answererInfos);
                     await setVariablesForArticleAsync({ "div_articles": div_articles });
                     resolve();
                 })
@@ -393,7 +383,9 @@ $(function () {
                             "paddingB": 10,
                             "paddingR": 10,
                             "paddingL": 10,
-                            "border": 6,
+                            "border": 1,
+                            "borderColor": "blue",
+                            "boxShadow": "5px 5px 10px rgba(0, 0, 0, 0.3)",
                             "bgColorForDelete": "rgb(220, 0, 0)"
                         },
                     });
@@ -470,7 +462,7 @@ $(function () {
                         //#region shift div_passedTimeLabel to end of article
                         let div_identity = div_article_info.children("#" + div_identity_id);
                         let div_passedTimeLabel = div_article_info.children("#" + div_passedTimeLabel_id);
-                        let div_article_infos_whiteSpace = style_div_info_height_IT - div_identity.prop("offsetHeight") - div_passedTimeLabel.prop("offsetHeight");
+                        let div_article_infos_whiteSpace = style_div_info_height_IT - div_identity.prop("offsetHeight") - div_passedTimeLabel.prop("offsetHeight") * 2;
 
                         div_passedTimeLabel.css("margin-top", div_article_infos_whiteSpace);
                         //#endregion
@@ -517,7 +509,6 @@ $(function () {
         })
         //#endregion
     }
-
     async function answerTheFormAsync(formStatus) {
         //#region set form status param
         let param_formStatus = formStatus == "accepted" ?

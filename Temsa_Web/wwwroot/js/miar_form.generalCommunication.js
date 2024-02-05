@@ -367,7 +367,6 @@ $(function () {
 
         await addFormArticlesAsync();
     }
-
     async function addFormArticlesAsync() {
         //#region set "getAnsweredForms" param
         let selectedMenubar = slct_menubar.val();
@@ -416,7 +415,9 @@ $(function () {
                             "paddingB": 10,
                             "paddingR": 10,
                             "paddingL": 10,
-                            "border": 6,
+                            "border": 1,
+                            "borderColor": "blue",
+                            "boxShadow": "5px 5px 10px rgba(0, 0, 0, 0.3)",
                             "bgColorForDelete": "rgb(220, 0, 0)"
                         }
                     });
@@ -567,7 +568,6 @@ $(function () {
         })
         //#endregion
     }
-
     async function resetFormDetailsPageAsync() {
         // remove sender infos
         div_sendererInfos.find("thead").empty();
