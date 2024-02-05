@@ -146,8 +146,8 @@ $(function () {
     $("#" + div_article_update_id + " input").click(async (event) => {
         await click_inputAsync(event, spn_resultLabel);
     })
-    $("#" + div_article_update_id + " textarea").click(async () => {
-        await click_textAreaAsync(spn_resultLabel);
+    $("#" + div_article_update_id + " textarea").click(async (event) => {
+        await click_textAreaAsync(event, spn_resultLabel);
     })
     $("#" + div_article_update_id + " input[type= number]").change(async (event) => {
         //#region check number input whether max or min value violation
@@ -318,7 +318,6 @@ $(function () {
         await change_imageInputAsync(
             event,
             inpt_chooseImage,
-            img_loading,
             inpt_image,
             vid_machine,
             spn_fileStatus);
@@ -327,7 +326,6 @@ $(function () {
         await change_videoInputAsync(
             event,
             inpt_chooseVideo,
-            img_loading,
             inpt_video,
             src_machine,
             vid_machine,
@@ -337,7 +335,6 @@ $(function () {
         await change_pdfInputAsync(
             event,
             inpt_choosePdf,
-            img_loading,
             inpt_pdf);
     })
     //#endregion

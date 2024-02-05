@@ -70,6 +70,8 @@ const css_imageAndVideoButtons_checked = {
 const imageSizeLimitInMb = 20;
 const videoSizeLimitInMb = 20;
 const pdfSizeLimitInMb = 20;
+const class_imageAndVideoButtons_active = "btn_imageAndVideo_active";
+const class_iamgeAndVideoButtons_passive = "btn_imageAndVideo_passive";
 //#endregion
 
 //#region events
@@ -103,25 +105,35 @@ export async function click_showVideoButtonAsync(
     vid_machine.load();
 }
 export async function click_inputAsync(event, spn_resultLabel) {
-    //#region reset help label of clicked <input>
+    //#region reset clicked <input> and its span help
+    // clicked input
     let clickedInputId = event.target.id;
-    let spn_help = $(`#spn_help_${clickedInputId}`);
+    $("#" + clickedInputId).removeAttr("style");
 
-    spn_help.removeAttr("style"); // reset style
+    // spn help
+    let spn_help = $(`#spn_help_${clickedInputId}`);
     spn_help.empty();  // reset input
     //#endregion
 
     spn_resultLabel.empty();
     spn_resultLabel.removeAttr("style");
 }
-export async function click_textAreaAsync(spn_resultLabel) {
+export async function click_textAreaAsync(event, spn_resultLabel) {
+    // reset text area
+    let clickedInputId = event.target.id;
+    $("#" + clickedInputId).removeAttr("style");
+
+    // spn help
+    let spn_help = $(`#spn_help_${clickedInputId}`);
+    spn_help.empty();
+
+    // reset span help
     spn_resultLabel.empty();
     spn_resultLabel.removeAttr("style");
 }
 export async function change_imageInputAsync(
     event,
     inpt_chooseImage,
-    img_loading,
     inpt_image,
     vid_machine,
     spn_fileStatus
@@ -137,13 +149,9 @@ export async function change_imageInputAsync(
 
     //#region when file type is not image (error)
     if (!await isFileTypeValidAsync(selectedFileInfos, "image")) {
-        // write error
-        updateResultLabel(
-            "#spn_help_" + inpt_chooseImage.attr("id"),
-            partnerErrorMessagesByLanguages[language]["invalidFileType"],
-            resultLabel_errorColor,
-            "10px",
-            img_loading);
+        await machineForm_writeErrorToBelowOfInputAsync(
+            inpt_chooseImage,
+            partnerErrorMessagesByLanguages[language]["invalidFileType"]);
 
         // reset file input
         inpt_image.val("");
@@ -154,13 +162,10 @@ export async function change_imageInputAsync(
     //#region when file size is invalid (error)
     if (!await isFileSizeValidAsync(selectedFileInfos.size, imageSizeLimitInMb)) {
         // write error
-        updateResultLabel(
-            "#spn_help_" + inpt_chooseImage.attr("id"),
-            errorMessagesByLanguages[language]["imageSizeOverflow"],
-            resultLabel_errorColor,
-            "10px",
-            img_loading);
-
+        await machineForm_writeErrorToBelowOfInputAsync(
+            inpt_chooseImage,
+            errorMessagesByLanguages[language]["imageSizeOverflow"]);
+        
         // reset file input
         inpt_image.val("");
         return false;
@@ -196,7 +201,6 @@ export async function change_imageInputAsync(
 export async function change_videoInputAsync(
     event,
     inpt_chooseVideo,
-    img_loading,
     inpt_video,
     src_machine,
     vid_machine,
@@ -213,13 +217,9 @@ export async function change_videoInputAsync(
 
     //#region when file type isn't video (error)
     if (!await isFileTypeValidAsync(selectedFileInfos, "video/")) {
-        // write error
-        updateResultLabel(
-            "#spn_help_" + inpt_chooseVideo.attr("id"),
-            partnerErrorMessagesByLanguages[language]["invalidFileType"],
-            resultLabel_errorColor,
-            "10px",
-            img_loading);
+        await machineForm_writeErrorToBelowOfInputAsync(
+            inpt_chooseVideo,
+            partnerErrorMessagesByLanguages[language]["invalidFileType"]);
 
         // reset file input
         inpt_video.val("");
@@ -229,12 +229,9 @@ export async function change_videoInputAsync(
 
     //#region when file size is invalid (error)
     if (!await isFileSizeValidAsync(selectedFileInfos.size, videoSizeLimitInMb)) {
-        updateResultLabel(
-            "#spn_help_" + inpt_chooseVideo.attr("id"),
-            errorMessagesByLanguages[language]["videoSizeOverflow"],
-            resultLabel_errorColor,
-            "10px",
-            img_loading);
+        await machineForm_writeErrorToBelowOfInputAsync(
+            inpt_chooseVideo,
+            errorMessagesByLanguages[language]["videoSizeOverflow"]);
 
         // reset file input
         inpt_video.val("");
@@ -274,7 +271,6 @@ export async function change_videoInputAsync(
 export async function change_pdfInputAsync(
     event,
     inpt_choosePdf,
-    img_loading,
     inpt_pdf
 ) {
     //#region control selected file (error)
@@ -288,13 +284,9 @@ export async function change_pdfInputAsync(
 
     //#region when file type is not "pdf" (error)
     if (!await isFileTypeValidAsync(selectedFileInfos, "application/pdf")) {
-        // write error
-        updateResultLabel(
-            "#" + inpt_choosePdf.attr("id"),
-            partnerErrorMessagesByLanguages[language]["invalidFileType"],
-            resultLabel_errorColor,
-            "10px",
-            img_loading);
+        await machineForm_writeErrorToBelowOfInputAsync(
+            inpt_choosePdf,
+            partnerErrorMessagesByLanguages[language]["invalidFileType"]);
 
         // reset file input
         inpt_pdf.val("");
@@ -304,13 +296,9 @@ export async function change_pdfInputAsync(
 
     //#region when file size is invalid (error)
     if (!await isFileSizeValidAsync(selectedFileInfos.size, pdfSizeLimitInMb)) {
-        // write error
-        updateResultLabel(
-            "#" + inpt_choosePdf.attr("id"),
-            errorMessagesByLanguages[language]["pdfSizeOverflow"],
-            resultLabel_errorColor,
-            "30px",
-            img_loading);
+        await machineForm_writeErrorToBelowOfInputAsync(
+            inpt_choosePdf,
+            errorMessagesByLanguages[language]["pdfSizeOverflow"]);
 
         // reset file input
         inpt_pdf.val("");
@@ -485,13 +473,15 @@ export async function machineForm_addElementNamesAsync(
     //#endregion
 
     //#region sold
-    div_sold.children("label")
-        .append(formElementNames["sold"]);
+    if(div_sold != null)
+        div_sold.children("label")
+            .append(formElementNames["sold"]);
     //#endregion
 
     //#region rented
-    div_rented.children("label")
-        .append(formElementNames["rented"]);
+    if(div_rented != null)
+        div_rented.children("label")
+            .append(formElementNames["rented"]);
     //#endregion
 
     //#region handStatus
@@ -579,5 +569,47 @@ export async function machineForm_populateSelectsAsync(slct_mainCategory) {
             }
             //#endregion
         });
+}
+export async function machineForm_activeOrPassiveTheImageOrVideoBtnAsync(
+    buttonToBeActive,
+    btn_showImage,
+    btn_showVideo
+) {
+    switch (buttonToBeActive) {
+        case "image":
+            //#region active the image; passive the video button
+            // passive the video button
+            btn_showVideo.addClass(class_iamgeAndVideoButtons_passive);
+            btn_showVideo.removeClass(class_imageAndVideoButtons_active);
+
+            // active the image button
+            btn_showImage.addClass(class_imageAndVideoButtons_active);
+            btn_showImage.removeClass(class_iamgeAndVideoButtons_passive);
+            //#endregion
+            break;
+        case "video":
+            //#region active/passive the image and video buttons
+            // passive the image button
+            btn_showImage.addClass(class_iamgeAndVideoButtons_passive);
+            btn_showImage.removeClass(class_imageAndVideoButtons_active);
+
+            // active the video button
+            btn_showVideo.addClass(class_imageAndVideoButtons_active);
+            btn_showVideo.removeClass(class_iamgeAndVideoButtons_passive);
+        //#endregion
+            break;
+    }
+}
+export async function machineForm_writeErrorToBelowOfInputAsync(input, error) {
+    // add "red" border to input
+    input.css({
+        "border-color": "red",
+        "border-width": "1.4px"
+    });
+
+    // write error to "span_help"
+    let spn_help = input.siblings("span");
+    spn_help.empty();
+    spn_help.append(error);
 }
 //#endregion

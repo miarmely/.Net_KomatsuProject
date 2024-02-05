@@ -31,7 +31,6 @@ export async function displayImageByNormalUrlAsync(
 
     await removeFileStatusLabelAsync(fileStatusLabel);
 }
-
 export async function displayFileByDataUrlAsync(
     selectedFileInfos,
     elementForAddDataUrl,
@@ -90,7 +89,6 @@ export async function displayFileByDataUrlAsync(
     }
     //#endregion
 }
-
 export async function displayFileByObjectUrlAsync(
     selectedFileInfos,
     elementForAddUrl,
@@ -122,7 +120,6 @@ export async function displayFileByObjectUrlAsync(
 
     await removeFileStatusLabelAsync(fileStatusLabel);
 }
-
 export async function getBase64StrOfFileAsync(selectedFileInfos) {
     //#region read file
     let fileReader = new FileReader();
@@ -144,7 +141,6 @@ export async function getBase64StrOfFileAsync(selectedFileInfos) {
     });
     //#endregion
 }
-
 export async function removeObjectUrlFromElementAsync(
     element,
     attributeName,
@@ -161,7 +157,6 @@ export async function removeObjectUrlFromElementAsync(
     if (afterRemove != null)
         afterRemove();
 }
-
 export async function resetBeforeAddUrlAsync(
     elementForAddUrl,
     fileStatusLabelId,
@@ -180,7 +175,6 @@ export async function resetBeforeAddUrlAsync(
         partnerInformationMessagesByLanguages[language]["fileLoading"],
         fileStatusLabel_color);
 }
-
 export async function isFileTypeValidAsync(
     selectedFileInfos,
     fileType
@@ -192,7 +186,6 @@ export async function isFileTypeValidAsync(
 
     return true;
 }
-
 export async function isFileSizeValidAsync(fileSizeInByte, limitInMb) {
     //#region when file size is invalid
     let fileSizeInMb = (fileSizeInByte / 1024) / 1024;  // first division for KB; second division for MB
@@ -203,12 +196,10 @@ export async function isFileSizeValidAsync(fileSizeInByte, limitInMb) {
 
     return true;
 }
-
 export function getFileTypeFromFileName(fileName) {
     return fileName.substring(
         fileName.lastIndexOf(".") + 1);
 }
-
 async function showFileStatusLabelAsync(fileStatusLabel, msg, msgColor) {
     // show file status
     fileStatusLabel
@@ -221,7 +212,6 @@ async function showFileStatusLabelAsync(fileStatusLabel, msg, msgColor) {
         msg,
         msgColor);
 }
-
 async function removeFileStatusLabelAsync(fileStatusLabel) {
     // hide
     fileStatusLabel
@@ -278,7 +268,6 @@ export async function addPaginationButtonsAsync(
 	</li>`);
     //#endregion
 }
-
 export async function controlPaginationBackAndNextButtonsAsync(paginationInfosInJson) {
     // when total page count more than 1
     if (paginationInfosInJson.TotalPage > 1) {
@@ -305,119 +294,6 @@ export async function controlPaginationBackAndNextButtonsAsync(paginationInfosIn
 }
 //#endregion
 
-export function getDateTimeInString(dateTime) {
-    //#region set year
-    let date = new Date(dateTime);
-    let year = date.getFullYear();
-    //#endregion
-
-    //#region set month
-    let month = date.getMonth() + 1;
-
-    // add '0' to head
-    let monthInString = month < 10 ?
-        `0${month}`  // add 0
-        : month.toString();  // don't add
-    //#endregion
-
-    //#region set day
-    let day = date.getDate();
-
-    // add '0' to head
-    let dayInString = day < 10 ?
-        `0${day}`  // add 0
-        : day.toString(); // don't add
-    //#endregion
-
-    //#region set hours
-    let hours = date.getHours() + 3;
-
-    // add '0' to head
-    let hoursInString = hours < 10 ?
-        `0${hours}`  // add 0
-        : hours.toString();  // don't add
-    //#endregion
-
-    //#region set minutes
-    let minutes = date.getMinutes();
-
-    // add '0' to head
-    let minutesInString = minutes < 10 ?
-        `0${minutes}`  // add 0
-        : minutes.toString();  // don't add
-    //#endregion
-
-    return `${dayInString}.${monthInString}.${year} - ${hoursInString}:${minutesInString}`;
-}
-
-export function getHeaderFromLocalInJson(headerName) {
-    return JSON.parse(
-        localStorage.getItem(headerName));
-}
-
-export function getTokenInSession() {
-    return sessionStorage.getItem("token");
-}
-
-export function updateResultLabel(
-    resultLabelId,
-    message,
-    color,
-    marginT = "0px",
-    img_loading = null) {
-    //#region resets
-    // reset result label
-    let resultLabel = $(resultLabelId);
-    resultLabel.empty();
-
-    // hide loading gif
-    if (img_loading != null)
-        img_loading.attr("hidden", "");
-    //#endregion
-
-    //#region change style
-    resultLabel.attr("style",
-        `color:	${color}; 
-		margin-top: ${marginT};
-		text-align: center`);
-    //#endregion
-
-    //#region write error to resultLabel
-    resultLabel.removeAttr("hidden");  // show resultLabel
-    resultLabel.append(message);
-    //#endregion
-}
-
-export function updateErrorRow(
-    errorRowId,
-    message,
-    color,
-    marginT = "30px") {
-    //#region show <td> of <tr> of error
-    let tr_row_error = $(errorRowId);
-    let td_error = tr_row_error.children("td");
-
-    td_error.removeAttr("hidden");
-    //#endregion
-
-    //#region change style
-    td_error.attr("style",
-        `color:	${color}; 
-		margin-top: ${marginT};
-		text-align: center`);
-    //#endregion
-
-    //#region write error to <td> of error row
-    td_error.empty();
-    td_error.append(message);
-    //#endregion
-}
-
-export function updateElementText(element, text) {
-    element.empty();
-    element.text(text);
-}
-
 export async function resetErrorRowAsync(rowId) {
     //#region hide and reset <td> of error
     var td_error = $(`#${rowId}_error`)
@@ -427,7 +303,6 @@ export async function resetErrorRowAsync(rowId) {
     td_error.empty();
     //#endregion
 }
-
 export async function populateTable(
     entityType,
     specialUrl,
@@ -504,7 +379,6 @@ export async function populateTable(
         },
     });
 }
-
 export async function setDisabledOfOtherUpdateButtonsAsync(rowId, pageSize, doDisabled) {
     //#region disable/enable other update buttons
     for (var rowNo = 1; rowNo <= pageSize; rowNo += 1) {
@@ -530,7 +404,6 @@ export async function setDisabledOfOtherUpdateButtonsAsync(rowId, pageSize, doDi
     //#endregion
 
 }
-
 export async function populateElementByAjaxOrLocalAsync(
     keyNameInLocal,
     specialApiUrl,
@@ -591,7 +464,6 @@ export async function populateElementByAjaxOrLocalAsync(
     }
     //#endregion
 }
-
 export async function populateSelectAsync(select, options, optionToBeDisplay = null) {
     //#region add <option>'s to <select>
     for (let index in options) {
@@ -608,7 +480,6 @@ export async function populateSelectAsync(select, options, optionToBeDisplay = n
         select.val(optionToBeDisplay);
     //#endregion
 }
-
 export async function setDisabledOfButtonAsync(doDisabled, button, bgColor) {
     //#region disable the button
     if (doDisabled) {
@@ -624,7 +495,6 @@ export async function setDisabledOfButtonAsync(doDisabled, button, bgColor) {
     }
     //#endregion
 }
-
 export async function setDisabledOfButtonsAsync(doDisabled, buttonIds, bgColor) {
     //#region disable/enable multiple button
     for (let index in buttonIds) {
@@ -646,7 +516,6 @@ export async function setDisabledOfButtonsAsync(doDisabled, buttonIds, bgColor) 
     }
     //#endregion
 }
-
 export async function isAllObjectValuesNullAsync(object) {
     //#region compute total null value quantity
     let nullCounter = 0
@@ -667,7 +536,6 @@ export async function isAllObjectValuesNullAsync(object) {
 
     return false;
 }
-
 export async function autoObjectMapperAsync(targetObject, sourceObject, dontAddNullValues = false) {
     //#region update target object values with source object values
     for (let sourceKey in sourceObject) {
@@ -684,7 +552,6 @@ export async function autoObjectMapperAsync(targetObject, sourceObject, dontAddN
     }
     //#endregion
 }
-
 export async function getPassedTimeInStringAsync(utcDateTimeInStr) {
     //#region convert old date in utc to local date
     let oldDateInUtc = new Date(utcDateTimeInStr);
@@ -781,7 +648,128 @@ export async function getPassedTimeInStringAsync(utcDateTimeInStr) {
 
     //#endregion
 }
+export async function getKeysOfBlankValuesAsync(data) {
+    //#region check whether blank that values of data 
+    let keysWithBlankValue = [];
 
+    for (let key in data) {
+        let value = data[key];
+
+        if (value == null
+            || value == '')
+            keysWithBlankValue.push(key);
+    }
+    //#endregion
+
+    return keysWithBlankValue;
+}
+export function getDateTimeInString(dateTime) {
+    //#region set year
+    let date = new Date(dateTime);
+    let year = date.getFullYear();
+    //#endregion
+
+    //#region set month
+    let month = date.getMonth() + 1;
+
+    // add '0' to head
+    let monthInString = month < 10 ?
+        `0${month}`  // add 0
+        : month.toString();  // don't add
+    //#endregion
+
+    //#region set day
+    let day = date.getDate();
+
+    // add '0' to head
+    let dayInString = day < 10 ?
+        `0${day}`  // add 0
+        : day.toString(); // don't add
+    //#endregion
+
+    //#region set hours
+    let hours = date.getHours() + 3;
+
+    // add '0' to head
+    let hoursInString = hours < 10 ?
+        `0${hours}`  // add 0
+        : hours.toString();  // don't add
+    //#endregion
+
+    //#region set minutes
+    let minutes = date.getMinutes();
+
+    // add '0' to head
+    let minutesInString = minutes < 10 ?
+        `0${minutes}`  // add 0
+        : minutes.toString();  // don't add
+    //#endregion
+
+    return `${dayInString}.${monthInString}.${year} - ${hoursInString}:${minutesInString}`;
+}
+export function getHeaderFromLocalInJson(headerName) {
+    return JSON.parse(
+        localStorage.getItem(headerName));
+}
+export function getTokenInSession() {
+    return sessionStorage.getItem("token");
+}
+export function updateResultLabel(
+    resultLabelId,
+    message,
+    color,
+    marginT = "0px",
+    img_loading = null) {
+    //#region resets
+    // reset result label
+    let resultLabel = $(resultLabelId);
+    resultLabel.empty();
+
+    // hide loading gif
+    if (img_loading != null)
+        img_loading.attr("hidden", "");
+    //#endregion
+
+    //#region change style
+    resultLabel.attr("style",
+        `color:	${color}; 
+		margin-top: ${marginT};
+		text-align: center`);
+    //#endregion
+
+    //#region write error to resultLabel
+    resultLabel.removeAttr("hidden");  // show resultLabel
+    resultLabel.append(message);
+    //#endregion
+}
+export function updateErrorRow(
+    errorRowId,
+    message,
+    color,
+    marginT = "30px") {
+    //#region show <td> of <tr> of error
+    let tr_row_error = $(errorRowId);
+    let td_error = tr_row_error.children("td");
+
+    td_error.removeAttr("hidden");
+    //#endregion
+
+    //#region change style
+    td_error.attr("style",
+        `color:	${color}; 
+		margin-top: ${marginT};
+		text-align: center`);
+    //#endregion
+
+    //#region write error to <td> of error row
+    td_error.empty();
+    td_error.append(message);
+    //#endregion
+}
+export function updateElementText(element, text) {
+    element.empty();
+    element.text(text);
+}
 async function addEntitiesToTableAsync(
     response,
     language,

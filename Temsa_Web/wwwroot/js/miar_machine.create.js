@@ -1,6 +1,6 @@
 ﻿import {
     btn_descriptions_id, changeDescriptionsButtonColorAsync, descriptions,
-    resetDescriptionsBuffer, uploadDescriptionsEventsAsync
+    resetDescriptionsBuffer, txt_descriptions_id, uploadDescriptionsEventsAsync
 } from "./miar_descriptions.js";
 
 import {
@@ -9,10 +9,10 @@ import {
     machineForm_addElementNamesAsync, machineForm_populateSelectsAsync,
     click_showImageButtonAsync, click_showVideoButtonAsync,
     machineForm_showOrHideBackButtonAsync, click_inputAsync, click_textAreaAsync,
-    change_imageInputAsync, change_videoInputAsync
+    change_imageInputAsync, change_videoInputAsync, machineForm_activeOrPassiveTheImageOrVideoBtnAsync, machineForm_writeErrorToBelowOfInputAsync
 } from "./miar_machine.js";
 
-import { updateResultLabel, getBase64StrOfFileAsync } from "./miar_tools.js"
+import { updateResultLabel, getBase64StrOfFileAsync, getKeysOfBlankValuesAsync } from "./miar_tools.js"
 import { checkValueOfNumberInputAsync } from "./miar_module_inputForm.js";
 
 
@@ -31,7 +31,7 @@ $(function () {
     };
     const div = {
         "form_id": "div_form",
-        "panelTitle": $("#div_panelTitle"),
+        "panelTitle": $(".panel-heading"),
         "imageInput": $("#div_imageInput"),
         "videoInput": $("#div_videoInput"),
         "pdfInput": $("#div_pdfInput"),
@@ -41,28 +41,36 @@ $(function () {
         "brand": $("#div_brand"),
         "year": $("#div_year"),
         "stock": $("#div_stock"),
-        "sold": $("#div_sold"),
-        "rented": $("#div_rented"),
         "handStatus": $("#div_handStatus")
     };
     const slct = {
         "mainCategory": $("#slct_mainCategory"),
         "subCategory": $("#slct_subCategory")
     };
-    const inpt = {
-        "model_id": "inpt_model",
-        "brand_id": "inpt_brand",
-        "year_id": "inpt_year",
-        "stock_id": "inpt_stock",
-        "sold_id": "inpt_sold",
-        "rented_id": "inpt_rented",
-        "image": $("#inpt_image"),
-        "video": $("#inpt_video"),
-        "pdf": $("#inpt_pdf"),
-        "chooseImage": $("#inpt_chooseImage"),
-        "chooseVideo": $("#inpt_chooseVideo"),
-        "choosePdf": $("#inpt_choosePdf"),
+    const inpt_id = {
+        "model": "inpt_model",
+        "brand": "inpt_brand",
+        "year": "inpt_year",
+        "stock": "inpt_stock",
+        "image": "inpt_image",
+        "video": "inpt_video",
+        "pdf": "inpt_pdf",
+        "chooseImage": "inpt_chooseImage",
+        "chooseVideo": "inpt_chooseVideo",
+        "choosePdf": "inpt_choosePdf",
     };
+    const inpt = {
+        "model": $("#" + inpt_id.model),
+        "brand": $("#" + inpt_id.brand),
+        "year": $("#" + inpt_id.year),
+        "stock": $("#" + inpt_id.stock),
+        "image": $("#" + inpt_id.image),
+        "video": $("#" + inpt_id.video),
+        "pdf": $("#" + inpt_id.pdf),
+        "chooseImage": $("#" + inpt_id.chooseImage),
+        "chooseVideo": $("#" + inpt_id.chooseVideo),
+        "choosePdf": $("#" + inpt_id.choosePdf),
+    }
     const langPack_panelTitle = {
         "TR": "YENİ MAKİNE OLUŞTUR",
         "EN": "CREATE NEW MACHINE"
@@ -73,27 +81,43 @@ $(function () {
 
     //#region events
     $("form").submit(async event => {
-        //#region resets
-        // reset result label
+        //#region before start
         event.preventDefault();
         spn_resultLabel.empty();
+        //#endregion
 
-        // display loading gif
-        img_loading.removeAttr("hidden");
+        //#region check whether blank that inputs
+        let isAnyInputBlank = await checkWhetherBlankTheInputsAsync();
+
+        if (isAnyInputBlank)
+            return;
+        //#endregşon
+
+        let data = {
+            "imageName": selectedImageInfos == null ? null : selectedImageInfos.name,
+            "videoName": selectedVideoInfos == null ? null : selectedVideoInfos.name,
+            "pdfName": selectedPdfInfos == null ? null : selectedPdfInfos.name,
+            "mainCategoryName": slct.mainCategory.val(),
+            "subCategoryName": slct.subCategory.val(),
+            "model": inpt.model.val(),
+            "brandName": inpt.brand.val(),
+            "year": inpt.year.val(),
+            "stock": inpt.stock.val(),
+            "handStatus": $("input[name= handStatus]:checked").val(),
+            "descriptions": {
+                "TR": descriptions.byLanguages.TR,
+                "EN": descriptions.byLanguages.EN
+            }
+        };
         //#endregion
 
         //#region control the descriptions whether entered (error)
 
         //#region when any description not entered (error)
         if (!descriptions.isChanged) {
-            // write error
-            updateResultLabel(
-                "#" + spn_resultLabel_id,
-                errorMessagesByLanguages[language]["descriptionNotEntered"],
-                resultLabel_errorColor,
-                "30px",
-                img_loading);
-
+            await machineForm_writeErrorToBelowOfInputAsync(
+                $("#" + txt_descriptions_id),
+                errorMessagesByLanguages[language]["descriptionNotEntered"]);
             return;
         }
         //#endregion
@@ -111,13 +135,9 @@ $(function () {
             if (descriptions.byLanguages[languageInSession] == null  // when relevant language not entered
                 || descriptions.byLanguages[languageInSession] == ""  // when blank value entered
             ) {
-                // write error
-                updateResultLabel(
-                    "#" + spn_resultLabel_id,
-                    `"${languageInSession}" ${errorMessagesByLanguages[language]["descriptionNotEntered"]}`,
-                    resultLabel_errorColor,
-                    "30px",
-                    img_loading);
+                await machineForm_writeErrorToBelowOfInputAsync(
+                    $("#" + txt_descriptions_id),
+                    `"${languageInSession}" ${errorMessagesByLanguages[language]["descriptionNotEntered"]}`);
 
                 return;
             }
@@ -130,6 +150,8 @@ $(function () {
         //#region create machine
 
         //#region create
+        img_loading.removeAttr("hidden");  // display loading gif
+
         let isCreateSuccessful = await createMachineAsync() ?
             await uploadMachineImageToFolderAsync() ?
                 await uploadMachineVideoToFolderAsync() ?
@@ -143,16 +165,7 @@ $(function () {
 
         //#region when create is successful
         if (isCreateSuccessful) {
-            //#region reset form
-            $("form")[0].reset();
-
-            await machineForm_removePosterAttrAsync(vid_machine, src_machine);
-            await machineForm_removeVideoAttrAsync(vid_machine, src_machine);
-            await changeDescriptionsButtonColorAsync(
-                $("#" + btn_descriptions_id),
-                descriptions_unsavedColor);
-            resetDescriptionsBuffer();
-            //#endregion
+            await resetFormAsync();
 
             //#region write successfull message
             updateResultLabel(
@@ -170,37 +183,25 @@ $(function () {
     $("#" + div.form_id + " input").click(async (event) => {
         await click_inputAsync(event, spn_resultLabel);
     })
-    $("#" + div.form_id + " textarea").click(async () => {
-        await click_textAreaAsync(spn_resultLabel);
+    $("#" + div.form_id + " textarea").click(async (event) => {
+        await click_textAreaAsync(event, spn_resultLabel);
     })
     $("#" + div.form_id + " input[type= number]").change(async (event) => {
         //#region check number input whether max or min value violation
         let input = $("#" + event.target.id);
 
         switch (event.target.id) {
-            case inpt.year_id:
+            case inpt_id.year:
                 await checkValueOfNumberInputAsync(
                     input,
                     numberInputLimits.year.min,
                     numberInputLimits.year.max);
                 break;
-            case inpt.stock_id:
+            case inpt_id.stock:
                 await checkValueOfNumberInputAsync(
                     input,
                     numberInputLimits.stock.min,
                     numberInputLimits.stock.max);
-                break;
-            case inpt.sold_id:
-                await checkValueOfNumberInputAsync(
-                    input,
-                    numberInputLimits.sold.min,
-                    numberInputLimits.sold.max);
-                break;
-            case inpt.rented_id:
-                await checkValueOfNumberInputAsync(
-                    input,
-                    numberInputLimits.rented.min,
-                    numberInputLimits.rented.max);
                 break;
         }
         //#endregion
@@ -222,15 +223,10 @@ $(function () {
         //#endregion
     })
     btn.showImage.click(async () => {
-        //#region active/passive the image and video buttons
-        //passive the video button
-        btn.showVideo.addClass("btn_imageAndVideo_passive");
-        btn.showVideo.removeClass("btn_imageAndVideo_active");
-        
-        // active the image button
-        btn.showImage.addClass("btn_imageAndVideo_active");
-        btn.showImage.removeClass("btn_imageAndVideo_passive");
-        //#endregion
+        await machineForm_activeOrPassiveTheImageOrVideoBtnAsync(
+            "image",
+            btn.showImage,
+            btn.showVideo);
 
         //#region show image if video shows
         if (imageAndVideoButtons_activeButton != "image")
@@ -240,15 +236,10 @@ $(function () {
         //#endregion        
     })
     btn.showVideo.click(async () => {
-        //#region active/passive the image and video buttons
-        // passive the image button
-        btn.showImage.addClass("btn_imageAndVideo_passive");
-        btn.showImage.removeClass("btn_imageAndVideo_active");
-
-        // active the video button
-        btn.showVideo.addClass("btn_imageAndVideo_active");
-        btn.showVideo.removeClass("btn_imageAndVideo_passive");
-        //#endregion
+        await machineForm_activeOrPassiveTheImageOrVideoBtnAsync(
+            "video",
+            btn.showImage,
+            btn.showVideo);
 
         //#region show video if image shows
         if (imageAndVideoButtons_activeButton != "video")
@@ -270,7 +261,6 @@ $(function () {
         let isSuccess = await change_imageInputAsync(
             event,
             inpt.chooseImage,
-            img_loading,
             inpt.image,
             vid_machine,
             spn_fileStatus);
@@ -285,13 +275,12 @@ $(function () {
         if (btn.showVideo.attr("hidden") == undefined)
             btn.showImage.addClass("btn btn_imageAndVideo btn_imageAndVideo_passive")
 
-
         // when video is not added
         else {
             btn.showImage.addClass("btn btn_imageAndVideo btn_imageAndVideo_active");
             imageAndVideoButtons_activeButton = "image";
         }
-           
+
         btn.showImage.removeAttr("hidden");
         //#endregion
     })
@@ -299,7 +288,6 @@ $(function () {
         let isSuccess = await change_videoInputAsync(
             event,
             inpt.chooseVideo,
-            img_loading,
             inpt.video,
             src_machine,
             vid_machine,
@@ -320,7 +308,7 @@ $(function () {
             btn.showVideo.addClass("btn btn_imageAndVideo btn_imageAndVideo_active");
             imageAndVideoButtons_activeButton = "video";
         }
-            
+
         btn.showVideo.removeAttr("hidden");
         //#endregion
     })
@@ -328,7 +316,6 @@ $(function () {
         await change_pdfInputAsync(
             event,
             inpt.choosePdf,
-            img_loading,
             inpt.pdf);
     })
     //#endregion
@@ -352,8 +339,8 @@ $(function () {
             div.brand,
             div.year,
             div.stock,
-            div.sold,
-            div.rented,
+            null,
+            null,
             div.handStatus,
             btn_descriptions_id,
             btn.save
@@ -372,12 +359,12 @@ $(function () {
                     "VideoName": selectedVideoInfos.name,
                     "MainCategoryName": slct.mainCategory.val(),
                     "SubCategoryName": slct.subCategory.val(),
-                    "Model": $("#" + inpt.model_id).val(),
-                    "BrandName": $("#" + inpt.brand_id).val(),
+                    "Model": inpt.model.val(),
+                    "BrandName": inpt.brand.val(),
                     "HandStatus": $("input[name= handStatus]:checked").val(),
                     "PdfName": selectedPdfInfos.name,
-                    "Stock": $("#" + inpt.stock_id).val(),
-                    "Year": $("#" + inpt.year_id).val(),
+                    "Stock": inpt.stock.val(),
+                    "Year": inpt.year.val(),
                     "Descriptions": {
                         "TR": descriptions.byLanguages.TR,
                         "EN": descriptions.byLanguages.EN
@@ -501,6 +488,117 @@ $(function () {
                 }
             });
         });
+    }
+    async function resetFormAsync() {
+        // machine video
+        await machineForm_removePosterAttrAsync(vid_machine, src_machine);
+        await machineForm_removeVideoAttrAsync(vid_machine, src_machine);
+
+        // image button
+        btn.showImage.attr("hidden", "");
+        btn.showImage.removeAttr("class");
+
+        // video button
+        btn.showVideo.attr("hidden", "");
+        btn.showVideo.removeAttr("class");
+        imageAndVideoButtons_activeButton = "";
+
+        // inputs
+        $("form")[0].reset();
+
+        // descriptions
+        await changeDescriptionsButtonColorAsync(
+            $("#" + btn_descriptions_id),
+            descriptions_unsavedColor);
+        resetDescriptionsBuffer();
+    }
+    async function checkWhetherBlankTheInputsAsync() {
+        //#region image input
+        let errorMessage_blankInput = errorMessagesByLanguages[language]["blankInput"];
+        let isAnyInputBlank = false;
+
+        if (inpt.chooseImage.val() == '') {
+            await machineForm_writeErrorToBelowOfInputAsync(
+                inpt.chooseImage,
+                errorMessage_blankInput);
+
+            isAnyInputBlank = true;
+        }
+        //#endregion
+
+        //#region video input
+        if (inpt.chooseVideo.val() == '') {
+            await machineForm_writeErrorToBelowOfInputAsync(
+                inpt.chooseVideo,
+                errorMessage_blankInput);
+
+            isAnyInputBlank = true;
+        }
+        //#endregion
+
+        //#region pdf input
+        if (inpt.choosePdf.val() == '') {
+            await machineForm_writeErrorToBelowOfInputAsync(
+                inpt.choosePdf,
+                errorMessage_blankInput);
+
+            isAnyInputBlank = true;
+        }
+        //#endregion
+
+        //#region model
+        if (inpt.model.val() == '') {
+            await machineForm_writeErrorToBelowOfInputAsync(
+                inpt.model,
+                errorMessage_blankInput);
+
+            isAnyInputBlank = true;
+        }
+        //#endregion
+
+        //#region brand
+        if (inpt.brand.val() == '') {
+            await machineForm_writeErrorToBelowOfInputAsync(
+                inpt.brand,
+                errorMessage_blankInput);
+
+            isAnyInputBlank = true;
+        }
+        //#endregion
+
+        //#region year
+        if (inpt.year.val() == '') {
+            await machineForm_writeErrorToBelowOfInputAsync(
+                inpt.year,
+                errorMessage_blankInput);
+
+            isAnyInputBlank = true;
+        }
+        //#endregion
+
+        //#region stock
+        if (inpt.stock.val() == '') {
+            await machineForm_writeErrorToBelowOfInputAsync(
+                inpt.stock,
+                errorMessage_blankInput);
+
+            isAnyInputBlank = true;
+        }
+        //#endregion
+
+        //#region descriptions
+        let txt_descriptions = $("#" + txt_descriptions_id);
+
+        if (txt_descriptions.val() == "") {
+            await machineForm_writeErrorToBelowOfInputAsync(
+                txt_descriptions,
+                errorMessage_blankInput);
+
+            isAnyInputBlank = true;
+        }
+        //#endregion
+
+        return isAnyInputBlank;
     }
     //#endregion
 

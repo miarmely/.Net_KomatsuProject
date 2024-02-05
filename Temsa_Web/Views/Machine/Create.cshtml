@@ -39,7 +39,7 @@
                         <button id="btn_showImage" type="button" hidden></button>
                         <button id="btn_showVideo" type="button" hidden></button>
                     </div>
-
+               
                     <form>
                         <div id="div_form" class="form-horizontal bucket-form"> 
                             @{
@@ -86,7 +86,7 @@
                             <div id="div_model" class="form-group">
                                 <label class="col-sm-3 control-label"></label>
                                 <div class="col-sm-6">
-                                    <input id="inpt_model" type="text" class="form-control" required>
+                                    <input id="inpt_model" type="text" class="form-control" >
                                     <span id="spn_help_inpt_model" class="help-block"></span>
                                 </div>
                             </div>
@@ -94,7 +94,7 @@
                             <div id="div_brand" class="form-group">
                                 <label class="col-sm-3 control-label"></label>
                                 <div class="col-sm-6">
-                                    <input id="inpt_brand" type="text" class="form-control" required>
+                                    <input id="inpt_brand" type="text" class="form-control" >
                                     <span id="spn_help_inpt_brand" class="help-block"></span>
                                 </div>
                             </div>
@@ -102,7 +102,7 @@
                             <div id="div_year" class="form-group">
                                 <label class="col-sm-3 control-label"></label>
                                 <div class="col-sm-6">
-                                    <input id="inpt_year" type="number" class="form-control" min=@minYearValue max=@maxYearValue required>
+                                    <input id="inpt_year" type="number" class="form-control" min=@minYearValue max=@maxYearValue >
                                     <span id="spn_help_inpt_year" class="help-block"></span>
                                 </div>
                             </div>
@@ -110,24 +110,8 @@
                             <div id="div_stock" class="form-group">
                                 <label class="col-sm-3 control-label"></label>
                                 <div class="col-sm-6">
-                                    <input id="inpt_stock" type="number" class="form-control" min=@minStockValue max=@maxStockValue required>
+                                    <input id="inpt_stock" type="number" class="form-control" min=@minStockValue max=@maxStockValue >
                                     <span id="spn_help_inpt_stock" class="help-block"></span>
-                                </div>
-                            </div>
-                            @*sold*@
-                            <div id="div_sold" class="form-group">
-                                <label class="col-sm-3 control-label"></label>
-                                <div class="col-sm-6">
-                                    <input id="inpt_sold" type="number" class="form-control" min=@minSoldValue max=@maxSoldValue required>
-                                    <span id="spn_help_inpt_sold" class="help-block"></span>
-                                </div>
-                            </div>
-                            @*rented*@
-                            <div id="div_rented" class="form-group">
-                                <label class="col-sm-3 control-label"></label>
-                                <div class="col-sm-6">
-                                    <input id="inpt_rented" type="number" class="form-control" min=@minRentedValue max=@maxRentedValue required>
-                                    <span id="spn_help_inpt_rented" class="help-block"></span>
                                 </div>
                             </div>
                             @*handStatus*@
@@ -136,7 +120,7 @@
                                 <div class="col-sm-6">
                                     <div class="radio">
                                         <label style="margin-right:10px">
-                                            <input type="radio" name="handStatus">
+                                            <input type="radio" name="handStatus" checked="">
                                         </label>
                                         <label>
                                             <input type="radio" name="handStatus">
@@ -161,7 +145,8 @@
                                     </div>
                                 </label>
                                 <div class="col-sm-6">
-                                    <textarea id="txt_descriptions"  style="resize:none"  type="text"  class="form-control"  rows="10"  required></textarea>
+                                    <textarea id="txt_descriptions"  style="resize:none"  type="text"  class="form-control"  rows="10"  ></textarea>
+                                    <span id="spn_help_txt_descriptions" class="help-block"></span>
                                 </div>
                             </div>
                              @*save button*@
@@ -221,7 +206,8 @@
             "unsuccessfulCreate": "makine oluşturulurken bir hata oluştu",
             "unsuccessfulImageUpload": "resim yüklenirken bir hata oluştu",
             "unsuccessfulVideoUpload": "video yüklenirken bir hata oluştu",
-            "unsuccessfulPdfUpload": "pdf yüklenirken bir hata oluştu"
+            "unsuccessfulPdfUpload": "pdf yüklenirken bir hata oluştu",
+            "blankInput": "bu alanı doldurmalısın"
         },
         "EN":{
             "pdfReadingError": "an error occured when pdf uploading",
@@ -233,6 +219,7 @@
             "unsuccessfulImageUpload": "an error occured when image uploading",
             "unsuccessfulVideoUpload": "an error occured when video uploading",
             "unsuccessfulPdfUpload": "an error occured when pdf uploading",
+            "blankInput": "you must fill in this field"
         }
     }
     let selectedImageInfos;
