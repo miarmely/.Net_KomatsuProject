@@ -18,7 +18,7 @@ import {
     machineForm_addElementNamesAsync, machineForm_populateSelectsAsync,
     click_showImageButtonAsync, click_showVideoButtonAsync,
     machineForm_showOrHideBackButtonAsync, click_inputAsync, click_textAreaAsync,
-    change_imageInputAsync, change_videoInputAsync, machineForm_activeOrPassiveTheImageOrVideoBtnAsync, machineForm_checkWhetherBlankTheInputsAsync
+    change_imageInputAsync, change_videoInputAsync, machineForm_activeOrPassiveTheImageOrVideoBtnAsync, machineForm_checkWhetherBlankTheInputsAsync, machineForm_populateInfoMessagesAsync
 } from "./miar_machine.js";
 
 import {
@@ -518,9 +518,14 @@ $(function () {
                         btn_save);
                     await machineForm_populateSelectsAsync(
                         $("#" + slct_mainCategory_id));
+                    await machineForm_populateInfoMessagesAsync();
 
                     isUpdatePageOpenedBefore = true;
                 }
+
+                else
+                    // show machine image
+                    btn_showImage.trigger("click");
                 //#endregion
 
                 await addDefaultValueToInputsAsync();
@@ -1111,7 +1116,7 @@ $(function () {
 
         //#region descriptions
         $("#txt_descriptions").val(infosOFLastClickedArticle.descriptions[language]);
-        
+
         await changeDescriptionsButtonColorAsync(
             $("#btn_descriptions"),
             descriptions_savedColor);
