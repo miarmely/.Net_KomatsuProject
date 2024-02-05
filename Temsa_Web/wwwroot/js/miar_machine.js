@@ -1,11 +1,13 @@
 ﻿import {
     displayFileByObjectUrlAsync, populateSelectAsync, isFileSizeValidAsync,
     isFileTypeValidAsync, populateElementByAjaxOrLocalAsync,
-    removeObjectUrlFromElementAsync, updateResultLabel
+    removeObjectUrlFromElementAsync
 } from "./miar_tools.js"
 
-import { a_descriptions_class, descriptions, txt_descriptions_id, ul_descriptions_id } from "./miar_descriptions.js";
-
+import {
+    a_descriptions_class, descriptions, txt_descriptions_id, ul_descriptions_id
+} from "./miar_descriptions.js";
+import { writeErrorToBelowOfInputAsync } from "./miar_module_inputForm.js";
 
 //#region variables
 const css_imageAndVideoButtons_checked = {
@@ -111,7 +113,7 @@ const langPack_infoMessages = {
             "It must be max 50 chars length."
         ],
         "div_descriptions": [
-            "TR and EN Description must be filled out",
+            "TR and EN Description must be filled out.",
             "It must be max 2000 chars length."
         ],
     }
@@ -193,7 +195,7 @@ export async function change_imageInputAsync(
 
     //#region when file type is not image (error)
     if (!await isFileTypeValidAsync(selectedFileInfos, "image")) {
-        await machineForm_writeErrorToBelowOfInputAsync(
+        await writeErrorToBelowOfInputAsync(
             inpt_chooseImage,
             partnerErrorMessagesByLanguages[language]["invalidFileType"]);
 
@@ -206,7 +208,7 @@ export async function change_imageInputAsync(
     //#region when file size is invalid (error)
     if (!await isFileSizeValidAsync(selectedFileInfos.size, imageSizeLimitInMb)) {
         // write error
-        await machineForm_writeErrorToBelowOfInputAsync(
+        await writeErrorToBelowOfInputAsync(
             inpt_chooseImage,
             errorMessagesByLanguages[language]["imageSizeOverflow"]);
 
@@ -261,7 +263,7 @@ export async function change_videoInputAsync(
 
     //#region when file type isn't video (error)
     if (!await isFileTypeValidAsync(selectedFileInfos, "video/")) {
-        await machineForm_writeErrorToBelowOfInputAsync(
+        await writeErrorToBelowOfInputAsync(
             inpt_chooseVideo,
             partnerErrorMessagesByLanguages[language]["invalidFileType"]);
 
@@ -273,7 +275,7 @@ export async function change_videoInputAsync(
 
     //#region when file size is invalid (error)
     if (!await isFileSizeValidAsync(selectedFileInfos.size, videoSizeLimitInMb)) {
-        await machineForm_writeErrorToBelowOfInputAsync(
+        await writeErrorToBelowOfInputAsync(
             inpt_chooseVideo,
             errorMessagesByLanguages[language]["videoSizeOverflow"]);
 
@@ -328,7 +330,7 @@ export async function change_pdfInputAsync(
 
     //#region when file type is not "pdf" (error)
     if (!await isFileTypeValidAsync(selectedFileInfos, "application/pdf")) {
-        await machineForm_writeErrorToBelowOfInputAsync(
+        await writeErrorToBelowOfInputAsync(
             inpt_choosePdf,
             partnerErrorMessagesByLanguages[language]["invalidFileType"]);
 
@@ -340,7 +342,7 @@ export async function change_pdfInputAsync(
 
     //#region when file size is invalid (error)
     if (!await isFileSizeValidAsync(selectedFileInfos.size, pdfSizeLimitInMb)) {
-        await machineForm_writeErrorToBelowOfInputAsync(
+        await writeErrorToBelowOfInputAsync(
             inpt_choosePdf,
             errorMessagesByLanguages[language]["pdfSizeOverflow"]);
 
@@ -644,18 +646,6 @@ export async function machineForm_activeOrPassiveTheImageOrVideoBtnAsync(
             break;
     }
 }
-export async function machineForm_writeErrorToBelowOfInputAsync(input, error) {
-    // add "red" border to input
-    input.css({
-        "border-color": "red",
-        "border-width": "1.4px"
-    });
-
-    // write error to "span_help"
-    let spn_help = input.siblings("span");
-    spn_help.empty();
-    spn_help.append(error);
-}
 export async function machineForm_checkWhetherBlankTheInputsAsync(
     errorMessage_blankInput,
     inputList
@@ -668,7 +658,7 @@ export async function machineForm_checkWhetherBlankTheInputsAsync(
         let input = inputList[index];
 
         if (input.val() == '') {
-            await machineForm_writeErrorToBelowOfInputAsync(
+            await writeErrorToBelowOfInputAsync(
                 input,
                 errorMessage_blankInput);
 
@@ -681,7 +671,7 @@ export async function machineForm_checkWhetherBlankTheInputsAsync(
     //#region when description in page language is blank
     if (descriptions.byLanguages[language] == null  // when any description isn't added
         || descriptions.byLanguages[language] == '') {  // when blank description added.
-        await machineForm_writeErrorToBelowOfInputAsync(
+        await writeErrorToBelowOfInputAsync(
             $("#" + txt_descriptions_id),
             errorMessage_blankInput);
 

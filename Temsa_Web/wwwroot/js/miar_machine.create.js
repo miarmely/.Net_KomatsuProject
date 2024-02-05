@@ -8,12 +8,13 @@ import {
     change_pdfInputAsync, machineForm_removePosterAttrAsync,
     machineForm_addElementNamesAsync, machineForm_populateSelectsAsync,
     click_showImageButtonAsync, click_showVideoButtonAsync,
-    machineForm_showOrHideBackButtonAsync, click_inputAsync, click_textAreaAsync,
-    change_imageInputAsync, change_videoInputAsync, machineForm_activeOrPassiveTheImageOrVideoBtnAsync, machineForm_writeErrorToBelowOfInputAsync, machineForm_checkWhetherBlankTheInputsAsync, machineForm_populateInfoMessagesAsync
+    click_inputAsync, click_textAreaAsync, change_imageInputAsync, change_videoInputAsync,
+    machineForm_activeOrPassiveTheImageOrVideoBtnAsync,
+    machineForm_checkWhetherBlankTheInputsAsync, machineForm_populateInfoMessagesAsync
 } from "./miar_machine.js";
 
-import { updateResultLabel, getBase64StrOfFileAsync, getKeysOfBlankValuesAsync } from "./miar_tools.js"
-import { checkValueOfNumberInputAsync } from "./miar_module_inputForm.js";
+import { updateResultLabel, getBase64StrOfFileAsync } from "./miar_tools.js"
+import { checkValueOfNumberInputAsync, writeErrorToBelowOfInputAsync } from "./miar_module_inputForm.js";
 
 
 $(function () {
@@ -107,7 +108,7 @@ $(function () {
 
         //#region when any description not entered (error)
         if (!descriptions.isChanged) {
-            await machineForm_writeErrorToBelowOfInputAsync(
+            await writeErrorToBelowOfInputAsync(
                 $("#" + txt_descriptions_id),
                 errorMessagesByLanguages[language]["descriptionNotEntered"]);
             return;
@@ -127,7 +128,7 @@ $(function () {
             if (descriptions.byLanguages[languageInSession] == null  // when relevant language not entered
                 || descriptions.byLanguages[languageInSession] == ""  // when blank value entered
             ) {
-                await machineForm_writeErrorToBelowOfInputAsync(
+                await writeErrorToBelowOfInputAsync(
                     $("#" + txt_descriptions_id),
                     `"${languageInSession}" ${errorMessagesByLanguages[language]["descriptionNotEntered"]}`);
 

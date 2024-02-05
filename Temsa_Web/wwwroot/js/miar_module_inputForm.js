@@ -74,4 +74,16 @@ export async function checkValueOfNumberInputAsync(inpt, minValue, maxValue) {
         inpt.val(maxValue);
     //#endregion
 }
+export async function writeErrorToBelowOfInputAsync(input, error) {
+    // add "red" border to input
+    input.css({
+        "border-color": "red",
+        "border-width": "1.4px"
+    });
+
+    // write error to "span_help"
+    let spn_help = input.siblings("span");
+    spn_help.empty();
+    spn_help.append(error);
+}
 //#endregion

@@ -1,5 +1,4 @@
-﻿import { createInputFormAsync, div_form, populateInputFormAsync } from "./miar_module_inputForm.js";
-
+﻿import { writeErrorToBelowOfInputAsync } from "./miar_module_inputForm.js";
 import {
     populateElementByAjaxOrLocalAsync, populateSelectAsync, updateResultLabel
 } from "./miar_tools.js";
@@ -9,13 +8,101 @@ $(function () {
     //#region variables
     const resultLabel_id = "#p_resultLabel";
     const img_loading = $("#img_loading");
-    const slct_roles_id = "slct_roles";
+    const slct_roles = $("#slct_roles");
+    const btn_showPassword = $("#btn_showPassword");
+    const inpt = {
+        "firstName": $("#inpt_firstName"),
+        "lastName": $("#inpt_lastName"),
+        "phone": $("#inpt_phone"),
+        "email": $("#inpt_email"),
+        "company": $("#inpt_company"),
+        "password": $("#inpt_password")
+    };
+    const langPack_infoMessages = {
+        "TR": {
+            "div_firstName": [
+                "Max 50 karakter uzunluğunda olmalı."
+            ],
+            "div_lastName": [
+                "Max 50 karakter uzunluğunda olmalı."
+            ],
+            "div_phone": [
+                "Başında 0 olmadan girilmeli."
+            ],
+            "div_email": [
+                "Uzantısı hariç max 50 karakter uzunluğunda olmalı."
+            ],
+            "div_company": [
+                "Max 50 karakter uzunluğunda olmalı."
+            ],
+            "div_password": [
+                "6 ile 16 karakter uzunluğunu arasında olmalı."
+            ],
+        },
+        "EN": {
+            "div_firstName": [
+                "It must be max 50 chars length."
+            ],
+            "div_lastName": [
+                "It must be max 50 chars length."
+            ],
+            "div_phone": [
+                "You must enter without leading zero."
+            ],
+            "div_email": [
+                "It must be max 50 chars length except extension."
+            ],
+            "div_company": [
+                "It must be max 50 chars length."
+            ],
+            "div_password": [
+                "Chars length must be between 6 and 16."
+            ],
+        }
+    };
+    const langPack_elementNames = {
+        "TR": {
+            "firstName": "Ad",
+            "lastName": "Soyad",
+            "phone": "Telefon",
+            "email": "Email",
+            "company": "Şirket",
+            "roles": "Rol",
+            "password": "Şifre",
+        },
+        "EN": {
+            "firstName": "Firstname",
+            "lastName": "Lastname",
+            "phone": "Phone",
+            "email": "Email",
+            "company": "Company",
+            "roles": "Role",
+            "password": "Password",
+        }
+    };
     //#endregion
 
     //#region events
-    $("form").submit((event) => {
-        //#region display loading gif
+    $("form").submit(async (event) => {
+        //#region check whether blank value on inputs
         event.preventDefault();
+        let isBlankValueExists = await checkWhetherBlankTheInputsAsync(
+            langPack_errorMessages[language]["blankInput"],
+            [
+                inpt.firstName,
+                inpt.lastName,
+                inpt.phone,
+                inpt.email,
+                inpt.company,
+                slct_roles,
+                inpt.password
+            ]
+        )
+
+        // when any value is blank
+        if (isBlankValueExists)
+            return;
+
         img_loading.removeAttr("hidden");
         //#endregion
 
@@ -23,14 +110,14 @@ $(function () {
             method: "POST",
             url: baseApiUrl + `/user/create?language=${language}`,
             data: JSON.stringify({
-                FirstName: $("#inpt_firstName").val().trim(),
-                LastName: $("#inpt_lastName").val().trim(),
-                companyName: $("#inpt_companyName").val().trim(),
-                TelNo: $("#inpt_telNo").val().trim(),
-                Email: $("#inpt_email").val().trim(),
-                Password: $("#inpt_password").val().trim(),
+                FirstName: inpt.firstName.val().trim(),
+                LastName: inpt.lastName.val().trim(),
+                companyName: inpt.company.val().trim(),
+                TelNo: inpt.phone.val().trim(),
+                Email: inpt.email.val().trim(),
+                Password: inpt.password.val().trim(),
                 RoleNames: [
-                    $("#slct_roles").val()
+                    slct_roles.val()
                 ]
             }),
             headers: { "Authorization": jwtToken },
@@ -52,16 +139,10 @@ $(function () {
                 //#endregion
             },
             error: (response) => {
-                //#region get errorMessage
-                let errorMessage = JSON
-                    .parse(response.responseText)
-                    .errorMessage
-                //#endregion
-
                 //#region write error message to resultLabel
                 updateResultLabel(
                     resultLabel_id,
-                    errorMessage,
+                    JSON.parse(response.responseText).errorMessage,
                     resultLabel_errorColor,
                     "30px",
                     img_loading)
@@ -69,6 +150,33 @@ $(function () {
             }
         });
     });
+    $("input").click((event) => {
+        //#region remove "red" color from input
+        let input = $("#" + event.target.id);
+        input.removeAttr("style");
+        //#endregion
+
+        //#region reset spn help of clicked input
+        let spn_help = input.siblings("span");
+        spn_help.attr("hidden", "");
+        spn_help.empty();
+        //#endregion
+    })
+    btn_showPassword.click(() => {
+        //#region show password
+        if (inpt.password.attr("type") == "password") {
+            inpt.password.attr("type", "text");
+            btn_showPassword.css("background-image", "url(../images/hide.png)");
+        }
+        //#endregion
+
+        //#region hide password
+        else {
+            inpt.password.attr("type", "password");
+            btn_showPassword.css("background-image", "url(../images/show.png)");
+        }
+        //#endregion
+    })
     //#endregion
 
     //#region functions
@@ -78,58 +186,19 @@ $(function () {
             formTitleByLanguages[language]);
         //#endregion
 
-        await createInputFormAsync($("form"), 7);
-
-        //#region populate input form
-        let formLabelNamesAndFeatures = formLabelNamesAndFeaturesByLanguages[language];
-
-        await populateInputFormAsync(1,
-            formLabelNamesAndFeatures.firstName.label,
-            `<input id="inpt_firstName" type="${formLabelNamesAndFeatures.firstName.type}" class="form-control" required>
-             <span class="help-block">${formLabelNamesAndFeatures.firstName.helpMessage}</span>`
-        ); // firstName
-        await populateInputFormAsync(2,
-            formLabelNamesAndFeatures.lastName.label,
-            `<input id="inpt_lastName" type="${formLabelNamesAndFeatures.lastName.type}" class="form-control" required>
-             <span class="help-block">${formLabelNamesAndFeatures.lastName.helpMessage}</span>`
-        ); // lastName
-        await populateInputFormAsync(3,
-            formLabelNamesAndFeatures.telNo.label,
-            `<input id="inpt_telNo" type="${formLabelNamesAndFeatures.telNo.type}" class="form-control" required>
-             <span class="help-block">${formLabelNamesAndFeatures.telNo.helpMessage}</span>`
-        ); // telNo
-        await populateInputFormAsync(4,
-            formLabelNamesAndFeatures.email.label,
-            `<input id="inpt_email" type="${formLabelNamesAndFeatures.email.type}" class="form-control" required>
-             <span class="help-block">${formLabelNamesAndFeatures.email.helpMessage}</span>`
-        ); // email
-        await populateInputFormAsync(5,
-            formLabelNamesAndFeatures.companyName.label,
-            `<input id="inpt_companyName" type="${formLabelNamesAndFeatures.companyName.type}" class="form-control" required>
-             <span class="help-block">${formLabelNamesAndFeatures.companyName.helpMessage}</span>`
-        ); // companyName
-        await populateInputFormAsync(6,
-            formLabelNamesAndFeatures.roles.label,
-            `<select id="${slct_roles_id}" class="form-control m-bot15">             
-            </select>`); // roles
-        await populateInputFormAsync(7,
-            formLabelNamesAndFeatures.password.label,
-            `<input id="inpt_password" type="${formLabelNamesAndFeatures.password.type}" class="form-control" required>
-             <span class="help-block">${formLabelNamesAndFeatures.password.helpMessage}</span>`); // password
-
-        // populate roles <select>
+        await populateElementNamesAsync();
         await populateElementByAjaxOrLocalAsync(
             localKeys_allRoles,
             `/user/display/role?language=${language}`,
             (data) => {
                 populateSelectAsync(
-                    $("#" + slct_roles_id),
+                    slct_roles,
                     data);
-            });
-        //#endregion
+            });  // populate roles
+        await populateInfoMessagesAsync();
 
         //#region add save button
-        div_form.append(
+        $("#div_form").append(
             `<div class="form-group">
                 <div class="col-sm-6; text-center">
                     <button id="btn_save" type="submit" class="btn btn-danger" style="background-color: darkblue">
@@ -139,6 +208,85 @@ $(function () {
             </div>`
         )
         //#endregion
+    }
+    async function populateInfoMessagesAsync() {
+        //#region fill in info messages
+        let infoMessages = langPack_infoMessages[language];
+
+        for (let div_id in infoMessages)
+            for (let index in infoMessages[div_id]) {
+                let message = infoMessages[div_id][index];
+
+                $("#" + div_id + " .div_infoMessage" + " ul")
+                    .append(`<li>* ${message}</li>`);
+            }
+        //#endregion
+    }
+    async function populateElementNamesAsync() {
+        //#region firstName
+        let elementNames = langPack_elementNames[language];
+
+        $("#div_firstName")
+            .children("label")
+            .append(elementNames.firstName);
+        //#endregion
+
+        //#region lastName
+        $("#div_lastName")
+            .children("label")
+            .append(elementNames.lastName);
+        //#endregion
+
+        //#region phone
+        $("#div_phone")
+            .children("label")
+            .append(elementNames.phone);
+        //#endregion
+
+        //#region email
+        $("#div_email")
+            .children("label")
+            .append(elementNames.email);
+        //#endregion
+
+        //#region company
+        $("#div_company")
+            .children("label")
+            .append(elementNames.company);
+        //#endregion
+
+        //#region roles
+        $("#div_roles")
+            .children("label")
+            .append(elementNames.roles);
+        //#endregion
+
+        //#region password
+        $("#div_password")
+            .children("label")
+            .append(elementNames.password);
+        //#endregion
+    }
+    async function checkWhetherBlankTheInputsAsync(errorMessage_blankInput, inputList) {
+        //#region check whether blank of inputs
+        let isAnyInputBlank = false;
+
+        for (let index in inputList) {
+            //#region when input is blank
+            let input = inputList[index];
+
+            if (input.val() == '') {
+                await writeErrorToBelowOfInputAsync(
+                    input,
+                    errorMessage_blankInput);
+
+                isAnyInputBlank = true;
+            }
+            //#endregion
+        }
+        //#endregion
+
+        return isAnyInputBlank;
     }
     //#endregion
 

@@ -15,7 +15,7 @@ namespace Temsa_Web.Controllers
 
 		public IActionResult Create()
 		{
-			return View("Create", _manager);
+			return View();
 		}
 
 		public IActionResult Display()
