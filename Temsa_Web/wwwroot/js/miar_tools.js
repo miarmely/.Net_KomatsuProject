@@ -688,7 +688,7 @@ export function getDateTimeInString(dateTime) {
     //#endregion
 
     //#region set hours
-    let hours = date.getHours() + 3;
+    let hours = (date.getHours() + 3) % 24;
 
     // add '0' to head
     let hoursInString = hours < 10 ?

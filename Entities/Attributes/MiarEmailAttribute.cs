@@ -58,7 +58,6 @@ namespace Entities.Attributes
 			var dotIndex = emailExtension.IndexOf('.');
 
 			if (totalDotQuantity == 0 // when '.' not found
-				|| totalDotQuantity > 1 // when total '.' quantity more than 1
 				|| dotIndex == 0  // when no char between '@' and '.'
 				|| dotIndex == emailExtension.Length - 1)  // when '.' last Index
 				throw new ErrorWithCodeException(_errorDto);
