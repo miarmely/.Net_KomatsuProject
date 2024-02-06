@@ -1,19 +1,21 @@
-﻿import { createInputFormAsync, populateInputFormAsync } from "./miar_module_inputForm.js";
-import { autoObjectMapperAsync, populateElementByAjaxOrLocalAsync, populateSelectAsync, updateResultLabel } from "./miar_tools.js";
+﻿import {
+    autoObjectMapperAsync, populateElementByAjaxOrLocalAsync, populateSelectAsync,
+    updateResultLabel
+} from "./miar_tools.js";
+import {
+    checkWhetherBlankTheInputsAsync,
+    click_userForm_inputAsync, click_userForm_showPasswordButtonAsync,
+    keyup_userForm_inputAsync, populateElementNamesAsync, populateInfoMessagesAsync
+} from "./miar_user_inputForm.js";
 
 
 $(function () {
     //#region variables
     const resultLabel_id = "#p_resultLabel";
-    const div_form = $("#div_form");
     const img_loading = $("#img_loading");
-    const inpt_firstName_id = "inpt_firstName";
-    const inpt_lastName_id = "inpt_lastName";
-    const inpt_email_id = "inpt_email";
-    const inpt_telNo_id = "inpt_telNo";
-    const inpt_companyName_id = "inpt_companyName";
     const inpt_password_id = "inpt_password";
-    const slct_roles_id = "slct_roles";
+    const slct_roles = $("#slct_roles");
+    const btn_showPassword = $("#btn_showPassword");
     const roleTranslator = {
         "TR": {
             "Kullanıcı": "User",
@@ -25,117 +27,92 @@ $(function () {
             "Editor": "Editör",
             "Admin": "Yönetici"
         }  // From EN to TR
-    }
+    };
+    const inpt = {
+        "firstName": $("#inpt_firstName"),
+        "lastName": $("#inpt_lastName"),
+        "phone": $("#inpt_phone"),
+        "email": $("#inpt_email"),
+        "company": $("#inpt_company"),
+        "password": $("#inpt_password")
+    };
     const langPack_formTitle = {
         "TR": "PROFİLE",
         "EN": "PROFILE"
-    }
-    const langPack_formLabelNamesAndFeatures = {
-        "TR": {
-            "firstName": {
-                "label": "Ad",
-                "type": "text",
-                "helpMessage": ""
-            },
-            "lastName": {
-                "label": "Soyad",
-                "type": "text",
-                "helpMessage": ""
-            },
-            "telNo": {
-                "label": "Telefon",
-                "type": "phone",
-                "helpMessage": "* Başında sıfır olmadan 10 haneli olarak giriniz."
-            },
-            "email": {
-                "label": "Email",
-                "type": "email",
-                "helpMessage": ""
-            },
-            "companyName": {
-                "label": "Şirket",
-                "type": "text",
-                "helpMessage": ""
-            },
-            "roles": {
-                "label": "Rol",
-                "type": null,
-                "helpMessage": ""
-            },
-            "password": {
-                "label": "Yeni Şifre",
-                "type": "text",
-                "helpMessage": "* 6 ile 16 karakter arasında giriniz."
-            }
-        },
-        "EN": {
-            "firstName": {
-                "label": "Firstname",
-                "type": "text",
-                "helpMessage": ""
-            },
-            "lastName": {
-                "label": "Lastname",
-                "type": "text",
-                "helpMessage": ""
-            },
-            "telNo": {
-                "label": "Telephone",
-                "type": "phone",
-                "helpMessage": "* enter as 10 digits without zero at head"
-            },
-            "email": {
-                "label": "Email",
-                "type": "email",
-                "helpMessage": ""
-            },
-            "companyName": {
-                "label": "Company",
-                "type": "text",
-                "helpMessage": ""
-            },
-            "roles": {
-                "label": "Role",
-                "type": null,
-                "helpMessage": ""
-            },
-            "password": {
-                "label": "New Password",
-                "type": "text",
-                "helpMessage": "* enter between 6 and 16 chars"
-            }
-        }
-    }
-    const langPack_saveButton = {
-        "TR": "Kaydet",
-        "EN": "Save"
-    }
+    };
     const langPack_successMessage = {
         "TR": "başarıyla kaydedildi",
         "EN": "save successfull"
+    };
+    const langPack_errorMessages = {
+        "TR": {
+            "blankInput": "bu alanı doldurmalısın."
+        },
+        "EN": {
+            "blankInput": "you must fill in this field."
+        }
     }
+    const langPack_elementNames = {
+        "TR": {
+            "firstName": "Ad",
+            "lastName": "Soyad",
+            "phone": "Telefon",
+            "email": "Email",
+            "company": "Şirket",
+            "roles": "Rol",
+            "password": "Yeni Şifre",
+            "saveButton": "Güncelle"
+        },
+        "EN": {
+            "firstName": "Firstname",
+            "lastName": "Lastname",
+            "phone": "Phone",
+            "email": "Email",
+            "company": "Company",
+            "roles": "Role",
+            "password": "New Password",
+            "saveButton": "Update"
+        }
+    };
     let claimInfos = JSON.parse(localStorage
         .getItem(localKeys_claimInfos));
     //#endregion
 
     //#region events
-    $("form").submit((event) => {
-        //#region show loading gif
+    $("form").submit(async (event) => {
+        //#region check whether blank value on inputs
+        // check
         event.preventDefault();
-        $(resultLabel_id).empty();
+        let isBlankValueExists = await checkWhetherBlankTheInputsAsync(
+            langPack_errorMessages[language]["blankInput"],
+            [
+                inpt.firstName,
+                inpt.lastName,
+                inpt.phone,
+                inpt.email,
+                inpt.company,
+                slct_roles
+            ]
+        )
 
+        // when any value is blank
+        if (isBlankValueExists)
+            return;
+
+        // show loading gif
         img_loading.removeAttr("hidden");
+        $(resultLabel_id).empty();
         //#endregion
 
         //#region set data
         let currentValues = {
-            "firstName": $("#" + inpt_firstName_id).val(),
-            "lastName": $("#" + inpt_lastName_id).val(),
-            "telNo": $("#" + inpt_telNo_id).val(),
-            "email": $("#" + inpt_email_id).val(),
-            "companyName": $("#" + inpt_companyName_id).val(),
-            "role": $("#" + slct_roles_id).val(),
-            "password": $("#" + inpt_password_id).val()
+            "firstName": inpt.firstName.val(),
+            "lastName": inpt.lastName.val(),
+            "telNo": inpt.phone.val(),
+            "email": inpt.email.val(),
+            "companyName": inpt.company.val(),
+            "role": slct_roles.val(),
+            "password": inpt.password.val()
         };
         let data = {
             "firstName": currentValues.firstName == claimInfos.firstName ? null : currentValues.firstName,
@@ -210,6 +187,17 @@ $(function () {
             }
         })
     });
+    $("input").click(async (event) => {
+        await click_userForm_inputAsync(event);
+    })
+    $("input").on("keyup", async (event) => {
+        await keyup_userForm_inputAsync(event);
+    })
+    btn_showPassword.click(async () => {
+        await click_userForm_showPasswordButtonAsync(
+            inpt.password,
+            btn_showPassword);
+    })
     spn_eventManager.on("click_input", () => {
         // reset result label
         $(resultLabel_id).empty();
@@ -227,84 +215,28 @@ $(function () {
             langPack_formTitle[language]);
         //#endregion
 
-        await createInputFormAsync($("form"), 7);
-
-        //#region populate input form
-        let formLabelNamesAndFeatures = langPack_formLabelNamesAndFeatures[language];
-
-        await populateInputFormAsync(1,
-            formLabelNamesAndFeatures.firstName.label,
-            `<input id="${inpt_firstName_id}" type="${formLabelNamesAndFeatures.firstName.type}" class="form-control" required>
-             <span class="help-block">${formLabelNamesAndFeatures.firstName.helpMessage}</span>`
-        ); // firstName
-        await populateInputFormAsync(2,
-            formLabelNamesAndFeatures.lastName.label,
-            `<input id="${inpt_lastName_id}" type="${formLabelNamesAndFeatures.lastName.type}" class="form-control" required>
-             <span class="help-block">${formLabelNamesAndFeatures.lastName.helpMessage}</span>`
-        ); // lastName
-        await populateInputFormAsync(3,
-            formLabelNamesAndFeatures.telNo.label,
-            `<input id="${inpt_telNo_id}" type="${formLabelNamesAndFeatures.telNo.type}" class="form-control" required>
-             <span class="help-block">${formLabelNamesAndFeatures.telNo.helpMessage}</span>`
-        ); // telNo
-        await populateInputFormAsync(4,
-            formLabelNamesAndFeatures.email.label,
-            `<input id="${inpt_email_id}" type="${formLabelNamesAndFeatures.email.type}" class="form-control" required>
-             <span class="help-block">${formLabelNamesAndFeatures.email.helpMessage}</span>`
-        ); // email
-        await populateInputFormAsync(5,
-            formLabelNamesAndFeatures.companyName.label,
-            `<input id="${inpt_companyName_id}" type="${formLabelNamesAndFeatures.companyName.type}" class="form-control" required>
-             <span class="help-block">${formLabelNamesAndFeatures.companyName.helpMessage}</span>`
-        ); // companyName
-        await populateInputFormAsync(6,
-            formLabelNamesAndFeatures.roles.label,
-            `<select id="${slct_roles_id}" class="form-control m-bot15">
-            </select>`
-        ); // roles
-        await populateInputFormAsync(7,
-            formLabelNamesAndFeatures.password.label,
-            `<input id="${inpt_password_id}" type="${formLabelNamesAndFeatures.password.type}" class="form-control">
-             <span class="help-block">${formLabelNamesAndFeatures.password.helpMessage}</span>`
-        ); // password
-
+        await populateElementNamesAsync(langPack_elementNames[language]);
         await populateElementByAjaxOrLocalAsync(
             localKeys_allRoles,
             `/user/display/role?language=${language}`,
             (data) => {
-                populateSelectAsync($("#" + slct_roles_id), data);
-                populateInputsWithClaimInfosAsync();
-            });  // add <option> to roles <select>
-        //#endregion
-
-        //#region add save button
-        div_form.append(
-            `<div class="form-group">
-                <div class="col-sm-6; text-center">
-                    <button id="btn_save" type="submit" class="btn btn-danger" style="background-color: darkblue">
-                        ${langPack_saveButton[language]}
-                    </button>
-                </div>
-            </div>`
-        )
-        //#endregion
-
-        //#region declare events
-        $("input").click(() => spn_eventManager.trigger("click_input"));
-        $("select").click(() => spn_eventManager.trigger("click_select"));
-        //#endregion
+                populateSelectAsync(
+                    slct_roles,
+                    data);
+            });  // populate roles
+        await populateInputsWithClaimInfosAsync();
+        await populateInfoMessagesAsync();
     }
-
     async function populateInputsWithClaimInfosAsync() {
         for (let key in claimInfos) {
             let claimValue = claimInfos[key];
 
             switch (key) {
-                case "firstName": $("#" + inpt_firstName_id).val(claimValue); break;
-                case "lastName": $("#" + inpt_lastName_id).val(claimValue); break;
-                case "telNo": $("#" + inpt_telNo_id).val(claimValue); break;
-                case "email": $("#" + inpt_email_id).val(claimValue); break;
-                case "companyName": $("#" + inpt_companyName_id).val(claimValue); break;
+                case "firstName": inpt.firstName.val(claimValue); break;
+                case "lastName": inpt.lastName.val(claimValue); break;
+                case "telNo": inpt.phone.val(claimValue); break;
+                case "email": inpt.email.val(claimValue); break;
+                case "companyName": inpt.company.val(claimValue); break;
                 case "roleNames":
                     //#region when role language isn't equal to page language
                     if (claimInfos.roleLanguage != language) {
@@ -319,13 +251,12 @@ $(function () {
                     }
                     //#endregion
 
-                    $("#" + slct_roles_id).val(claimInfos.roleNames);  // display role
+                    slct_roles.val(claimInfos.roleNames);  // display role
                     break;
-                case "password": $("#" + inpt_password_id).val(claimValue); break;
+                case "password": inpt.password.val(claimValue); break;
             }
         }
     }
-
     async function updateClaimInfosAsync(data) {
         // update claimInfos object
         await autoObjectMapperAsync(claimInfos, data, true);

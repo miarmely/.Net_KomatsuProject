@@ -4,6 +4,8 @@
     Layout = "_Layout";
 }
 
+<link rel="stylesheet" href="~/css/miar_user_inputForm.css" />
+
 
 <div class="form-w3layouts">
     <div class="row">
@@ -14,6 +16,92 @@
                 <div class="panel-body">
                     <form>
                         <div id="div_form" class="form-horizontal bucket-form" style="padding-top:20px">
+                             @*firstName*@
+                            <div id="div_firstName" class="form-group">
+                                <label class="col-sm-3 control-label"></label>
+                                <div class="col-sm-6">
+                                    <input id="inpt_firstName" type="text" class="form-control" >
+                                    <span id="spn_help_inpt_firstName" class="help-block"></span>
+                                </div>
+                                <div class="col-sm-3 div_infoMessage">
+                                    <button type="button" tabindex="-1" data-toggle="dropdown" class="dropdown-toggle"></button>
+                                    <ul role="menu" class="dropdown-menu"></ul>
+                                </div>
+                            </div>
+                            @*lastName*@
+                            <div id="div_lastName" class="form-group">
+                                <label class="col-sm-3 control-label"></label>
+                                <div class="col-sm-6">
+                                    <input id="inpt_lastName" type="text" class="form-control" >
+                                    <span id="spn_help_inpt_lastName" class="help-block"></span>
+                                </div>
+                                <div class="col-sm-3 div_infoMessage">
+                                    <button type="button" tabindex="-1" data-toggle="dropdown" class="dropdown-toggle"></button>
+                                    <ul role="menu" class="dropdown-menu"></ul>
+                                </div>
+                            </div>
+                            @*phone*@
+                            <div id="div_phone" class="form-group">
+                                <label class="col-sm-3 control-label"></label>
+                                <div class="col-sm-6">
+                                    <input id="inpt_phone" type="number" class="form-control">
+                                    <span id="spn_help_inpt_phone" class="help-block"></span>
+                                </div>
+                                <div class="col-sm-3 div_infoMessage">
+                                    <button type="button" tabindex="-1" data-toggle="dropdown" class="dropdown-toggle"></button>
+                                    <ul role="menu" class="dropdown-menu"></ul>
+                                </div>
+                            </div>
+                            @*email*@
+                            <div id="div_email" class="form-group">
+                                <label class="col-sm-3 control-label"></label>
+                                <div class="col-sm-6">
+                                    <input id="inpt_email" type="text" class="form-control" >
+                                    <span id="spn_help_inpt_email" class="help-block"></span>
+                                </div>
+                                <div class="col-sm-3 div_infoMessage">
+                                    <button type="button" tabindex="-1" data-toggle="dropdown" class="dropdown-toggle"></button>
+                                    <ul role="menu" class="dropdown-menu"></ul>
+                                </div>
+                            </div>
+                            @*company*@
+                            <div id="div_company" class="form-group">
+                                <label class="col-sm-3 control-label"></label>
+                                <div class="col-sm-6">
+                                    <input id="inpt_company" type="text" class="form-control" >
+                                    <span id="spn_help_inpt_company" class="help-block"></span>
+                                </div>
+                                <div class="col-sm-3 div_infoMessage">
+                                    <button type="button" tabindex="-1" data-toggle="dropdown" class="dropdown-toggle"></button>
+                                    <ul role="menu" class="dropdown-menu"></ul>
+                                </div>
+                            </div>
+                            @*roles*@
+                            <div id="div_roles" class="form-group">
+                                <label class="col-sm-3 control-label"></label>
+                                <div class="col-sm-6">
+                                    <select id="slct_roles" class="form-control m-bot15"></select>
+                                </div>
+                            </div>
+                            @*password*@
+                            <div id="div_password" class="form-group">
+                                <label class="col-sm-3 control-label"></label>
+                                <div class="col-sm-6">
+                                    <input id="inpt_password" type="password" class="form-control" >
+                                    <span id="spn_help_inpt_password" class="help-block"></span>
+                                </div>
+                                <div class="col-sm-3 div_infoMessage">
+                                    <button id="btn_showPassword" type="button"></button>
+                                    <button type="button" tabindex="-1" data-toggle="dropdown" class="dropdown-toggle"></button>
+                                    <ul role="menu" class="dropdown-menu"></ul>
+                                </div>
+                            </div>
+                            @*save button*@
+                            <div id="div_saveButton" class="form-group">
+                                <div class="col-sm-6; text-center">
+                                    <button id="btn_save" type="submit" class="btn btn-danger" style="background-color: darkblue"></button>
+                                </div>
+                            </div>
                         </div>
                     </form>
                     <div style="text-align:center">
