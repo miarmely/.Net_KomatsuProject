@@ -9,7 +9,8 @@ import {
     mouseover_articleVideoAsync, click_articleVideoDivAsync, controlArticleWidthAsync,
     div_article_button_id, div_article_info_id, div_article_video_id,
     ended_articleVideoAsync, alignArticlesAsAutoAsync, mouseout_articleVideoDivAsync,
-    removeLastUploadedArticleVideoAsync
+    removeLastUploadedArticleVideoAsync,
+    getArticleCountOnOneRowAsync
 } from "./miar_article.js"
 
 import {
@@ -34,7 +35,7 @@ import { checkValueOfNumberInputAsync } from "./miar_module_inputForm.js";
 $(function () {
     //#region variables
     const pageNumber = 1;
-    const pageSize = 10;
+    const pageRow = 3;
     const paginationButtonQuantity = 5;
     const nameOfPaginationHeader = "Machine-Pagination";
     const errorMessageColor = "rgb(255, 75, 75)";
@@ -104,6 +105,7 @@ $(function () {
         "TR": "KAYITLI MAKİNELER",
         "EN": "REGISTERED MACHINES"
     }
+    let pageSize;
     let paginationInfos = {};
     let machineCountOnPage;
     let idOfLastClickedArticle = null;
@@ -442,7 +444,6 @@ $(function () {
                 if (paginationInfos.HasPrevious)
                     await addMachineArticlesAsync(
                         paginationInfos.CurrentPageNo - 1,
-                        pageSize,
                         true);
 
                 break;
@@ -453,7 +454,6 @@ $(function () {
                 if (paginationInfos.HasNext)
                     await addMachineArticlesAsync(
                         paginationInfos.CurrentPageNo + 1,
-                        pageSize,
                         true);
 
                 break;
@@ -466,7 +466,6 @@ $(function () {
 
                 await addMachineArticlesAsync(
                     pageNo,
-                    pageSize,
                     true);
                 //#endregion
 
@@ -614,10 +613,37 @@ $(function () {
         );
         //#endregion
 
-        await addMachineArticlesAsync(pageNumber, pageSize, true);
+        await addMachineArticlesAsync(pageNumber, true);
         await uploadDescriptionsEventsAsync();
     }
-    async function addMachineArticlesAsync(pageNumber, pageSize, refreshPaginationButtons) {
+    async function addMachineArticlesAsync(pageNumber, refreshPaginationButtons) {
+        //#region set page size 
+        await setVariablesForArticleAsync({
+            "div_articles": div_articles,
+            "path_articleVideos": path_videoFolderAfterWwwroot,
+            "articleType": "videoAndText",
+            "articleStyle": {
+                "width": 370,
+                "height": 560,
+                "marginT": 10,
+                "marginB": 10,
+                "marginR": 20,
+                "marginL": 20,
+                "paddingT": 10,
+                "paddingB": 10,
+                "paddingR": 10,
+                "paddingL": 10,
+                "border": 1,
+                "borderColor": "blue",
+                "boxShadow": "5px 5px 10px rgba(0, 0, 0, 0.3)",
+                "bgColorForDelete": "rgb(220, 0, 0)"
+            },
+        });
+        let articleCountOnOneRow = await getArticleCountOnOneRowAsync();
+
+        pageSize = articleCountOnOneRow * pageRow;
+        //#endregion
+
         $.ajax({
             method: "GET",
             url: (baseApiUrl + "/machine/display/all" +
@@ -634,26 +660,7 @@ $(function () {
             success: (response, status, xhr) => {
                 //#region set variables
                 setVariablesForArticleAsync({
-                    "div_articles": div_articles,
-                    "path_articleVideos": path_videoFolderAfterWwwroot,
                     "totalArticleCount": response.length,
-                    "articleType": "videoAndText",
-                    "articleStyle": {
-                        "width": 370,
-                        "height": 580,
-                        "marginT": 10,
-                        "marginB": 10,
-                        "marginR": 20,
-                        "marginL": 20,
-                        "paddingT": 10,
-                        "paddingB": 10,
-                        "paddingR": 10,
-                        "paddingL": 10,
-                        "border": 1,
-                        "borderColor": "blue",
-                        "boxShadow": "5px 5px 10px rgba(0, 0, 0, 0.3)",
-                        "bgColorForDelete": "rgb(220, 0, 0)"
-                    },
                 });
                 //#endregion
 
@@ -1012,12 +1019,12 @@ $(function () {
                 if (data.length == paginationInfos.CurrentPageCount) {
                     //#region when next page exists
                     if (paginationInfos.HasNext)
-                        addMachineArticlesAsync(currentPageNo, pageSize, true);  // refresh current page
+                        addMachineArticlesAsync(currentPageNo, true);  // refresh current page
                     //#endregion
 
                     //#region when previous page exists
                     else if (paginationInfos.HasPrevious)
-                        addMachineArticlesAsync(currentPageNo - 1, pageSize, true);
+                        addMachineArticlesAsync(currentPageNo - 1, true);
                     //#endregion
 
                     //#region when any machines not found
@@ -1038,7 +1045,7 @@ $(function () {
 
                 //#region when some machines on page deleted
                 else
-                    addMachineArticlesAsync(currentPageNo, pageSize, true);  // refresh current page
+                    addMachineArticlesAsync(currentPageNo, true);  // refresh current page
                 //#endregion
 
                 //#region change page mode

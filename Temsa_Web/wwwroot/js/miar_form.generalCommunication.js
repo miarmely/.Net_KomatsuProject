@@ -1,6 +1,6 @@
 ﻿import {
     addArticlesAsync, setVariablesForArticleAsync, art_baseId, div_article_info_id,
-    articleBuffer, addMsgWithImgToDivArticlesAsync, alignArticlesAsAutoAsync
+    articleBuffer, addMsgWithImgToDivArticlesAsync, alignArticlesAsAutoAsync, getArticleCountOnOneRowAsync
 } from "./miar_article.js";
 
 import {
@@ -18,7 +18,7 @@ import {
 $(function () {
     //#region variables
     const div_articles = $("#div_articles");
-    const pageSize = 10;
+    const pageRow = 3;
     const pagination_buttonCount = 5;
     const pagination_headerNames = {
         "unanswered": "Form-Gc-Unanswered",
@@ -108,6 +108,7 @@ $(function () {
         "EN": "form displaying"
     };
     let pageNumber = 1;
+    let pageSize;
     let pagination_formInfos = {};
     let article_IdsAndFormInfos = {};
     let slct_menubar_value = "unanswered";
@@ -378,6 +379,32 @@ $(function () {
                 : '');  // get answered and unanswered forms;
         //#endregion
 
+        //#region set page size 
+        await setVariablesForArticleAsync({
+            "div_articles": div_articles,
+            "articleType": "text",
+            "articleStyle": {
+                "width": 300,
+                "height": 350,
+                "marginT": 10,
+                "marginB": 10,
+                "marginR": 20,
+                "marginL": 20,
+                "paddingT": 10,
+                "paddingB": 10,
+                "paddingR": 10,
+                "paddingL": 10,
+                "border": 1,
+                "borderColor": "blue",
+                "boxShadow": "5px 5px 10px rgba(0, 0, 0, 0.3)",
+                "bgColorForDelete": "rgb(220, 0, 0)"
+            }
+        });
+        let articleCountOnOneRow = await getArticleCountOnOneRowAsync();
+
+        pageSize = articleCountOnOneRow * pageRow;
+        //#endregion
+
         //#region add form articles and populate (ajax)
         $.ajax({
             method: "GET",
@@ -395,32 +422,11 @@ $(function () {
                 // reset div_articles
                 div_articles.empty();
                 div_articles.removeAttr("style");
-
-                setVariablesForArticleAsync({ "div_articles": div_articles })
             },
             success: (response, status, xhr) => {
                 new Promise(async (resolve) => {
                     //#region add <article>s
-                    setVariablesForArticleAsync({
-                        "totalArticleCount": response.length,
-                        "articleType": "text",
-                        "articleStyle": {
-                            "width": 300,
-                            "height": 350,
-                            "marginT": 10,
-                            "marginB": 10,
-                            "marginR": 20,
-                            "marginL": 20,
-                            "paddingT": 10,
-                            "paddingB": 10,
-                            "paddingR": 10,
-                            "paddingL": 10,
-                            "border": 1,
-                            "borderColor": "blue",
-                            "boxShadow": "5px 5px 10px rgba(0, 0, 0, 0.3)",
-                            "bgColorForDelete": "rgb(220, 0, 0)"
-                        }
-                    });
+                    setVariablesForArticleAsync({"totalArticleCount": response.length});
                     await addArticlesAsync(true);
                     await alignArticlesAsAutoAsync();
                     //#endregion

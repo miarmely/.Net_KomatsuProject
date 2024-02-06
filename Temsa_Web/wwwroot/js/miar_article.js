@@ -329,7 +329,7 @@ export async function alignArticlesToCenterAsync(widthUnit = "px") {
     //#endregion
 
     //#region set padding left and right of article
-    articleBuffer.articleCountOnOneRow = Math.floor(div_articles_width / article_netCurrentWidth);
+    articleBuffer.articleCountOnOneRow = await getArticleCountOnOneRowAsync(widthUnit);
     let whiteSpaceWidth = div_articles_width - (article_netCurrentWidth * articleBuffer.articleCountOnOneRow);
     
     articleBuffer.div_articles.css({
@@ -405,6 +405,17 @@ export async function alignArticlesAsAutoAsync() {
         }, 500);
     }
     //#endregion
+}
+export async function getArticleCountOnOneRowAsync(widthUnit = "px") {
+    //#region set variables
+    let article_style = articleBuffer.articleStyle;
+    let div_articles_width = articleBuffer.div_articles.prop("clientWidth");
+    let article_netCurrentWidth = (widthUnit == "px" ?
+        article_style.width + article_style.marginR + article_style.marginL
+        : $(".article").prop("offsetWidth"));  // widthUnit == "%"
+    //#endregion
+
+    return Math.floor(div_articles_width / article_netCurrentWidth);
 }
 export function showPlayImage(article) {
     //#region hide video
