@@ -1,0 +1,7 @@
+﻿.form_file_input {
+    cursor: pointer
+}
+
+    .form_file_input:hover {
+        font-weight: bold
+    }

@@ -123,5 +123,13 @@ namespace Presantation.Controllers
 
             return NoContent();
         }
+
+
+        [HttpGet("Test")]
+        public async Task<IActionResult> Test()
+        {
+           
+            return Ok("OK! çalışıyor.");
+        }
     }
 }

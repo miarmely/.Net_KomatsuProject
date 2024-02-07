@@ -1,0 +1,53 @@
+﻿.btn_imageAndVideo {
+    background-color: darkblue;
+    color: white;
+    margin-bottom: 30px;
+    width: 100px;
+    font-size: 14.3px;
+}
+
+    .btn_imageAndVideo:hover {
+        color: white;
+        font-weight: bold;
+    }
+
+    .btn_imageAndVideo:disabled {
+        background-color: darkgrey
+    }
+
+.btn_imageAndVideo_active {
+    background-color: darkblue;
+    color: yellow;
+    font-weight: bolder;
+}
+
+.btn_imageAndVideo_passive {
+    background-color: darkgray;
+    color: white;
+}
+
+.help-block {
+    color: red;
+    text-align: center
+}
+
+.div_infoMessage > button {
+    width: 25px;
+    height: 25px;
+    position: relative;
+    top: 3.5px;
+    background-image: url("../images/info.png");
+    background-color: transparent;
+    background-size: cover;
+    border-width: 0px;
+}
+
+.div_infoMessage > ul {
+    padding-left: 10px;
+    padding-right: 10px;
+    font-size: 15px
+}
+
+.div_infoMessage > ul > li{
+    margin-bottom: 5px;
+}

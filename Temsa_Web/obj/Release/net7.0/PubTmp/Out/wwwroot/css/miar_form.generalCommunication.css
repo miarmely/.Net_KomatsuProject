@@ -1,0 +1,18 @@
+﻿#td_subject {
+    font-weight: bold;
+}
+
+#div_message {
+    height: 200px;
+    text-align: center;
+    margin: 20px 150px;
+}
+
+#btn_complete {
+    background-color: #521FFF;
+    color: white;
+}
+
+#td_subject{
+    padding-top: 50px
+}

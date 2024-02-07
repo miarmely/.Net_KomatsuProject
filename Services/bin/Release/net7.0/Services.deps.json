@@ -10,8 +10,8 @@
         "dependencies": {
           "AutoMapper.Extensions.Microsoft.DependencyInjection": "12.0.1",
           "MailKit": "4.1.0",
+          "MicroServices": "1.0.0",
           "Microsoft.AspNetCore.Authentication.JwtBearer": "7.0.13",
-          "Microsoft.AspNetCore.Http.Abstractions": "2.2.0",
           "Repositories": "1.0.0",
           "System.IdentityModel.Tokens.Jwt": "6.32.2"
         },
@@ -538,10 +538,19 @@
           "Entities.dll": {}
         }
       },
+      "MicroServices/1.0.0": {
+        "dependencies": {
+          "Microsoft.AspNetCore.Http.Abstractions": "2.2.0"
+        },
+        "runtime": {
+          "MicroServices.dll": {}
+        }
+      },
       "Repositories/1.0.0": {
         "dependencies": {
           "Dapper": "2.0.151",
           "Entities": "1.0.0",
+          "Microsoft.AspNetCore.Http.Abstractions": "2.2.0",
           "Microsoft.Data.SqlClient": "5.1.1",
           "Microsoft.Extensions.Configuration.Abstractions": "7.0.0"
         },
@@ -936,6 +945,11 @@
       "hashPath": "system.windows.extensions.6.0.0.nupkg.sha512"
     },
     "Entities/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "MicroServices/1.0.0": {
       "type": "project",
       "serviceable": false,
       "sha512": ""

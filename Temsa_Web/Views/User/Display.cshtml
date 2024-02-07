@@ -1,4 +1,6 @@
-﻿@model IServiceManager
+﻿@model string
+
+<link rel="stylesheet" href="~/css/miar_user_display.css"> 
 
 
 <div class="table-agile-info">
@@ -6,11 +8,12 @@
         @*title*@
         <div class="panel-heading"></div>
         @*/title*@
+
         @*table menubar*@
         <div class="row w3-res-tb">
             @*options*@
             <div class="col-sm-5 m-b-xs">
-				<select id="slct_tableMenubar" class="input-sm form-control w-sm inline v-middle">
+				<select id="slct_menubar" class="input-sm form-control w-sm inline v-middle">
                 </select>
 				<button id="btn_apply" class="btn btn-sm btn-default">
                 </button>                
@@ -65,9 +68,9 @@
     </div>
 </div>
 
-<script type="module" src="~/js/miar_user_display.js"></script>
 
 <script>
+    const userRole = "@Html.Raw(Model)";
     const tableTitleByLanguages = {
         "TR": "KAYITLI KULLANICILAR",
         "EN": "REGISTERED USERS"
@@ -124,3 +127,4 @@
         "EN": "Update",
     };
 </script>
+<script type="module" src="~/js/miar_user_display.js"></script>

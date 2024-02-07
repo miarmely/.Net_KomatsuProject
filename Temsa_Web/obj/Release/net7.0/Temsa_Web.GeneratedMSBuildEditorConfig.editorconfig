@@ -9,57 +9,73 @@ build_property.EnforceExtendedAnalyzerRules =
 build_property._SupportedPlatformList = Linux,macOS,Windows
 build_property.RootNamespace = Temsa_Web
 build_property.RootNamespace = Temsa_Web
-build_property.ProjectDir = C:\Users\Mac\Desktop\SOFTWARE\1__Software_Languages\1__C#\2__API\1__Projects\Temsa\Temsa_Web\
+build_property.ProjectDir = C:\Users\Mac\Desktop\SOFTWARE\1__Software_Languages\1__C#\2__API\1__Projects\3__Temsa\Temsa_Web\
 build_property.RazorLangVersion = 7.0
 build_property.SupportLocalizedComponentNames = 
 build_property.GenerateRazorMetadataSourceChecksumAttributes = 
-build_property.MSBuildProjectDirectory = C:\Users\Mac\Desktop\SOFTWARE\1__Software_Languages\1__C#\2__API\1__Projects\Temsa\Temsa_Web
+build_property.MSBuildProjectDirectory = C:\Users\Mac\Desktop\SOFTWARE\1__Software_Languages\1__C#\2__API\1__Projects\3__Temsa\Temsa_Web
 build_property._RazorSourceGeneratorDebug = 
 
-[C:/Users/Mac/Desktop/SOFTWARE/1__Software_Languages/1__C\#/2__API/1__Projects/Temsa/Temsa_Web/Views/Authentication/Login.cshtml]
+[C:/Users/Mac/Desktop/SOFTWARE/1__Software_Languages/1__C\#/2__API/1__Projects/3__Temsa/Temsa_Web/Views/Authentication/Login.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQXV0aGVudGljYXRpb25cTG9naW4uY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Mac/Desktop/SOFTWARE/1__Software_Languages/1__C\#/2__API/1__Projects/Temsa/Temsa_Web/Views/Home/Index.cshtml]
+[C:/Users/Mac/Desktop/SOFTWARE/1__Software_Languages/1__C\#/2__API/1__Projects/3__Temsa/Temsa_Web/Views/Form/GeneralCommunication.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcRm9ybVxHZW5lcmFsQ29tbXVuaWNhdGlvbi5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Mac/Desktop/SOFTWARE/1__Software_Languages/1__C\#/2__API/1__Projects/3__Temsa/Temsa_Web/Views/Form/GetOffer.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcRm9ybVxHZXRPZmZlci5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Mac/Desktop/SOFTWARE/1__Software_Languages/1__C\#/2__API/1__Projects/3__Temsa/Temsa_Web/Views/Form/Renting.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcRm9ybVxSZW50aW5nLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Mac/Desktop/SOFTWARE/1__Software_Languages/1__C\#/2__API/1__Projects/3__Temsa/Temsa_Web/Views/Home/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxJbmRleC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Mac/Desktop/SOFTWARE/1__Software_Languages/1__C\#/2__API/1__Projects/Temsa/Temsa_Web/Views/Machine/Create.cshtml]
+[C:/Users/Mac/Desktop/SOFTWARE/1__Software_Languages/1__C\#/2__API/1__Projects/3__Temsa/Temsa_Web/Views/Machine/Create.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcTWFjaGluZVxDcmVhdGUuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Mac/Desktop/SOFTWARE/1__Software_Languages/1__C\#/2__API/1__Projects/Temsa/Temsa_Web/Views/Machine/Display.cshtml]
+[C:/Users/Mac/Desktop/SOFTWARE/1__Software_Languages/1__C\#/2__API/1__Projects/3__Temsa/Temsa_Web/Views/Machine/Display.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcTWFjaGluZVxEaXNwbGF5LmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Mac/Desktop/SOFTWARE/1__Software_Languages/1__C\#/2__API/1__Projects/Temsa/Temsa_Web/Views/Register/index.cshtml]
-build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUmVnaXN0ZXJcaW5kZXguY3NodG1s
+[C:/Users/Mac/Desktop/SOFTWARE/1__Software_Languages/1__C\#/2__API/1__Projects/3__Temsa/Temsa_Web/Views/ProfileOption/Profile.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUHJvZmlsZU9wdGlvblxQcm9maWxlLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Mac/Desktop/SOFTWARE/1__Software_Languages/1__C\#/2__API/1__Projects/Temsa/Temsa_Web/Views/Shared/_LoginAndRegisterLayout.cshtml]
-build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9Mb2dpbkFuZFJlZ2lzdGVyTGF5b3V0LmNzaHRtbA==
+[C:/Users/Mac/Desktop/SOFTWARE/1__Software_Languages/1__C\#/2__API/1__Projects/3__Temsa/Temsa_Web/Views/Shared/LoginLayout.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXExvZ2luTGF5b3V0LmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Mac/Desktop/SOFTWARE/1__Software_Languages/1__C\#/2__API/1__Projects/Temsa/Temsa_Web/Views/Shared/_ValidationScriptsPartial.cshtml]
+[C:/Users/Mac/Desktop/SOFTWARE/1__Software_Languages/1__C\#/2__API/1__Projects/3__Temsa/Temsa_Web/Views/Shared/_ValidationScriptsPartial.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9WYWxpZGF0aW9uU2NyaXB0c1BhcnRpYWwuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Mac/Desktop/SOFTWARE/1__Software_Languages/1__C\#/2__API/1__Projects/Temsa/Temsa_Web/Views/User/Create.cshtml]
+[C:/Users/Mac/Desktop/SOFTWARE/1__Software_Languages/1__C\#/2__API/1__Projects/3__Temsa/Temsa_Web/Views/Slider/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2xpZGVyXEluZGV4LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Mac/Desktop/SOFTWARE/1__Software_Languages/1__C\#/2__API/1__Projects/3__Temsa/Temsa_Web/Views/User/Create.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVXNlclxDcmVhdGUuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Mac/Desktop/SOFTWARE/1__Software_Languages/1__C\#/2__API/1__Projects/Temsa/Temsa_Web/Views/User/Display.cshtml]
+[C:/Users/Mac/Desktop/SOFTWARE/1__Software_Languages/1__C\#/2__API/1__Projects/3__Temsa/Temsa_Web/Views/User/Display.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVXNlclxEaXNwbGF5LmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Mac/Desktop/SOFTWARE/1__Software_Languages/1__C\#/2__API/1__Projects/Temsa/Temsa_Web/Views/_ViewImports.cshtml]
+[C:/Users/Mac/Desktop/SOFTWARE/1__Software_Languages/1__C\#/2__API/1__Projects/3__Temsa/Temsa_Web/Views/_ViewImports.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcX1ZpZXdJbXBvcnRzLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Mac/Desktop/SOFTWARE/1__Software_Languages/1__C\#/2__API/1__Projects/Temsa/Temsa_Web/Views/_ViewStart.cshtml]
+[C:/Users/Mac/Desktop/SOFTWARE/1__Software_Languages/1__C\#/2__API/1__Projects/3__Temsa/Temsa_Web/Views/_ViewStart.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcX1ZpZXdTdGFydC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Mac/Desktop/SOFTWARE/1__Software_Languages/1__C\#/2__API/1__Projects/Temsa/Temsa_Web/Views/Shared/_Layout.cshtml]
+[C:/Users/Mac/Desktop/SOFTWARE/1__Software_Languages/1__C\#/2__API/1__Projects/3__Temsa/Temsa_Web/Views/Shared/_Layout.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9MYXlvdXQuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = b-5y9xrqe3zc
