@@ -59,7 +59,7 @@ $(function () {
 
                 //#region call afterLogin action
                 location.replace("/authentication/afterLogin" +
-                    `?token=${response["token"]}`);
+                    `?token=${response.token}`);
                 //#endregion
             },
             error: () => {

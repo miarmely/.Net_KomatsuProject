@@ -417,6 +417,20 @@ export async function getArticleCountOnOneRowAsync(widthUnit = "px") {
 
     return Math.floor(div_articles_width / article_netCurrentWidth);
 }
+export async function getValidArticleWidthAsync(
+    style_article = { "width": 0, "marginR": 0, "marginL": 0 },
+    div_articles
+) {
+    //#region when article net width is bigger than div_articles (OVERFLOW)
+    let div_articles_width = div_articles.prop("clientWidth");
+    let article_expectedMaxWidth = div_articles_width - style_article.marginR - style_article.marginL;
+    
+    if (style_article.width > article_expectedMaxWidth)
+        return article_expectedMaxWidth;
+    //#endregion
+
+    return style_article.width;  // when article net width is valid
+}
 export function showPlayImage(article) {
     //#region hide video
     article.find("video")

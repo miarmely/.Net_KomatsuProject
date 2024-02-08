@@ -75,10 +75,10 @@ namespace Temsa_Web.Controllers
 			var result = await tokenHandler.ValidateTokenAsync(token,
 				new TokenValidationParameters
 				{
-					ValidAudience = _configs.JwtSettings.ValidAudience,
+                    ValidIssuer = _configs.JwtSettings.ValidIssuer,
+                    ValidateIssuer = true,
+                    ValidAudience = _configs.JwtSettings.ValidAudience,
 					ValidateAudience = true,
-					ValidIssuer = _configs.JwtSettings.ValidIssuer,
-					ValidateIssuer = true,
 					IssuerSigningKey = new SymmetricSecurityKey(securityKeyInBytes),
 					ValidateIssuerSigningKey = true,
 					ValidateLifetime = true,

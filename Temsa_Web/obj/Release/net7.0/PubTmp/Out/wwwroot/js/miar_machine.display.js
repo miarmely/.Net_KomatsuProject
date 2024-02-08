@@ -10,7 +10,8 @@ import {
     div_article_button_id, div_article_info_id, div_article_video_id,
     ended_articleVideoAsync, alignArticlesAsAutoAsync, mouseout_articleVideoDivAsync,
     removeLastUploadedArticleVideoAsync,
-    getArticleCountOnOneRowAsync
+    getArticleCountOnOneRowAsync,
+    getValidArticleWidthAsync
 } from "./miar_article.js";
 
 import {
@@ -617,13 +618,17 @@ $(function () {
         await uploadDescriptionsEventsAsync();
     }
     async function addMachineArticlesAsync(pageNumber, refreshPaginationButtons) {
-        //#region set page size 
+        //#region set page size
         await setVariablesForArticleAsync({
             "div_articles": div_articles,
             "path_articleVideos": path_videoFolderAfterWwwroot,
             "articleType": "videoAndText",
             "articleStyle": {
-                "width": 370,
+                "width": await getValidArticleWidthAsync({
+                    "width": 370,
+                    "marginR": 20,
+                    "marginL": 20
+                }, div_articles),
                 "height": 560,
                 "marginT": 10,
                 "marginB": 10,

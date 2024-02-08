@@ -20,12 +20,12 @@ builder.Services.ConfigureExceptionHandler(app);
 #region set production or staging mode 
 if (app.Environment.IsDevelopment())
 {
-	app.UseSwagger();
-	app.UseSwaggerUI();
+    app.UseSwagger();
+    app.UseSwaggerUI();
 }
 
 else
-	app.UseHsts();
+    app.UseHsts();
 #endregion
 
 #region add pipelines

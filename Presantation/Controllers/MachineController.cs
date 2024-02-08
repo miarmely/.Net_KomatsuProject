@@ -31,7 +31,8 @@ namespace Presantation.Controllers
 
 	
 		[HttpPost("upload/image")]
-		public async Task<IActionResult> UploadMachineImage(
+        [Authorization("Admin,Yönetici,Editor,Editör")]
+        public async Task<IActionResult> UploadMachineImage(
 			[FromQuery] MachineParamsForUploadFile machineParams,
 			[FromBody] MachineDtoForUploadFile machineDto)
 		{
@@ -45,6 +46,7 @@ namespace Presantation.Controllers
 
 
 		[HttpPost("upload/video")]
+		[Authorization("Admin,Yönetici,Editor,Editör")]
 		public async Task<IActionResult> UploadMachineVideo(
 			[FromQuery] MachineParamsForUploadFile machineParams,
 			[FromBody] MachineDtoForUploadFile machineDto)
@@ -59,7 +61,8 @@ namespace Presantation.Controllers
 
 
 		[HttpPost("upload/pdf")]
-		public async Task<IActionResult> UploadMachinePdf(
+        [Authorization("Admin,Yönetici,Editor,Editör")]
+        public async Task<IActionResult> UploadMachinePdf(
 			[FromQuery] MachineParamsForUploadFile machineParams,
 			[FromBody] MachineDtoForUploadFile machineDto)
 		{

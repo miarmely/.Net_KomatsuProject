@@ -108,7 +108,7 @@ namespace Services.Concretes
 			#region when telNo or password is wrong (throw)
 			if (userView == null)
 				throw new ErrorWithCodeException(
-					parameters.Get<int>("StatusCode"),
+					parameters.Get<Int16>("StatusCode"),
 					parameters.Get<string>("ErrorCode"),
 					parameters.Get<string>("ErrorDescription"),
 					parameters.Get<string>("ErrorMessage"));
