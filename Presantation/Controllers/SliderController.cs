@@ -71,7 +71,7 @@ namespace Presantation.Controllers
 		}
 
 
-		[HttpDelete("delete/multiple")]
+		[HttpPost("delete/multiple")]
 		[Authorization("Admin,Editor,Yönetici,Editör")]
 		public async Task<IActionResult> DeleteMultipleSlider(
 			[FromQuery] SliderParametersForDeleteMultiple sliderParams,
@@ -85,7 +85,7 @@ namespace Presantation.Controllers
 		}
 
 
-		[HttpDelete("delete/one")]
+		[HttpPost("delete/one")]
 		[Authorization("Admin,Editor,Yönetici,Editör")]
 		public async Task<IActionResult> DeleteOneSlider(
 			[FromQuery] SliderParametersForDeleteOne sliderParams)
@@ -96,6 +96,6 @@ namespace Presantation.Controllers
 				sliderParams.FileName);
 
 			return NoContent();
-		}
-	}
+		}        
+    }
 }

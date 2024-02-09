@@ -87,15 +87,17 @@ namespace Temsa_Api.Extensions
             services.AddCors(setup =>
             {
                 #region for Temsa_Web projects
-                setup.AddPolicy("Temsa_Web", configure =>
+                setup.AddDefaultPolicy(configure =>
                     configure
                         .WithOrigins(
                             "http://localhost:7136",
                             "https://localhost:7136",
                             "http://104.247.163.183:5552",
-                            "https://104.247.163.183:5552")
-                        .AllowAnyHeader()
+                            "https://104.247.163.183:5552",
+                            "http://192.168.200.1:5552",
+                            "https://192.168.200.1:5552")
                         .AllowAnyMethod()
+                        .AllowAnyHeader()
                         .WithExposedHeaders(
                             "User-Pagination",
                             "Machine-Pagination",

@@ -3,9 +3,8 @@
 
 namespace Entities.QueryParameters
 {
-	public record SliderParametersForUploadToFolder
+	public record SliderParametersForUploadToFolder : LanguageParams
 	{
-		[Required] public string Language { get; init; }
 		[Required] public string FolderPathAfterWwwroot { get; init; }
 	}
 

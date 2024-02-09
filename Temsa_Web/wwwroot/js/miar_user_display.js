@@ -536,7 +536,7 @@ $(function () {
         for (let index = 0; index < tableMenubarOptions.length; index += 1) {
             let tableMenubarOption = tableMenubarOptions[index];
 
-           slct_menubar.append(
+            slct_menubar.append(
                 `<option value="${index}">
                 ${tableMenubarOption}
                 </option>`
@@ -569,7 +569,7 @@ $(function () {
         $("#lbl_entityQuantity").append(
             `<b>0</b> ${entityQuantity_message}`
         );
-    //#endregion
+        //#endregion
     }
     async function restrictEditorFeaturesAsync(feature, data) {
         //#region when user isn't editor
@@ -626,7 +626,7 @@ $(function () {
         }
         //#endregion
     }
-      async function populateTableAsy(nc
+    async function populateTableAsync(
         entityType,
         specialUrl,
         language,
@@ -643,10 +643,10 @@ $(function () {
         entityQuantity_message,
         refreshPaginationButtons
     )
-        //#region set variables
-        let url = 
-        //#endregion
- {
+    //#region set variables
+    let url =
+    //#endregion
+    {
         $.ajax({
             method: "GET",
             url: (baseApiUrl + "/user/display/all" +
@@ -710,75 +710,75 @@ $(function () {
         columnNamesToBeFill,
         updateButtonName
     ) {
-            //#region set variables
-            let columnQuantityOnTable = columnNamesToBeFill.length + 3;  // 3: 1-> checkBox column, 2-> processes column, 3-> blank column
-            let rowNo = 1;
-            let rowId;
-            let row;
+        //#region set variables
+        let columnQuantityOnTable = columnNamesToBeFill.length + 3;  // 3: 1-> checkBox column, 2-> processes column, 3-> blank column
+        let rowNo = 1;
+        let rowId;
+        let row;
+        //#endregion
+
+        //#region add entities to table
+        response.forEach(entityView => {
+            //#region add checkbox to row
+            rowId = `tr_row${rowNo}`
+
+            //#region when entity type is machine
+            if (entityType == "machine")
+                tableBody.append(
+                    `<tr id= "${rowId}" class= ${entityView.id}>
+                        <td id="td_checkBox">
+					        <label class="i-checks m-b-none">
+						        <input type="checkbox"><i></i>
+					        </label>
+				        </td>
+                    </tr>`);
             //#endregion
 
-            //#region add entities to table
-            response.forEach(entityView => {
-                //#region add checkbox to row
-                rowId = `tr_row${rowNo}`
-
-                //#region when entity type is machine
-                if (entityType == "machine")
-                    tableBody.append(
-                        `<tr id= "${rowId}" class= ${entityView.id}>
+            //#region when entity type is user
+            else
+                tableBody.append(
+                    `<tr id= "${rowId}">
                         <td id="td_checkBox">
 					        <label class="i-checks m-b-none">
 						        <input type="checkbox"><i></i>
 					        </label>
 				        </td>
                     </tr>`);
+
+            row = $("#" + rowId);
+            //#endregion
+
+            //#endregion
+
+            //#region add column values of entity as dynamic
+            for (let index in columnNamesToBeFill) {
+                let columnName = columnNamesToBeFill[index];
+
+                //#region set columnValue
+                let columnValue = columnName != "descriptions" ?
+                    entityView[columnName]
+                    : entityView[columnName][language]
                 //#endregion
 
-                //#region when entity type is user
+                //#region when column name is not "createdAt"
+                if (columnName != "createdAt")
+                    row.append(
+                        `<td id="td_${columnName}">${columnValue}</td>`
+                    );
+                //#endregion
+
+                //#region when column name is "createdAt"
                 else
-                    tableBody.append(
-                        `<tr id= "${rowId}">
-                        <td id="td_checkBox">
-					        <label class="i-checks m-b-none">
-						        <input type="checkbox"><i></i>
-					        </label>
-				        </td>
-                    </tr>`);
-
-                row = $("#" + rowId);
+                    row.append(
+                        `<td id="td_${columnName}">${getDateTimeInString(columnValue)}</td>`
+                    );
                 //#endregion
+            }
+            //#endregion
 
-                //#endregion
-
-                //#region add column values of entity as dynamic
-                for (let index in columnNamesToBeFill) {
-                    let columnName = columnNamesToBeFill[index];
-
-                    //#region set columnValue
-                    let columnValue = columnName != "descriptions" ?
-                        entityView[columnName]
-                        : entityView[columnName][language]
-                    //#endregion
-
-                    //#region when column name is not "createdAt"
-                    if (columnName != "createdAt")
-                        row.append(
-                            `<td id="td_${columnName}">${columnValue}</td>`
-                        );
-                    //#endregion
-
-                    //#region when column name is "createdAt"
-                    else
-                        row.append(
-                            `<td id="td_${columnName}">${getDateTimeInString(columnValue)}</td>`
-                        );
-                    //#endregion
-                }
-                //#endregion
-
-                //#region add update button to row
-                row.append(
-                    `<td id="td_processes">
+            //#region add update button to row
+            row.append(
+                `<td id="td_processes">
 				    <button id="btn_update" ui-toggle-class="">
 					    <i class="fa fa-pencil text-info">
 						    ${updateButtonName}
@@ -786,31 +786,31 @@ $(function () {
 				    </button>
 			    </td>
                 <td style="width:30px;"></td>`
-                );
-                //#endregion
+            );
+            //#endregion
 
-                //#region add error row to row
-                tableBody.append(
-                    `<tr hidden></tr>
+            //#region add error row to row
+            tableBody.append(
+                `<tr hidden></tr>
 			    <tr id="tr_row${rowNo}_error">
 		            <td id="td_error" colspan=${columnQuantityOnTable} hidden>
                     </td>
 			    </tr>`
-                );
-                //#endregion
-
-                //#region add descriptions of machines to session if entity is machine
-                if (entityType == "machine")
-                    sessionStorage.setItem(
-                        rowId,
-                        JSON.stringify({
-                            "descriptions": entityView.descriptions
-                        }));
-                //#endregion
-
-                rowNo += 1;
-            });
+            );
             //#endregion
+
+            //#region add descriptions of machines to session if entity is machine
+            if (entityType == "machine")
+                sessionStorage.setItem(
+                    rowId,
+                    JSON.stringify({
+                        "descriptions": entityView.descriptions
+                    }));
+            //#endregion
+
+            rowNo += 1;
+        });
+        //#endregion
     }
     function removeInputsAndSelects(row, columnNamesAndValues) {
         //#region remove <input>'s and <select>'s

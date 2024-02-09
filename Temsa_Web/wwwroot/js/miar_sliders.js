@@ -255,7 +255,7 @@ $(function () {
                     return;
                 }
             }
-            //#endregion
+        //#endregion
         //#endregion
 
         await uploadSlidersAsync();
@@ -284,13 +284,11 @@ $(function () {
         img_sliders.css("max-height", sliderMaxHeight);
         //#endregion
     }
-
     async function updateSliderNoButtonAsync() {
         btn_sliderNo.empty();
         btn_sliderNo.append(
             (currentSliderNo + 1) + "/" + maxSliderQuantity);
     }
-
     async function uploadSlidersAsync() {
         //#region set data
         let data = slider_noAndPaths;
@@ -305,7 +303,7 @@ $(function () {
         // 2nd ajax: upload sliders to folder
         // 3nd ajax: upload sliders to db
         $.ajax({
-            method: "DELETE",
+            method: "POST",
             url: (baseApiUrl + "/slider/delete/multiple" +
                 `?language=${language}` +
                 `&folderPathAfterWwwroot=${slider_folderPathAfterWwwroot}`),
@@ -454,7 +452,6 @@ $(function () {
             }
         })
     }
-
     async function displaySliderAsync() {
         await setSliderMaxHeightAndWidthAsync();
 
@@ -476,7 +473,7 @@ $(function () {
                 //#endregion
             }
             //#endregion
-            
+
             //#region when slider not exists on "slider_noAndPaths"
             else {
                 img_sliders.attr("src", image_noImagePath);
@@ -508,10 +505,9 @@ $(function () {
                     updateSliderNoButtonAsync();
                     controlNextButtonAsync();
                 });
-            //#endregion display image
+        //#endregion display image
         //#endregion
     }
-
     async function controlNextButtonAsync() {
         //#region add "newImage.png" to next button
         if (currentSliderNo == maxSliderQuantity - 1) {
@@ -540,7 +536,6 @@ $(function () {
         }
         //#endregion
     }
-
     async function initializeMaxSliderQuantityAsync() {
         //#region initialize "maxSliderQuantity"
         maxSliderQuantity = slider_noAndPaths.length <= 1 ?
@@ -548,7 +543,6 @@ $(function () {
             slider_noAndPaths.length
         //#endregion
     }
-
     async function populateSliderAsync() {
         //#region initialize "slider_noAndPaths" array
         // get infos from local
@@ -606,7 +600,6 @@ $(function () {
 
         //#endregion
     }
-
     async function populateHtmlAsync() {
         // add table title
         $("#header_tableTitle").append(

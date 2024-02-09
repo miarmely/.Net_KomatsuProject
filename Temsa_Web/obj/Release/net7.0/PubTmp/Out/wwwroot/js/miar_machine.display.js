@@ -793,6 +793,7 @@ $(function () {
                     `&oldMainCategoryName=${oldMainCategoryName}` +
                     `&oldSubCategoryName=${oldSubCategoryName}`),
                 headers: { "Authorization": jwtToken },
+                crossDomain: true,
                 data: JSON.stringify(data),
                 contentType: "application/json",
                 dataType: "json",
