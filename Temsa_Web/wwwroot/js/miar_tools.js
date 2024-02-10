@@ -234,38 +234,31 @@ export async function addPaginationButtonsAsync(
         : paginationButtonQuantity
     //#endregion
 
-    //#region reset paginationButtons if exists
-    if (ul_pagination.children("li").length != 0)
-        ul_pagination.empty()
-    //#endregion
-
-    //#region add paginationBack button as hidden
+    //#region add back button as hidden
+    ul_pagination.empty()
     ul_pagination.append(
         `<li>
-		<a id="a_paginationBack" href="#" hidden>
-			<i class="fa fa-chevron-left"></i>
-		</a>
-	</li>`);
+		    <a id="a_paginationBack" href="#" hidden>
+			    <i class="fa fa-chevron-left"></i>
+		    </a>
+	    </li>`);
     //#endregion
 
     //#region add pagination buttons
     for (let pageNo = 1; pageNo <= buttonQuantity; pageNo += 1)
         ul_pagination.append(
             `<li>
-			<a href="#"> 
-				${pageNo}
-			</a>
-		</li> `
-        );
+			    <a href="#">${pageNo}</a>
+		    </li> `);
     //#endregion
 
-    //#region add paginationNext button as hidden
+    //#region add next button as hidden
     ul_pagination.append(
         `<li>
-		<a id="a_paginationNext" href="#" hidden>
-			<i class="fa fa-chevron-right"></i>
-		</a>
-	</li>`);
+		    <a id="a_paginationNext" href="#" hidden>
+			    <i class="fa fa-chevron-right"></i>
+		    </a>
+	    </li>`);
     //#endregion
 }
 export async function controlPaginationBackAndNextButtonsAsync(paginationInfosInJson) {

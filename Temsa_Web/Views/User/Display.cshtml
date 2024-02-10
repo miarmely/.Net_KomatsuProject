@@ -40,11 +40,19 @@
             <table id="tbl_user" class="table table-striped b-t b-light">
                 <thead>
                     <tr>
+                        @*checbox*@
                         <th style="width:20px;">
                             <label class="i-checks m-b-none">
 								<input id="box_all" type="checkbox"><i></i>
                             </label>
                         </th>
+                        <th class="th_userTable"></th>
+                        <th class="th_userTable"></th>
+                        <th class="th_userTable"></th>
+                        <th class="th_userTable"></th>
+                        <th class="th_userTable"></th>
+                        <th class="th_userTable"></th>
+                        <th class="th_userTable"></th>
                     </tr>
                 </thead>
                 <tbody>
@@ -86,41 +94,6 @@
     const tableMenubar_applyButtonName = {
         "TR": "Uygula",
         "EN": "Apply"
-    };
-    const columnNamesByLanguages = {
-        "TR": {
-            "firstName": "Ad",
-            "lastName": "Soyad",
-            "companyName": "Şirket",
-            "telNo": "Telefon",
-            "email": "Email",
-            "roleNames": "Rol",
-            "createdAt": "Kayıt Tarihi",
-            "processes": "İşlemler",
-        },
-        "EN": {
-            "firstName": "First Name",
-            "lastName": "Last Name",
-            "companyName": "Company",
-            "telNo": "Telephone",
-            "email": "Email",
-            "roleNames": "Role",
-            "createdAt": "Registration Date",
-            "processes": "Processes",
-        }
-    }
-    const columnNamesToBeFill = [
-        "firstName",
-        "lastName",
-        "companyName",
-        "telNo",
-        "email",
-        "roleNames",
-        "createdAt"
-    ]
-    const entityQuantityMessageByLanguages = {
-        "TR": "kullanıcı gösteriliyor",
-        "EN": "user displaying"
     };
     const updateButtonNameByLanguages = {
         "TR": "Güncelle",

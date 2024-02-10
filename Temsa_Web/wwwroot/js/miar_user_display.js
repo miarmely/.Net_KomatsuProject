@@ -1,7 +1,7 @@
 ﻿import {
     populateTable, paginationInfosInJson, setDisabledOfOtherUpdateButtonsAsync,
     resetErrorRowAsync, updateResultLabel, entityCountOnTable, updateErrorRow,
-    populateElementByAjaxOrLocalAsync, populateSelectAsync
+    populateElementByAjaxOrLocalAsync, populateSelectAsync, getDateTimeInString, addPaginationButtonsAsync, controlPaginationBackAndNextButtonsAsync
 } from "./miar_tools.js"
 
 
@@ -9,18 +9,13 @@ $(function () {
     //#region variables
     const pageNumber = 1;
     const pageSize = 10;
-    const paginationButtonQuantity = 5;
     const routeForDisplay = "user/display/all";
     const routeForUpdate = "user/update";
     const routeForDelete = "user/delete";
     const entityType = "user"
-    const nameOfPaginationHeader = "User-Pagination";
     const errorMessageColor = "red";
     const table_body = $("#tbl_user tbody");
     const table_head = $("#tbl_user thead tr");
-    const entityQuantity_id = "#lbl_entityQuantity";
-    const entityQuantity_message = entityQuantityMessageByLanguages[language];
-    const lbl_entityQuantity = $(entityQuantity_id);
     const ul_pagination = $("#ul_pagination");
     const box_all = $("#box_all");
     const updateButtonName = updateButtonNameByLanguages[language];
@@ -34,6 +29,40 @@ $(function () {
         "color": "white"
     };
     const editorRoleNamesByLanguages = ["editor", "editör"];
+    const langPack_columnNames = {
+        "TR": [
+            "Ad",
+            "Soyad",
+            "Şirket",
+            "Telefon",
+            "Email",
+            "Rol",
+            "Kayıt Tarihi",
+        ],
+        "EN": [
+            "First Name",
+            "Last Name",
+            "Company",
+            "Telephone",
+            "Email",
+            "Role",
+            "Registration Date",
+        ]
+    }
+    const langPack_entityQuantity = {
+        "TR": "kullanıcı gösteriliyor",
+        "EN": "user displaying"
+    };
+    const pagination = {
+        "headerName": "User-Pagination",
+        "buttonCount": 5,
+        "infos": {}
+    };
+    const entityQuantity = {
+        "id": "lbl_entityQuantity",
+        "color": "#7A7A7A"
+    };
+    const lbl_entityQuantity = $("#" + lbl_entityQuantity);
     //#endregion
 
     //#region events
@@ -86,12 +115,12 @@ $(function () {
                         table_body,
                         columnNamesToBeFill,
                         updateButtonName,
-                        nameOfPaginationHeader,
+                        pagination.headerName,
                         lbl_entityQuantity,
                         ul_pagination,
                         errorMessageColor,
-                        paginationButtonQuantity,
-                        entityQuantity_message,
+                        pagination.buttonCount,
+                        langPack_entityQuantity[language],
                         true)
                 break;
             //#endregion
@@ -108,12 +137,12 @@ $(function () {
                         table_body,
                         columnNamesToBeFill,
                         updateButtonName,
-                        nameOfPaginationHeader,
+                        pagination.headerName,
                         lbl_entityQuantity,
                         ul_pagination,
                         errorMessageColor,
-                        paginationButtonQuantity,
-                        entityQuantity_message,
+                        pagination.buttonCount,
+                        langPack_entityQuantity[language],
                         true)
                 break;
             //#endregion
@@ -131,12 +160,12 @@ $(function () {
                     table_body,
                     columnNamesToBeFill,
                     updateButtonName,
-                    nameOfPaginationHeader,
+                    pagination.headerName,
                     lbl_entityQuantity,
                     ul_pagination,
                     errorMessageColor,
-                    paginationButtonQuantity,
-                    entityQuantity_message,
+                    pagination.buttonCount,
+                    langPack_entityQuantity[language],
                     true)
                 break;
             //#endregion
@@ -236,12 +265,12 @@ $(function () {
                             table_body,
                             columnNamesToBeFill,
                             updateButtonName,
-                            nameOfPaginationHeader,
+                            pagination.headerName,
                             lbl_entityQuantity,
                             ul_pagination,
                             errorMessageColor,
-                            paginationButtonQuantity,
-                            entityQuantity_message,
+                            pagination.buttonCount,
+                            langPack_entityQuantity[language],
                             true);  // refresh current page
                     //#endregion
 
@@ -256,12 +285,12 @@ $(function () {
                             table_body,
                             columnNamesToBeFill,
                             updateButtonName,
-                            nameOfPaginationHeader,
+                            pagination.headerName,
                             lbl_entityQuantity,
                             ul_pagination,
                             errorMessageColor,
-                            paginationButtonQuantity,
-                            entityQuantity_message,
+                            pagination.buttonCount,
+                            langPack_entityQuantity[language],
                             true);
                     //#endregion
 
@@ -270,8 +299,8 @@ $(function () {
                         table_body.empty();
 
                         updateResultLabel(
-                            entityQuantity_id,
-                            `<b>0/${pageSize}<b> ${entityQuantity_message}`,
+                            "#" + entityQuantity.id,
+                            `<b>0/${pageSize}<b> ${langPack_entityQuantity[language]}`,
                             errorMessageColor);
                     }
                     //#endregion
@@ -289,12 +318,12 @@ $(function () {
                         table_body,
                         columnNamesToBeFill,
                         updateButtonName,
-                        nameOfPaginationHeader,
+                        pagination.headerName,
                         lbl_entityQuantity,
                         ul_pagination,
                         errorMessageColor,
-                        paginationButtonQuantity,
-                        entityQuantity_message,
+                        pagination.buttonCount,
+                        langPack_entityQuantity[language],
                         true);  // refresh current page
                 //#endregion
 
@@ -305,7 +334,7 @@ $(function () {
             error: (response) => {
                 //#region write error to entity quantity label
                 updateResultLabel(
-                    entityQuantity_id,
+                    "#" + entityQuantity.id,
                     JSON.parse(response.responseText).errorMessage,
                     errorMessageColor
                 );
@@ -567,7 +596,7 @@ $(function () {
 
         //#region add entity quantity message
         $("#lbl_entityQuantity").append(
-            `<b>0</b> ${entityQuantity_message}`
+            `<b>0</b> ${langPack_entityQuantity[language]}`
         );
         //#endregion
     }
@@ -626,67 +655,78 @@ $(function () {
         }
         //#endregion
     }
-    async function populateTableAsync(
-        entityType,
-        specialUrl,
-        language,
-        pageNumber,
-        pageSize,
-        tableBody,
-        columnNamesToBeFill,
-        updateButtonName,
-        nameOfPaginationHeader,
-        lbl_entityQuantity,
-        ul_pagination,
-        errorMessageColor,
-        paginationButtonQuantity,
-        entityQuantity_message,
-        refreshPaginationButtons
-    ){
+    async function addColumnNamesToTableAsync() {
+        let columnNames = langPack_columnNames[language];
+
+        for (let index in columnNames)
+            table_head
+                .children(`th:nth-child${index + 1}`)
+                .append(columnNames[index]);
+    }
+    async function addUsersToTableAsync(response) {
+        for (let index in response) {
+            let rowId = `tr_row${index}`;
+            let userInfos = response[index];
+
+            table_body.append(
+                `<tr id= "${rowId}">
+                    <td>
+					    <label class="i-checks m-b-none">
+						    <input type="checkbox"><i></i>
+					    </label>
+				    </td>
+                    <td>${userInfos.firstName}</td>
+                    <td>${userInfos.lastName}</td>
+                    <td>${userInfos.companyName}</td>
+                    <td>${userInfos.telNo}</td>
+                    <td>${userInfos.email}</td>
+                    <td>${userInfos.roleName}</td>
+                    <td>${getDateTimeInString(userInfos.createdAt)}</td>
+                </tr>`);
+        }
+    }
+    async function populateTableAsync(addPagingButtons) {
         $.ajax({
             method: "GET",
             url: (baseApiUrl + "/user/display/all" +
                 `?language=${language}` +
                 `&pageNumber=${pageNumber}` +
                 `&pageSize=${pageSize}`),
-            headers: { "Authorization": jwtToken },
+            headers: { "authorization": jwtToken },
             contentType: "application/json",
             dataType: "json",
             beforeSend: () => {
-                //#region reset table if not empty
+                //#region reset rows if exists
                 if (table_body.children("tr").length != 0)
                     table_body.empty();
                 //#endregion
             },
             success: (response, status, xhr) => {
-                addEntitiesToTableAsync(response, language, table_body, entityType, columnNamesToBeFill, updateButtonName);
+                new Promise(resolve => {
+                    await addColumnNamesToTableAsync();
+                    await addUsersToTableAsync(response);
 
-                //#region get pagination infos from headers
-                paginationInfosInJson = JSON.parse(
-                    xhr.getResponseHeader(nameOfPaginationHeader));
-                //#endregion
-
-                //#region update entity count label
-                if (response.length != 0) {  // if any machine exists
-                    entityCountOnTable = paginationInfosInJson.CurrentPageCount;
+                    //#region add entity quantity message
+                    pagination.infos = JSON.parse(
+                        xhr.getResponseHeader(pagination.headerName));
 
                     updateResultLabel(
-                        "#" + lbl_entityQuantity.attr("id"),
-                        `<b>${entityCountOnTable}/${pageSize}</b> ${entityQuantity_message}`,
-                        "#7A7A7A"
-                    )
-                }
-                //#endregion
+                        "#" + lbl_entityQuantity,
+                        `<b>${pagination.infos.CurrentPageCount}/${pageSize}</b> ${langPack_entityQuantity[language]}`,
+                        entityQuantity.color);
+                    //#endregion
 
-                //#region add pagination buttons
-                if (refreshPaginationButtons)
-                    addPaginationButtonsAsync(
-                        paginationInfosInJson,
-                        paginationButtonQuantity,
-                        ul_pagination);
-                //#endregion
+                    //#region add paging button if desired
+                    if (addPagingButtons)
+                        await addPaginationButtonsAsync(
+                            pagination.infos,
+                            pagination.buttonCount,
+                            ul_pagination);
+                    //#endregion
 
-                controlPaginationBackAndNextButtonsAsync(paginationInfosInJson);
+                    await controlPaginationBackAndNextButtonsAsync(pagination.infos);
+                    resolve();
+                })
             },
             error: (response) => {
                 //#region write error to resultLabel
@@ -697,116 +737,6 @@ $(function () {
                 //#endregion
             },
         });
-    }
-    async function addEntitiesToTableAsync(
-        response,
-        language,
-        tableBody,
-        entityType,
-        columnNamesToBeFill,
-        updateButtonName
-    ) {
-        //#region set variables
-        let columnQuantityOnTable = columnNamesToBeFill.length + 3;  // 3: 1-> checkBox column, 2-> processes column, 3-> blank column
-        let rowNo = 1;
-        let rowId;
-        let row;
-        //#endregion
-
-        //#region add entities to table
-        response.forEach(entityView => {
-            //#region add checkbox to row
-            rowId = `tr_row${rowNo}`
-
-            //#region when entity type is machine
-            if (entityType == "machine")
-                tableBody.append(
-                    `<tr id= "${rowId}" class= ${entityView.id}>
-                        <td id="td_checkBox">
-					        <label class="i-checks m-b-none">
-						        <input type="checkbox"><i></i>
-					        </label>
-				        </td>
-                    </tr>`);
-            //#endregion
-
-            //#region when entity type is user
-            else
-                tableBody.append(
-                    `<tr id= "${rowId}">
-                        <td id="td_checkBox">
-					        <label class="i-checks m-b-none">
-						        <input type="checkbox"><i></i>
-					        </label>
-				        </td>
-                    </tr>`);
-
-            row = $("#" + rowId);
-            //#endregion
-
-            //#endregion
-
-            //#region add column values of entity as dynamic
-            for (let index in columnNamesToBeFill) {
-                let columnName = columnNamesToBeFill[index];
-
-                //#region set columnValue
-                let columnValue = columnName != "descriptions" ?
-                    entityView[columnName]
-                    : entityView[columnName][language]
-                //#endregion
-
-                //#region when column name is not "createdAt"
-                if (columnName != "createdAt")
-                    row.append(
-                        `<td id="td_${columnName}">${columnValue}</td>`
-                    );
-                //#endregion
-
-                //#region when column name is "createdAt"
-                else
-                    row.append(
-                        `<td id="td_${columnName}">${getDateTimeInString(columnValue)}</td>`
-                    );
-                //#endregion
-            }
-            //#endregion
-
-            //#region add update button to row
-            row.append(
-                `<td id="td_processes">
-				    <button id="btn_update" ui-toggle-class="">
-					    <i class="fa fa-pencil text-info">
-						    ${updateButtonName}
-					    </i>
-				    </button>
-			    </td>
-                <td style="width:30px;"></td>`
-            );
-            //#endregion
-
-            //#region add error row to row
-            tableBody.append(
-                `<tr hidden></tr>
-			    <tr id="tr_row${rowNo}_error">
-		            <td id="td_error" colspan=${columnQuantityOnTable} hidden>
-                    </td>
-			    </tr>`
-            );
-            //#endregion
-
-            //#region add descriptions of machines to session if entity is machine
-            if (entityType == "machine")
-                sessionStorage.setItem(
-                    rowId,
-                    JSON.stringify({
-                        "descriptions": entityView.descriptions
-                    }));
-            //#endregion
-
-            rowNo += 1;
-        });
-        //#endregion
     }
     function removeInputsAndSelects(row, columnNamesAndValues) {
         //#region remove <input>'s and <select>'s
@@ -840,20 +770,5 @@ $(function () {
     //#endregion
 
     populateHtmlAsync();
-    populateTableAsync(
-        entityType,
-        routeForDisplay,
-        language,
-        pageNumber,
-        pageSize,
-        table_body,
-        columnNamesToBeFill,
-        updateButtonName,
-        nameOfPaginationHeader,
-        lbl_entityQuantity,
-        ul_pagination,
-        errorMessageColor,
-        paginationButtonQuantity,
-        entityQuantity_message,
-        true);
+    populateTableAsync()
 });
