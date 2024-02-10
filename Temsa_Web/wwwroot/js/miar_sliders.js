@@ -622,4 +622,3 @@ $(function () {
     populateHtmlAsync();
     populateSliderAsync();
 })
-

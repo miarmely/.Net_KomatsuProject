@@ -100,6 +100,8 @@ namespace Services.Concretes
 			string language,
 			string folderPathAfterWwwroot)
 		{
+			#region get paths of all files on folder (throw)
+			
 			#region set variables
 			string[] filePathsInDirectory;
 			var fullFolderPath = await GetFullFolderPathAsync(folderPathAfterWwwroot);
@@ -116,10 +118,12 @@ namespace Services.Concretes
 				return new string[0];  // return empty array;
 				#endregion
 			}
-			#endregion
+            #endregion
 
-			return filePathsInDirectory;
-		}
+            #endregion
+
+            return filePathsInDirectory;
+        }
 
 		public async Task<string> GetFullFolderPathAsync(
 			string folderPathAfterWwwroot) =>

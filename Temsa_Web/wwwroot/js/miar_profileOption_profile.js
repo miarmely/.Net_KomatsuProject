@@ -147,7 +147,7 @@ $(function () {
 
         // update user infos
         $.ajax({
-            method: "PUT",
+            method: "POST",
             url: (baseApiUrl + "/user/update" +
                 `?language=${language}` +
                 `&telNo=${claimInfos.telNo}`),

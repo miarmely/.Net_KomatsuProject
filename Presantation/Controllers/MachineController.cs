@@ -167,7 +167,7 @@ namespace Presantation.Controllers
 		}
 
 
-		[HttpPut("update")]
+		[HttpPost("update")]
 		[Authorization("Admin,Yönetici,Editor,Editör")]
 		public async Task<IActionResult> UpdateMachine(
 			[FromQuery] MachineParamsForUpdate machineParams,
@@ -180,7 +180,7 @@ namespace Presantation.Controllers
 		}
 
 		
-		[HttpDelete("delete")]
+		[HttpPost("delete")]
 		[Authorization("Admin,Yönetici")]
 		public async Task<IActionResult> DeleteMachines(
 			[FromQuery] MachineParamsForDelete machineParams,
@@ -194,7 +194,7 @@ namespace Presantation.Controllers
 		}
 
 
-		[HttpPut("update/image")]
+		[HttpPost("update/image")]
 		[Authorization("Admin,Editor,Yönetici,Editör")]
 		public async Task<IActionResult> UpdateMachineImage(
 			[FromQuery] MachineParamsForUpdateFile machineParams,
@@ -210,7 +210,7 @@ namespace Presantation.Controllers
 		}
 
 
-		[HttpPut("update/video")]
+		[HttpPost("update/video")]
 		[Authorization("Admin,Editor,Yönetici,Editör")]
 		public async Task<IActionResult> UpdateMachineVideo(
 			[FromQuery] MachineParamsForUpdateFile machineParams,
@@ -226,7 +226,7 @@ namespace Presantation.Controllers
 		}
 
 
-		[HttpPut("update/pdf")]
+		[HttpPost("update/pdf")]
 		[Authorization("Admin,Editor,Yönetici,Editör")]
 		public async Task<IActionResult> UpdateMachinePdf(
 			[FromQuery] MachineParamsForUpdateFile machineParams,

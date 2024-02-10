@@ -210,7 +210,7 @@ $(function () {
         //#endregion
 
         $.ajax({
-            method: "DELETE",
+            method: "POST",
             url: `${baseApiUrl}/${routeForDelete}?language=${language}`,
             headers: {
                 "Authorization": jwtToken
@@ -485,7 +485,7 @@ $(function () {
         //#endregion
 
         $.ajax({
-            method: "PUT",
+            method: "POST",
             url: url,
             headers: { "Authorization": jwtToken },
             data: JSON.stringify(data),
@@ -642,11 +642,7 @@ $(function () {
         paginationButtonQuantity,
         entityQuantity_message,
         refreshPaginationButtons
-    )
-    //#region set variables
-    let url =
-    //#endregion
-    {
+    ){
         $.ajax({
             method: "GET",
             url: (baseApiUrl + "/user/display/all" +

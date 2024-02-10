@@ -17,7 +17,7 @@ import {
 
 $(function () {
     //#region variables
-    const pageRow = 3;
+    const pageRow = 2;
     const div_articles = $("#div_articles");
     const pagination_buttonCount = 5;
     const pagination_headerNames = {
@@ -526,7 +526,7 @@ $(function () {
 
         // answer the form
         $.ajax({
-            method: "PUT",
+            method: "POST",
             url: (baseApiUrl + "/form/answer/renting" +
                 `?language=${language}` +
                 `&FormId=${lastClickedArticleInfos.formId}` +

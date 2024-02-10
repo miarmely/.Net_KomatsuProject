@@ -114,17 +114,10 @@
 			<!-- main content end -->
 		</section>
 
-		<script src="~/js/bootstrap.js"></script>
-		<script src="~/js/jquery.dcjqaccordion.2.7.js"></script>
-		<script src="~/js/scripts.js"></script>
-		<script src="~/js/jquery.slimscroll.js"></script>
-		<script src="~/js/jquery.nicescroll.js"></script>
-		<script src="~/js/jquery.scrollTo.js"></script>
-
 		<script>
 			//const baseApiUrl = "http://104.247.163.183:5551/api/services";  // for server
-			//const baseApiUrl = "http://192.168.200.1:5551/api/services";  // for iis in my pc
-			const baseApiUrl = "http://localhost:7091/api/services";  // for local
+			const baseApiUrl = "http://192.168.200.1:5551/api/services";  // for iis in my pc
+			//const baseApiUrl = "http://localhost:7091/api/services";  // for local
 			const token = localStorage.getItem("token");
 			const jwtToken = "Bearer " + token;
 			const searchBarPlaceHolderByLanguages = {
@@ -322,5 +315,11 @@
 			}
 			let language = localStorage.getItem("language"); // language was add at "login.cshtml".
 		</script>
+		<script src="~/js/bootstrap.js"></script>
+		<script src="~/js/jquery.dcjqaccordion.2.7.js"></script>
+		<script src="~/js/scripts.js"></script>
+		<script src="~/js/jquery.slimscroll.js"></script>
+		<script src="~/js/jquery.nicescroll.js"></script>
+		<script src="~/js/jquery.scrollTo.js"></script>
 	</body>
 </html>

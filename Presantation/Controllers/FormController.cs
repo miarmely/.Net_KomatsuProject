@@ -130,7 +130,7 @@ namespace Presantation.Controllers
         }
 
 
-        [HttpPut("answer/generalCommunication")]
+        [HttpPost("answer/generalCommunication")]
         [Authorization("Admin,Editor,Yönetici,Editör")]
         public async Task<IActionResult> AnswerTheGeneralCommForm(
             [FromQuery] FormParamsForAnswerTheGeneralCommForm formParams)
@@ -143,7 +143,7 @@ namespace Presantation.Controllers
         }
 
 
-        [HttpPut("answer/getOffer")]
+        [HttpPost("answer/getOffer")]
         [Authorization("Admin,Editor,Yönetici,Editör")]
         public async Task<IActionResult> AnswerTheGetOfferForm(
             [FromQuery] FormParamsForAnswerTheGetOfferForm formParams)
@@ -156,7 +156,7 @@ namespace Presantation.Controllers
         }
 
 
-        [HttpPut("answer/renting")]
+        [HttpPost("answer/renting")]
         [Authorization("Admin,Editor,Yönetici,Editör")]
         public async Task<IActionResult> AnswerTheRentingForm(
             [FromQuery] FormParamsForAnswerTheRentingForm formParams)

@@ -97,7 +97,7 @@ namespace Presantation.Controllers
         }
 
 
-        [HttpPut("update")]
+        [HttpPost("update")]
         [Authorization("Admin,Editor,Yönetici,Editör")]
         public async Task<IActionResult> UpdateUserByTelNoAsync(
             [FromQuery] UserParamsForUpdate userParams,
@@ -112,7 +112,7 @@ namespace Presantation.Controllers
         }
 
 
-        [HttpDelete("delete")]
+        [HttpPost("delete")]
         [Authorization("Admin,Yönetici")]
         public async Task<IActionResult> DeleteUsersAsync(
             [FromQuery] LanguageParams languageParams,
@@ -128,7 +128,6 @@ namespace Presantation.Controllers
         [HttpGet("Test")]
         public async Task<IActionResult> Test()
         {
-           
             return Ok("OK! çalışıyor.");
         }
     }

@@ -78,44 +78,50 @@ const langPack_saveButton = {
 const langPack_infoMessages = {
     "TR": {
         "div_imageInput": [
-            "Max 50 karakter uzunluğunda olmalı."
+            "Resim boyutu max 20Mb olmalı",
+            "Resim adı max 50 karakter uzunluğunda olmalı."
         ],
         "div_videoInput": [
-            "Max 50 karakter uzunluğunda olmalı."
+            "Video boyutu max 20Mb olmalı",
+            "Video adı max 50 karakter uzunluğunda olmalı."
         ],
         "div_pdfInput": [
-            "Max 50 karakter uzunluğunda olmalı."
+            "Pdf boyutu max 20Mb olmalı",
+            "Pdf adı max 50 karakter uzunluğunda olmalı."
         ],
         "div_model": [
-            "Max 50 karakter uzunluğunda olmalı."
+            "Model adı max 50 karakter uzunluğunda olmalı."
         ],
         "div_brand": [
-            "Max 50 karakter uzunluğunda olmalı."
+            "Marka adı max 50 karakter uzunluğunda olmalı."
         ],
         "div_descriptions": [
             "TR ve EN Açıklama girilmeli.",
-            "Max 2000 karakter uzunluğunda olmalı."
+            "Açıklama max 2000 karakter uzunluğunda olmalı."
         ],
     },
     "EN": {
         "div_imageInput": [
-            "It must be max 50 chars length."
+            "Image size must be max 20Mb.",
+            "Image name must be max 50 chars length."
         ],
         "div_videoInput": [
-            "It must be max 50 chars length."
+            "Video size must be max 20Mb.",
+            "Video name must be max 50 chars length."
         ],
         "div_pdfInput": [
-            "It must be max 50 chars length."
+            "Pdf size must be max 20Mb.",
+            "Pdf name must be max 50 chars length."
         ],
         "div_model": [
-            "It must be max 50 chars length."
+            "Model name must be max 50 chars length."
         ],
         "div_brand": [
-            "It must be max 50 chars length."
+            "Brand name must be max 50 chars length."
         ],
         "div_descriptions": [
             "TR and EN Description must be filled out.",
-            "It must be max 2000 chars length."
+            "Description must be max 2000 chars length."
         ],
     }
 }

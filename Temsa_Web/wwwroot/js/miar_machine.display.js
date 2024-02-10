@@ -36,7 +36,7 @@ import { checkValueOfNumberInputAsync } from "./miar_module_inputForm.js";
 $(function () {
     //#region variables
     const pageNumber = 1;
-    const pageRow = 3;
+    const pageRow = 2;
     const paginationButtonQuantity = 5;
     const nameOfPaginationHeader = "Machine-Pagination";
     const errorMessageColor = "rgb(255, 75, 75)";
@@ -786,7 +786,7 @@ $(function () {
     ) {
         return new Promise(resolve => {
             $.ajax({
-                method: "PUT",
+                method: "POST",
                 url: (baseApiUrl + "/machine/update?" +
                     `language=${language}` +
                     `&id=${oldMachineId}` +
@@ -825,7 +825,7 @@ $(function () {
             //#endregion
 
             $.ajax({
-                type: "PUT",
+                method: "POST",
                 url: (baseApiUrl + "/machine/update/image?" +
                     `language=${language}` +
                     `&newFileName=${newMachineInfos.imageName}` +
@@ -866,7 +866,7 @@ $(function () {
             //#endregion
 
             $.ajax({
-                type: "PUT",
+                method: "POST",
                 url: (baseApiUrl + "/machine/update/video?" +
                     `language=${language}` +
                     `&newFileName=${newMachineInfos.videoName}` +
@@ -907,7 +907,7 @@ $(function () {
             //#endregion
 
             $.ajax({
-                type: "PUT",
+                method: "POST",
                 url: (baseApiUrl + "/machine/update/pdf?" +
                     `language=${language}` +
                     `&newFileName=${newMachineInfos.pdfName}` +
@@ -961,6 +961,14 @@ $(function () {
         }
         //#endregion
 
+        //#region when pdf is changed
+        if (data.pdfName != null) {
+            article
+                .find("#" + div_article_button_id + " a")
+                .attr("href", "/" + path_pdfFolderAfterWwwroot + "/" + data.pdfName);
+        }
+        //#endregion
+
         //#region when model is changed
         if (data.model != null)
             updateElementText(
@@ -1006,7 +1014,7 @@ $(function () {
         //#endregion
 
         $.ajax({
-            method: "DELETE",
+            method: "POST",
             url: (baseApiUrl + "/machine/delete" +
                 `?language=${language}` +
                 `&imageFolderPathAfterWwwroot=${path_imageFolderAfterWwwroot}` +
@@ -1072,8 +1080,6 @@ $(function () {
                 //#endregion
             }
         });
-
-
     }
     async function saveClaimInfosToLocalAsync() {
         // if not exists on local

@@ -21,7 +21,7 @@ import {
 $(function () {
     //#region variables
     const div_articles = $("#div_articles");
-    const pageRow = 3;
+    const pageRow = 2;
     const pagination_buttonCount = 5;
     const pagination_headerNames = {
         "waiting": "Form-Go-Waiting",
@@ -540,7 +540,7 @@ $(function () {
 
         // answer the form
         $.ajax({
-            method: "PUT",
+            method: "POST",
             url: (baseApiUrl + "/form/answer/getOffer" +
                 `?language=${language}` +
                 `&FormId=${lastClickedArticleInfos.formId}` +

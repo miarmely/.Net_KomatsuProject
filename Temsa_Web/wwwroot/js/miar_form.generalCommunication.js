@@ -204,7 +204,7 @@ $(function () {
     btn_complete.click(async () => {
         // answer the form
         $.ajax({
-            method: "PUT",
+            method: "POST",
             url: (baseApiUrl + "/form/answer/generalCommunication" +
                 `?language=${language}` +
                 `&FormId=${lastClickedArticleInfos.formId}`),
