@@ -1,7 +1,7 @@
 ﻿import {
     updateResultLabel, addPaginationButtonsAsync, getFileTypeFromFileName,
     controlPaginationBackAndNextButtonsAsync, isAllObjectValuesNullAsync,
-    updateElementText, getBase64StrOfFileAsync, autoObjectMapperAsync
+    updateElementText, getBase64StrOfFileAsync, autoObjectMapperAsync, showOrHideBackButtonAsync
 } from "./miar_tools.js";
 
 import {
@@ -19,8 +19,7 @@ import {
     change_pdfInputAsync, machineForm_removePosterAttrAsync,
     machineForm_addElementNamesAsync, machineForm_populateSelectsAsync,
     click_showImageButtonAsync, click_showVideoButtonAsync,
-    machineForm_showOrHideBackButtonAsync, click_inputAsync, click_textAreaAsync,
-    change_imageInputAsync, change_videoInputAsync,
+    click_inputAsync, click_textAreaAsync, change_imageInputAsync, change_videoInputAsync,
     machineForm_activeOrPassiveTheImageOrVideoBtnAsync,
     machineForm_checkWhetherBlankTheInputsAsync, machineForm_populateInfoMessagesAsync
 } from "./miar_machine.js"
@@ -316,7 +315,7 @@ $(function () {
         div_article_display.removeAttr("hidden");
         //#endregion
 
-        await machineForm_showOrHideBackButtonAsync(
+        await showOrHideBackButtonAsync(
             "hide",
             div_backButton,
             div_panelTitle,
@@ -529,7 +528,7 @@ $(function () {
                 //#endregion
 
                 await addDefaultValueToInputsAsync();
-                await machineForm_showOrHideBackButtonAsync(
+                await showOrHideBackButtonAsync(
                     "show",
                     div_backButton,
                     div_panelTitle,

@@ -2,11 +2,12 @@
     autoObjectMapperAsync, populateElementByAjaxOrLocalAsync, populateSelectAsync,
     updateResultLabel
 } from "./miar_tools.js";
+
 import {
-    checkWhetherBlankTheInputsAsync, click_userForm_inputAsync, populateInfoMessagesAsync,
-    click_userForm_showPasswordButtonAsync, keyup_userForm_inputAsync,
+    checkInputsWhetherBlankAsync, click_userForm_inputAsync, populateInfoMessagesAsync,
+    click_userForm_showPasswordButtonAsync, keyup_userForm_inputAsync, roleTranslator,
     populateElementNamesAsync
-} from "./miar_user_inputForm.js";
+} from "./miar_user.inputForm.js";
 
 
 $(function () {
@@ -15,18 +16,6 @@ $(function () {
     const img_loading = $("#img_loading");
     const slct_roles = $("#slct_roles");
     const btn_showPassword = $("#btn_showPassword");
-    const roleTranslator = {
-        "TR": {
-            "Kullanıcı": "User",
-            "Editör": "Editor",
-            "Yönetici": "Admin"
-        },  // From TR to EN
-        "EN": {
-            "User": "Kullanıcı",
-            "Editor": "Editör",
-            "Admin": "Yönetici"
-        }  // From EN to TR
-    };
     const inpt = {
         "firstName": $("#inpt_firstName"),
         "lastName": $("#inpt_lastName"),
@@ -43,14 +32,6 @@ $(function () {
         "TR": "başarıyla kaydedildi",
         "EN": "save successfull"
     };
-    const langPack_errorMessages = {
-        "TR": {
-            "blankInput": "bu alanı doldurmalısın."
-        },
-        "EN": {
-            "blankInput": "you must fill in this field."
-        }
-    }
     const langPack_elementNames = {
         "TR": {
             "firstName": "Ad",
@@ -82,8 +63,7 @@ $(function () {
         //#region check whether blank value on inputs
         // check
         event.preventDefault();
-        let isBlankValueExists = await checkWhetherBlankTheInputsAsync(
-            langPack_errorMessages[language]["blankInput"],
+        let isBlankValueExists = await checkInputsWhetherBlankAsync(
             [
                 inpt.firstName,
                 inpt.lastName,
@@ -225,41 +205,35 @@ $(function () {
         await populateInfoMessagesAsync();
     }
     async function populateInputsWithClaimInfosAsync() {
-        for (let key in claimInfos) {
-            let claimValue = claimInfos[key];
+        inpt.firstName.val(claimInfos.firstName);
+        inpt.lastName.val(claimInfos.lastName);
+        inpt.company.val(claimInfos.companyName);
+        inpt.phone.val(claimInfos.telNo);
+        inpt.email.val(claimInfos.email);
+        //#region role name
 
-            switch (key) {
-                case "firstName": inpt.firstName.val(claimValue); break;
-                case "lastName": inpt.lastName.val(claimValue); break;
-                case "telNo": inpt.phone.val(claimValue); break;
-                case "email": inpt.email.val(claimValue); break;
-                case "companyName": inpt.company.val(claimValue); break;
-                case "roleNames":
-                    //#region when role language isn't equal to page language
-                    if (claimInfos.roleLanguage != language) {
-                        // update role of claim infos object according page language
-                        claimInfos.roleNames = roleTranslator[claimInfos.roleLanguage][claimInfos.roleNames];
-                        claimInfos.roleLanguage = language;
+        //#region when role language isn't equal to page language
+        if (claimInfos.roleLanguage != language) {
+            // update claimInfos object according page language
+            claimInfos.roleNames = roleTranslator[claimInfos.roleLanguage][claimInfos.roleNames];
+            claimInfos.roleLanguage = language;
 
-                        // update claim infos in local
-                        localStorage.setItem(
-                            localKeys_claimInfos,
-                            JSON.stringify(claimInfos));
-                    }
-                    //#endregion
-
-                    //#region disable role select when user is not "Admin"
-                    slct_roles.val(claimInfos.roleNames);  // display role
-
-                    if (language == "TR" && claimInfos.roleNames != "Yönetici"
-                        || (language == "EN" && claimInfos.roleNames != "Admin"))
-                        slct_roles.attr("disabled", "");
-                    //#endregion
-
-                    break;
-                case "password": inpt.password.val(claimValue); break;
-            }
+            // update claim infos in local
+            localStorage.setItem(
+                localKeys_claimInfos,
+                JSON.stringify(claimInfos));
         }
+        //#endregion
+
+        //#region disable role select when user is not "Admin"
+        slct_roles.val(claimInfos.roleNames);  // display role
+
+        if (language == "TR" && claimInfos.roleNames != "Yönetici"
+            || (language == "EN" && claimInfos.roleNames != "Admin"))
+            slct_roles.attr("disabled", "");
+                    //#endregion
+
+        //#endregion
     }
     async function updateClaimInfosAsync(data) {
         // update claimInfos object

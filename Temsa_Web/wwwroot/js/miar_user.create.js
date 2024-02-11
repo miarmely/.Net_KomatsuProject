@@ -3,9 +3,10 @@
 } from "./miar_tools.js";
 
 import {
-    checkWhetherBlankTheInputsAsync, click_userForm_inputAsync, populateInfoMessagesAsync,
-    click_userForm_showPasswordButtonAsync, keyup_userForm_inputAsync, populateElementNamesAsync
-} from "./miar_user_inputForm.js";
+    checkInputsWhetherBlankAsync, click_userForm_inputAsync, populateInfoMessagesAsync,
+    click_userForm_showPasswordButtonAsync, keyup_userForm_inputAsync,
+    populateElementNamesAsync
+} from "./miar_user.inputForm.js";
 
 
 $(function () {
@@ -50,8 +51,7 @@ $(function () {
     $("form").submit(async (event) => {
         //#region check whether blank value on inputs
         event.preventDefault();
-        let isBlankValueExists = await checkWhetherBlankTheInputsAsync(
-            langPack_errorMessages[language]["blankInput"],
+        let isBlankValueExists = await checkInputsWhetherBlankAsync(
             [
                 inpt.firstName,
                 inpt.lastName,
@@ -149,4 +149,3 @@ $(function () {
 
     populateFormAsync();
 });
-

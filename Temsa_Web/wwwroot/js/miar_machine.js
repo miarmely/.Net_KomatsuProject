@@ -424,31 +424,6 @@ export async function machineForm_removeVideoAttrAsync(vid_machine, src_machine)
     }
     //#endregion
 }
-export async function machineForm_showOrHideBackButtonAsync(
-    mode,
-    div_backButton,
-    div_panelTitle,
-    btn_back
-) {
-    switch (mode) {
-        case "show":
-            // show back button
-            div_backButton.removeAttr("hidden");
-
-            // shift the panel title to right
-            div_panelTitle.css(
-                "padding-left",
-                btn_back.css("width"));
-            break;
-        case "hide":
-            // hide back button
-            div_backButton.attr("hidden", "");
-
-            // shift the panel title to left
-            div_panelTitle.css("padding-left", "");
-            break;
-    }
-}
 export async function machineForm_setMachineVideoSizeAsync(vid_machine) {
     //#region set width and max-height
     let panelBody_width = $(".panel-body").prop("clientWidth");

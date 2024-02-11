@@ -1,4 +1,4 @@
-﻿<link rel="stylesheet" href="~/css/miar_user_inputForm.css" />
+﻿<link rel="stylesheet" href="~/css/miar_user.inputForm.css" />
 
 
 <div class="form-w3layouts">
@@ -34,6 +34,18 @@
                                     <ul role="menu" class="dropdown-menu"></ul>
                                 </div>
                             </div>
+                            @*company*@
+                            <div id="div_company" class="form-group">
+                                <label class="col-sm-3 control-label"></label>
+                                <div class="col-sm-6">
+                                    <input id="inpt_company" type="text" class="form-control" >
+                                    <span id="spn_help_inpt_company" class="help-block"></span>
+                                </div>
+                                <div class="col-sm-3 div_infoMessage">
+                                    <button type="button" tabindex="-1" data-toggle="dropdown" class="dropdown-toggle"></button>
+                                    <ul role="menu" class="dropdown-menu"></ul>
+                                </div>
+                            </div>
                             @*phone*@
                             <div id="div_phone" class="form-group">
                                 <label class="col-sm-3 control-label"></label>
@@ -52,18 +64,6 @@
                                 <div class="col-sm-6">
                                     <input id="inpt_email" type="text" class="form-control" >
                                     <span id="spn_help_inpt_email" class="help-block"></span>
-                                </div>
-                                <div class="col-sm-3 div_infoMessage">
-                                    <button type="button" tabindex="-1" data-toggle="dropdown" class="dropdown-toggle"></button>
-                                    <ul role="menu" class="dropdown-menu"></ul>
-                                </div>
-                            </div>
-                            @*company*@
-                            <div id="div_company" class="form-group">
-                                <label class="col-sm-3 control-label"></label>
-                                <div class="col-sm-6">
-                                    <input id="inpt_company" type="text" class="form-control" >
-                                    <span id="spn_help_inpt_company" class="help-block"></span>
                                 </div>
                                 <div class="col-sm-3 div_infoMessage">
                                     <button type="button" tabindex="-1" data-toggle="dropdown" class="dropdown-toggle"></button>
@@ -108,20 +108,12 @@
     </div>
 </div>
 
-<script type="module" src="~/js/miar_user_create.js"></script>
+<script type="module" src="~/js/miar_user.create.js"></script>
 
 <script>
     const formTitleByLanguages = {
         "TR": "YENİ KULLANICI OLUŞTUR",
         "EN": "CREATE NEW USER"
-    }
-    const langPack_errorMessages = {
-        "TR": {
-            "blankInput": "bu alanı doldurmalısın."
-        },
-        "EN": {
-            "blankInput": "you must fill in this field."
-        }
     }
     const resultLabel_successMessageByLanguages = {
         "TR": "başarıyla kaydedildi",

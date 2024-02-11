@@ -1,48 +1,69 @@
 ﻿import { writeErrorToBelowOfInputAsync } from "./miar_module_inputForm.js";
+import { populateElementByAjaxOrLocalAsync, populateSelectAsync } from "./miar_tools.js";
 
 //#region variables
-const langPack_infoMessages = {
+export const roleTranslator = {
     "TR": {
-        "div_firstName": [
-            "Max 50 karakter uzunluğunda olmalı."
-        ],
-        "div_lastName": [
-            "Max 50 karakter uzunluğunda olmalı."
-        ],
-        "div_phone": [
-            "Başında 0 olmadan girilmeli. (5xxxxxxxxx)"
-        ],
-        "div_email": [
-            "Uzantısı hariç max 50 karakter uzunluğunda olmalı."
-        ],
-        "div_company": [
-            "Max 50 karakter uzunluğunda olmalı."
-        ],
-        "div_password": [
-            "6 ile 16 karakter uzunluğunu arasında olmalı."
-        ],
-    },
+        "Kullanıcı": "User",
+        "Editör": "Editor",
+        "Yönetici": "Admin"
+    },  // From TR to EN
     "EN": {
-        "div_firstName": [
-            "It must be max 50 chars length."
-        ],
-        "div_lastName": [
-            "It must be max 50 chars length."
-        ],
-        "div_phone": [
-            "You must enter without leading zero. (5xxxxxxxxx)"
-        ],
-        "div_email": [
-            "It must be max 50 chars length except extension."
-        ],
-        "div_company": [
-            "It must be max 50 chars length."
-        ],
-        "div_password": [
-            "Chars length must be between 6 and 16."
-        ],
-    }
+        "User": "Kullanıcı",
+        "Editor": "Editör",
+        "Admin": "Yönetici"
+    }  // From EN to TR
 };
+const langPack = {
+    "errorMessages": {
+        "blankInput": {
+            "TR": "bu alanı doldurmalısın.",
+            "EN": "you must fill in this field."
+        }
+    },
+    "infoMessages": {
+        "TR": {
+            "div_firstName": [
+                "Max 50 karakter uzunluğunda olmalı."
+            ],
+            "div_lastName": [
+                "Max 50 karakter uzunluğunda olmalı."
+            ],
+            "div_phone": [
+                "Başında 0 olmadan girilmeli. (5xxxxxxxxx)"
+            ],
+            "div_email": [
+                "Uzantısı hariç max 50 karakter uzunluğunda olmalı."
+            ],
+            "div_company": [
+                "Max 50 karakter uzunluğunda olmalı."
+            ],
+            "div_password": [
+                "6 ile 16 karakter uzunluğunu arasında olmalı."
+            ],
+        },
+        "EN": {
+            "div_firstName": [
+                "It must be max 50 chars length."
+            ],
+            "div_lastName": [
+                "It must be max 50 chars length."
+            ],
+            "div_phone": [
+                "You must enter without leading zero. (5xxxxxxxxx)"
+            ],
+            "div_email": [
+                "It must be max 50 chars length except extension."
+            ],
+            "div_company": [
+                "It must be max 50 chars length."
+            ],
+            "div_password": [
+                "Chars length must be between 6 and 16."
+            ],
+        }
+    },
+}
 //#endregion
 
 //#region events
@@ -50,14 +71,14 @@ export async function click_userForm_showPasswordButtonAsync(inpt_password, btn_
     //#region show password
     if (inpt_password.attr("type") == "password") {
         inpt_password.attr("type", "text");
-        btn_showPassword.css("background-image", "url(../images/hide.png)");
+        btn_showPassword.css("background-image", "url(/images/hide.png)");
     }
     //#endregion
 
     //#region hide password
     else {
         inpt_password.attr("type", "password");
-        btn_showPassword.css("background-image", "url(../images/show.png)");
+        btn_showPassword.css("background-image", "url(/images/show.png)");
     }
     //#endregion
 }
@@ -138,7 +159,7 @@ export async function populateElementNamesAsync(elementNames) {
 }
 export async function populateInfoMessagesAsync() {
     //#region fill in info messages
-    let infoMessages = langPack_infoMessages[language];
+    let infoMessages = langPack.infoMessages[language];
 
     for (let div_id in infoMessages)
         for (let index in infoMessages[div_id]) {
@@ -149,7 +170,7 @@ export async function populateInfoMessagesAsync() {
         }
     //#endregion
 }
-export async function checkWhetherBlankTheInputsAsync(errorMessage_blankInput, inputList) {
+export async function checkInputsWhetherBlankAsync(inputList) {
     //#region check whether blank of inputs
     let isAnyInputBlank = false;
 
@@ -160,7 +181,7 @@ export async function checkWhetherBlankTheInputsAsync(errorMessage_blankInput, i
         if (input.val() == '') {
             await writeErrorToBelowOfInputAsync(
                 input,
-                errorMessage_blankInput);
+                langPack.errorMessages.blankInput[language]);
 
             isAnyInputBlank = true;
         }

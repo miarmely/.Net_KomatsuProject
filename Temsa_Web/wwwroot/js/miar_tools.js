@@ -343,8 +343,6 @@ export async function populateElementByAjaxOrLocalAsync(
             contentType: "application/json",
             dataType: "json",
             success: (response) => {
-                func_populate(response);
-
                 //#region save data to local
 
                 //#region initialize "dataInLocal"
@@ -361,6 +359,8 @@ export async function populateElementByAjaxOrLocalAsync(
                 //#endregion
 
                 //#endregion
+
+                func_populate(response);
 
                 //#region call function after populate process
                 if (func_afterPopulated != null)
@@ -386,9 +386,7 @@ export async function populateSelectAsync(select, options, optionToBeDisplay = n
     for (let index in options) {
         let option = options[index];
 
-        select.append(
-            `<option>${option}</option>`
-        )
+        select.append(`<option>${option}</option>`);
     }
     //#endregion
 
@@ -579,6 +577,46 @@ export async function getKeysOfBlankValuesAsync(data) {
     //#endregion
 
     return keysWithBlankValue;
+}
+export async function showOrHideBackButtonAsync(
+    mode,
+    div_backButton,
+    div_panelTitle,
+    btn_back
+) {
+    switch (mode) {
+        case "show":
+            // show back button
+            div_backButton.removeAttr("hidden");
+
+            // shift the panel title to right
+            div_panelTitle.css(
+                "padding-left",
+                btn_back.css("width"));
+            break;
+        case "hide":
+            // hide back button
+            div_backButton.attr("hidden", "");
+
+            // shift the panel title to left
+            div_panelTitle.css("padding-left", "");
+            break;
+    }
+}
+export async function isUserRoleThisRoleAsync(userRole, targetRole) {
+    //#region check user role whether is desired role
+    switch (targetRole) {
+        case "user":
+            if (userRole == "User" || userRole == "Kullanıcı") return true;
+            return false;
+        case "editor":
+            if (userRole == "Editor" || userRole == "Editör") return true;
+            return false;
+        case "admin":
+            if (userRole == "Admin" || userRole == "Yönetici") return true;
+            return false;
+    }
+    //#endregion
 }
 export function getDateTimeInString(dateTime) {
     //#region set year

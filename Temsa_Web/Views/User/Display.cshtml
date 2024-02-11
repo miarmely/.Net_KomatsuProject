@@ -1,77 +1,179 @@
 ﻿@model string
 
-<link rel="stylesheet" href="~/css/miar_user_display.css"> 
+<link rel="stylesheet" href="~/css/miar_user.display.css" />
+<link rel="stylesheet" href="~/css/miar_user.inputForm.css" />
 
 
 <div class="table-agile-info">
     <div class="panel panel-default">
         @*title*@
-        <div class="panel-heading"></div>
+        <div class="panel-heading">
+            <div id="div_backButton" style="float:right" hidden>
+                <button id="btn_back" type="button" class="btn">
+                    <img src="~/images/close.png" alt="close"/>
+                </button>
+            </div>
+            <div id="div_panelTitle"></div>
+        </div>
         @*/title*@
 
         @*table menubar*@
-        <div class="row w3-res-tb">
-            @*options*@
-            <div class="col-sm-5 m-b-xs">
-				<select id="slct_menubar" class="input-sm form-control w-sm inline v-middle">
-                </select>
-				<button id="btn_apply" class="btn btn-sm btn-default">
-                </button>                
-            </div>
-            @*/options*@
-            <div class="col-sm-4"></div>
-			@*search bar*@
-            @*<div class="col-sm-3">
-				<div class="input-group">
-					<input type="text" class="input-sm form-control" placeholder="Ara">
-					<span class="input-group-btn">
-						<button class="btn btn-sm btn-default" type="button">
-							Ara
-						</button>
-					</span>
-				</div>
-            </div>*@
-			@*/search bar*@
-        </div>
-        @*/table menubar*@
+        <div class="panel-body">
+            <div id="div_userUpdate" hidden>
+                <form>
+                    <div id="div_form" class="form-horizontal bucket-form" style="padding-top:20px">
+                        @*firstName*@
+                        <div id="div_firstName" class="form-group">
+                            <label class="col-sm-3 control-label"></label>
+                            <div class="col-sm-6">
+                                <input id="inpt_firstName" type="text" class="form-control" >
+                                <span id="spn_help_inpt_firstName" class="help-block"></span>
+                            </div>
+                            <div class="col-sm-3 div_infoMessage">
+                                <button type="button" tabindex="-1" data-toggle="dropdown" class="dropdown-toggle"></button>
+                                <ul role="menu" class="dropdown-menu"></ul>
+                            </div>
+                        </div>
+                        @*lastName*@
+                        <div id="div_lastName" class="form-group">
+                            <label class="col-sm-3 control-label"></label>
+                            <div class="col-sm-6">
+                                <input id="inpt_lastName" type="text" class="form-control" >
+                                <span id="spn_help_inpt_lastName" class="help-block"></span>
+                            </div>
+                            <div class="col-sm-3 div_infoMessage">
+                                <button type="button" tabindex="-1" data-toggle="dropdown" class="dropdown-toggle"></button>
+                                <ul role="menu" class="dropdown-menu"></ul>
+                            </div>
+                        </div>
+                         @*company*@
+                        <div id="div_company" class="form-group">
+                            <label class="col-sm-3 control-label"></label>
+                            <div class="col-sm-6">
+                                <input id="inpt_company" type="text" class="form-control" >
+                                <span id="spn_help_inpt_company" class="help-block"></span>
+                            </div>
+                            <div class="col-sm-3 div_infoMessage">
+                                <button type="button" tabindex="-1" data-toggle="dropdown" class="dropdown-toggle"></button>
+                                <ul role="menu" class="dropdown-menu"></ul>
+                            </div>
+                        </div>
+                        @*phone*@
+                        <div id="div_phone" class="form-group">
+                            <label class="col-sm-3 control-label"></label>
+                            <div class="col-sm-6">
+                                <input id="inpt_phone" type="number" class="form-control">
+                                <span id="spn_help_inpt_phone" class="help-block"></span>
+                            </div>
+                            <div class="col-sm-3 div_infoMessage">
+                                <button type="button" tabindex="-1" data-toggle="dropdown" class="dropdown-toggle"></button>
+                                <ul role="menu" class="dropdown-menu"></ul>
+                            </div>
+                        </div>
+                        @*email*@
+                        <div id="div_email" class="form-group">
+                            <label class="col-sm-3 control-label"></label>
+                            <div class="col-sm-6">
+                                <input id="inpt_email" type="text" class="form-control" >
+                                <span id="spn_help_inpt_email" class="help-block"></span>
+                            </div>
+                            <div class="col-sm-3 div_infoMessage">
+                                <button type="button" tabindex="-1" data-toggle="dropdown" class="dropdown-toggle"></button>
+                                <ul role="menu" class="dropdown-menu"></ul>
+                            </div>
+                        </div>
+                        @*roles*@
+                        <div id="div_roles" class="form-group">
+                            <label class="col-sm-3 control-label"></label>
+                            <div class="col-sm-6">
+                                <select id="slct_roles" class="form-control m-bot15"></select>
+                            </div>
+                        </div>
+                        @*new password*@
+                        <div id="div_password" class="form-group">
+                            <label class="col-sm-3 control-label"></label>
+                            <div class="col-sm-6">
+                                <input id="inpt_password" type="password" class="form-control" >
+                                <span id="spn_help_inpt_password" class="help-block"></span>
+                            </div>
+                            <div class="col-sm-3 div_infoMessage">
+                                <button id="btn_showPassword" type="button"></button>
+                                <button type="button" tabindex="-1" data-toggle="dropdown" class="dropdown-toggle"></button>
+                                <ul role="menu" class="dropdown-menu"></ul>
+                            </div>
+                        </div>
+                        @*save button*@
+                        <div id="div_saveButton" class="form-group">
+                            <div class="col-sm-6; text-center">
+                                <button id="btn_save" type="submit" class="btn btn-danger" style="background-color: darkblue;" disabled></button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
 
-        @*/data*@
-        <div class="table-responsive">
-            <table id="tbl_user" class="table table-striped b-t b-light">
-                <thead>
-                    <tr class="tr_columnNames">
-                        <th></th>
-                        <th></th>
-                        <th></th>
-                        <th></th>
-                        <th></th>
-                        <th></th>
-                        <th></th>
-                    </tr>
-                </thead>
-                <tbody>
-                </tbody>
-            </table>
-        </div>
-        @*/data*@
-
-        @*/navigation*@
-        <footer class="panel-footer">
-            <div class="row">
-                <div class="col-sm-5 text-left">
-                    <small id="lbl_entityQuantity" class="text-muted inline m-t-sm m-b-s"></small>
-                </div>
-                <div class="col-sm-7 text-right text-center-xs">                
-                    <ul id="ul_pagination" class="pagination pagination-sm m-t-none m-b-none"></ul>
+                @*result label*@
+                <div style="text-align:center">
+                    <p id="p_resultLabel"></p>
+                    <img id="img_loading" src="~/images/loading.gif" style="width:40px; height:40px" hidden/>
                 </div>
             </div>
-        </footer>
-        @*/navigation*@
+            <div id="div_userDisplay">
+                @*menubar + search*@
+                <div class="row w3-res-tb">
+                    @*menubar*@
+                    <div class="col-sm-5 m-b-xs">
+				        <select id="slct_menubar" class="input-sm form-control w-sm inline v-middle"></select>
+				        <button id="btn_apply" class="btn btn-sm btn-default"></button>                
+                    </div>
+                    <div class="col-sm-4"></div>
+                    @*search*@
+                    @*<div class="col-sm-3">
+				        <div class="input-group">
+					        <input type="text" class="input-sm form-control" placeholder="Search">
+					        <span class="input-group-btn">
+						        <button class="btn btn-sm btn-default" type="button">Search</button>
+					        </span>
+				        </div>
+                    </div>*@
+                </div>
+
+                 @*table*@
+                <div class="table-responsive">
+                    <table id="tbl_user" class="table table-striped b-t b-light">
+                        <thead>
+                            <tr>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
+
+                @*entity quantity + pagination *@
+                <footer class="panel-footer">
+                    <div class="row">
+                        <div class="col-sm-5 text-left">
+                            <small id="lbl_entityQuantity" class="text-muted inline m-t-sm m-b-s"></small>
+                        </div>
+                        <div class="col-sm-7 text-right text-center-xs">                
+                            <ul id="ul_pagination" class="pagination pagination-sm m-t-none m-b-none"></ul>
+                        </div>
+                    </div>
+                </footer>
+            </div>
+        </div>
     </div>
 </div>
 
 
 <script>
-    const userRole = "@Html.Raw(Model)";
+    const accountRole = "@Html.Raw(Model)";
 </script>
-<script type="module" src="~/js/miar_user_display.js"></script>
+<script type="module" src="~/js/miar_user.display.js"></script>

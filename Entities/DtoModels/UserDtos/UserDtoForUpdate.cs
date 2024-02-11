@@ -21,9 +21,9 @@ namespace Entities.DtoModels.UserDtos
 		[MiarEmail]
 		public string? Email { get; init; }
 
-		[MiarLength(6, 16, "Şifre", "Password")]
-		public string? Password { get; init; }
-		
         public string? RoleNames { get; init; }
+
+        [MiarLength(6, 16, "Şifre", "Password")]
+		public string? Password { get; init; }
     }
 }
