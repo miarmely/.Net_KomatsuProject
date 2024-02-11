@@ -7,6 +7,14 @@
         color: black
     }
 
-.th_userTable{
-    
+.tr_columnNames th{
+    text-align:center;
+}
+
+.table-responsive tbody{
+    text-align: center
+}
+
+.table-responsive tbody td {
+  word-break:keep-all;
 }

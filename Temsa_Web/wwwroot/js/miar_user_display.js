@@ -1,7 +1,7 @@
 ﻿import {
-    populateTable, paginationInfosInJson, setDisabledOfOtherUpdateButtonsAsync,
-    resetErrorRowAsync, updateResultLabel, entityCountOnTable, updateErrorRow,
-    populateElementByAjaxOrLocalAsync, populateSelectAsync, getDateTimeInString, addPaginationButtonsAsync, controlPaginationBackAndNextButtonsAsync
+    paginationInfosInJson,
+    updateResultLabel, entityCountOnTable,
+    getDateTimeInString, addPaginationButtonsAsync, controlPaginationBackAndNextButtonsAsync
 } from "./miar_tools.js"
 
 
@@ -18,41 +18,12 @@ $(function () {
     const table_head = $("#tbl_user thead tr");
     const ul_pagination = $("#ul_pagination");
     const box_all = $("#box_all");
-    const updateButtonName = updateButtonNameByLanguages[language];
     const slct_menubar = $("#slct_menubar");
     const css_roleNamesSelect_disabled = {
         "background-color": "darkGrey",
         "color": "white"
     };
-    const css_updateButton_disabled = {
-        "background-color": "darkGrey",
-        "color": "white"
-    };
     const editorRoleNamesByLanguages = ["editor", "editör"];
-    const langPack_columnNames = {
-        "TR": [
-            "Ad",
-            "Soyad",
-            "Şirket",
-            "Telefon",
-            "Email",
-            "Rol",
-            "Kayıt Tarihi",
-        ],
-        "EN": [
-            "First Name",
-            "Last Name",
-            "Company",
-            "Telephone",
-            "Email",
-            "Role",
-            "Registration Date",
-        ]
-    }
-    const langPack_entityQuantity = {
-        "TR": "kullanıcı gösteriliyor",
-        "EN": "user displaying"
-    };
     const pagination = {
         "headerName": "User-Pagination",
         "buttonCount": 5,
@@ -62,7 +33,49 @@ $(function () {
         "id": "lbl_entityQuantity",
         "color": "#7A7A7A"
     };
-    const lbl_entityQuantity = $("#" + lbl_entityQuantity);
+    const lbl_entityQuantity = $("#" + entityQuantity.id);
+    const langPack = {
+        "columnNames": {
+            "TR": [
+                "Ad",
+                "Soyad",
+                "Şirket",
+                "Telefon",
+                "Email",
+                "Rol",
+                "Kayıt Tarihi",
+            ],
+            "EN": [
+                "First Name",
+                "Last Name",
+                "Company",
+                "Telephone",
+                "Email",
+                "Role",
+                "Registration Date",
+            ]
+        },
+        "entityQuantity": {
+            "TR": "kullanıcı gösteriliyor",
+            "EN": "user displaying"
+        },
+        "panelTitle": {
+            "TR": "KAYITLI KULLANICILAR",
+            "EN": "REGISTERED USERS"
+        },
+        "menubarOptions": {
+            "TR": [
+                "Seçilenleri Sil"
+            ],
+            "EN": [
+                "Delete Selected"
+            ]
+        },
+        "applyButton": {
+            "TR": "Uygula",
+            "EN": "Apply"
+        }
+    }
     //#endregion
 
     //#region events
@@ -79,18 +92,6 @@ $(function () {
         //#region when update, save or delete button clicked
         let clickedElement = $(":focus");
         let row = clickedElement.closest("tr");
-
-        switch (clickedElement.attr("id")) {
-            case "btn_update":
-                await clicked_updateButtonAsync(row);
-                break;
-            case "btn_save":
-                await clicked_saveButtonAsync(row);
-                break;
-            case "btn_cancel":
-                await clicked_cancelButtonAsync(row);
-                break;
-        }
         //#endregion
     })
     ul_pagination.click(() => {
@@ -106,67 +107,18 @@ $(function () {
             //#region open previous page if previous page exists
             case "a_paginationBack":
                 if (paginationInfosInJson.HasPrevious)
-                    populateTable(
-                        entityType,
-                        routeForDisplay,
-                        language,
-                        paginationInfosInJson.CurrentPageNo - 1,
-                        pageSize,
-                        table_body,
-                        columnNamesToBeFill,
-                        updateButtonName,
-                        pagination.headerName,
-                        lbl_entityQuantity,
-                        ul_pagination,
-                        errorMessageColor,
-                        pagination.buttonCount,
-                        langPack_entityQuantity[language],
-                        true)
                 break;
             //#endregion
 
             //#region open next page if next page exists
             case "a_paginationNext":
                 if (paginationInfosInJson.HasNext)
-                    populateTable(
-                        entityType,
-                        routeForDisplay,
-                        language,
-                        paginationInfosInJson.CurrentPageNo + 1,
-                        pageSize,
-                        table_body,
-                        columnNamesToBeFill,
-                        updateButtonName,
-                        pagination.headerName,
-                        lbl_entityQuantity,
-                        ul_pagination,
-                        errorMessageColor,
-                        pagination.buttonCount,
-                        langPack_entityQuantity[language],
-                        true)
                 break;
             //#endregion
 
             //#region open page that matched with clicked button number
             default:
                 let pageNo = clickedButton.prop("innerText");
-
-                populateTable(
-                    entityType,
-                    routeForDisplay,
-                    language,
-                    pageNo,
-                    pageSize,
-                    table_body,
-                    columnNamesToBeFill,
-                    updateButtonName,
-                    pagination.headerName,
-                    lbl_entityQuantity,
-                    ul_pagination,
-                    errorMessageColor,
-                    pagination.buttonCount,
-                    langPack_entityQuantity[language],
-                    true)
                 break;
             //#endregion
         }
@@ -196,6 +148,105 @@ $(function () {
     //#endregion
 
     //#region functions
+    async function populateHtmlAsync() {
+        //#region panel title
+        $(".panel-heading").append(
+            langPack.panelTitle[language]);
+        //#endregion
+
+        //#region panel menubar
+        let tableMenubarOptions = langPack.menubarOptions[language];
+
+        for (let index = 0; index < tableMenubarOptions.length; index += 1) {
+            let tableMenubarOption = tableMenubarOptions[index];
+
+            slct_menubar.append(
+                `<option value="${index}">
+                ${tableMenubarOption}
+                </option>`
+            )
+        }
+        //#endregion
+
+        //#region apply button name
+        $("#btn_apply").append(
+            langPack.applyButton[language])
+        //#endregion
+
+        await addColumnNamesToTableAsync();
+    }
+    async function populateTableAsync(addPagingButtons = true) {
+        $.ajax({
+            method: "GET",
+            url: (baseApiUrl + "/user/display/all" +
+                `?language=${language}` +
+                `&pageNumber=${pageNumber}` +
+                `&pageSize=${pageSize}`),
+            headers: { "authorization": jwtToken },
+            contentType: "application/json",
+            dataType: "json",
+            beforeSend: () => {
+                table_body.empty();
+                addEntityQuantityMessageAsync(0);
+            },
+            success: (response, status, xhr) => {
+                new Promise(async resolve => {
+                    await addUsersToTableAsync(response);
+
+                    //#region update entity quantity message
+                    pagination.infos = JSON.parse(
+                        xhr.getResponseHeader(pagination.headerName));
+
+                    await addEntityQuantityMessageAsync(pagination.infos.CurrentPageCount);
+                    //#endregion
+
+                    //#region add paging button if desired
+                    if (addPagingButtons)
+                        await addPaginationButtonsAsync(
+                            pagination.infos,
+                            pagination.buttonCount,
+                            ul_pagination);
+                    //#endregion
+
+                    await controlPaginationBackAndNextButtonsAsync(pagination.infos);
+                    resolve();
+                })
+            },
+            error: (response) => {
+                //#region write error to resultLabel
+                updateResultLabel(
+                    "#" + entityQuantity.id,
+                    JSON.parse(response.responseText).errorMessage,
+                    errorMessageColor);
+                //#endregion
+            },
+        });
+    }
+    async function addColumnNamesToTableAsync() {
+        let columnNames = langPack.columnNames[language];
+
+        for (let index in columnNames)
+            table_head
+                .children(`th:nth-child(${+index + 1})`)
+                .append(columnNames[index]);    
+    }
+    async function addUsersToTableAsync(response) {
+        for (let index in response) {
+            let rowId = `tr_row${index}`;
+            let userInfos = response[index];
+
+            table_body.append(
+                `<tr id= "${rowId}">
+                    <td>${userInfos.firstName}</td>
+                    <td>${userInfos.lastName}</td>
+                    <td>${userInfos.companyName}</td>
+                    <td>${userInfos.telNo}</td>
+                    <td>${userInfos.email}</td>
+                    <td>${userInfos.roleNames}</td>
+                    <td>${getDateTimeInString(userInfos.createdAt)}</td>
+                </tr>`);
+        }
+    }
     async function deleteSelectedUsersAsync() {
         //#region set variables
         let telNoList = [];
@@ -256,42 +307,12 @@ $(function () {
                 if (telNoList.length == entityCountOnTable) {
                     //#region when next page exists
                     if (paginationInfosInJson.HasNext)
-                        populateTable(
-                            entityType,
-                            routeForDisplay,
-                            language,
-                            currentPageNo,
-                            pageSize,
-                            table_body,
-                            columnNamesToBeFill,
-                            updateButtonName,
-                            pagination.headerName,
-                            lbl_entityQuantity,
-                            ul_pagination,
-                            errorMessageColor,
-                            pagination.buttonCount,
-                            langPack_entityQuantity[language],
-                            true);  // refresh current page
+                        alert(1);
                     //#endregion
 
                     //#region when previous page exists
                     else if (paginationInfosInJson.HasPrevious)
-                        populateTable(
-                            entityType,
-                            routeForDisplay,
-                            language,
-                            currentPageNo - 1,
-                            pageSize,
-                            table_body,
-                            columnNamesToBeFill,
-                            updateButtonName,
-                            pagination.headerName,
-                            lbl_entityQuantity,
-                            ul_pagination,
-                            errorMessageColor,
-                            pagination.buttonCount,
-                            langPack_entityQuantity[language],
-                            true);
+                        alert(2);
                     //#endregion
 
                     //#region when any machines not found
@@ -300,7 +321,7 @@ $(function () {
 
                         updateResultLabel(
                             "#" + entityQuantity.id,
-                            `<b>0/${pageSize}<b> ${langPack_entityQuantity[language]}`,
+                            `<b>0/${pageSize}<b> ${langPack.entityQuantity[language]}`,
                             errorMessageColor);
                     }
                     //#endregion
@@ -323,7 +344,7 @@ $(function () {
                         ul_pagination,
                         errorMessageColor,
                         pagination.buttonCount,
-                        langPack_entityQuantity[language],
+                        langPack.entityQuantity[language],
                         true);  // refresh current page
                 //#endregion
 
@@ -341,264 +362,6 @@ $(function () {
                 //#endregion
             }
         });
-    }
-    async function clicked_updateButtonAsync(row) {
-        //#region set variables
-
-        //#region set "tableDatasForAddInput"
-        let tableDatasForAddInput = {}
-        let tableDatasForAddInputGuide = {
-            "firstName": "text",
-            "lastName": "text",
-            "companyName": "text",
-            "telNo": "number",
-            "email": "email",
-        }
-
-        // populate "tableDatasForAddInput"
-        for (let columnName in tableDatasForAddInputGuide) {
-            tableDatasForAddInput[columnName] = row
-                .children(`#td_${columnName}`);
-        }
-        //#endregion
-
-        //#region set "rowId" and "tableDatasForAddSelect"
-        let rowId = row.attr("id");
-        let tableDatasForAddSelect = {
-            "roleNames": row.children("#td_roleNames"),
-        };
-        //#endregion
-
-        //#region set "columnValues"
-        let columnValues = {}
-        let tableDataTypes = [tableDatasForAddInput, tableDatasForAddSelect]
-
-        //#region populate columnValues
-        for (let index in tableDataTypes) {
-            let tableDatas = tableDataTypes[index];
-
-            // add column values to columnValues
-            for (let columnName in tableDatas) {
-                let columnValue = tableDatas[columnName].text();
-                columnValues[columnName] = columnValue;
-            }
-        }
-        //#endregion
-
-        //#endregion
-
-        //#endregion
-
-        await setDisabledOfOtherUpdateButtonsAsync(rowId, pageSize, true);
-
-        //#region add <input> to columns
-        for (let columnName in tableDatasForAddInput) {
-            //#region reset column
-            let td = tableDatasForAddInput[columnName];
-            td.empty()
-            //#endregion
-
-            //#region add <input>
-            let inputType = tableDatasForAddInputGuide[columnName];
-            td.append(`<input type="${inputType}" id="inpt_${columnName}">`);
-            //#endregion
-
-            //#region add default value to <inpt>'s
-            let inputOnColumn = td.children(`#inpt_${columnName}`)
-            inputOnColumn.val(columnValues[columnName]);
-            //#endregion
-        }
-        //#endregion
-
-        //#region add role <select> to column
-        // add role <select>
-        for (let columnName in tableDatasForAddSelect) {
-            let td = tableDatasForAddSelect[columnName];
-            td.empty();
-            td.append(`<select class="slct_roleNames"> </select>`)
-        }
-
-        // populate role <select>
-        await populateElementByAjaxOrLocalAsync(
-            localKeys_allRoles,
-            `/user/display/role?language=${language}`,
-            async (roles) => {
-                await populateSelectAsync(
-                    tableDatasForAddSelect.roleNames.children("select"),
-                    roles,
-                    columnValues.roleNames);
-                await restrictEditorFeaturesAsync("roleNameSelect", {
-                    "row": row,
-                    "roles": roles
-                });
-            }
-        );
-        //#endregion
-
-        //#region add "save" and "cancel" buttons
-
-        //#region remove 'update' button
-        let td_processes = row.children("#td_processes");
-        td_processes.empty();
-        //#endregion
-
-        //#region add buttons
-        td_processes.append(
-            `<button id="btn_save" class="active" ui-toggle-class="">
-                <i class="fa fa-check text-success" style="width:15px">
-                    
-                </i>
-            <button id="btn_cancel" class="active" ui-toggle-class="">
-                <i class="fa fa-times text-danger" style="width:15px">
-                </i>`
-        );
-        //#endregion
-
-        //#endregion
-
-        //#region add columnValues to session
-        sessionStorage.setItem(
-            rowId,
-            JSON.stringify(columnValues)
-        );
-        //#endregion
-    }
-    async function clicked_saveButtonAsync(row) {
-        //#region set variables
-        let rowId = row.attr("id");
-        let columnNamesByElementTypes = {
-            "input": [
-                "firstName",
-                "lastName",
-                "companyName",
-                "telNo",
-                "email",
-            ],
-            "select": [
-                "roleNames"
-            ]
-        }
-        let oldColumnValues = JSON.parse(
-            sessionStorage.getItem(rowId));
-        let newColumnValues = {};
-        var data = {};
-        let url;
-
-        //#region populate newColumnValues
-        for (let elementType in columnNamesByElementTypes)
-            for (let index in columnNamesByElementTypes[elementType]) {
-                let columnName = columnNamesByElementTypes[elementType][index];
-                let inputOrSelect = row
-                    .children(`#td_${columnName}`)
-                    .children(elementType);
-
-                newColumnValues[columnName] = inputOrSelect.val();
-            }
-        //#endregion
-
-        //#region populate data
-        for (let columnName in newColumnValues) {
-            data[columnName] =
-                oldColumnValues[columnName] == newColumnValues[columnName] ? // is same old value with new value?
-                    null  // if not changed
-                    : newColumnValues[columnName]  // if changed
-        }
-        //#endregion
-
-        //#region set url
-        url = `${baseApiUrl}/${routeForUpdate}` +
-            `?language=${language}` +
-            `&telNo=${oldColumnValues.telNo}`
-        //#endregion
-
-        //#endregion
-
-        $.ajax({
-            method: "POST",
-            url: url,
-            headers: { "Authorization": jwtToken },
-            data: JSON.stringify(data),
-            contentType: "application/json",
-            dataType: "json",
-            success: () => {
-                //#region update row infos in session 
-                sessionStorage.setItem(
-                    rowId,
-                    JSON.stringify(newColumnValues));
-                //#endregion
-
-                removeInputsAndSelects(row, newColumnValues);
-                resetErrorRowAsync(rowId);
-                setDisabledOfOtherUpdateButtonsAsync(rowId, pageSize, false);
-            },
-            error: (response) => {
-                //#region write error to error row
-                updateErrorRow(
-                    `#${rowId}_error`,
-                    JSON.parse(response.responseText).errorMessage,
-                    errorMessageColor);
-                //#endregion
-            }
-        })
-    }
-    async function clicked_cancelButtonAsync(row) {
-        //#region get machine infos in session
-        let rowId = row.attr("id");
-
-        let userInfosInSession = JSON.parse(sessionStorage
-            .getItem(rowId));
-        //#endregion
-
-        removeInputsAndSelects(row, userInfosInSession);
-        await resetErrorRowAsync(rowId);
-        await setDisabledOfOtherUpdateButtonsAsync(rowId, pageSize, false);
-    }
-    async function populateHtmlAsync() {
-        //#region add table title
-        $(".panel-heading").append(
-            tableTitleByLanguages[language]);
-        //#endregion
-
-        //#region add table menubars
-        let tableMenubarOptions = tableMenubar_optionsByLanguages[language];
-
-        for (let index = 0; index < tableMenubarOptions.length; index += 1) {
-            let tableMenubarOption = tableMenubarOptions[index];
-
-            slct_menubar.append(
-                `<option value="${index}">
-                ${tableMenubarOption}
-                </option>`
-            )
-        }
-        //#endregion
-
-        //#region add apply button name
-        $("#btn_apply").append(
-            tableMenubar_applyButtonName[language])
-        //#endregion
-
-        //#region add column names
-        // add column names
-        for (let column in columnNamesByLanguages[language]) {
-            let columnName = columnNamesByLanguages[language][column];
-
-            table_head.append(
-                `<th>${columnName}</th>`
-            );
-        }
-
-        // add blank column to end
-        table_head.append(
-            `<th style="width:30px"></th>`
-        );
-        //#endregion
-
-        //#region add entity quantity message
-        $("#lbl_entityQuantity").append(
-            `<b>0</b> ${langPack_entityQuantity[language]}`
-        );
-        //#endregion
     }
     async function restrictEditorFeaturesAsync(feature, data) {
         //#region when user isn't editor
@@ -644,131 +407,95 @@ $(function () {
                 //#endregion 
 
                 break;
-            case "updateButton": // required data: row
-                //#region disable update button
-                data.row
-                    .children("#btn_update")
-                    .css("disabled", "");
-                //#endregion
-
-                break;
         }
         //#endregion
     }
-    async function addColumnNamesToTableAsync() {
-        let columnNames = langPack_columnNames[language];
-
-        for (let index in columnNames)
-            table_head
-                .children(`th:nth-child${index + 1}`)
-                .append(columnNames[index]);
+    async function addEntityQuantityMessageAsync(entityCount) {
+        updateResultLabel(
+            "#" + entityQuantity.id,
+            `<b>${entityCount}/${pageSize}</b> ${langPack.entityQuantity[language]}`,
+            entityQuantity.color);
     }
-    async function addUsersToTableAsync(response) {
-        for (let index in response) {
-            let rowId = `tr_row${index}`;
-            let userInfos = response[index];
 
-            table_body.append(
-                `<tr id= "${rowId}">
-                    <td>
-					    <label class="i-checks m-b-none">
-						    <input type="checkbox"><i></i>
-					    </label>
-				    </td>
-                    <td>${userInfos.firstName}</td>
-                    <td>${userInfos.lastName}</td>
-                    <td>${userInfos.companyName}</td>
-                    <td>${userInfos.telNo}</td>
-                    <td>${userInfos.email}</td>
-                    <td>${userInfos.roleName}</td>
-                    <td>${getDateTimeInString(userInfos.createdAt)}</td>
-                </tr>`);
-        }
-    }
-    async function populateTableAsync(addPagingButtons) {
-        $.ajax({
-            method: "GET",
-            url: (baseApiUrl + "/user/display/all" +
-                `?language=${language}` +
-                `&pageNumber=${pageNumber}` +
-                `&pageSize=${pageSize}`),
-            headers: { "authorization": jwtToken },
-            contentType: "application/json",
-            dataType: "json",
-            beforeSend: () => {
-                //#region reset rows if exists
-                if (table_body.children("tr").length != 0)
-                    table_body.empty();
-                //#endregion
-            },
-            success: (response, status, xhr) => {
-                new Promise(resolve => {
-                    await addColumnNamesToTableAsync();
-                    await addUsersToTableAsync(response);
+    //async function clicked_saveButtonAsync(row) {
+    //    //#region set variables
+    //    let rowId = row.attr("id");
+    //    let columnNamesByElementTypes = {
+    //        "input": [
+    //            "firstName",
+    //            "lastName",
+    //            "companyName",
+    //            "telNo",
+    //            "email",
+    //        ],
+    //        "select": [
+    //            "roleNames"
+    //        ]
+    //    }
+    //    let oldColumnValues = JSON.parse(
+    //        sessionStorage.getItem(rowId));
+    //    let newColumnValues = {};
+    //    var data = {};
+    //    let url;
 
-                    //#region add entity quantity message
-                    pagination.infos = JSON.parse(
-                        xhr.getResponseHeader(pagination.headerName));
+    //    //#region populate newColumnValues
+    //    for (let elementType in columnNamesByElementTypes)
+    //        for (let index in columnNamesByElementTypes[elementType]) {
+    //            let columnName = columnNamesByElementTypes[elementType][index];
+    //            let inputOrSelect = row
+    //                .children(`#td_${columnName}`)
+    //                .children(elementType);
 
-                    updateResultLabel(
-                        "#" + lbl_entityQuantity,
-                        `<b>${pagination.infos.CurrentPageCount}/${pageSize}</b> ${langPack_entityQuantity[language]}`,
-                        entityQuantity.color);
-                    //#endregion
+    //            newColumnValues[columnName] = inputOrSelect.val();
+    //        }
+    //    //#endregion
 
-                    //#region add paging button if desired
-                    if (addPagingButtons)
-                        await addPaginationButtonsAsync(
-                            pagination.infos,
-                            pagination.buttonCount,
-                            ul_pagination);
-                    //#endregion
+    //    //#region populate data
+    //    for (let columnName in newColumnValues) {
+    //        data[columnName] =
+    //            oldColumnValues[columnName] == newColumnValues[columnName] ? // is same old value with new value?
+    //                null  // if not changed
+    //                : newColumnValues[columnName]  // if changed
+    //    }
+    //    //#endregion
 
-                    await controlPaginationBackAndNextButtonsAsync(pagination.infos);
-                    resolve();
-                })
-            },
-            error: (response) => {
-                //#region write error to resultLabel
-                updateResultLabel(
-                    lbl_entityQuantity,
-                    JSON.parse(response.responseText).errorMessage,
-                    errorMessageColor);
-                //#endregion
-            },
-        });
-    }
-    function removeInputsAndSelects(row, columnNamesAndValues) {
-        //#region remove <input>'s and <select>'s
-        for (let columnName in columnNamesAndValues) {
-            var td = row.children(`#td_${columnName}`);
-            td.empty();
+    //    //#region set url
+    //    url = `${baseApiUrl}/${routeForUpdate}` +
+    //        `?language=${language}` +
+    //        `&telNo=${oldColumnValues.telNo}`
+    //    //#endregion
 
-            switch (columnName) {
-                case "descriptions":
-                    td.append(columnNamesAndValues[columnName][language]);
-                    break;
-                default:
-                    td.append(columnNamesAndValues[columnName]);
-                    break;
-            }
-        }
-        //#endregion
+    //    //#endregion
 
-        //#region add update button
-        let td_processes = row.children("#td_processes")
+    //    $.ajax({
+    //        method: "POST",
+    //        url: url,
+    //        headers: { "Authorization": jwtToken },
+    //        data: JSON.stringify(data),
+    //        contentType: "application/json",
+    //        dataType: "json",
+    //        success: () => {
+    //            //#region update row infos in session 
+    //            sessionStorage.setItem(
+    //                rowId,
+    //                JSON.stringify(newColumnValues));
+    //            //#endregion
 
-        td_processes.empty()
-        td_processes.append(
-            `<button id="btn_update" class="active" ui-toggle-class="">
-			    <i class="fa fa-pencil text-info">
-                    ${updateButtonName}
-			    </i>
-		    </button>`);
-        //#endregion
-    }
+    //            resetErrorRowAsync(rowId);
+    //            setDisabledOfOtherUpdateButtonsAsync(rowId, pageSize, false);
+    //        },
+    //        error: (response) => {
+    //            //#region write error to error row
+    //            updateErrorRow(
+    //                `#${rowId}_error`,
+    //                JSON.parse(response.responseText).errorMessage,
+    //                errorMessageColor);
+    //            //#endregion
+    //        }
+    //    })
+    //}
     //#endregion
 
     populateHtmlAsync();
-    populateTableAsync()
+    populateTableAsync();
 });

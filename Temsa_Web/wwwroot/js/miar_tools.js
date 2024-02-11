@@ -622,7 +622,7 @@ export function getDateTimeInString(dateTime) {
         : minutes.toString();  // don't add
     //#endregion
 
-    return `${dayInString}.${monthInString}.${year} - ${hoursInString}:${minutesInString}`;
+    return `${dayInString}.${monthInString}.${year}__${hoursInString}:${minutesInString}`;
 }
 export function getHeaderFromLocalInJson(headerName) {
     return JSON.parse(

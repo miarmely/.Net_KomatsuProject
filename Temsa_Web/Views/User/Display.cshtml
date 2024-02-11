@@ -39,20 +39,14 @@
         <div class="table-responsive">
             <table id="tbl_user" class="table table-striped b-t b-light">
                 <thead>
-                    <tr>
-                        @*checbox*@
-                        <th style="width:20px;">
-                            <label class="i-checks m-b-none">
-								<input id="box_all" type="checkbox"><i></i>
-                            </label>
-                        </th>
-                        <th class="th_userTable"></th>
-                        <th class="th_userTable"></th>
-                        <th class="th_userTable"></th>
-                        <th class="th_userTable"></th>
-                        <th class="th_userTable"></th>
-                        <th class="th_userTable"></th>
-                        <th class="th_userTable"></th>
+                    <tr class="tr_columnNames">
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
                     </tr>
                 </thead>
                 <tbody>
@@ -79,25 +73,5 @@
 
 <script>
     const userRole = "@Html.Raw(Model)";
-    const tableTitleByLanguages = {
-        "TR": "KAYITLI KULLANICILAR",
-        "EN": "REGISTERED USERS"
-    };
-    const tableMenubar_optionsByLanguages = {
-        "TR": [
-            "Seçilenleri Sil"
-        ],
-        "EN": [
-            "Delete Selected"
-        ]
-    }
-    const tableMenubar_applyButtonName = {
-        "TR": "Uygula",
-        "EN": "Apply"
-    };
-    const updateButtonNameByLanguages = {
-        "TR": "Güncelle",
-        "EN": "Update",
-    };
 </script>
 <script type="module" src="~/js/miar_user_display.js"></script>
