@@ -17,15 +17,6 @@ $(function () {
     //#region variables
     const pageNumber = 1;
     const pageSize = 10;
-    const routeForDisplay = "user/display/all";
-    const routeForDelete = "user/delete";
-    const entityType = "user"
-    const errorMessageColor = "red";
-    const table_body = $("#tbl_user tbody");
-    const table_head = $("#tbl_user thead tr");
-    const ul_pagination = $("#ul_pagination");
-    const box_all = $("#box_all");
-    const slct_menubar = $("#slct_menubar");
     const pagination = {
         "headerName": "User-Pagination",
         "buttonCount": 5,
@@ -36,6 +27,15 @@ $(function () {
         "color": "#7A7A7A"
     };
     const lbl_entityQuantity = $("#" + entityQuantity.id);
+    const routeForDisplay = "user/display/all";
+    const routeForDelete = "user/delete";
+    const entityType = "user"
+    const errorMessageColor = "red";
+    const table_body = $("#tbl_user tbody");
+    const table_head = $("#tbl_user thead tr");
+    const ul_pagination = $("#ul_pagination");
+    const box_all = $("#box_all");
+    const slct_menubar = $("#slct_menubar");
     const slct_roles = $("#slct_roles");
     const p_resultLabel_id = "p_resultLabel";
     const p_resultLabel = $("#" + p_resultLabel_id);
@@ -109,10 +109,12 @@ $(function () {
         },
         "menubarOptions": {
             "TR": [
-                "Seçilenleri Sil"
+                "Görüntüle",
+                "Sil"
             ],
             "EN": [
-                "Delete Selected"
+                "Display",
+                "Delete"
             ]
         },
         "applyButton": {
@@ -161,6 +163,8 @@ $(function () {
     let rowIdsAndUserInfos = {};
     let isUpdatePageOpenedBefore = false
     let idOfLastClickedRow = null;
+    let slct_menubar_value = '0';  // display
+    let rowIdsForDelete = [];
     //#endregion
 
     //#region events
@@ -209,7 +213,7 @@ $(function () {
             inpt.phone,
             inpt.email]);
 
-        //#region update user
+        //#region update user (ajax)
         let newValues = {
             "firstName": inpt.firstName.val(),
             "lastName": inpt.lastName.val(),
@@ -319,11 +323,9 @@ $(function () {
     //#region display page
     btn.apply.click(async () => {
         switch (slct_menubar.val()) {
-            //#region delete selected values
-            case "0":
+            case '1':  // delete
                 await deleteSelectedUsersAsync();
                 break;
-            //#endregion 
         }
     })
     ul_pagination.click(() => {
@@ -377,67 +379,137 @@ $(function () {
         }
         //#endregion
     })
+    slct_menubar.change(() => {
+        slct_menubar_value = slct_menubar.val();
+
+        switch (slct_menubar_value) {
+            case '0':  // display
+                // reset row colors
+                table_body
+                    .children("tr")
+                    .removeAttr("style");
+
+                // reset td colors
+                table_body
+                    .find("td")
+                    .removeAttr("style");
+
+                // hide apply button and reset colors
+                btn.apply.attr("hidden", "");
+                btn.apply.removeAttr("style");
+
+                break;
+
+            case '1':
+                // add "red" color to apply button
+                btn.apply.css({
+                    "background-color": "red",
+                    "color": "white"
+                })
+                btn.apply.removeAttr("hidden");
+        }
+    })
     spn_eventManager.on("click_row", async (_, event) => {
         //#region set variables
         idOfLastClickedRow = event.currentTarget.id;
         let userInfos = rowIdsAndUserInfos[idOfLastClickedRow];
-
-        // show inputs (reset)
-        $("input").removeAttr("disabled");
-        slct_roles.removeAttr("disabled");
-        btn.save.removeAttr("disabled");
         //#endregion
 
-        //#region change panel title
-        div.panelTitle.empty();
-        div.panelTitle.append(
-            langPack.panelTitle.updatePage[language]);
+        switch (slct_menubar_value) {
+            case '0':  // display
+                //#region show inputs (reset)
+                $("input").removeAttr("disabled");
+                slct_roles.removeAttr("disabled");
+                btn.save.removeAttr("disabled");
+                //#endregion
 
-        await showOrHideBackButtonAsync(
-            "show",
-            div.backButton,
-            div.panelTitle,
-            btn.back);
-        //#endregion
+                //#region change panel title
+                div.panelTitle.empty();
+                div.panelTitle.append(
+                    langPack.panelTitle.updatePage[language]);
 
-        //#region show user update page
-        div.userDisplay.attr("hidden", "");
-        div.userUpdate.removeAttr("hidden");
-        //#endregion
+                await showOrHideBackButtonAsync(
+                    "show",
+                    div.backButton,
+                    div.panelTitle,
+                    btn.back);
+                //#endregion
 
-        //#region when user page is not opened before
-        if (!isUpdatePageOpenedBefore) {
-            await populateElementNamesAsync(langPack.formElementNames[language]);
-            await populateRoleSelectAsync(slct_roles, accountRole, userInfos.roleNames[0]);
-            await populateInfoMessagesAsync();
+                //#region show user update page
+                div.userDisplay.attr("hidden", "");
+                div.userUpdate.removeAttr("hidden");
+                //#endregion
 
-            isUpdatePageOpenedBefore = true;
+                //#region when user page is not opened before
+                if (!isUpdatePageOpenedBefore) {
+                    await populateElementNamesAsync(langPack.formElementNames[language]);
+                    await populateRoleSelectAsync(slct_roles, accountRole, userInfos.roleNames[0]);
+                    await populateInfoMessagesAsync();
+
+                    isUpdatePageOpenedBefore = true;
+                }
+                //#endregion
+
+                await populateInputsWithUserInfosAsync(userInfos);
+
+                //#region authorization control
+                // when user role is editor and role of clicked user is not user
+                if (await isUserRoleThisRoleAsync(accountRole, "editor")
+                    && !await authorizationAsync(userInfos.roleNames[0], ["User", "Kullanıcı"])
+                ) {
+                    //#region disable the inputs if desired
+                    $("input").attr("disabled", "");
+                    slct_roles.attr("disabled", "");
+                    btn.save.attr("disabled", "");
+                    //#endregion
+
+                    //#region write "no permission" error
+                    updateResultLabel(
+                        "#" + p_resultLabel_id,
+                        langPack.errorMessages.noPermission[language],
+                        resultLabel_errorColor,
+                        "30px",
+                        img_loading);
+                    //#endregion
+                }
+                //#endregion
+
+                break;
+            case '1':  // delete
+                //#region when account is "editor" and clicked user is "editor" or "admin"
+                let roleNameOfClickedRow = rowIdsAndUserInfos[idOfLastClickedRow].roleNames[0];
+
+                if (await isUserRoleThisRoleAsync(accountRole, "editor")
+                    && (await isUserRoleThisRoleAsync(roleNameOfClickedRow, "editor")
+                        || await isUserRoleThisRoleAsync(roleNameOfClickedRow, "admin")))
+                    return;
+                //#endregion
+
+                //#region change color of clicked row as "red"
+                let row = table_body.children("#" + idOfLastClickedRow);
+
+                if (row.attr("style") == null) {
+                    row.css("background-color", "red");
+                    row.children("td").css("color", "white");
+
+                    rowIdsForDelete.push(idOfLastClickedRow);
+                }
+                //#endregion
+
+                //#region reset color of clicked row
+                else {
+                    // reset
+                    row.removeAttr("style");
+                    row.children("td").removeAttr("style");
+
+                    // delete id from "rowIdsForDelete" buffer
+                    let indexOfRowId = rowIdsForDelete.indexOf(idOfLastClickedRow);
+                    rowIdsForDelete.splice(indexOfRowId, 1);
+                }
+                //#endregion
+
+                break;
         }
-        //#endregion
-
-        await populateInputsWithUserInfosAsync(userInfos);
-
-        //#region authorization control
-        // when user role is editor and role of clicked user is not user
-        if (await isUserRoleThisRoleAsync(accountRole, "editor")
-            && !await authorizationAsync(userInfos.roleNames[0], ["User", "Kullanıcı"])
-        ) {
-            //#region disable the inputs if desired
-            $("input").attr("disabled", "");
-            slct_roles.attr("disabled", "");
-            btn.save.attr("disabled", "");
-            //#endregion
-
-            //#region write "no permission" error
-            updateResultLabel(
-                "#" + p_resultLabel_id,
-                langPack.errorMessages.noPermission[language],
-                resultLabel_errorColor,
-                "30px",
-                img_loading);
-            //#endregion
-        }
-        //#endregion
     })
     //#endregion
 
@@ -471,12 +543,12 @@ $(function () {
 
         await addColumnNamesToTableAsync();
     }
-    async function populateTableAsync(addPagingButtons = true) {
+    async function populateTableAsync(_pageNumber = pageNumber, addPagingButtons = true) {
         $.ajax({
             method: "GET",
             url: (baseApiUrl + "/user/display/all" +
                 `?language=${language}` +
-                `&pageNumber=${pageNumber}` +
+                `&pageNumber=${_pageNumber}` +
                 `&pageSize=${pageSize}`),
             headers: { "authorization": jwtToken },
             contentType: "application/json",
@@ -607,40 +679,15 @@ $(function () {
         }
     }
     async function deleteSelectedUsersAsync() {
-        //#region set variables
+        //#region set telNoList
         let telNoList = [];
-        let rowNoList = [];
-        //#endregion
 
-        //#region set telNoList and rowNoList
-        await new Promise(resolve => {
-            let checkBox;
-            let row;
-            let telNo;
+        for (let index in rowIdsForDelete) {
+            let rowId = rowIdsForDelete[index];
 
-            for (let rowNo = 1; rowNo <= entityCountOnTable; rowNo += 1) {
-                //#region set variables
-                checkBox = $(`#tr_row${rowNo} #td_checkBox input`);
-                row = $(`#tr_row${rowNo}`);
-                //#endregion 
-
-                //#region populate telNoList and rowNoList if user checked
-                if (checkBox.is(":checked")) {
-                    //#region when update process continuing
-                    if (row.children("td").children("input").length != 0)  // when any <input> exists
-                        clicked_cancelButtonAsync(row);  // cancel update process
-                    //#endregion
-
-                    telNo = row.children("#td_telNo").text();
-
-                    telNoList.push(telNo);
-                    rowNoList.push(rowNo);
-                }
-                //#endregion
-            }
-
-            resolve();
-        })
+            telNoList.push(
+                rowIdsAndUserInfos[rowId].telNo);
+        }
         //#endregion
 
         //#region when any user not select
@@ -650,75 +697,62 @@ $(function () {
 
         $.ajax({
             method: "POST",
-            url: `${baseApiUrl}/${routeForDelete}?language=${language}`,
+            url: baseApiUrl + `/user/delete?language=${language}`,
             headers: {
-                "Authorization": jwtToken
+                "authorization": jwtToken
             },
             data: JSON.stringify({
-                "TelNoList": telNoList
+                "telNoList": telNoList
             }),
             contentType: "application/json",
             dataType: "json",
+            before: () => {
+                img_loading.removeAttr("hidden");
+            },
             success: () => {
-                let currentPageNo = paginationInfosInJson.CurrentPageNo;
+                new Promise(async resolve => {
+                    //#region when all users on page deleted
+                    if (telNoList.length == pagination.infos.CurrentPageCount) {
+                        //#region when next page exists
+                        if (pagination.infos.HasNext)
+                            await populateTableAsync();  // refresh current page
+                        //#endregion
 
-                //#region when all users on page deleted
-                if (telNoList.length == entityCountOnTable) {
-                    //#region when next page exists
-                    if (paginationInfosInJson.HasNext)
-                        alert(1);
-                    //#endregion
+                        //#region when previous page exists
+                        else if (paginationInfosInJson.HasPrevious)
+                            await populateTableAsync(pagination.infos.CurrentPageNo - 1);
+                        //#endregion
 
-                    //#region when previous page exists
-                    else if (paginationInfosInJson.HasPrevious)
-                        alert(2);
-                    //#endregion
+                        //#region when any machines not found
+                        else {
+                            table_body.empty();
 
-                    //#region when any machines not found
-                    else {
-                        table_body.empty();
-
-                        updateResultLabel(
-                            "#" + entityQuantity.id,
-                            `<b>0/${pageSize}<b> ${langPack.entityQuantity[language]}`,
-                            errorMessageColor);
+                            updateResultLabel(
+                                "#" + entityQuantity.id,
+                                `<b>0/${pageSize}<b> ${langPack.entityQuantity[language]}`,
+                                resultLabel_errorColor);
+                        }
+                        //#endregion
                     }
                     //#endregion
-                }
-                //#endregion
 
-                //#region when some users on page deleted
-                else
-                    populateTable(
-                        entityType,
-                        routeForDisplay,
-                        language,
-                        currentPageNo,
-                        pageSize,
-                        table_body,
-                        columnNamesToBeFill,
-                        updateButtonName,
-                        pagination.headerName,
-                        lbl_entityQuantity,
-                        ul_pagination,
-                        errorMessageColor,
-                        pagination.buttonCount,
-                        langPack.entityQuantity[language],
-                        true);  // refresh current page
-                //#endregion
+                    //#region when some users on page deleted
+                    else
+                        await populateTableAsync(); // refresh current page
+                    //#endregion
 
-                //#region do unchecked 'box_all'
-                box_all.prop("checked", false);
-                //#endregion
+                    img_loading.removeAttr("hidden");
+                    resolve();
+                })
             },
             error: (response) => {
-                //#region write error to entity quantity label
+                // write error to entity quantity label
                 updateResultLabel(
                     "#" + entityQuantity.id,
                     JSON.parse(response.responseText).errorMessage,
-                    errorMessageColor
-                );
-                //#endregion
+                    resultLabel_errorColor,
+                    "30px",
+                    img_loading);
             }
         });
     }
@@ -735,80 +769,6 @@ $(function () {
         //#endregion
 
         return true;
-    }
-
-    async function clicked_saveButtonAsync(row) {
-        //#region set variables
-        let rowId = row.attr("id");
-        let columnNamesByElementTypes = {
-            "input": [
-                "firstName",
-                "lastName",
-                "companyName",
-                "telNo",
-                "email",
-            ],
-            "select": [
-                "roleNames"
-            ]
-        }
-        let oldColumnValues = JSON.parse(
-            sessionStorage.getItem(rowId));
-        let newColumnValues = {};
-        var data = {};
-
-        //#region populate newColumnValues
-        for (let elementType in columnNamesByElementTypes)
-            for (let index in columnNamesByElementTypes[elementType]) {
-                let columnName = columnNamesByElementTypes[elementType][index];
-                let inputOrSelect = row
-                    .children(`#td_${columnName}`)
-                    .children(elementType);
-
-                newColumnValues[columnName] = inputOrSelect.val();
-            }
-        //#endregion
-
-        //#region populate data
-        for (let columnName in newColumnValues) {
-            data[columnName] =
-                oldColumnValues[columnName] == newColumnValues[columnName] ? // is same old value with new value?
-                    null  // if not changed
-                    : newColumnValues[columnName]  // if changed
-        }
-        //#endregion
-
-
-        //#endregion
-
-        $.ajax({
-            method: "POST",
-            url: (`${baseApiUrl}/user/update` +
-                `?language=${language}` +
-                `&telNo=${r.telNo}`),
-            headers: { "Authorization": jwtToken },
-            data: JSON.stringify(data),
-            contentType: "application/json",
-            dataType: "json",
-            success: () => {
-                //#region update row infos in session 
-                sessionStorage.setItem(
-                    rowId,
-                    JSON.stringify(newColumnValues));
-                //#endregion
-
-                resetErrorRowAsync(rowId);
-                setDisabledOfOtherUpdateButtonsAsync(rowId, pageSize, false);
-            },
-            error: (response) => {
-                //#region write error to error row
-                updateErrorRow(
-                    `#${rowId}_error`,
-                    JSON.parse(response.responseText).errorMessage,
-                    errorMessageColor);
-                //#endregion
-            }
-        })
     }
     //#endregion
 

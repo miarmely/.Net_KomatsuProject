@@ -113,7 +113,7 @@ namespace Presantation.Controllers
 
 
         [HttpPost("delete")]
-        [Authorization("Admin,Yönetici")]
+        [Authorization("Admin,Editor,Yönetici,Editör")]
         public async Task<IActionResult> DeleteUsersAsync(
             [FromQuery] LanguageParams languageParams,
             [FromBody] UserDtoForDelete userDto)
