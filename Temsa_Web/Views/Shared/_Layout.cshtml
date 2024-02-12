@@ -115,8 +115,8 @@
 		</section>
 
 		<script>
-			//const baseApiUrl = "http://104.247.163.183:5551/api/services";  // for server
-			const baseApiUrl = "http://192.168.200.1:5551/api/services";  // for iis in my pc
+			const baseApiUrl = "http://104.247.163.183:5551/api/services";  // for server
+			//const baseApiUrl = "http://192.168.200.1:5551/api/services";  // for iis in my pc
 			//const baseApiUrl = "http://localhost:7091/api/services";  // for local
 			const token = localStorage.getItem("token");
 			const jwtToken = "Bearer " + token;
@@ -303,14 +303,22 @@
 					"fileLoading": "file loading...",
 				}
 			}
-			const partnerErrorMessagesByLanguages = {
-				"TR": {
-					"invalidFileType": "geçersiz dosya tipi",
-					"nullArguments": "herhangi bir değişiklik yapılmadı"
+			const langPack_partnerErrorMessages = {
+				"invalidFileType": {
+					"TR": "geçersiz dosya tipi",
+					"EN": "invalid file type"
 				},
-				"EN": {
-					"invalidFileType": "invalid file type",
-					"nullArguments": "no changes were made"
+				"nullArguments": {
+					"TR": "herhangi bir değişiklik yapılmadı",
+					"EN": "no changes were made"
+				},
+				"noPermission": {
+					"TR": "yetkiniz yok",
+					"EN": "you don't have permission"
+				},
+				"anErrorOccured": {
+					"TR": "bir hata oluştu", 
+					"EN": "an error occured"
 				}
 			}
 			let language = localStorage.getItem("language"); // language was add at "login.cshtml".

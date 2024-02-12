@@ -1,0 +1,30 @@
+﻿#div_userDisplay tbody tr:hover {
+    background-color: #4136f1;
+    cursor: pointer
+}
+
+    #div_userDisplay tbody tr:hover td {
+        color: white;
+    }
+
+#div_userDisplay thead th {
+    text-align: center;
+}
+
+#div_userDisplay .table-responsive tbody {
+    text-align: center
+}
+
+    #div_userDisplay .table-responsive tbody td {
+        word-break: keep-all;
+    }
+
+#btn_back {
+    color: black;
+    background-color: red;
+    width: 55px;
+}
+
+#btn_save:disabled{
+    background-color: darkgray
+}

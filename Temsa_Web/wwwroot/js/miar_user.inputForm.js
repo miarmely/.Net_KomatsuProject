@@ -191,4 +191,13 @@ export async function checkInputsWhetherBlankAsync(inputList) {
 
     return isAnyInputBlank;
 }
+export async function getRoleNameByPageLanguageAsync(roleName, roleLanguage) {
+   // when role language is equal to page language
+    if (roleLanguage == language)
+        return roleName;
+
+    // when not equal (translate)
+    else
+        return roleTranslator[roleLanguage][roleName];
+}
 //#endregion

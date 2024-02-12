@@ -206,7 +206,7 @@ export async function change_imageInputAsync(
     if (!await isFileTypeValidAsync(selectedFileInfos, "image")) {
         await writeErrorToBelowOfInputAsync(
             inpt_chooseImage,
-            partnerErrorMessagesByLanguages[language]["invalidFileType"]);
+            langPack_partnerErrorMessages.invalidFileType[language]);
 
         // reset file input
         inpt_image.val("");
@@ -274,7 +274,7 @@ export async function change_videoInputAsync(
     if (!await isFileTypeValidAsync(selectedFileInfos, "video/")) {
         await writeErrorToBelowOfInputAsync(
             inpt_chooseVideo,
-            partnerErrorMessagesByLanguages[language]["invalidFileType"]);
+            langPack_partnerErrorMessages.invalidFileType[language]);
 
         // reset file input
         inpt_video.val("");
@@ -341,7 +341,7 @@ export async function change_pdfInputAsync(
     if (!await isFileTypeValidAsync(selectedFileInfos, "application/pdf")) {
         await writeErrorToBelowOfInputAsync(
             inpt_choosePdf,
-            partnerErrorMessagesByLanguages[language]["invalidFileType"]);
+            langPack_partnerErrorMessages.invalidFileType[language]);
 
         // reset file input
         inpt_pdf.val("");
@@ -423,31 +423,6 @@ export async function machineForm_removeVideoAttrAsync(vid_machine, src_machine)
         src_machine.removeAttr("src type");
     }
     //#endregion
-}
-export async function machineForm_showOrHideBackButtonAsync(
-    mode,
-    div_backButton,
-    div_panelTitle,
-    btn_back
-) {
-    switch (mode) {
-        case "show":
-            // show back button
-            div_backButton.removeAttr("hidden");
-
-            // shift the panel title to right
-            div_panelTitle.css(
-                "padding-left",
-                btn_back.css("width"));
-            break;
-        case "hide":
-            // hide back button
-            div_backButton.attr("hidden", "");
-
-            // shift the panel title to left
-            div_panelTitle.css("padding-left", "");
-            break;
-    }
 }
 export async function machineForm_setMachineVideoSizeAsync(vid_machine) {
     //#region set width and max-height

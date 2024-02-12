@@ -26,6 +26,7 @@ import {
 
 import {
     btn_descriptions_id, changeDescriptionsButtonColorAsync, descriptions,
+    descriptions_baseButtonNameByLanguages,
     setVariablesForDescriptionsAsync, uploadDescriptionsEventsAsync
 } from "./miar_descriptions.js"
 
@@ -251,7 +252,7 @@ $(function () {
             // write error
             updateResultLabel(
                 "#" + spn_resultLabel_id,
-                partnerErrorMessagesByLanguages[language]["nullArguments"],
+                langPack_partnerErrorMessages.nullArguments[language],
                 resultLabel_errorColor,
                 "30px",
                 img_loading);
@@ -522,9 +523,15 @@ $(function () {
                     isUpdatePageOpenedBefore = true;
                 }
 
-                else
+                else {
                     // show machine image
                     btn_showImage.trigger("click");
+
+                    // update description button name
+                    $("#" + btn_descriptions_id).empty()
+                    $("#" + btn_descriptions_id).append(
+                        `<b>${descriptions_baseButtonNameByLanguages[language]} (${language})</b>`)
+                }
                 //#endregion
 
                 await addDefaultValueToInputsAsync();

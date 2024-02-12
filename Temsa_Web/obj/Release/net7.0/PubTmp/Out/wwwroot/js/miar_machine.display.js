@@ -1,7 +1,7 @@
 ﻿import {
     updateResultLabel, addPaginationButtonsAsync, getFileTypeFromFileName,
     controlPaginationBackAndNextButtonsAsync, isAllObjectValuesNullAsync,
-    updateElementText, getBase64StrOfFileAsync, autoObjectMapperAsync
+    updateElementText, getBase64StrOfFileAsync, autoObjectMapperAsync, showOrHideBackButtonAsync
 } from "./miar_tools.js";
 
 import {
@@ -19,14 +19,14 @@ import {
     change_pdfInputAsync, machineForm_removePosterAttrAsync,
     machineForm_addElementNamesAsync, machineForm_populateSelectsAsync,
     click_showImageButtonAsync, click_showVideoButtonAsync,
-    machineForm_showOrHideBackButtonAsync, click_inputAsync, click_textAreaAsync,
-    change_imageInputAsync, change_videoInputAsync,
+    click_inputAsync, click_textAreaAsync, change_imageInputAsync, change_videoInputAsync,
     machineForm_activeOrPassiveTheImageOrVideoBtnAsync,
     machineForm_checkWhetherBlankTheInputsAsync, machineForm_populateInfoMessagesAsync
 } from "./miar_machine.js"
 
 import {
     btn_descriptions_id, changeDescriptionsButtonColorAsync, descriptions,
+    descriptions_baseButtonNameByLanguages,
     setVariablesForDescriptionsAsync, uploadDescriptionsEventsAsync
 } from "./miar_descriptions.js"
 
@@ -36,7 +36,7 @@ import { checkValueOfNumberInputAsync } from "./miar_module_inputForm.js";
 $(function () {
     //#region variables
     const pageNumber = 1;
-    const pageRow = 3;
+    const pageRow = 2;
     const paginationButtonQuantity = 5;
     const nameOfPaginationHeader = "Machine-Pagination";
     const errorMessageColor = "rgb(255, 75, 75)";
@@ -252,7 +252,7 @@ $(function () {
             // write error
             updateResultLabel(
                 "#" + spn_resultLabel_id,
-                partnerErrorMessagesByLanguages[language]["nullArguments"],
+                langPack_partnerErrorMessages.nullArguments[language],
                 resultLabel_errorColor,
                 "30px",
                 img_loading);
@@ -316,7 +316,7 @@ $(function () {
         div_article_display.removeAttr("hidden");
         //#endregion
 
-        await machineForm_showOrHideBackButtonAsync(
+        await showOrHideBackButtonAsync(
             "hide",
             div_backButton,
             div_panelTitle,
@@ -523,13 +523,19 @@ $(function () {
                     isUpdatePageOpenedBefore = true;
                 }
 
-                else
+                else {
                     // show machine image
                     btn_showImage.trigger("click");
+
+                    // update description button name
+                    $("#" + btn_descriptions_id).empty()
+                    $("#" + btn_descriptions_id).append(
+                        `<b>${descriptions_baseButtonNameByLanguages[language]} (${language})</b>`)
+                }
                 //#endregion
 
                 await addDefaultValueToInputsAsync();
-                await machineForm_showOrHideBackButtonAsync(
+                await showOrHideBackButtonAsync(
                     "show",
                     div_backButton,
                     div_panelTitle,

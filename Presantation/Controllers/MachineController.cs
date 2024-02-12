@@ -181,7 +181,7 @@ namespace Presantation.Controllers
 
 		
 		[HttpPost("delete")]
-		[Authorization("Admin,Yönetici")]
+		[Authorization("Admin,Editor,Yönetici,Editör")]
 		public async Task<IActionResult> DeleteMachines(
 			[FromQuery] MachineParamsForDelete machineParams,
 			[FromBody] IEnumerable<MachineDtoForDelete> machineDtos)

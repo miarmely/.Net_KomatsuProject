@@ -234,38 +234,31 @@ export async function addPaginationButtonsAsync(
         : paginationButtonQuantity
     //#endregion
 
-    //#region reset paginationButtons if exists
-    if (ul_pagination.children("li").length != 0)
-        ul_pagination.empty()
-    //#endregion
-
-    //#region add paginationBack button as hidden
+    //#region add back button as hidden
+    ul_pagination.empty()
     ul_pagination.append(
         `<li>
-		<a id="a_paginationBack" href="#" hidden>
-			<i class="fa fa-chevron-left"></i>
-		</a>
-	</li>`);
+		    <a id="a_paginationBack" href="#" hidden>
+			    <i class="fa fa-chevron-left"></i>
+		    </a>
+	    </li>`);
     //#endregion
 
     //#region add pagination buttons
     for (let pageNo = 1; pageNo <= buttonQuantity; pageNo += 1)
         ul_pagination.append(
             `<li>
-			<a href="#"> 
-				${pageNo}
-			</a>
-		</li> `
-        );
+			    <a href="#">${pageNo}</a>
+		    </li> `);
     //#endregion
 
-    //#region add paginationNext button as hidden
+    //#region add next button as hidden
     ul_pagination.append(
         `<li>
-		<a id="a_paginationNext" href="#" hidden>
-			<i class="fa fa-chevron-right"></i>
-		</a>
-	</li>`);
+		    <a id="a_paginationNext" href="#" hidden>
+			    <i class="fa fa-chevron-right"></i>
+		    </a>
+	    </li>`);
     //#endregion
 }
 export async function controlPaginationBackAndNextButtonsAsync(paginationInfosInJson) {
@@ -350,8 +343,6 @@ export async function populateElementByAjaxOrLocalAsync(
             contentType: "application/json",
             dataType: "json",
             success: (response) => {
-                func_populate(response);
-
                 //#region save data to local
 
                 //#region initialize "dataInLocal"
@@ -368,6 +359,8 @@ export async function populateElementByAjaxOrLocalAsync(
                 //#endregion
 
                 //#endregion
+
+                func_populate(response);
 
                 //#region call function after populate process
                 if (func_afterPopulated != null)
@@ -393,9 +386,7 @@ export async function populateSelectAsync(select, options, optionToBeDisplay = n
     for (let index in options) {
         let option = options[index];
 
-        select.append(
-            `<option>${option}</option>`
-        )
+        select.append(`<option>${option}</option>`);
     }
     //#endregion
 
@@ -587,6 +578,46 @@ export async function getKeysOfBlankValuesAsync(data) {
 
     return keysWithBlankValue;
 }
+export async function showOrHideBackButtonAsync(
+    mode,
+    div_backButton,
+    div_panelTitle,
+    btn_back
+) {
+    switch (mode) {
+        case "show":
+            // show back button
+            div_backButton.removeAttr("hidden");
+
+            // shift the panel title to right
+            div_panelTitle.css(
+                "padding-left",
+                btn_back.css("width"));
+            break;
+        case "hide":
+            // hide back button
+            div_backButton.attr("hidden", "");
+
+            // shift the panel title to left
+            div_panelTitle.css("padding-left", "");
+            break;
+    }
+}
+export async function isUserRoleThisRoleAsync(userRole, targetRole) {
+    //#region check user role whether is desired role
+    switch (targetRole) {
+        case "user":
+            if (userRole == "User" || userRole == "Kullanıcı") return true;
+            return false;
+        case "editor":
+            if (userRole == "Editor" || userRole == "Editör") return true;
+            return false;
+        case "admin":
+            if (userRole == "Admin" || userRole == "Yönetici") return true;
+            return false;
+    }
+    //#endregion
+}
 export function getDateTimeInString(dateTime) {
     //#region set year
     let date = new Date(dateTime);
@@ -629,7 +660,7 @@ export function getDateTimeInString(dateTime) {
         : minutes.toString();  // don't add
     //#endregion
 
-    return `${dayInString}.${monthInString}.${year} - ${hoursInString}:${minutesInString}`;
+    return `${dayInString}.${monthInString}.${year}__${hoursInString}:${minutesInString}`;
 }
 export function getHeaderFromLocalInJson(headerName) {
     return JSON.parse(

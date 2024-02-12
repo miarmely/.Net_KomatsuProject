@@ -1,8 +1,0 @@
-﻿input:hover{
-    background-color: #4136f1;
-    color: white
-}
-    input:hover::selection {
-        background-color: white;
-        color: black
-    }

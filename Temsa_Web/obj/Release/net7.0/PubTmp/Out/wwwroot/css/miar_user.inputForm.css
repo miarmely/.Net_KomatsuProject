@@ -1,0 +1,41 @@
+﻿.help-block {
+    color: red;
+    text-align: center
+}
+
+.div_infoMessage > button[class= dropdown-toggle] {
+    width: 20px;
+    height: 20px;
+    position: relative;
+    top: 3.5px;
+    background-image: url("../images/info.png");
+    background-color: transparent;
+    background-size: cover;
+    border-width: 0px;
+}
+
+.div_infoMessage > ul {
+    padding-left: 10px;
+    padding-right: 10px;
+    font-size: 15px
+}
+
+    .div_infoMessage > ul > li {
+        margin-bottom: 5px;
+    }
+
+#btn_showPassword {
+    width: 25px;
+    height: 25px;
+    position: relative;
+    top: 3.5px;
+    background-image: url(../images/show.png);
+    background-size: cover;
+    background-color: transparent;
+    border-width: 0px;
+}
+
+select option:disabled {
+    background-color: white;
+    color: lightgray;
+}

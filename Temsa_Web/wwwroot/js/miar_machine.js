@@ -206,7 +206,7 @@ export async function change_imageInputAsync(
     if (!await isFileTypeValidAsync(selectedFileInfos, "image")) {
         await writeErrorToBelowOfInputAsync(
             inpt_chooseImage,
-            partnerErrorMessagesByLanguages[language]["invalidFileType"]);
+            langPack_partnerErrorMessages.invalidFileType[language]);
 
         // reset file input
         inpt_image.val("");
@@ -274,7 +274,7 @@ export async function change_videoInputAsync(
     if (!await isFileTypeValidAsync(selectedFileInfos, "video/")) {
         await writeErrorToBelowOfInputAsync(
             inpt_chooseVideo,
-            partnerErrorMessagesByLanguages[language]["invalidFileType"]);
+            langPack_partnerErrorMessages.invalidFileType[language]);
 
         // reset file input
         inpt_video.val("");
@@ -341,7 +341,7 @@ export async function change_pdfInputAsync(
     if (!await isFileTypeValidAsync(selectedFileInfos, "application/pdf")) {
         await writeErrorToBelowOfInputAsync(
             inpt_choosePdf,
-            partnerErrorMessagesByLanguages[language]["invalidFileType"]);
+            langPack_partnerErrorMessages.invalidFileType[language]);
 
         // reset file input
         inpt_pdf.val("");

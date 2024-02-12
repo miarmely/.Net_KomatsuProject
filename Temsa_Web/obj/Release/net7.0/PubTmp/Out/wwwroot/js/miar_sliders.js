@@ -54,7 +54,7 @@ $(function () {
             // write error
             updateResultLabel(
                 resultLabel_id,
-                partnerErrorMessagesByLanguages[language]["invalidFileType"],
+                langPack_partnerErrorMessages.invalidFileType[language],
                 resultLabel_errorColor,
                 "0px",
                 img_loading);
@@ -622,4 +622,3 @@ $(function () {
     populateHtmlAsync();
     populateSliderAsync();
 })
-

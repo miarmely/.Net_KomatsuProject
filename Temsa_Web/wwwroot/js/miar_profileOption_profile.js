@@ -1,12 +1,12 @@
 ﻿import {
-    autoObjectMapperAsync, populateElementByAjaxOrLocalAsync, populateSelectAsync,
-    updateResultLabel
+    autoObjectMapperAsync, isUserRoleThisRoleAsync, populateElementByAjaxOrLocalAsync,
+    populateSelectAsync, updateResultLabel
 } from "./miar_tools.js";
 
 import {
     checkInputsWhetherBlankAsync, click_userForm_inputAsync, populateInfoMessagesAsync,
     click_userForm_showPasswordButtonAsync, keyup_userForm_inputAsync, roleTranslator,
-    populateElementNamesAsync
+    populateElementNamesAsync, getRoleNameByPageLanguageAsync
 } from "./miar_user.inputForm.js";
 
 
@@ -83,6 +83,32 @@ $(function () {
         $(resultLabel_id).empty();
         //#endregion
 
+        //#region when account is editor and role is changed (security)
+        if (await isUserRoleThisRoleAsync(claimInfos.roleNames, "editor")
+            && !await isUserRoleThisRoleAsync(slct_roles.val(), "editor")
+        ) {
+            //#region write error
+            updateResultLabel(
+                resultLabel_id,
+                langPack_partnerErrorMessages.anErrorOccured[language],
+                resultLabel_errorColor,
+                "30px",
+                img_loading);
+            //#endregion
+
+            //#region add account role to select again
+            let accountRoleByPageLanguage = await getRoleNameByPageLanguageAsync(
+                claimInfos.roleNames,
+                claimInfos.roleLanguage);
+
+            slct_roles.val(accountRoleByPageLanguage);
+            slct_roles.attr("disabled", "");  // disable select
+            //#endregion
+
+            return;
+        }
+        //#endregion
+
         //#region set data
         let currentValues = {
             "firstName": inpt.firstName.val(),
@@ -104,7 +130,7 @@ $(function () {
         }
         //#endregion
 
-        //#region when all data values is null (error)
+        //#region when no any change (error)
         // get total null value count
         let nullCounter = 0;
         for (let key in data) {
@@ -116,7 +142,7 @@ $(function () {
         if (nullCounter == Object.keys(data).length) {
             updateResultLabel(
                 resultLabel_id,
-                partnerErrorMessagesByLanguages[language]["nullArguments"],
+                langPack_partnerErrorMessages.nullArguments[language],
                 resultLabel_errorColor,
                 "30px",
                 img_loading);
@@ -125,7 +151,6 @@ $(function () {
         }
         //#endregion
 
-        // update user infos
         $.ajax({
             method: "POST",
             url: (baseApiUrl + "/user/update" +
@@ -164,7 +189,7 @@ $(function () {
                     "30px",
                     img_loading);
             }
-        })
+        })  // update user infos
     });
     $("input").click(async (event) => {
         await click_userForm_inputAsync(event, $(resultLabel_id));
@@ -211,28 +236,14 @@ $(function () {
         inpt.phone.val(claimInfos.telNo);
         inpt.email.val(claimInfos.email);
         //#region role name
+        // populate role select with account role
+        slct_roles.val(await getRoleNameByPageLanguageAsync(
+            claimInfos.roleNames,
+            claimInfos.roleLanguage));
 
-        //#region when role language isn't equal to page language
-        if (claimInfos.roleLanguage != language) {
-            // update claimInfos object according page language
-            claimInfos.roleNames = roleTranslator[claimInfos.roleLanguage][claimInfos.roleNames];
-            claimInfos.roleLanguage = language;
-
-            // update claim infos in local
-            localStorage.setItem(
-                localKeys_claimInfos,
-                JSON.stringify(claimInfos));
-        }
-        //#endregion
-
-        //#region disable role select when user is not "Admin"
-        slct_roles.val(claimInfos.roleNames);  // display role
-
-        if (language == "TR" && claimInfos.roleNames != "Yönetici"
-            || (language == "EN" && claimInfos.roleNames != "Admin"))
+        // disable role select when account is editor
+        if (await isUserRoleThisRoleAsync(claimInfos.roleNames, "editor"))
             slct_roles.attr("disabled", "");
-                    //#endregion
-
         //#endregion
     }
     async function updateClaimInfosAsync(data) {
