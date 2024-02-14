@@ -12,7 +12,7 @@ export let articleBuffer = {
     "div_articles": "",  // should be set
     "path_articleVideos": "",
     "totalArticleCount": 0,  // should be set
-    "articleCountOnOneRow" : 0,
+    "articleCountOnOneRow": 0,
     "articleType": "",  // should be set 
     "articleStyle": {  // should be set
         "width": 0,
@@ -29,6 +29,7 @@ export let articleBuffer = {
         "borderColor": "",
         "boxShadow": "",
         "bgColorForDelete": "",
+        "widthHeightRatio": 0,
     }  // firstly articleType should be set
 }
 let articleInfos_lastUploadedPlayImage = {};
@@ -181,7 +182,7 @@ export async function setVariablesForArticleAsync(variables) {
     }
     //#endregion
 }
-export async function addArticlesAsync(autoAlign=true) {
+export async function addArticlesAsync(autoAlign = true) {
     // articleType: "imageAndText", "videoAndText", "text"
 
     //#region add articles
@@ -331,7 +332,7 @@ export async function alignArticlesToCenterAsync(widthUnit = "px") {
     //#region set padding left and right of article
     articleBuffer.articleCountOnOneRow = await getArticleCountOnOneRowAsync(widthUnit);
     let whiteSpaceWidth = div_articles_width - (article_netCurrentWidth * articleBuffer.articleCountOnOneRow);
-    
+
     articleBuffer.div_articles.css({
         "padding-left": Math.floor(whiteSpaceWidth / 2),
         "padding-right": Math.floor(whiteSpaceWidth / 2)
@@ -424,12 +425,46 @@ export async function getValidArticleWidthAsync(
     //#region when article net width is bigger than div_articles (OVERFLOW)
     let div_articles_width = div_articles.prop("clientWidth");
     let article_expectedMaxWidth = div_articles_width - style_article.marginR - style_article.marginL;
-    
+
     if (style_article.width > article_expectedMaxWidth)
         return article_expectedMaxWidth;
     //#endregion
 
     return style_article.width;  // when article net width is valid
+}
+export async function getArticleWidthAsync(
+    articleStyle = { "articleCountOnOneRow": 0, "marginR": 0, "marginL": 0 },
+    div_articles
+) {
+    //#region when device is mobile (set article width as one article)
+    let div_articles_width = div_articles.prop("clientWidth");
+    const mobileDeviceTypes = [
+        /Android/i,
+        /webOS/i,
+        /iPhone/i,
+        /iPad/i,
+        /iPod/i,
+        /BlackBerry/i,
+        /Windows Phone/i
+    ];
+
+    // check the device type whether is mobile
+    if (mobileDeviceTypes.some(deviceType => window
+        .navigator
+        .userAgent
+        .match(deviceType))
+    ) {
+        let article_expectedMaxWidth = div_articles_width - articleStyle.marginR - articleStyle.marginL;
+        return article_expectedMaxWidth;
+    }
+    //#endregion
+
+    //#region when device is PC (set article width by desired article count)
+    let totalMarginAmount = articleStyle.articleCountOnOneRow * (articleStyle.marginR + articleStyle.marginL);
+    let whiteSpaceAmount = div_articles_width - totalMarginAmount;
+    
+    return Math.floor(whiteSpaceAmount / articleStyle.articleCountOnOneRow);
+    //#endregion
 }
 export function showPlayImage(article) {
     //#region hide video
@@ -525,7 +560,7 @@ function setStylesOfArticleElements() {
             style_vid_width_VT = style_div_video_width_VT;
             style_vid_height_VT = style_div_video_height_VT;
 
-            style_img_play_width_VT = style_vid_width_VT / 2.7;
+            style_img_play_width_VT = style_vid_width_VT / 2.5;
             style_img_play_height_VT = style_vid_height_VT / 2.2;
             style_img_play_marginT_VT = (style_vid_height_VT - style_img_play_height_VT) / 2;
             style_img_play_marginB_VT = style_img_play_marginT_VT;

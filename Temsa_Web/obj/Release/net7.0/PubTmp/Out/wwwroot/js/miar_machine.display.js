@@ -7,11 +7,9 @@
 import {
     addArticlesAsync, articleBuffer, art_baseId, setVariablesForArticleAsync,
     mouseover_articleVideoAsync, click_articleVideoDivAsync, controlArticleWidthAsync,
-    div_article_button_id, div_article_info_id, div_article_video_id,
+    div_article_button_id, div_article_info_id, div_article_video_id, getValidArticleWidthAsync,
     ended_articleVideoAsync, alignArticlesAsAutoAsync, mouseout_articleVideoDivAsync,
-    removeLastUploadedArticleVideoAsync,
-    getArticleCountOnOneRowAsync,
-    getValidArticleWidthAsync
+    removeLastUploadedArticleVideoAsync, getArticleCountOnOneRowAsync,    
 } from "./miar_article.js";
 
 import {
@@ -630,12 +628,11 @@ $(function () {
             "path_articleVideos": path_videoFolderAfterWwwroot,
             "articleType": "videoAndText",
             "articleStyle": {
-                "width": await getValidArticleWidthAsync({
-                    "width": 370,
-                    "marginR": 20,
-                    "marginL": 20
-                }, div_articles),
-                "height": 560,
+                "width": await getValidArticleWidthAsync(
+                    { "width": 300, "marginR": 20, "marginL": 20 },
+                    div_articles
+                ),
+                "height": 550,  // 560
                 "marginT": 10,
                 "marginB": 10,
                 "marginR": 20,
@@ -749,7 +746,7 @@ $(function () {
                 <h2 style="margin-bottom: 5px">${machineInfos.model}</h2>
                 <h3 style="margin-bottom: 3px">${machineInfos.mainCategoryName}</h3>
                 <h4 style="margin-bottom: 20px">${machineInfos.subCategoryName}</h4>
-                <h5>${machineInfos.descriptions[language].substring(0, descriptions_charQuantityToBeDisplayOnArticle)}...</h5>
+                <h6>${machineInfos.descriptions[language].substring(0, descriptions_charQuantityToBeDisplayOnArticle)}...</h5>
             `);
             //#endregion
 
