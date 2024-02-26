@@ -46,10 +46,10 @@ namespace Entities.DtoModels.MachineDtos
 
 	public record DescriptionsByLanguages
 	{
-		[MiarLength(1, 2000, "TR Açıklama", "Description In TR")]
+		[MiarLength(1, -1, "TR Açıklama", "Description In TR")]
 		public string? TR { get; init; }
 
-		[MiarLength(1, 2000, "EN Açıklama", "Description In EN")]
+		[MiarLength(1, -1, "EN Açıklama", "Description In EN")]
 		public string? EN { get; init; }
 	}
 }

@@ -1,5 +1,4 @@
 ﻿import { writeErrorToBelowOfInputAsync } from "./miar_module_inputForm.js";
-import { populateElementByAjaxOrLocalAsync, populateSelectAsync } from "./miar_tools.js";
 
 //#region variables
 export const roleTranslator = {
@@ -17,8 +16,8 @@ export const roleTranslator = {
 const langPack = {
     "errorMessages": {
         "blankInput": {
-            "TR": "bu alanı doldurmalısın.",
-            "EN": "you must fill in this field."
+            "TR": "bu alanı doldurmalısın",
+            "EN": "you must fill in this field"
         }
     },
     "infoMessages": {

@@ -651,7 +651,7 @@ $(function () {
 
         pageSize = articleCountOnOneRow * pageRow;
         //#endregion
-
+        2
         $.ajax({
             method: "GET",
             url: (baseApiUrl + "/machine/display/all" +

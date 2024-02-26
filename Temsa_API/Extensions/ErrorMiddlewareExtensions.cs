@@ -35,11 +35,11 @@ namespace Temsa_Api.Extensions
                             var errorDto = JsonSerializer
                                 .Deserialize<ErrorDto>(exceptionMessage);
 
-                            // if error can be deserialize then this error is
-                            // expected error. But when error can't be desirealize 
-                            // then this error is unexpected error and not know
-                            // where from throwed so this error should show
-                            // without desiralize at "catch"
+                            // if error message can be deserialize then this error is
+                            // expected error. But when error message can't be
+                            // desirealize then this error is unexpected error and not
+                            // know where from throwed so this error should show on
+                            // "catch" without desiralize 
                             #endregion
 
                             #region when error occured in "login"
@@ -68,7 +68,7 @@ namespace Temsa_Api.Extensions
                                         .Equals("language"))
                                     .Value;
 
-                                // control language whether found
+                                // control the language whether valid
                                 var validLanguages = new List<string> { "TR", "EN" };
 
                                 language = validLanguages.Contains(language) ?

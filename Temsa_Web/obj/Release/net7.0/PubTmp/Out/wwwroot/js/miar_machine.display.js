@@ -385,7 +385,7 @@ $(function () {
 
     //#region for articles page
     $("#div_sidebarMenuButton").click(async () => {
-        //#region when articles page is opened
+        //#region when sidebar is opened
         if (div_article_display.attr("hidden") == undefined)
             setTimeout(async () => {
                 await controlArticleWidthAsync();
@@ -651,7 +651,7 @@ $(function () {
 
         pageSize = articleCountOnOneRow * pageRow;
         //#endregion
-
+        2
         $.ajax({
             method: "GET",
             url: (baseApiUrl + "/machine/display/all" +
@@ -674,8 +674,6 @@ $(function () {
 
                 addArticlesAsync(true)
                     .then(async () => {
-                        await controlArticleWidthAsync();
-                        await alignArticlesAsAutoAsync();
                         await populateArticlesAsync(response);
 
                         //#region get pagination infos from headers

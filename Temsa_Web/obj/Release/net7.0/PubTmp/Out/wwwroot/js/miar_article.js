@@ -267,6 +267,7 @@ export async function addArticlesAsync(autoAlign = true) {
 
     //#region align articles and set height of div_articles
     if (autoAlign) {
+        await controlArticleWidthAsync();
         await alignArticlesToCenterAsync();
         await setHeightOfArticlesDivAsync();
     }
@@ -333,10 +334,9 @@ export async function alignArticlesToCenterAsync(widthUnit = "px") {
     articleBuffer.articleCountOnOneRow = await getArticleCountOnOneRowAsync(widthUnit);
     let whiteSpaceWidth = div_articles_width - (article_netCurrentWidth * articleBuffer.articleCountOnOneRow);
 
-    articleBuffer.div_articles.css({
-        "padding-left": Math.floor(whiteSpaceWidth / 2),
-        "padding-right": Math.floor(whiteSpaceWidth / 2)
-    });
+    articleBuffer.div_articles.css(
+        "padding-left",
+        Math.floor(whiteSpaceWidth / 2));
     //#endregion
 }
 export async function setHeightOfArticlesDivAsync() {

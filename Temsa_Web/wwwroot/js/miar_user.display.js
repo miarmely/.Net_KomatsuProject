@@ -2,14 +2,13 @@
     paginationInfosInJson, updateResultLabel, entityCountOnTable, getDateTimeInString,
     addPaginationButtonsAsync, controlPaginationBackAndNextButtonsAsync,
     populateElementByAjaxOrLocalAsync, populateSelectAsync, showOrHideBackButtonAsync,
-    isUserRoleThisRoleAsync,
-    autoObjectMapperAsync
+    isUserRoleThisRoleAsync, autoObjectMapperAsync
 } from "./miar_tools.js"
 
 import {
-    checkInputsWhetherBlankAsync, click_userForm_inputAsync, populateElementNamesAsync,
-    click_userForm_showPasswordButtonAsync, keyup_userForm_inputAsync,
-    populateInfoMessagesAsync
+    click_userForm_inputAsync, populateElementNamesAsync, keyup_userForm_inputAsync,
+    populateInfoMessagesAsync, click_userForm_showPasswordButtonAsync,
+    checkInputsWhetherBlankAsync
 } from "./miar_user.inputForm.js";
 
 
@@ -163,7 +162,7 @@ $(function () {
     let rowIdsAndUserInfos = {};
     let isUpdatePageOpenedBefore = false
     let idOfLastClickedRow = null;
-    let slct_menubar_value = '0';  // display
+    let slct_menubar_value = '0';  // '0': display
     let rowIdsForDelete = [];
     //#endregion
 
