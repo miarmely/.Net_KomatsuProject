@@ -92,7 +92,6 @@ $(function () {
             errorMessagesByLanguages[language]["blankInput"],
             [
                 inpt.chooseImage,
-                inpt.chooseVideo,
                 inpt.choosePdf,
                 inpt.model,
                 inpt.brand,
@@ -350,7 +349,7 @@ $(function () {
                 headers: { "Authorization": jwtToken },
                 data: JSON.stringify({
                     "ImageName": selectedImageInfos.name,
-                    "VideoName": selectedVideoInfos.name,
+                    "VideoName": selectedVideoInfos == null ? null : selectedVideoInfos.name,
                     "MainCategoryName": slct.mainCategory.val(),
                     "SubCategoryName": slct.subCategory.val(),
                     "Model": inpt.model.val(),
@@ -418,6 +417,11 @@ $(function () {
         });
     }
     async function uploadMachineVideoToFolderAsync() {
+        //#region when any video is not selected
+        if (selectedVideoInfos == null)
+            return true;
+        //#endregion
+
         return new Promise(async resolve => {
             $.ajax({
                 type: "POST",

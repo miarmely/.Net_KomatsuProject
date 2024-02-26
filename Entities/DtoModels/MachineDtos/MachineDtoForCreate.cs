@@ -9,9 +9,12 @@ namespace Entities.DtoModels.MachineDtos
 		public string ImageName { get; init; }
 
 		[MiarLength(1, 50, "Video Adı", "Video Name")]
-		public string VideoName { get; init; }
+		public string? VideoName { get; init; }
 
-		[MiarLength(1, 50, "Ana Kategori", "Main Category")]
+        [MiarLength(1, 50, "PDF Adı", "PDF Name")]
+        public string PdfName { get; init; }
+
+        [MiarLength(1, 50, "Ana Kategori", "Main Category")]
 		public string MainCategoryName { get; init; }
 
 		[MiarLength(1, 50, "Alt Kategori", "Sub Category")]
@@ -30,9 +33,6 @@ namespace Entities.DtoModels.MachineDtos
 		public int Stock { get; init; }
 
 		public string HandStatus { get; init; }
-
-		[MiarLength(1, 50, "PDF Adı", "PDF Name")]
-		public string PdfName { get; init; }
 
 		public DescriptionsByLanguages? Descriptions { get; init; }
 	}

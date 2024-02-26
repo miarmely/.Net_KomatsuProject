@@ -401,7 +401,8 @@ export async function machineForm_removePosterAttrAsync(vid_machine, src_machine
 }
 export async function machineForm_removeVideoAttrAsync(vid_machine, src_machine) {
     //#region when video is object url
-    if (src_machine.attr("src").startsWith("blob:"))
+    if (src_machine.attr("src") != null  // when any video is exists
+        && src_machine.attr("src").startsWith("blob:"))
         await removeObjectUrlFromElementAsync(
             src_machine,
             "src",

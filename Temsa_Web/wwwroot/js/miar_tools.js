@@ -618,6 +618,18 @@ export async function isUserRoleThisRoleAsync(userRole, targetRole) {
     }
     //#endregion
 }
+export async function resetFormAsync(lbl_result) {
+    // reset inputs and result label
+    $("form")[0].reset();
+    lbl_result.empty();
+
+    // remove error message
+    $("form .help-block").empty();
+
+    // reset "red" border color of input or select
+    $("form input").css("border-color", "");
+    $("form select").css("border-color", "");
+}
 export function getDateTimeInString(dateTime) {
     //#region set year
     let date = new Date(dateTime);

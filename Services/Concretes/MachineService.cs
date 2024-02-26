@@ -7,9 +7,11 @@ using Entities.ViewModels;
 using Microsoft.AspNetCore.Authentication.OAuth.Claims;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
+using Microsoft.IdentityModel.Tokens;
 using Repositories;
 using Repositories.Contracts;
 using Services.Contracts;
+using System.Collections;
 using System.Data;
 
 namespace Services.Concretes
@@ -69,13 +71,10 @@ namespace Services.Concretes
 			#region delete files that not using by other machines (throw)
 			if (fileNamesNotExistsOnTableInStr != null)
 			{
-				#region add file names in str to array
-				var fileNamesNotExistsOnTable = fileNamesNotExistsOnTableInStr
-					.Split(',');
-				#endregion
+                #region delete files
+                var fileNamesNotExistsOnTable = fileNamesNotExistsOnTableInStr.Split(',');
 
-				#region delete files
-				foreach (var fileName in fileNamesNotExistsOnTable)
+                foreach (var fileName in fileNamesNotExistsOnTable)
 					await _fileService.DeleteFileOnFolderByPathAsync(
 						language,
 						fileFolderPathAfterWwwroot,
@@ -470,13 +469,20 @@ namespace Services.Concretes
 				FileTypes.Image);
 			#endregion
 
-			#region delete videos on folder
-			await DeleteFilesFromFolderForMachineAsync(
-				machineParams.Language,
-				machineParams.VideoFolderPathAfterWwwroot,
-				machineDtos.Select(m => m.VideoName),
-				"VideoName",
-				FileTypes.Video);
+			#region delete videos on folder if exists
+			// get values that not null
+			var videoNames = machineDtos
+				.Select(m => m.VideoName)
+				.Where(v => !v.IsNullOrEmpty());
+
+			// when video exists
+			if(!videoNames.IsNullOrEmpty())
+				await DeleteFilesFromFolderForMachineAsync(
+					machineParams.Language,
+					machineParams.VideoFolderPathAfterWwwroot,
+					videoNames,
+					"VideoName",
+					FileTypes.Video);
 			#endregion
 
 			#region delete Pdfs on folder
