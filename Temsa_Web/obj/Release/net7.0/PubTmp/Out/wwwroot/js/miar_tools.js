@@ -453,9 +453,11 @@ export async function isAllObjectValuesNullAsync(object) {
 }
 export async function autoObjectMapperAsync(targetObject, sourceObject, dontAddNullValues = false) {
     //#region update target object values with source object values
+    let keysOfTarget = Object.keys(targetObject);
+
     for (let sourceKey in sourceObject) {
-        //#region when source key exists in target object
-        if (targetObject[sourceKey] != undefined) {
+        //#region when source key is exists in target object
+        if (keysOfTarget.indexOf(sourceKey) != -1){
             //#region when source object value is null (check null)
             if (dontAddNullValues && sourceObject[sourceKey] == null)
                 continue;
@@ -617,6 +619,18 @@ export async function isUserRoleThisRoleAsync(userRole, targetRole) {
             return false;
     }
     //#endregion
+}
+export async function resetFormAsync(lbl_result) {
+    // reset inputs and result label
+    $("form")[0].reset();
+    lbl_result.empty();
+
+    // remove error message
+    $("form .help-block").empty();
+
+    // reset "red" border color of input or select
+    $("form input").css("border-color", "");
+    $("form select").css("border-color", "");
 }
 export function getDateTimeInString(dateTime) {
     //#region set year

@@ -83,7 +83,6 @@ $(function () {
         }
         //#endregion
     }
-
     async function populateElementsOnHeaderAsync() {
         //#region add placeholder to search bar
         $("#inpt_searchBar").attr(
@@ -109,7 +108,6 @@ $(function () {
         );
         //#endregion       
     }
-
     async function populateSideBarMenuAsync() {
         //#region add sidebar main menus
         for (let menuName in sidebar_mainMenus) {
@@ -177,12 +175,10 @@ $(function () {
         }
         //#endregion
     }
-
     async function populateFooterAsync() {
         $("#spn_footerInfo").append(
             footerInfoByLanguages[language]);
     }
-
     async function populateHtmlAsync() {
         await populateElementsOnHeaderAsync();
         await populateProfileOptionsAsync();

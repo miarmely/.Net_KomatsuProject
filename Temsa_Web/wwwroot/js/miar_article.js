@@ -87,9 +87,9 @@ export async function click_articleVideoDivAsync(article) {
     //#region set variables
     let vid_machine = article.find("video");
     let videoName = article_idsAndMachineInfos[article.attr("id")]["videoName"];
-    let videoType = videoName == null ?
+    let videoType = (videoName == null ?
         null
-        : videoName.substring(videoName.lastIndexOf(".") + 1);
+        : videoName.substring(videoName.lastIndexOf(".") + 1));
     //#endregion
 
     //#region load video

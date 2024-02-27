@@ -3,9 +3,9 @@
 } from "./miar_tools.js";
 
 import {
-    checkInputsWhetherBlankAsync, click_userForm_inputAsync, populateInfoMessagesAsync,
+    click_userForm_inputAsync, populateInfoMessagesAsync,
     click_userForm_showPasswordButtonAsync, keyup_userForm_inputAsync,
-    populateElementNamesAsync
+    populateElementNamesAsync, checkInputsWhetherBlankAsync
 } from "./miar_user.inputForm.js";
 
 

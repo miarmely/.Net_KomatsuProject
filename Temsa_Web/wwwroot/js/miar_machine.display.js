@@ -19,7 +19,7 @@ import {
     click_showImageButtonAsync, click_showVideoButtonAsync,
     click_inputAsync, click_textAreaAsync, change_imageInputAsync, change_videoInputAsync,
     machineForm_activeOrPassiveTheImageOrVideoBtnAsync,
-    machineForm_checkWhetherBlankTheInputsAsync, machineForm_populateInfoMessagesAsync
+    machineForm_checkWhetherBlankTheInputsAsync, machineForm_populateInfoMessagesAsync, keyup_userForm_inputAsync
 } from "./miar_machine.js"
 
 import {
@@ -149,8 +149,30 @@ $(function () {
     $("#" + div_article_update_id + " input").click(async (event) => {
         await click_inputAsync(event, spn_resultLabel);
     })
+    $("#" + div_article_update_id + " input").on("keyup", async (event) => {
+        //#region when error is exists below of input
+        let input = $("#" + event.target.id);
+        let spn_help_message = input
+            .siblings("span")
+            .text();
+        
+        if (spn_help_message != "")
+            await keyup_userForm_inputAsync(event, spn_resultLabel);
+        //#endregion
+    })
     $("#" + div_article_update_id + " textarea").click(async (event) => {
         await click_textAreaAsync(event, spn_resultLabel);
+    })
+    $("#" + div_article_update_id + " textarea").on("keyup", async (event) => {
+        //#region when error is exists below of input
+        let input = $("#" + event.target.id);
+        let spn_help_message = input
+            .siblings("span")
+            .text();
+
+        if (spn_help_message != "")
+            await keyup_userForm_inputAsync(event, spn_resultLabel);
+        //#endregion
     })
     $("#" + div_article_update_id + " input[type= number]").change(async (event) => {
         //#region check number input whether max or min value violation
@@ -185,6 +207,12 @@ $(function () {
         //#endregion
     })
     btn_save.click(async (event) => {
+        //#region resets
+        event.preventDefault();
+        spn_resultLabel.empty();
+        spn_resultLabel.removeAttr("style");
+        //#endregion
+
         //#region check whether blank that inputs
         let isAnyInputBlank = await machineForm_checkWhetherBlankTheInputsAsync(
             errorMessagesByLanguages[language]["blankInput"],
@@ -203,14 +231,9 @@ $(function () {
             return;
         //#endregion
 
-        //#region show loading image
-        event.preventDefault();
-        spn_resultLabel.empty();
-        spn_resultLabel.removeAttr("style");
-        img_loading.removeAttr("hidden");
-        //#endregion
-
         //#region set variables
+        img_loading.removeAttr("hidden");  // show
+
         let oldMachineInfos = article_idsAndMachineInfos[idOfLastClickedArticle];
         let newMachineInfos = {
             "imageName": inpt_chooseImage.val(),

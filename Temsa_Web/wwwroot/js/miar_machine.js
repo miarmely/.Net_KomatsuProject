@@ -661,9 +661,9 @@ export async function machineForm_checkWhetherBlankTheInputsAsync(
     }
     //#endregion
 
-    //#region when description in page language is blank
-    if (descriptions.byLanguages[language] == null  // when any description isn't added
-        || descriptions.byLanguages[language] == '') {  // when blank description added.
+    //#region when description is blank
+    if (descriptions.byLanguages[descriptions.language] == null  // when any description isn't added
+        || descriptions.byLanguages[descriptions.language] == '') {  // when empty description is added.
         await writeErrorToBelowOfInputAsync(
             $("#" + txt_descriptions_id),
             errorMessage_blankInput);

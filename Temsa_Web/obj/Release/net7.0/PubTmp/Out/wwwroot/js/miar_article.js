@@ -83,18 +83,36 @@ export async function click_articleVideoDivAsync(article) {
     hidePlayImage(article);
 
     //#region load article video
-    let videoName = article_idsAndMachineInfos[article.attr("id")]["videoName"];
 
-    article
-        .find("video")
+    //#region set variables
+    let vid_machine = article.find("video");
+    let videoName = article_idsAndMachineInfos[article.attr("id")]["videoName"];
+    let videoType = (videoName == null ?
+        null
+        : videoName.substring(videoName.lastIndexOf(".") + 1));
+    //#endregion
+
+    //#region load video
+    vid_machine
+        .children("source")
         .attr({
             "src": "/" + articleBuffer.path_articleVideos + "/" + videoName,
+            "type": "video/" + videoType
+        })
+
+    vid_machine
+        .attr({
             "controls": "",
             "autoplay": ""
         });
 
-    // save article of last uploaded video 
+    vid_machine.load();
+    //#endregion
+
+    //#region save article of last uploaded video 
     articleInfos_lastUploadedVideo["article"] = article;
+    //#endregion
+
     //#endregion
 }
 export async function mouseover_articleVideoAsync(event, article) {
@@ -509,9 +527,9 @@ export function hidePlayImage(article) {
 export function isVideoExists(article) {
     let src = article
         .find("video")
-        .attr("src");
+        .attr("controls");
 
-    return src != undefined;
+    return src != null;
 }
 export function removeArticleVideo(article) {
     //#region remove attributes article video

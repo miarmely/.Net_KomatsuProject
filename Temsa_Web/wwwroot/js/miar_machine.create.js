@@ -10,7 +10,7 @@ import {
     click_showImageButtonAsync, click_showVideoButtonAsync,
     click_inputAsync, click_textAreaAsync, change_imageInputAsync, change_videoInputAsync,
     machineForm_activeOrPassiveTheImageOrVideoBtnAsync,
-    machineForm_checkWhetherBlankTheInputsAsync, machineForm_populateInfoMessagesAsync
+    machineForm_checkWhetherBlankTheInputsAsync, machineForm_populateInfoMessagesAsync, keyup_userForm_inputAsync
 } from "./miar_machine.js";
 
 import { updateResultLabel, getBase64StrOfFileAsync } from "./miar_tools.js"
@@ -172,13 +172,35 @@ $(function () {
 
         //#endregion 
     })
-    $("#" + div.form_id + " input").click(async (event) => {
+    $("input").click(async (event) => {
         await click_inputAsync(event, spn_resultLabel);
     })
-    $("#" + div.form_id + " textarea").click(async (event) => {
+    $("input").on("keyup", async (event) => {
+        //#region when error is exists below of input
+        let input = $("#" + event.target.id);
+        let spn_help_message = input
+            .siblings("span")
+            .text();
+
+        if (spn_help_message != "")
+            await keyup_userForm_inputAsync(event, spn_resultLabel);
+        //#endregion
+    })
+    $("textarea").click(async (event) => {
         await click_textAreaAsync(event, spn_resultLabel);
     })
-    $("#" + div.form_id + " input[type= number]").change(async (event) => {
+    $("textarea").on("keyup", async (event) => {
+        //#region when error is exists below of input
+        let input = $("#" + event.target.id);
+        let spn_help_message = input
+            .siblings("span")
+            .text();
+
+        if (spn_help_message != "")
+            await keyup_userForm_inputAsync(event, spn_resultLabel);
+        //#endregion
+    })
+    $("input[type= number]").change(async (event) => {
         //#region check number input whether max or min value violation
         let input = $("#" + event.target.id);
 

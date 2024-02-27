@@ -273,14 +273,6 @@
       "PackagePath": "staticwebassets\\images\\machines\\d85-exi-1250x835-02.webp"
     },
     {
-      "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\images\\machines\\hide.png",
-      "PackagePath": "staticwebassets\\images\\machines\\hide.png"
-    },
-    {
-      "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\images\\machines\\information.png",
-      "PackagePath": "staticwebassets\\images\\machines\\information.png"
-    },
-    {
       "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\images\\machines\\pc950lc-11.jpg",
       "PackagePath": "staticwebassets\\images\\machines\\pc950lc-11.jpg"
     },
@@ -745,12 +737,8 @@
       "PackagePath": "staticwebassets\\pdfs\\MachineDetails.pdf"
     },
     {
-      "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\pdfs\\adli-sicil-kaydi.pdf",
-      "PackagePath": "staticwebassets\\pdfs\\adli-sicil-kaydi.pdf"
-    },
-    {
-      "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\pdfs\\sgk_4a_ise_giris_bildirgesi (1).pdf",
-      "PackagePath": "staticwebassets\\pdfs\\sgk_4a_ise_giris_bildirgesi (1).pdf"
+      "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\videos\\machines\\_Geometric80s28_preview.mp4",
+      "PackagePath": "staticwebassets\\videos\\machines\\_Geometric80s28_preview.mp4"
     },
     {
       "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\videos\\machines\\random1.mp4",
