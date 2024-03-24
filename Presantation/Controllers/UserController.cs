@@ -48,7 +48,6 @@ namespace Presantation.Controllers
 
 
         [HttpPost("register")]
-		[Authorization]
         public async Task<IActionResult> RegisterAsync(
 			[FromQuery] LanguageParams languageParams,
             [FromBody] UserDtoForRegister userDto)

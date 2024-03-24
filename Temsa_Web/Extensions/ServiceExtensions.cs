@@ -37,8 +37,8 @@ namespace Temsa_Web.Extensions
 		}
 
         public static void ConfigureAddControllersWithView(
-        this IServiceCollection services) =>
-            services.AddControllersWithViews();
+			this IServiceCollection services) =>
+				services.AddControllersWithViews();
 
         public static void ConfigureConfigModels(
             this IServiceCollection services,

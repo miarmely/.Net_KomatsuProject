@@ -53,7 +53,11 @@ namespace Repositories
 			HttpContext? httpContext = null)
 		{
 			#region when not wanting add to header
-			var pagingList = new PagingList<T>(source, totalCount, pageNumber, pageSize);
+			var pagingList = new PagingList<T>(
+				source, 
+				totalCount, 
+				pageNumber, 
+				pageSize);
 			
 			if (headerKey == null)
 				return pagingList;

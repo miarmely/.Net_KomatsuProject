@@ -155,7 +155,15 @@ namespace Services.Concretes
 			string language,
 			UserDtoForRegister userDto)
 		{
+			#region add "user" role to user
 			var userDtoForCreate = _mapper.Map<UserDtoForCreate>(userDto);
+
+			if (language.Equals("TR"))
+				userDtoForCreate.RoleNames.Add("Kullanıcı");
+
+			else
+				userDtoForCreate.RoleNames.Add("User");
+			#endregion
 
 			await CreateUserAsync(language, userDtoForCreate);
 		}
@@ -181,7 +189,7 @@ namespace Services.Concretes
 				TelNo = userDto.TelNo,
 				Email = userDto.Email,
 				Password = await _micro.ComputeMd5Async(userDto.Password),
-				RoleNames = string.Join(",", userDto.RoleNames) // list to string 
+				RoleNames = string.Join(",", userDto.RoleNames) // convert list to string 
 			});
 
 			parameters.Add("Language", language, DbType.String);
