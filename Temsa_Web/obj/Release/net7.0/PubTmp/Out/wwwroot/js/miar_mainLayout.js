@@ -14,10 +14,8 @@ $(function () {
     //#endregion
 
     //#region events
-    ul_profileOptions.click(() => {
-        let selectedMenu = $(":focus");
-
-        switch (selectedMenu.attr("id")) {
+    ul_profileOptions.click((event) => {
+        switch ($(event.target).attr("id")) {
             //#region when clicked to "logout"
             case profileOption_logout_id:
                 //#region reset all local
@@ -37,9 +35,9 @@ $(function () {
             //#endregion
         }
     })
-    $(".sidebar-menu").click(() => {
+    $(".sidebar-menu").click((event) => {
         //#region control whether click to main menu that have sub menus
-        let a_selectedMenu = $(":focus");
+        let a_selectedMenu = $(event.target);
 
         switch (a_selectedMenu.attr("class")) {
             //#region when select menu that have sub menus

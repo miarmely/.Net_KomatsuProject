@@ -40,7 +40,7 @@
 			<header class="header fixed-top clearfix">
 				<!-- logo -->
 				<div class="brand">
-					<a href="/machine/display" class="logo">KOMATSU</a>
+					<a href="/machine/display" class="logo"><img src="~/images/komatsuLogo_white.svg" alt="Komatsu" title="Komatsu" style="width:170px"/></a>
 					<div class="sidebar-toggle-box">
 						<div id="div_sidebarMenuButton" class="fa fa-bars"></div>
 					</div>
@@ -115,7 +115,7 @@
 		</section>
 
 		<script>
-			const baseApiUrl = "http://104.247.163.183:5551/api/services";  // for iis in server
+			const baseApiUrl = "http://104.247.163.183:5551/api/services";  // for iis in real server
 			//const baseApiUrl = "http://192.168.200.1:5551/api/services";  // for iis in my pc
 			//const baseApiUrl = "http://localhost:7091/api/services";  // for local
 			const token = localStorage.getItem("token");
@@ -132,7 +132,7 @@
 						"href": `/profileOption/profile`
 					},
 					"logout": {
-						"icon": "fa fa-close",
+						"icon": "fa fa-sign-out",
 						"label": " Çıkıp Yap",
 						"href": "/authentication/logout"
 					},
@@ -144,8 +144,8 @@
 						"href": `/profileOption/profile`
 					},
 					"logout": {
-						"icon": "fa fa-close",
-						"label": " Logout",
+						"icon": "fa fa-sign-out",
+						"label": "Logout",
 						"href": "/authentication/logout"
 					},
 				}
@@ -153,44 +153,44 @@
 			const sidebar_mainMenus_byLanguages = {
 				"TR": {
 					"users": {
-						"icon": "fa fa-book",
+						"icon": "fa fa-users",
 						"label": "Kullanıcılar",
 						"href": "#"
 					},
 					"machines": {
-						"icon": "fa fa-book",
+						"icon": "fa fa-truck",
 						"label": "Makineler",
 						"href": "#"
 					},
 					"sliders": {
-						"icon": "fa fa-cog",
+						"icon": "fa fa-picture-o",
 						"label": "Sliderlar",
 						"href": "/slider/index"
 					},
 					"forms" : {
-						"icon": "fa fa-cog",
+						"icon": "fa fa-check-square-o",
 						"label": "Formlar",
 						"href": "#"
 					}
 				},
 				"EN": {
 					"users": {
-						"icon": "fa fa-book",
+						"icon": "fa fa-users",
 						"label": "Users",
 						"href": "#"
 					},
 					"machines": {
-						"icon": "fa fa-book",
+						"icon": "fa fa-truck",
 						"label": "Machines",
 						"href": "#"
 					},
 					"sliders": {
-						"icon": "fa fa-cog",
+						"icon": "fa fa-picture-o",
 						"label": "Sliders",
 						"href": "/slider/index"
 					},
 					"forms" : {
-						"icon": "fa fa-cog",
+						"icon": "fa fa-check-square-o",
 						"label": "Forms",
 						"href": "#"
 					}

@@ -403,7 +403,7 @@ $(function () {
 
     //#region for articles page
     $("#div_sidebarMenuButton").click(async () => {
-        //#region when sidebar is opened
+        //#region when display page is opened
         if (div_article_display.attr("hidden") == undefined)
             setTimeout(async () => {
                 await controlArticleWidthAsync();

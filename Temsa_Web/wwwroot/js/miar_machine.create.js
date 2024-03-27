@@ -95,8 +95,7 @@ $(function () {
                 inpt.choosePdf,
                 inpt.model,
                 inpt.brand,
-                inpt.year,
-                inpt.stock
+                inpt.year
             ]);
 
         if (isAnyInputBlank)
@@ -364,6 +363,8 @@ $(function () {
         await uploadDescriptionsEventsAsync();
     }
     async function createMachineAsync() {
+        let stock = inpt.stock.val();
+
         return new Promise(resolve => {
             $.ajax({
                 method: "POST",
@@ -378,7 +379,7 @@ $(function () {
                     "BrandName": inpt.brand.val(),
                     "HandStatus": $("input[name= handStatus]:checked").val(),
                     "PdfName": selectedPdfInfos.name,
-                    "Stock": inpt.stock.val(),
+                    "Stock": stock == "" ? null : stock,
                     "Year": inpt.year.val(),
                     "Descriptions": {
                         "TR": descriptions.byLanguages.TR,

@@ -95,6 +95,7 @@ namespace Services.Concretes
 			#region set parameters
 			var parameters = new DynamicParameters(new
 			{
+				languageParams.Language,
 				machineDto.MainCategoryName,
 				machineDto.SubCategoryName,
 				machineDto.Model,
@@ -108,8 +109,6 @@ namespace Services.Concretes
 				machineDto.VideoName,
 				machineDto.PdfName
 			});
-
-			parameters.Add("Language", languageParams.Language, DbType.String);
 			#endregion
 
 			#region create machine

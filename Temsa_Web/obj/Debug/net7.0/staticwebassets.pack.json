@@ -181,8 +181,20 @@
       "PackagePath": "staticwebassets\\images\\info.png"
     },
     {
+      "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\images\\komatsuLogo_blue.svg",
+      "PackagePath": "staticwebassets\\images\\komatsuLogo_blue.svg"
+    },
+    {
+      "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\images\\komatsuLogo_white.svg",
+      "PackagePath": "staticwebassets\\images\\komatsuLogo_white.svg"
+    },
+    {
       "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\images\\loading.gif",
       "PackagePath": "staticwebassets\\images\\loading.gif"
+    },
+    {
+      "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\images\\machines\\01-Anasayfa.png",
+      "PackagePath": "staticwebassets\\images\\machines\\01-Anasayfa.png"
     },
     {
       "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\images\\machines\\D155AX-8_Walkaround_01.png",
@@ -269,6 +281,10 @@
       "PackagePath": "staticwebassets\\images\\machines\\WA600-8_Walkaround_01.png"
     },
     {
+      "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\images\\machines\\d2.png",
+      "PackagePath": "staticwebassets\\images\\machines\\d2.png"
+    },
+    {
       "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\images\\machines\\d85-exi-1250x835-02.webp",
       "PackagePath": "staticwebassets\\images\\machines\\d85-exi-1250x835-02.webp"
     },
@@ -331,6 +347,14 @@
     {
       "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\images\\show.png",
       "PackagePath": "staticwebassets\\images\\show.png"
+    },
+    {
+      "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\images\\sliders\\pc210lc-11e0-1250x723-01.webp",
+      "PackagePath": "staticwebassets\\images\\sliders\\pc210lc-11e0-1250x723-01.webp"
+    },
+    {
+      "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\images\\sliders\\yeni-cag-yeni.webp",
+      "PackagePath": "staticwebassets\\images\\sliders\\yeni-cag-yeni.webp"
     },
     {
       "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\images\\user.png",
@@ -733,8 +757,16 @@
       "PackagePath": "staticwebassets\\lib\\jquery\\dist\\jquery.min.map"
     },
     {
-      "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\pdfs\\MachineDetails.pdf",
-      "PackagePath": "staticwebassets\\pdfs\\MachineDetails.pdf"
+      "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\pdfs\\senCard Dental Conertlü.pdf",
+      "PackagePath": "staticwebassets\\pdfs\\senCard Dental Conertlü.pdf"
+    },
+    {
+      "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\videos\\machines\\_Geometric80s28_preview.mp4",
+      "PackagePath": "staticwebassets\\videos\\machines\\_Geometric80s28_preview.mp4"
+    },
+    {
+      "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\videos\\machines\\pexels-andi-farruku-6194506 (2160p).mp4",
+      "PackagePath": "staticwebassets\\videos\\machines\\pexels-andi-farruku-6194506 (2160p).mp4"
     },
     {
       "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\videos\\machines\\random1.mp4",

@@ -18,7 +18,7 @@ namespace Presantation.Controllers
 
 
 		[HttpPost("create")]
-		[Authorization("Admin,Yönetici,Editor,Editör")]
+		//[Authorization("Admin,Yönetici,Editor,Editör")]
 		public async Task<IActionResult> CreateMachine(
 			[FromQuery] LanguageParams languageParams,
 			[FromBody] MachineDtoForCreate machineDto)

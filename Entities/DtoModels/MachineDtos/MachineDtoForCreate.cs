@@ -30,7 +30,7 @@ namespace Entities.DtoModels.MachineDtos
 		public int Year { get; init; }
 
 		[MiarRange(1, 5000, "Stok", "Stock")]
-		public int Stock { get; init; }
+		public int? Stock { get; init; }
 
 		public string HandStatus { get; init; }
 
