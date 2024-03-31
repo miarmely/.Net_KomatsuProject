@@ -24,6 +24,7 @@
 		string Machine_GetSubCategoryNames,
 		string Machine_GetAllHandStatus,
 		string Machine_SeparateTheValuesNotExistsOnTable,
+		string Machine_Category_AddMainAndSubCategories,
 		string Slider_Create,
 		string Slider_DisplayAll,
 		string Slider_DisplaySliderPathBySliderNo,

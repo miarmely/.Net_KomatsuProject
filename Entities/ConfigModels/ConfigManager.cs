@@ -17,7 +17,6 @@ namespace Entities.ConfigModels
 		public LoginSettingsConfig LoginSettings => _loginSettings.Value;
 		public ErrorDetailsConfig ErrorDetails => _errorDetails.Value;
 
-		
 		public ConfigManager(
 			IOptions<JwtSettingsConfig> jwtSettings,
 			IOptions<MailSettingsConfig> mailSettings,

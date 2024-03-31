@@ -6,5 +6,6 @@
 		IMachineRepository MachineRepository { get; }
 		IFileRepository FileRepository { get; }
 		IFormRepository FormRepository { get; }
+		IMachineCategoryRepository MachineCategoryRepository { get; }
 	}
 }

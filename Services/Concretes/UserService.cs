@@ -22,7 +22,8 @@ using System.Text;
 
 namespace Services.Concretes
 {
-	public partial class UserService : IUserService
+	public partial class UserService // private
+		: IUserService
 	{
 		private readonly IRepositoryManager _manager;
 		private readonly IConfigManager _configs;
@@ -118,7 +119,7 @@ namespace Services.Concretes
 		}
 	}
 
-	public partial class UserService
+	public partial class UserService  // public
 	{
 		public async Task<string> LoginForMobileAsync(
 			string language,

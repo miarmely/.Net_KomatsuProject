@@ -1,7 +1,6 @@
 ﻿using AutoMapper;
 using Entities.ConfigModels.Contracts;
 using MicroServices;
-using Microsoft.AspNetCore.Http;
 using Repositories.Contracts;
 using Services.Contracts;
 
@@ -15,6 +14,7 @@ namespace Services.Concretes
 		private readonly Lazy<IFileService> _fileService;
 		private readonly Lazy<ISliderService> _sliderService;
 		private readonly Lazy<IFormService> _formService;
+		private readonly Lazy<IMachineCategoryService> _machineCategoryService;
 		
 		public IUserService UserService => _userService.Value;
 		public IMailService MailService => _mailService.Value;
@@ -22,6 +22,8 @@ namespace Services.Concretes
 		public IFileService FileService => _fileService.Value;
 		public ISliderService SliderService => _sliderService.Value;
 		public IFormService FormService => _formService.Value;
+		public IMachineCategoryService MachineCategoryService => 
+			_machineCategoryService.Value;
        
 		public ServiceManager(
 			IRepositoryManager manager,
@@ -41,6 +43,8 @@ namespace Services.Concretes
 				new SliderService(manager, configs, FileService));
 			_formService = new Lazy<IFormService>(() => 
 				new FormService(manager));
+			_machineCategoryService = new Lazy<IMachineCategoryService>(() => 
+				new MachineCategoryService(manager));
         }
 	}
 }

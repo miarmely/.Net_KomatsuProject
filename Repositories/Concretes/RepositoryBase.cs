@@ -1,25 +1,37 @@
 ﻿using Dapper;
 using Entities.ConfigModels.Contracts;
-using Entities.Exceptions;
+using Entities.DtoModels;
 using Repositories.Contracts;
 using System.Data;
-using System.Reflection.Metadata.Ecma335;
+
 
 namespace Repositories.Concretes
 {
-    public abstract class RepositoryBase : IRepositoryBase
+    public abstract partial class RepositoryBase  // private
+		: IRepositoryBase
+	{
+		private RepositoryContext _context;
+		private readonly IConfigManager _configs;
+
+		public IConfigManager Configs => _configs;
+
+		public RepositoryBase(RepositoryContext context, IConfigManager configs)
+		{
+			_context = context;
+			_configs = configs;
+		}
+
+		private CommandDefinition GetCommandDefinitionForProcedures(
+			string commandText,
+			DynamicParameters? parameters) =>
+				new CommandDefinition(
+					commandText,
+					parameters,
+					commandType: CommandType.StoredProcedure);
+	}
+
+    public abstract partial class RepositoryBase  // public
     {
-        private RepositoryContext _context;
-        private readonly IConfigManager _configs;
-
-        public IConfigManager Configs => _configs;
-
-        public RepositoryBase(RepositoryContext context, IConfigManager configs)
-        {
-            _context = context;
-            _configs = configs;
-        }
-            
         public async Task<IEnumerable<T>> QueryAsync<T>(
             string procedureName, 
             DynamicParameters? parameters)
@@ -97,7 +109,7 @@ namespace Repositories.Concretes
 			using (var connection = _context.CreateSqlConnection())
 			{
 				using (var multi = await connection
-					.QueryMultipleAsync(sqlCommand, parameters))
+                    .QueryMultipleAsync(sqlCommand, parameters))
 				{
 					return await funcAsync(multi);
 				}
@@ -105,17 +117,35 @@ namespace Repositories.Concretes
 			#endregion
 		}
 
+		public async Task<ErrorDto> ExecuteAsync(
+			string sql, 
+			DynamicParameters parameters)
+		{
+			#region update parameters
+			parameters.Add("StatusCode", 0, DbType.Int16, ParameterDirection.Output);
+			parameters.Add("ErrorCode", "", DbType.String, ParameterDirection.Output);
+			parameters.Add("ErrorMessage", "", DbType.String, ParameterDirection.Output);
+			parameters.Add("ErrorDescription", 
+				"", 
+				DbType.String,
+				ParameterDirection.Output);
+			#endregion
 
-		#region private
+			#region execute command without returning data
+			using (var connection = _context.CreateSqlConnection())
+			{
+				await connection.ExecuteAsync(
+					GetCommandDefinitionForProcedures(sql, parameters));
+			}
+			#endregion
 
-		private CommandDefinition GetCommandDefinitionForProcedures(
-            string commandText, 
-            DynamicParameters? parameters) =>
-                new CommandDefinition(
-                    commandText,
-                    parameters,
-                    commandType: CommandType.StoredProcedure);
-
-        #endregion
+			return new ErrorDto
+			{
+				StatusCode = parameters.Get<Int16>("StatusCode"),
+				ErrorCode = parameters.Get<string>("ErrorCode"),
+				ErrorDescription = parameters.Get<string>("ErrorDescription"),
+				ErrorMessage = parameters.Get<string>("ErrorMessage")
+			};
+		}
     }
 }

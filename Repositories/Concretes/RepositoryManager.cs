@@ -10,11 +10,14 @@ namespace Repositories.Concretes
 		private readonly Lazy<IMachineRepository> _machineRepository;
 		private readonly Lazy<IFileRepository> _fileRepository;
 		private readonly Lazy<IFormRepository> _formRepository;
-		
+		private readonly Lazy<IMachineCategoryRepository> _machineCategoryRepository;
+
  		public IUserRepository UserRepository => _userRepository.Value;
 		public IMachineRepository MachineRepository => _machineRepository.Value;
 		public IFileRepository FileRepository => _fileRepository.Value;
 		public IFormRepository FormRepository => _formRepository.Value;
+		public IMachineCategoryRepository MachineCategoryRepository => 
+			_machineCategoryRepository.Value;
 
 		public RepositoryManager(
 			RepositoryContext context,
@@ -28,6 +31,8 @@ namespace Repositories.Concretes
 				new FileRepository(context, configs));
 			_formRepository = new Lazy<IFormRepository>(() =>
 				new FormRepository(context, configs));
+			_machineCategoryRepository = new Lazy<IMachineCategoryRepository>(() => 
+				new MachineCategoryRepository(context, configs));
 		}
 	}
 }

@@ -1,12 +1,11 @@
-﻿using Entities.ConfigModels;
-using Entities.ConfigModels.Contracts;
+﻿using Entities.ConfigModels.Contracts;
 using Entities.DtoModels;
 using Entities.Exceptions;
 using MailKit.Net.Smtp;
 using MailKit.Security;
-using Microsoft.Extensions.Options;
 using MimeKit;
 using Services.Contracts;
+
 
 namespace Services.Concretes
 {
