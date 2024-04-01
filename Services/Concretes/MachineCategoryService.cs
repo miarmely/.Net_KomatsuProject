@@ -1,6 +1,7 @@
 ﻿using Dapper;
 using Entities.DtoModels.CategoryDtos;
 using Entities.Exceptions;
+using Entities.QueryParameters;
 using Repositories.Contracts;
 using Services.Contracts;
 using System.Data;
@@ -18,11 +19,13 @@ namespace Services.Concretes
 		}
 
 		public async Task AddMainAndSubcategoriesAsync(
-			CategoryDtoForAddMainAndSubcategories categoryDto)
+			CategoryDtoForAddMainAndSubcategories categoryDto,
+			LanguageParams languageParams)
 		{
 			#region set parameters
 			var parameters = new DynamicParameters(new
 			{
+				Language = languageParams.Language,
 				MainCategoryInEN = categoryDto.MainCategoryInEN,
 				MainCategoryInTR = categoryDto.MainCategoryInTR,
 				SubCategoriesInTR = string.Join(',', categoryDto.SubcategoriesInTR),
@@ -36,7 +39,7 @@ namespace Services.Concretes
 				.AddMainAndSubcategoriesAsync(parameters);
 
 			// when any error is occured
-			if (errorDto.ErrorCode != "")
+			if (errorDto.StatusCode != 204)
 				throw new ErrorWithCodeException(errorDto);
 			#endregion
 		}

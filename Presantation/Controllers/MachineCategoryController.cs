@@ -1,4 +1,5 @@
 ﻿using Entities.DtoModels.CategoryDtos;
+using Entities.QueryParameters;
 using Microsoft.AspNetCore.Mvc;
 using Services.Contracts;
 
@@ -19,10 +20,11 @@ namespace Presantation.Controllers
 
 		[HttpPost("mainAndSubcategory/add")]
 		public async Task<IActionResult> AddMainAndSubcategories(
+			[FromQuery] LanguageParams languageParam,
 			[FromBody] CategoryDtoForAddMainAndSubcategories categoryDto)
 		{
 			await _services.MachineCategoryService
-				.AddMainAndSubcategoriesAsync(categoryDto);
+				.AddMainAndSubcategoriesAsync(categoryDto, languageParam);
 
 			return NoContent();
 		}

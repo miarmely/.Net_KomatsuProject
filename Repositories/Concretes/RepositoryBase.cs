@@ -1,6 +1,7 @@
 ﻿using Dapper;
 using Entities.ConfigModels.Contracts;
 using Entities.DtoModels;
+using Microsoft.AspNetCore.Http;
 using Repositories.Contracts;
 using System.Data;
 
@@ -125,6 +126,7 @@ namespace Repositories.Concretes
 			parameters.Add("StatusCode", 0, DbType.Int16, ParameterDirection.Output);
 			parameters.Add("ErrorCode", "", DbType.String, ParameterDirection.Output);
 			parameters.Add("ErrorMessage", "", DbType.String, ParameterDirection.Output);
+			
 			parameters.Add("ErrorDescription", 
 				"", 
 				DbType.String,
