@@ -15,30 +15,30 @@ namespace Repositories.Concretes
 
         public async Task UploadSlidersAsync(DynamicParameters parameters) =>
             await base.QuerySingleOrDefaultAsync<int>(
-                base.Configs.DbSettings.ProcedureNames.Slider_Create,
+                base.Configs.DbSettings.ProcedureNames.S_Create,
                 parameters);
 
         public async Task<IEnumerable<SliderView>?> GetAllSlidersAsync(
             DynamicParameters parameters) =>
             await base.QueryAsync<SliderView>(
-                base.Configs.DbSettings.ProcedureNames.Slider_DisplayAll,
+                base.Configs.DbSettings.ProcedureNames.S_DisplayAll,
                 parameters);
 
         public async Task<string?> GetSliderPathBySliderNoAsync(
             DynamicParameters parameters) =>
                 await base.QuerySingleOrDefaultAsync<string>(
                     Configs.DbSettings.ProcedureNames
-                        .Slider_DisplaySliderPathBySliderNo,
+                        .S_DisplaySliderPathBySliderNo,
                     parameters);
 
         public async Task DeleteMultipleSliderAsync(DynamicParameters parameters) =>
             await base.QuerySingleOrDefaultAsync<int>(
-               base.Configs.DbSettings.ProcedureNames.Slider_DeleteMultipleByFileNames,
+               base.Configs.DbSettings.ProcedureNames.S_DeleteMultipleByFileNames,
                parameters);
                 
         public async Task DeleteOneSliderAsync(DynamicParameters parameters) =>
             await base.QuerySingleOrDefaultAsync<int>(
-                Configs.DbSettings.ProcedureNames.Slider_DeleteOneBySliderNo,
+                Configs.DbSettings.ProcedureNames.S_DeleteOneBySliderNo,
                 parameters);
     }
 }

@@ -22,7 +22,7 @@ namespace Repositories.Concretes
 			try
 			{
 				await base.QueryAsync<UserView, RolePartForUserView, UserView>(
-					base.Configs.DbSettings.ProcedureNames.User_Login,
+					base.Configs.DbSettings.ProcedureNames.U_Login,
 					parameters,
 					(userViewPart, RolePart) =>
 					{
@@ -50,7 +50,7 @@ namespace Repositories.Concretes
 
 		public async Task<ErrorDto?> CreateUserAsync(DynamicParameters parameters) =>
 			await base.QuerySingleOrDefaultAsync<ErrorDto>(
-				base.Configs.DbSettings.ProcedureNames.User_Create,
+				base.Configs.DbSettings.ProcedureNames.U_Create,
 				parameters);
 
 		public async Task<IEnumerable<UserView>?> GetAllUsersWithPagingAsync(
@@ -61,7 +61,7 @@ namespace Repositories.Concretes
 
 			var userViews = await base.QueryAsync
 				<UserView, RolePartForUserView, UserView>(
-					base.Configs.DbSettings.ProcedureNames.User_DisplayAll,
+					base.Configs.DbSettings.ProcedureNames.U_DisplayAll,
 					parameters,
 					(userViewPart, rolePart) =>
 					{
@@ -90,7 +90,7 @@ namespace Repositories.Concretes
 		public async Task<IEnumerable<string>> GetAllRolesByLanguageAsync(
 			DynamicParameters parameters)
 			=> await base.QueryAsync<string>(
-					base.Configs.DbSettings.ProcedureNames.User_DisplayAllRoles,
+					base.Configs.DbSettings.ProcedureNames.U_DisplayAllRoles,
 					parameters);
 
 		public async Task<UserView?> GetUserByTelNoAsync(DynamicParameters parameters)
@@ -99,7 +99,7 @@ namespace Repositories.Concretes
 			UserView? userView = null;
 
 			await base.QueryAsync<UserView, RolePartForUserView, UserView>(
-				base.Configs.DbSettings.ProcedureNames.User_DisplayByTelNo,
+				base.Configs.DbSettings.ProcedureNames.U_DisplayByTelNo,
 				parameters,
 				(userViewPart, rolePart) =>
 				{
@@ -121,13 +121,13 @@ namespace Repositories.Concretes
 		public async Task<ErrorDto?> UpdateUserByTelNoAsync(
 			DynamicParameters parameters) =>
 				await base.QuerySingleOrDefaultAsync<ErrorDto>(
-					base.Configs.DbSettings.ProcedureNames.User_Update,
+					base.Configs.DbSettings.ProcedureNames.U_Update,
 					parameters);
 
 		public async Task<ErrorDto?> DeleteUsersByTelNoListAsync(
 			DynamicParameters parameters) =>
 				await base.QuerySingleOrDefaultAsync<ErrorDto>(
-					base.Configs.DbSettings.ProcedureNames.User_Delete,
+					base.Configs.DbSettings.ProcedureNames.U_Delete,
 					parameters);
 	}
 }

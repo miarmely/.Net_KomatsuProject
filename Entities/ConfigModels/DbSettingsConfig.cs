@@ -1,47 +1,57 @@
 ﻿namespace Entities.ConfigModels
 {
-    public record DbSettingsConfig
-    {
-        public ProcedureNames ProcedureNames { get; init; }
-        public TableNames TableNames { get; init; }
+	public record DbSettingsConfig
+	{
+		public ProcedureNames ProcedureNames { get; init; }
+		public TableNames TableNames { get; init; }
+	}
+
+	public record ProcedureNames
+	{
+		public string U_Login { get; init; }
+		public string U_Create { get; init; }
+		public string U_DisplayAll { get; init; }
+		public string U_DisplayByTelNo { get; init; }
+		public string U_DisplayAllRoles { get; init; }
+		public string U_Update { get; init; }
+		public string U_Delete { get; init; }
+		public string M_Create { get; init; }
+		public string M_DisplayAll { get; init; }
+		public string M_DisplayByCondition { get; init; }
+		public string M_DisplayOneById { get; init; }
+		public string M_Update { get; init; }
+		public string M_Delete { get; init; }
+		public string M_GetMainCategoryNames { get; init; }
+		public string M_GetSubCategoryNames { get; init; }
+		public string M_GetAllHandStatus { get; init; }
+		public string M_SeparateTheValuesNotExistsOnTable { get; init; }
+		public string M_C_AddMainAndSubCategories { get; init; }
+		public string M_C_DisplayAllMainAndSubcategories { get; init; }
+		public string M_C_UpdateMainCategory { get; init; }
+		public string M_C_UpdateSubcategories { get; init; }
+		public string M_C_UpdateMainAndSubcategories { get; init; }
+		public string M_C_DeleteMainCategory { get; init; }
+		public string M_C_DeleteSubcategories { get; init; }
+		public string S_Create { get; init; }
+		public string S_DisplayAll { get; init; }
+		public string S_DisplaySliderPathBySliderNo { get; init; }
+		public string S_DeleteOneBySliderNo { get; init; }
+		public string S_DeleteMultipleByFileNames { get; init; }
+		public string U_F_GeneralCommunication_Create { get; init; }
+		public string U_F_GeneralCommunication_GetAll { get; init; }
+		public string U_F_GeneralCommunication_GetAllOfOneUserByUserId { get; init; }
+		public string U_F_GetOffer_Create { get; init; }
+		public string U_F_GetOffer_GetAll { get; init; }
+		public string U_F_GetOffer_GetAllOfOneUserByUserId { get; init; }
+		public string U_F_Renting_Create { get; init; }
+		public string U_F_Renting_GetAll { get; init; }
+		public string U_F_Renting_GetAllOfOneUserByUserId { get; init; }
+		public string U_F_AnswerTheAnyForm { get; init; }
+	}
+
+	public record TableNames
+	{
+        public string Language { get; init; }
+        public string Sliders { get; init; }
     }
-
-    public record ProcedureNames(
-		string User_Login,
-		string User_Create,
-		string User_DisplayAll,
-		string User_DisplayByTelNo,
-		string User_DisplayAllRoles,
-		string User_Update,
-		string User_Delete,
-		string Machine_Create,
-		string Machine_DisplayAll,
-		string Machine_DisplayByCondition,
-		string Machine_DisplayOneById,
-		string Machine_Update,
-		string Machine_Delete,
-		string Machine_GetMainCategoryNames,
-		string Machine_GetSubCategoryNames,
-		string Machine_GetAllHandStatus,
-		string Machine_SeparateTheValuesNotExistsOnTable,
-		string Machine_Category_AddMainAndSubCategories,
-		string Slider_Create,
-		string Slider_DisplayAll,
-		string Slider_DisplaySliderPathBySliderNo,
-		string Slider_DeleteOneBySliderNo,
-		string Slider_DeleteMultipleByFileNames,
-		string User_Form_GeneralCommunication_Create,
-		string User_Form_GeneralCommunication_GetAll,
-		string User_Form_GeneralCommunication_GetAllOfOneUserByUserId,
-		string User_Form_GetOffer_Create,
-		string User_Form_GetOffer_GetAll,
-		string User_Form_GetOffer_GetAllOfOneUserByUserId,
-		string User_Form_Renting_Create,
-		string User_Form_Renting_GetAll,
-		string User_Form_Renting_GetAllOfOneUserByUserId,
-		string User_Form_AnswerTheAnyForm);
-
-    public record TableNames(
-		string Language,
-		string Sliders);
 }

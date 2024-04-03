@@ -14,7 +14,7 @@ namespace Repositories.Concretes
 
 		public async Task<ErrorDto?> CreateMachineAsync(DynamicParameters parameters) =>
 			await base.QuerySingleOrDefaultAsync<ErrorDto>(
-				base.Configs.DbSettings.ProcedureNames.Machine_Create,
+				base.Configs.DbSettings.ProcedureNames.M_Create,
 				parameters);
 
 		public async Task<IEnumerable<MachineView>> GetAllMachinesAsync(
@@ -22,7 +22,7 @@ namespace Repositories.Concretes
 			Func<MachineView, DescriptionPartOfMachineView, MachineView> map,
 			string splitOn) =>
 				await base.QueryAsync(
-					base.Configs.DbSettings.ProcedureNames.Machine_DisplayAll,
+					base.Configs.DbSettings.ProcedureNames.M_DisplayAll,
 					parameters,
 					map,
 					splitOn);
@@ -30,7 +30,7 @@ namespace Repositories.Concretes
 		public async Task<IEnumerable<MachineView>> GetMachinesByConditionAsync(
 			DynamicParameters parameters) =>
 				await base.QueryAsync<MachineView>(
-					base.Configs.DbSettings.ProcedureNames.Machine_DisplayByCondition,
+					base.Configs.DbSettings.ProcedureNames.M_DisplayByCondition,
 					parameters);
 
 		public async Task<IEnumerable<MachineView>> GetOneMachineByIdAsync(
@@ -38,7 +38,7 @@ namespace Repositories.Concretes
 			Func<MachineView, DescriptionPartOfMachineView, MachineView> map,
 			string splitOn) =>
 				await base.QueryAsync(
-					base.Configs.DbSettings.ProcedureNames.Machine_DisplayOneById,
+					base.Configs.DbSettings.ProcedureNames.M_DisplayOneById,
 					parameters,
 					map,
 					splitOn);
@@ -46,19 +46,19 @@ namespace Repositories.Concretes
 		public async Task<IEnumerable<string>> GetMainCategoryNamesByLanguageAsync(
 			DynamicParameters parameters) =>
 				await base.QueryAsync<string>(
-					base.Configs.DbSettings.ProcedureNames.Machine_GetMainCategoryNames,
+					base.Configs.DbSettings.ProcedureNames.M_GetMainCategoryNames,
 					parameters);
 
 		public async Task<IEnumerable<string>> GetSubCategoryNamesOfMainCategoryByLanguageAsync
 			(DynamicParameters parameters) =>
 				await base.QueryAsync<string>(
-					base.Configs.DbSettings.ProcedureNames.Machine_GetSubCategoryNames,
+					base.Configs.DbSettings.ProcedureNames.M_GetSubCategoryNames,
 					parameters);
 
 		public async Task<IEnumerable<string>> GetAllHandStatusByLanguageAsync(
 			DynamicParameters parameters)
 				=> await base.QueryAsync<string>(
-					base.Configs.DbSettings.ProcedureNames.Machine_GetAllHandStatus,
+					base.Configs.DbSettings.ProcedureNames.M_GetAllHandStatus,
 					parameters);
 
 		public async Task<IEnumerable<string>> GetAllLanguagesAsync() =>
@@ -68,19 +68,19 @@ namespace Repositories.Concretes
 
 		public async Task<ErrorDto?> UpdateMachineAsync(DynamicParameters parameters) =>
 			await base.QuerySingleOrDefaultAsync<ErrorDto>(
-				base.Configs.DbSettings.ProcedureNames.Machine_Update,
+				base.Configs.DbSettings.ProcedureNames.M_Update,
 				parameters);
 
 		public async Task<ErrorDto?> DeleteMachinesAsync(DynamicParameters parameters)
 			=> await base.QuerySingleOrDefaultAsync<ErrorDto>(
-					base.Configs.DbSettings.ProcedureNames.Machine_Delete,
+					base.Configs.DbSettings.ProcedureNames.M_Delete,
 					parameters);
 
 		public async Task SeparateValuesNotExistsOnTableAsync(
 			DynamicParameters parameters) =>
 				await base.QuerySingleOrDefaultAsync<int>(
 					base.Configs.DbSettings.ProcedureNames
-						.Machine_SeparateTheValuesNotExistsOnTable,
+						.M_SeparateTheValuesNotExistsOnTable,
 					parameters);
 	}
 }
