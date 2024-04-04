@@ -10,7 +10,7 @@ namespace Presantation.Controllers
 	[ApiController]
 	public class MachineCategoryController : ControllerBase
 	{
-        private readonly IServiceManager _services;
+		private readonly IServiceManager _services;
 
 		public MachineCategoryController(IServiceManager services)
 		{
@@ -25,6 +25,76 @@ namespace Presantation.Controllers
 		{
 			await _services.MachineCategoryService
 				.AddMainAndSubcategoriesAsync(categoryDto, languageParam);
+
+			return NoContent();
+		}
+
+
+		[HttpGet("mainAndSubcategory/display/all")]
+		public async Task<IActionResult> GetAllMainAndSubcategories()
+		{
+			var entity = await _services.MachineCategoryService
+				.GetAllMainAndSubcategoriesAsync();
+
+			return Ok(entity);
+		}
+
+
+		[HttpPost("mainAndSubcategory/update")]
+		public async Task<IActionResult> UpdateMainAndSubcategories(
+			[FromQuery] LanguageParams languageParams,
+			[FromBody] CategoryDtoForUpdateMainAndSubcategories categoryDto)
+		{
+			await _services.MachineCategoryService
+				.UpdateMainAndSubcategoriesAsync(languageParams, categoryDto);
+
+			return NoContent();
+		}
+
+
+		[HttpPost("mainCategory/update")]
+		public async Task<IActionResult> UpdateMainCategory(
+			[FromQuery] LanguageParams languageParams,
+			[FromBody] CategoryDtoForUpdateMainCategory categoryDto)
+		{
+			await _services.MachineCategoryService
+				.UpdateMainCategoryAsync(languageParams, categoryDto);
+
+			return NoContent();
+		}
+
+
+		[HttpPost("maincategory/delete")]
+		public async Task<IActionResult> DeleteMainCategory(
+			[FromQuery] LanguageParams languageParams,
+			[FromBody] CategoryDtoForDeleteMainCategory categoryDto)
+		{
+			await _services.MachineCategoryService
+			   .DeleteMainCategoryAsync(languageParams, categoryDto);
+
+			return NoContent();
+		}
+
+
+		[HttpPost("subcategory/update")]
+		public async Task<IActionResult> UpdateSubcategories(
+			[FromQuery] LanguageParams languageParams,
+			[FromBody] CategoryDtoForUpdateSubcategories categoryDto)
+		{
+			await _services.MachineCategoryService
+			   .UpdateSubcategoriesAsync(languageParams, categoryDto);
+
+			return NoContent();
+		}
+
+
+		[HttpPost("subcategory/delete")]
+		public async Task<IActionResult> DeleteSubcategories(
+			[FromQuery] LanguageParams languageParams,
+			[FromBody] CategoryDtoForDeleteSubcategories categoryDto)
+		{
+			await _services.MachineCategoryService
+			   .DeleteSubCategoriesAsync(languageParams, categoryDto);
 
 			return NoContent();
 		}

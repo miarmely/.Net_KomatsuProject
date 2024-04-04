@@ -59,7 +59,7 @@ namespace Repositories.Concretes
 
         public async Task<IEnumerable<TResult>> QueryAsync<TPart1, TPart2, TResult>(
             string procedureName,
-            DynamicParameters parameters,
+            DynamicParameters? parameters,
             Func<TPart1, TPart2, TResult> map,
             string splitOn)
         {
@@ -90,7 +90,7 @@ namespace Repositories.Concretes
 
 		public async Task<T> QuerySingleOrDefaultAsync<T>(
 			string procedureName,
-			DynamicParameters parameters)
+			DynamicParameters? parameters)
 		{
 			#region send query
 			using (var connection = _context.CreateSqlConnection())
@@ -103,7 +103,7 @@ namespace Repositories.Concretes
 
 		public async Task<TResult> MultipleQueryAsync<TResult>(
 			string sqlCommand,
-			DynamicParameters parameters,
+			DynamicParameters? parameters,
 			Func<SqlMapper.GridReader, Task<TResult>> funcAsync)
 		{
 			#region send multiple query
@@ -119,7 +119,7 @@ namespace Repositories.Concretes
 		}
 
 		public async Task<ErrorDto> ExecuteAsync(
-			string sql, 
+			string procedureName, 
 			DynamicParameters parameters)
 		{
 			#region update parameters
@@ -137,7 +137,7 @@ namespace Repositories.Concretes
 			using (var connection = _context.CreateSqlConnection())
 			{
 				await connection.ExecuteAsync(
-					GetCommandDefinitionForProcedures(sql, parameters));
+					GetCommandDefinitionForProcedures(procedureName, parameters));
 			}
 			#endregion
 

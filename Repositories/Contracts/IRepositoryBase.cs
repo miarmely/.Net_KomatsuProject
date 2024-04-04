@@ -16,17 +16,17 @@ namespace Repositories.Contracts
 
         Task<IEnumerable<TResult>> QueryAsync<TPart1, TPart2, TResult>(
             string procedureName,
-            DynamicParameters parameters,
+            DynamicParameters? parameters,
             Func<TPart1, TPart2, TResult> map,
             string SplitOn);
 
 		Task<T> QuerySingleOrDefaultAsync<T>(
 		   string procedureName,
-		   DynamicParameters parameters);
+		   DynamicParameters? parameters);
 
 		Task<TResult> MultipleQueryAsync<TResult>(
 			string sqlCommand,
-			DynamicParameters parameters,
+			DynamicParameters? parameters,
 			Func<SqlMapper.GridReader, Task<TResult>> funcAsync);
 
 		Task<ErrorDto> ExecuteAsync(string sql, DynamicParameters parameters);
