@@ -18,6 +18,8 @@
 <html>
 	<head>
 		<title>Komatsu</title>
+		<link rel="icon" href="~/images/komatsuTitleLogo_32x32.webp"/>
+
 		<meta name="viewport" content="width=device-width, initial-scale=1">
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 		<meta name="keywords" content="Komatsu Admin Panel">	
@@ -115,11 +117,58 @@
 		</section>
 
 		<script>
-			const baseApiUrl = "http://104.247.163.183:5551/api/services";  // for iis in real server
+			//const baseApiUrl = "http://104.247.163.183:5551/api/services";  // for iis in real server
 			//const baseApiUrl = "http://192.168.200.1:5551/api/services";  // for iis in my pc
-			//const baseApiUrl = "http://localhost:7091/api/services";  // for local
+			const baseApiUrl = "http://localhost:7091/api/services";  // for local
 			const token = localStorage.getItem("token");
 			const jwtToken = "Bearer " + token;
+			const currentYear = new Date().getFullYear();
+			const localKeys_token = "token";
+			const localKeys_language = "language";
+			const localKeys_allRoles = "allRoles";
+			const localKeys_allMainCategories = "allMainCategories";
+			const localKeys_allSubCategories = "allSubCategories";
+			const localKeys_allLanguages = "allLanguages";
+			const localKeys_sliderNoAndPaths = "sliderNoAndPaths"
+			const localKeys_handStatuses = "allHandStatuses";
+			const localKeys_claimInfos = "claimInfos";
+			const localKeys_telNoForLogin = "telNoForLogin";
+			const descriptions_unsavedColor = "red";
+			const descriptions_savedColor = "lightgreen";
+			const img_displayingFlag_id = "img_displayingFlag";
+			const spn_displayingLanguage_id = "spn_displayingLanguage";
+			const resultLabel_errorColor = "red";
+			const resultLabel_successColor = "rgb(16, 155, 16)";
+			const fileStatusLabel_color = "darkBlue";
+			const spn_eventManager = $("#spn_eventManager");
+			const inpt_fileChooser = $("#inpt_fileChooser");
+			const button_disabledColor = "DarkGrey";
+			const partnerInformationMessagesByLanguages = {
+				"TR": {
+					"fileLoading": "dosya yükleniyor...",
+				},
+				"EN": {
+					"fileLoading": "file loading...",
+				}
+			}
+			const langPack_partnerErrorMessages = {
+				"invalidFileType": {
+					"TR": "geçersiz dosya tipi",
+					"EN": "invalid file type"
+				},
+				"nullArguments": {
+					"TR": "herhangi bir değişiklik yapılmadı",
+					"EN": "no changes were made"
+				},
+				"noPermission": {
+					"TR": "yetkiniz yok",
+					"EN": "you don't have permission"
+				},
+				"anErrorOccured": {
+					"TR": "bir hata oluştu", 
+					"EN": "an error occured"
+				}
+			}
 			const searchBarPlaceHolderByLanguages = {
 				"TR": "Ara",
 				"EN": "Search"
@@ -216,6 +265,10 @@
 						"registeredMachines": {
 							"label": "Kayıtlı Makineler",
 							"href": "/machine/display/all",
+						},
+						"categories": {
+							"label": "Kategoriler",
+							"href": "/machine/category",
 						}
 					},
 					"forms": {
@@ -252,6 +305,10 @@
 						"registeredMachines": {
 							"label": "Registered Machines",
 							"href": "/machine/display/all",
+						},
+						"categories": {
+							"label": "Categories",
+							"href": "/machine/category",
 						}
 					},
 					"forms": {
@@ -272,55 +329,9 @@
 			};
 			const sidebar_width = 240;
 			const footerInfoByLanguages = {
-				"TR": "© 2023 Tüm hakları saklıdır. | Designed by ",
-				"EN": "© 2023 All rights reserved. | Designed by "
+				"TR": `© ${currentYear} Tüm hakları saklıdır. | Designed by `,
+				"EN": `© ${currentYear} All rights reserved. | Designed by `
 			};
-			const localKeys_token = "token";
-			const localKeys_language = "language";
-			const localKeys_allRoles = "allRoles";
-			const localKeys_allMainCategories = "allMainCategories";
-			const localKeys_allSubCategories = "allSubCategories";
-			const localKeys_allLanguages = "allLanguages";
-			const localKeys_sliderNoAndPaths = "sliderNoAndPaths"
-			const localKeys_handStatuses = "allHandStatuses";
-			const localKeys_claimInfos = "claimInfos";
-			const localKeys_telNoForLogin = "telNoForLogin";
-			const descriptions_unsavedColor = "red";
-			const descriptions_savedColor = "lightgreen";
-			const img_displayingFlag_id = "img_displayingFlag";
-			const spn_displayingLanguage_id = "spn_displayingLanguage";
-			const resultLabel_errorColor = "red";
-			const resultLabel_successColor = "rgb(16, 155, 16)";
-			const fileStatusLabel_color = "darkBlue";
-			const spn_eventManager = $("#spn_eventManager");
-			const inpt_fileChooser = $("#inpt_fileChooser");
-			const button_disabledColor = "DarkGrey";
-			const partnerInformationMessagesByLanguages = {
-				"TR": {
-					"fileLoading": "dosya yükleniyor...",
-				},
-				"EN": {
-					"fileLoading": "file loading...",
-				}
-			}
-			const langPack_partnerErrorMessages = {
-				"invalidFileType": {
-					"TR": "geçersiz dosya tipi",
-					"EN": "invalid file type"
-				},
-				"nullArguments": {
-					"TR": "herhangi bir değişiklik yapılmadı",
-					"EN": "no changes were made"
-				},
-				"noPermission": {
-					"TR": "yetkiniz yok",
-					"EN": "you don't have permission"
-				},
-				"anErrorOccured": {
-					"TR": "bir hata oluştu", 
-					"EN": "an error occured"
-				}
-			}
 			let language = localStorage.getItem("language"); // language was add at "login.cshtml".
 		</script>
 		<script src="~/js/bootstrap.js"></script>

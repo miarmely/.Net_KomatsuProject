@@ -189,6 +189,10 @@
       "PackagePath": "staticwebassets\\images\\komatsuLogo_white.svg"
     },
     {
+      "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\images\\komatsuTitleLogo_32x32.webp",
+      "PackagePath": "staticwebassets\\images\\komatsuTitleLogo_32x32.webp"
+    },
+    {
       "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\images\\loading.gif",
       "PackagePath": "staticwebassets\\images\\loading.gif"
     },

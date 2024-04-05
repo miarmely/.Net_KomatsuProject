@@ -1,0 +1,213 @@
+﻿@{
+	Layout = "_Layout";
+}
+
+<style>
+    /*------------- PARTNER -------------*/
+    .panel-body{
+        padding: 20px;
+        min-height: 230px;
+    }
+
+    /*category modes*/
+    #div_category_menubar select:nth-child(1){
+        float:left;
+    }
+
+    #div_category_menubar select{
+        font-size: 13px;
+    }
+
+    #div_category_form{
+        margin-top: 50px;
+    }
+
+    /* form labels*/
+    #div_category_form label{
+        text-align: right;
+    }
+
+
+    /*------------- UPDATE MODE -------------*/
+
+    #div_category_update .div_newCategory {
+        border: solid 2px transparent;
+        padding: 25px 10px;
+        box-shadow: 2px 1px 10px #002fff8f
+    }
+
+    /*maincategory div*/
+    #div_category_update .div_newCategory:nth-child(2){
+        margin-top:40px;
+    }
+
+    /*----- cancel button -----*/
+    #div_category_update .cancelButton{
+        color: red;
+    }
+
+    #div_category_update .cancelButton img{
+        width:10px;
+        height:10px;
+    }
+    /*-------------------------*/
+</style>
+
+
+<div class="form-w3layouts">
+    <div class="row">
+        <div class="col-lg-12">    
+            <section class="panel">
+                <header class="panel-heading"></header>
+                <div class="panel-body">
+                    <div id="div_category_menubar">
+                        @*category modes select*@
+                        <select class="input-sm form-control w-sm inline v-middle">
+                            <option selected>Display</option>
+                            <option>Update</option>
+                            <option>Delete</option>
+                        </select>
+
+                        @*language select*@
+                        <select class="input-sm form-control w-sm inline v-middle">
+                            <option selected>EN</option>
+                            <option>TR</option>
+                        </select>
+                    </div>
+                    <div id="div_category_form">
+                        <form>
+                            <div class="form-horizontal bucket-form">
+                                <div id="div_category_display" hidden>
+                                    @*maincategory select*@
+                                    <div class="form-group">
+                                        <label for="slct_mainCategory" class="col-sm-3 control-label">Main Category</label>
+                                        <div class="col-sm-6">
+                                            <select id="slct_mainCategory" class="form-control">
+                                                <option>Work Machines</option>
+                                                <option>Power Machines</option>
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    @*subcategories select*@
+                                    <div class="form-group">
+                                        <label for="slct_subcategories" class="col-sm-3 control-label">Subcategories</label>
+                                        <div class="col-sm-6">
+                                            <select id="slct_subcategories" class="form-control">
+                                                <option>Crawler Excavators</option>
+                                                <option>Bulldozers</option>
+                                                <option>Wheel Loaders</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div id="div_category_update">
+                                    <div class="div_newCategory">
+                                        @*maincategory select*@
+                                        <div class="form-group">
+                                            <label for="slct_mainCategory" class="col-sm-3 control-label">Main Category</label>
+                                            <div class="col-sm-6">
+                                                <select id="slct_mainCategory" class="form-control">
+                                                    <option>Work Machines</option>
+                                                    <option>Power Machines</option>
+                                                </select>
+                                            </div>
+                                        </div>
+
+                                        @*new main category input*@
+                                        <div class="form-group">
+                                            <label for="inpt_newMainCategory" class="col-sm-3 control-label">Change Name</label>
+                                            <div class="col-sm-6">
+                                                <input id="inpt_newMainCategory" type="text" class="form-control"/>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="div_newCategory">
+                                        @*subcategories select*@
+                                        <div class="form-group">
+                                            <label for="slct_subcategories" class="col-sm-3 control-label">Subcategories</label>
+                                            <div class="col-sm-6">
+                                                <select id="slct_subcategories" class="form-control">
+                                                    <option>Crawler Excavators</option>
+                                                    <option>Bulldozers</option>
+                                                    <option>Wheel Loaders</option>
+                                                </select>
+                                            </div>
+                                        </div>
+
+                                        @*change name input*@
+                                        <div class="form-group">
+                                            <label for="inpt_newSubcategory" class="col-sm-3 control-label">Change Name</label>
+                                            <div class="col-sm-6">
+                                                <input id="inpt_newSubcategory" type="text" class="form-control"/>
+                                            </div>
+                                        </div>
+
+                                        @*save button*@
+                                        <div class="form-group">
+                                            <label class="col-sm-3 control-label"></label>
+                                            <div class="col-sm-6">
+                                                <button type="button" class="btn">Save</button>
+                                            </div>
+                                        </div>
+
+                                        @*new subcategories*@
+                                        <div class="form-group">
+                                            <label class="col-sm-3 control-label">New Subcategories</label>
+                                            <div class="col-sm-6">
+                                                <input id="inpt_newSubcategory1" type="text" value="Crawler Excavator  -->  Crawler Excavator1" class="form-control" readonly/>
+                                                <label for=inpt_newSubcategory1">
+                                                    <img src="~/images/cancel.png"/>
+                                                </label>
+
+                                                <input type="text" value="Wheel Loaders  -->  Wheel Loaders2" class="form-control" readonly/>
+                                                <input type="text" value="Bulldozers --> Bulldozers2" class="form-control" readonly/>
+                                            </div>
+                                            
+                                            @*cancel button*@
+                                            <div class="col-sm-3">
+                                               <button type="button" class="btn"><img src="~/images/cancel.png"/></button>
+                                           </div>
+                                        </div>
+                                    </>
+                                </div>
+                                <div id="div_category_delete" hidden>
+                                    @*maincategory select*@
+                                    <div class="form-group">
+                                        <label for="slct_mainCategory" class="col-sm-3 control-label">Main Category</label>
+                                        <div class="col-sm-6">
+                                            <select id="slct_mainCategory" class="form-control">
+                                                <option>Work Machines</option>
+                                                <option>Power Machines</option>
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    @*subcategories select*@
+                                    <div class="form-group">
+                                        <label for="slct_subcategories" class="col-sm-3 control-label">Subcategories</label>
+                                        <div class="col-sm-6">
+                                            <select id="slct_subcategories" class="form-control">
+                                                <option>Crawler Excavators</option>
+                                                <option>Bulldozers</option>
+                                                <option>Wheel Loaders</option>
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    @*new subcategory input*@
+                                    <div class="form-group">
+                                        <label for="inpt_newSubcategory" class="col-sm-3 control-label">New Subcategory</label>
+                                        <div class="col-sm-6">
+                                            <input id="inpt_newSubcategory" type="text" class="form-control"/>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </div>
+</div>
