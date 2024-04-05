@@ -1,0 +1,94 @@
+﻿/*------------- PARTNER -------------*/
+.panel-body {
+    padding: 20px;
+    min-height: 230px;
+}
+
+/*category modes*/
+#div_category_menubar select:nth-child(1) {
+    float: left;
+}
+
+#div_category_menubar select {
+    font-size: 13px;
+}
+
+#div_category_form {
+    margin-top: 50px;
+}
+
+    /* form labels*/
+    #div_category_form label {
+        text-align: right;
+    }
+
+
+/*------------- UPDATE & DELETE MODE -------------*/
+
+.div_category {
+    border: solid 2px transparent;
+    padding: 20px 10px 30px;
+    box-shadow: 2px 1px 10px #002fff8f
+}
+
+    /*maincategory div*/
+    .div_category:nth-child(2) {
+        margin-top: 40px;
+    }
+
+.h_articleTitle {
+    text-align: center;
+    margin-bottom: 35px;
+}
+
+
+/*------ button of article ------*/
+.div_articleButton {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+    .div_articleButton button {
+        background-color: darkblue;
+        color: white;
+    }
+
+        .div_articleButton button:hover {
+            color: white;
+            font-weight: bolder;
+            box-shadow: 1px 1px 10px #0075d3;
+        }
+
+        .div_articleButton button:focus {
+            color: white;
+        }
+
+
+/*------ send button ------*/
+#div_sendButton {
+    text-align: center;
+    margin-top: 40px;
+    margin-bottom: 10px;
+}
+
+    #div_sendButton button {
+        background-color: #521FFF;
+        color: white;
+        width: 100px;
+    }
+
+        #div_sendButton button:hover {
+            font-weight: bolder;
+            box-shadow: 1px 1px 10px #0075d3;
+        }
+
+
+/*----- cancel button -----*/
+.btn_cancel {
+    background-color: transparent;
+}
+
+    .btn_cancel img {
+        width: 20px;
+        height: 20px;
+    }

@@ -2,56 +2,7 @@
 	Layout = "_Layout";
 }
 
-<style>
-    /*------------- PARTNER -------------*/
-    .panel-body{
-        padding: 20px;
-        min-height: 230px;
-    }
-
-    /*category modes*/
-    #div_category_menubar select:nth-child(1){
-        float:left;
-    }
-
-    #div_category_menubar select{
-        font-size: 13px;
-    }
-
-    #div_category_form{
-        margin-top: 50px;
-    }
-
-    /* form labels*/
-    #div_category_form label{
-        text-align: right;
-    }
-
-
-    /*------------- UPDATE MODE -------------*/
-
-    #div_category_update .div_newCategory {
-        border: solid 2px transparent;
-        padding: 25px 10px;
-        box-shadow: 2px 1px 10px #002fff8f
-    }
-
-    /*maincategory div*/
-    #div_category_update .div_newCategory:nth-child(2){
-        margin-top:40px;
-    }
-
-    /*----- cancel button -----*/
-    #div_category_update .cancelButton{
-        color: red;
-    }
-
-    #div_category_update .cancelButton img{
-        width:10px;
-        height:10px;
-    }
-    /*-------------------------*/
-</style>
+<link rel="stylesheet" href="~/css/miar_machine.category.css"/>
 
 
 <div class="form-w3layouts">
@@ -102,7 +53,10 @@
                                     </div>
                                 </div>
                                 <div id="div_category_update">
-                                    <div class="div_newCategory">
+                                    @*mainCategory*@
+                                    <div class="div_category">
+                                        <h3 class="h_articleTitle">Main Category</h3>
+
                                         @*maincategory select*@
                                         <div class="form-group">
                                             <label for="slct_mainCategory" class="col-sm-3 control-label">Main Category</label>
@@ -116,14 +70,37 @@
 
                                         @*new main category input*@
                                         <div class="form-group">
-                                            <label for="inpt_newMainCategory" class="col-sm-3 control-label">Change Name</label>
+                                            <label for="inpt_newMainCategory" class="col-sm-3 control-label">New Name</label>
                                             <div class="col-sm-6">
                                                 <input id="inpt_newMainCategory" type="text" class="form-control"/>
                                             </div>
                                         </div>
+
+                                         @*select <button>*@
+                                        <div class="form-group  div_articleButton">
+                                            <label class="col-sm-3 control-label"></label>
+                                            <div class="col-sm-6">
+                                                <button type="button" class="btn">Select</button>
+                                            </div>
+                                        </div>
+
+                                        @*selected main category*@
+                                        <div class="form-group" style="margin-bottom: 0px">
+                                            <label class="col-sm-3 control-label"></label>
+                                            <div class="col-sm-6">
+                                                <input type="text" value="Crawler Excavator" class="form-control" readonly/>
+                                            </div>
+                                            <div class="col-sm-3">
+                                                <button type="button" class="btn btn_cancel"><img src="~/images/cancel.png"/></button>
+                                            </div>
+                                        </div>
                                     </div>
-                                    <div class="div_newCategory">
-                                        @*subcategories select*@
+                                    
+                                    @*subcategory*@
+                                    <div class="div_category">
+                                        <h3 class="h_articleTitle">Subcategory</h3>
+
+                                        @*subcategories <select>*@
                                         <div class="form-group">
                                             <label for="slct_subcategories" class="col-sm-3 control-label">Subcategories</label>
                                             <div class="col-sm-6">
@@ -135,16 +112,16 @@
                                             </div>
                                         </div>
 
-                                        @*change name input*@
+                                        @*new name <input>*@
                                         <div class="form-group">
-                                            <label for="inpt_newSubcategory" class="col-sm-3 control-label">Change Name</label>
+                                            <label for="inpt_newSubcategory" class="col-sm-3 control-label">New Name</label>
                                             <div class="col-sm-6">
                                                 <input id="inpt_newSubcategory" type="text" class="form-control"/>
                                             </div>
                                         </div>
 
-                                        @*save button*@
-                                        <div class="form-group">
+                                        @*save <button>*@
+                                        <div class="form-group  div_articleButton">
                                             <label class="col-sm-3 control-label"></label>
                                             <div class="col-sm-6">
                                                 <button type="button" class="btn">Save</button>
@@ -152,54 +129,142 @@
                                         </div>
 
                                         @*new subcategories*@
-                                        <div class="form-group">
-                                            <label class="col-sm-3 control-label">New Subcategories</label>
+                                        <div class="form-group" style="margin-bottom: 0px">
+                                            <label class="col-sm-3 control-label"></label>
                                             <div class="col-sm-6">
-                                                <input id="inpt_newSubcategory1" type="text" value="Crawler Excavator  -->  Crawler Excavator1" class="form-control" readonly/>
-                                                <label for=inpt_newSubcategory1">
-                                                    <img src="~/images/cancel.png"/>
-                                                </label>
+                                                <input type="text" value="Crawler Excavator  -->  Crawler Excavator1" class="form-control" readonly/>
+                                            </div>
+                                            <div class="col-sm-3">
+                                                <button type="button" class="btn btn_cancel"><img src="~/images/cancel.png"/></button>
+                                            </div>
+                                        </div>
 
+                                        <div class="form-group" style="margin-bottom: 0px">
+                                            <label class="col-sm-3 control-label"></label>
+                                            <div class="col-sm-6">
                                                 <input type="text" value="Wheel Loaders  -->  Wheel Loaders2" class="form-control" readonly/>
+                                            </div>
+                                            <div class="col-sm-3">
+                                                <button type="button" class="btn btn_cancel"><img src="~/images/cancel.png"/></button>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group" style="margin-bottom: 0px">
+                                            <label class="col-sm-3 control-label"></label>
+                                            <div class="col-sm-6">
                                                 <input type="text" value="Bulldozers --> Bulldozers2" class="form-control" readonly/>
                                             </div>
-                                            
-                                            @*cancel button*@
                                             <div class="col-sm-3">
-                                               <button type="button" class="btn"><img src="~/images/cancel.png"/></button>
-                                           </div>
+                                                <button type="button" class="btn btn_cancel"><img src="~/images/cancel.png"/></button>
+                                            </div>
                                         </div>
-                                    </>
+                                    </div>
+
+                                     @*send <button>*@
+                                    <div id="div_sendButton" class="form-group">
+                                        <label class="col-sm-3 control-label"></label>
+                                        <div class="col-sm-6">
+                                            <button type="button" class="btn">Send</button>
+                                        </div>
+                                    </div>
                                 </div>
                                 <div id="div_category_delete" hidden>
-                                    @*maincategory select*@
-                                    <div class="form-group">
-                                        <label for="slct_mainCategory" class="col-sm-3 control-label">Main Category</label>
-                                        <div class="col-sm-6">
-                                            <select id="slct_mainCategory" class="form-control">
-                                                <option>Work Machines</option>
-                                                <option>Power Machines</option>
-                                            </select>
+                                    @*mainCategory*@
+                                    <div class="div_category">
+                                        <h3 class="h_articleTitle">Main Category</h3>
+
+                                        @*maincategory select*@
+                                        <div class="form-group" style="margin-bottom: 0px">
+                                            <label for="slct_mainCategory" class="col-sm-3 control-label">Main Category</label>
+                                            <div class="col-sm-6">
+                                                <select id="slct_mainCategory" class="form-control">
+                                                    <option>Work Machines</option>
+                                                    <option>Power Machines</option>
+                                                </select>
+                                            </div>
+                                        </div>
+
+                                        @*select <button>*@
+                                        <div class="form-group  div_articleButton">
+                                            <label class="col-sm-3 control-label"></label>
+                                            <div class="col-sm-6">
+                                                <button type="button" class="btn">Select</button>
+                                            </div>
+                                        </div>
+
+                                        @*selected main category*@
+                                        <div class="form-group" style="margin-bottom: 0px">
+                                            <label class="col-sm-3 control-label"></label>
+                                            <div class="col-sm-6">
+                                                <input type="text" value="Crawler Excavator" class="form-control" readonly/>
+                                            </div>
+                                            <div class="col-sm-3">
+                                                <button type="button" class="btn btn_cancel"><img src="~/images/cancel.png"/></button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    @*subcategory*@
+                                    <div class="div_category">
+                                        <h3 class="h_articleTitle">Subcategory</h3>
+
+                                        @*subcategories <select>*@
+                                        <div class="form-group">
+                                            <label for="slct_subcategories" class="col-sm-3 control-label">Subcategories</label>
+                                            <div class="col-sm-6">
+                                                <select id="slct_subcategories" class="form-control">
+                                                    <option>Crawler Excavators</option>
+                                                    <option>Bulldozers</option>
+                                                    <option>Wheel Loaders</option>
+                                                </select>
+                                            </div>
+                                        </div>
+
+                                        @*select <button>*@
+                                        <div class="form-group  div_articleButton">
+                                            <label class="col-sm-3 control-label"></label>
+                                            <div class="col-sm-6">
+                                                <button type="button" class="btn">Select</button>
+                                            </div>
+                                        </div>
+
+                                        @*selected main category*@
+                                        <div class="form-group" style="margin-bottom: 0px">
+                                            <label class="col-sm-3 control-label"></label>
+                                            <div class="col-sm-6">
+                                                <input type="text" value="Crawler Excavator" class="form-control" readonly/>
+                                            </div>
+                                            <div class="col-sm-3">
+                                                <button type="button" class="btn btn_cancel"><img src="~/images/cancel.png"/></button>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group" style="margin-bottom: 0px">
+                                            <label class="col-sm-3 control-label"></label>
+                                            <div class="col-sm-6">
+                                                <input type="text" value="Wheel Loaders" class="form-control" readonly/>
+                                            </div>
+                                            <div class="col-sm-3">
+                                                <button type="button" class="btn btn_cancel"><img src="~/images/cancel.png"/></button>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group" style="margin-bottom: 0px">
+                                            <label class="col-sm-3 control-label"></label>
+                                            <div class="col-sm-6">
+                                                <input type="text" value="Bulldozers" class="form-control" readonly/>
+                                            </div>
+                                            <div class="col-sm-3">
+                                                <button type="button" class="btn btn_cancel"><img src="~/images/cancel.png"/></button>
+                                            </div>
                                         </div>
                                     </div>
 
-                                    @*subcategories select*@
-                                    <div class="form-group">
-                                        <label for="slct_subcategories" class="col-sm-3 control-label">Subcategories</label>
+                                     @*send <button>*@
+                                    <div id="div_sendButton" class="form-group">
+                                        <label class="col-sm-3 control-label"></label>
                                         <div class="col-sm-6">
-                                            <select id="slct_subcategories" class="form-control">
-                                                <option>Crawler Excavators</option>
-                                                <option>Bulldozers</option>
-                                                <option>Wheel Loaders</option>
-                                            </select>
-                                        </div>
-                                    </div>
-
-                                    @*new subcategory input*@
-                                    <div class="form-group">
-                                        <label for="inpt_newSubcategory" class="col-sm-3 control-label">New Subcategory</label>
-                                        <div class="col-sm-6">
-                                            <input id="inpt_newSubcategory" type="text" class="form-control"/>
+                                            <button type="button" class="btn">Send</button>
                                         </div>
                                     </div>
                                 </div>
