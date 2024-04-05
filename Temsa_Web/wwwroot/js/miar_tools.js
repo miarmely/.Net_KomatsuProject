@@ -321,65 +321,51 @@ export async function setDisabledOfOtherUpdateButtonsAsync(rowId, pageSize, doDi
     //#endregion
 
 }
-export async function populateElementByAjaxOrLocalAsync(
-    keyNameInLocal,
-    specialApiUrl,
-    func_populate,
-    func_afterPopulated = null) {
+export async function getDataByAjaxOrLocalAsync(keyNameInLocal, specialApiUrl) {
     //#region get data from local
     let dataInLocal = JSON.parse(
         localStorage.getItem(keyNameInLocal));
     //#endregion
 
-    //#region get data by ajax if not exists in local (ajax)
-    if (dataInLocal == null  // data of any language not exists in local
-        || dataInLocal[language] == null)  // data belong to language not exists in local
-        $.ajax({
-            method: "GET",
-            url: baseApiUrl + specialApiUrl,
-            headers: {
-                "Authorization": jwtToken
-            },
-            contentType: "application/json",
-            dataType: "json",
-            success: (response) => {
-                //#region save data to local
+    return new Promise(resolve => {
+        //#region get data by ajax if not exists in local (ajax)
+        if (dataInLocal == null  // data of any language not exists in local
+            || dataInLocal[language] == null)  // data belong to language not exists in local
+            $.ajax({
+                method: "GET",
+                url: baseApiUrl + specialApiUrl,
+                headers: {
+                    "Authorization": jwtToken
+                },
+                contentType: "application/json",
+                dataType: "json",
+                success: (response) => {
+                    //#region initialize "dataInLocal"
+                    if (dataInLocal == null)  // when any data not exists (sometimes it can be exists on local but associated language of data is not exists on local)
+                        dataInLocal = {};
 
-                //#region initialize "dataInLocal"
-                if (dataInLocal == null)  // when any data not exists
-                    dataInLocal = {};
+                    dataInLocal[language] = response;
+                    //#endregion
 
-                dataInLocal[language] = response;
-                //#endregion
+                    //#region save data to local
+                    localStorage.setItem(
+                        keyNameInLocal,
+                        JSON.stringify(dataInLocal));
+                    //#endregion
 
-                //#region add to local
-                localStorage.setItem(
-                    keyNameInLocal,
-                    JSON.stringify(dataInLocal));
-                //#endregion
-
-                //#endregion
-
-                func_populate(response);
-
-                //#region call function after populate process
-                if (func_afterPopulated != null)
-                    func_afterPopulated();
-                //#endregion
-            }
-        });
-    //#endregion
-
-    //#region when data already in local
-    else {
-        func_populate(dataInLocal[language]);
-
-        //#region call function after populate process
-        if (func_afterPopulated != null)
-            func_afterPopulated();
+                    resolve(response);
+                },
+                complete: () => {
+                    resolve(null);
+                }
+            });
         //#endregion
-    }
-    //#endregion
+
+        //#region when data already in local
+        else
+            resolve(dataInLocal[language]);
+        //#endregion
+    })
 }
 export async function populateSelectAsync(select, options, optionToBeDisplay = null) {
     //#region add <option>'s to <select>
@@ -739,4 +725,65 @@ export function updateElementText(element, text) {
     element.empty();
     element.text(text);
 }
+
+export async function populateElementByAjaxOrLocalAsync(
+    keyNameInLocal,
+    specialApiUrl,
+    func_populate,
+    func_afterPopulated = null) {
+    //#region get data from local
+    let dataInLocal = JSON.parse(
+        localStorage.getItem(keyNameInLocal));
+    //#endregion
+
+    //#region get data by ajax if not exists in local (ajax)
+    if (dataInLocal == null  // data of any language not exists in local
+        || dataInLocal[language] == null)  // data belong to language not exists in local
+        $.ajax({
+            method: "GET",
+            url: baseApiUrl + specialApiUrl,
+            headers: {
+                "Authorization": jwtToken
+            },
+            contentType: "application/json",
+            dataType: "json",
+            success: (response) => {
+                //#region save data to local
+
+                //#region initialize "dataInLocal"
+                if (dataInLocal == null)  // when any data not exists
+                    dataInLocal = {};
+
+                dataInLocal[language] = response;
+                //#endregion
+
+                //#region add to local
+                localStorage.setItem(
+                    keyNameInLocal,
+                    JSON.stringify(dataInLocal));
+                //#endregion
+
+                //#endregion
+
+                func_populate(response);
+
+                //#region call function after populate process
+                if (func_afterPopulated != null)
+                    func_afterPopulated();
+                //#endregion
+            }
+        });
+    //#endregion
+
+    //#region when data already in local
+    else {
+        func_populate(dataInLocal[language]);
+
+        //#region call function after populate process
+        if (func_afterPopulated != null)
+            func_afterPopulated();
+        //#endregion
+    }
+    //#endregion
+}  // duplicate
 //#endregion
