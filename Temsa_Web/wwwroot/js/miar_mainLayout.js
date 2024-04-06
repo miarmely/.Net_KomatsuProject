@@ -1,5 +1,7 @@
-﻿import { populateElementByAjaxOrLocalAsync } from "./miar_tools.js"
-import { updateDefaultFlagAndLanguage, populateLanguageDropdown, clicked_languageDropdown } from "./miar_header.js";
+﻿import {
+    updateDefaultFlagAndLanguage, populateLanguageDropdownAsync,
+    clicked_languageDropdown
+} from "./miar_header.js";
 
 
 $(function () {
@@ -9,7 +11,6 @@ $(function () {
     const ul_profileOptions = $("#ul_profileOptions");
     const sidebar_mainMenus = sidebar_mainMenus_byLanguages[language];
     const sidebar_allSubMenus = sidebar_subMenus_byLanguages[language];
-    const ul_languages_id = "ul_languages";
     const profileOption_logout_id = "a_logout";
     //#endregion
 
@@ -94,17 +95,7 @@ $(function () {
             spn_displayingLanguage_id);
         //#endregion
 
-        //#region populate language dropdown
-        await populateElementByAjaxOrLocalAsync(
-            localKeys_allLanguages,
-            "/machine/display/language",
-            (data) => {
-                populateLanguageDropdown(
-                    ul_languages_id,
-                    data);
-            }
-        );
-        //#endregion       
+        await populateLanguageDropdownAsync(ul_languages);
     }
     async function populateSideBarMenuAsync() {
         //#region add sidebar main menus
@@ -154,7 +145,7 @@ $(function () {
 
             //#region add <ul> to sidebar sub menu
             li_sidebar_mainMenu.append(
-                `<ul id="${ul_sidebar_subMenus_id}" class="sub" style="display: none">
+                `<ul id="${ul_sidebar_subMenus_id}" class="sub sidebar_submenu" style="display: none">
                 </ul>`
             );
             //#endregion
@@ -172,6 +163,9 @@ $(function () {
             //#endregion
         }
         //#endregion
+
+        $("#ul_sidebar_subMenus_machines a[href= '/machine/category']").append(
+            `<img src="/images/new.png" alt="new" style="margin-left: 5px; width:30px; height:30px"/>`)
     }
     async function populateFooterAsync() {
         $("#spn_footerInfo").append(

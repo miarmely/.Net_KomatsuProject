@@ -43,53 +43,69 @@
 }
 
 
-/*------ button of article ------*/
-.div_articleButton {
+/*------ category buttons ------*/
+.div_categoryButton {
     text-align: center;
     margin-bottom: 40px;
 }
 
-    .div_articleButton button {
+
+    .div_categoryButton button {
         background-color: darkblue;
         color: white;
     }
 
-        .div_articleButton button:hover {
+        .div_categoryButton button:disabled {
+            background-color: #00008b70
+        }
+
+        .div_categoryButton button:hover {
             color: white;
             font-weight: bolder;
+        }
+
+        .div_categoryButton button:enabled:hover {
             box-shadow: 1px 1px 10px #0075d3;
         }
 
-        .div_articleButton button:focus {
+        .div_categoryButton button:disabled:hover {
+            box-shadow: 1px 1px 10px red;
+        }
+
+        .div_categoryButton button:focus {
             color: white;
         }
 
 
 /*------ send button ------*/
 #div_sendButton {
-    text-align: center;
     margin-top: 40px;
     margin-bottom: 10px;
 }
 
     #div_sendButton button {
-        background-color: #521FFF;
+        background-color: #129902;
         color: white;
         width: 100px;
     }
 
-        #div_sendButton button:hover {
-            font-weight: bolder;
-            box-shadow: 1px 1px 10px #0075d3;
+        #div_sendButton button:disabled {
+            background-color: #1299024a
         }
 
 
 /*----- cancel button -----*/
 .btn_cancel {
     background-color: transparent;
+    padding-right: 0px;
+    padding-left: 0px;
 }
 
     .btn_cancel img {
         width: 20px;
         height: 20px;
+    }
+
+    .btn_cancel:hover {
+        box-shadow: 1px 1px 10px red;
     }

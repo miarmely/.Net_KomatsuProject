@@ -1,7 +1,8 @@
 ﻿import {
     displayFileByObjectUrlAsync, populateSelectAsync, isFileSizeValidAsync,
     isFileTypeValidAsync, populateElementByAjaxOrLocalAsync,
-    removeObjectUrlFromElementAsync
+    removeObjectUrlFromElementAsync,
+    getDataByAjaxOrLocalAsync
 } from "./miar_tools.js"
 
 import {
@@ -591,23 +592,24 @@ export async function machineForm_populateSelectsAsync(slct_mainCategory) {
             //#endregion
         });
 
-    // populate description select
-    await populateElementByAjaxOrLocalAsync(
+    //#region populate descriptions select
+    var allLanguages = await getDataByAjaxOrLocalAsync(
         localKeys_allLanguages,
         "/machine/display/language",
-        (languages) => {
-            //#region add languages as <li>
-            for (let index in languages) {
-                let languageInData = languages[index];
+        false);
 
-                $("#" + ul_descriptions_id).append(
-                    `<li>
-                        <a class="${a_descriptions_class}" href="#">${languageInData}</a>
-                     </li>`
-                );
-            }
-            //#endregion
-        });
+    //#region add languages to <ul> as <li>
+    for (let index in allLanguages) {
+        let languageInData = allLanguages[index];
+
+        $("#" + ul_descriptions_id).append(
+            `<li>
+                <a class="${a_descriptions_class}" href="#">${languageInData}</a>
+            </li>`);
+    }
+    //#endregion
+
+    //#endregion
 }
 export async function machineForm_activeOrPassiveTheImageOrVideoBtnAsync(
     buttonToBeActive,

@@ -321,52 +321,6 @@ export async function setDisabledOfOtherUpdateButtonsAsync(rowId, pageSize, doDi
     //#endregion
 
 }
-export async function getDataByAjaxOrLocalAsync(keyNameInLocal, specialApiUrl) {
-    //#region get data from local
-    let dataInLocal = JSON.parse(
-        localStorage.getItem(keyNameInLocal));
-    //#endregion
-
-    return new Promise(resolve => {
-        //#region get data by ajax if not exists in local (ajax)
-        if (dataInLocal == null  // data of any language not exists in local
-            || dataInLocal[language] == null)  // data belong to language not exists in local
-            $.ajax({
-                method: "GET",
-                url: baseApiUrl + specialApiUrl,
-                headers: {
-                    "Authorization": jwtToken
-                },
-                contentType: "application/json",
-                dataType: "json",
-                success: (response) => {
-                    //#region initialize "dataInLocal"
-                    if (dataInLocal == null)  // when any data not exists (sometimes it can be exists on local but associated language of data is not exists on local)
-                        dataInLocal = {};
-
-                    dataInLocal[language] = response;
-                    //#endregion
-
-                    //#region save data to local
-                    localStorage.setItem(
-                        keyNameInLocal,
-                        JSON.stringify(dataInLocal));
-                    //#endregion
-
-                    resolve(response);
-                },
-                complete: () => {
-                    resolve(null);
-                }
-            });
-        //#endregion
-
-        //#region when data already in local
-        else
-            resolve(dataInLocal[language]);
-        //#endregion
-    })
-}
 export async function populateSelectAsync(select, options, optionToBeDisplay = null) {
     //#region add <option>'s to <select>
     for (let index in options) {
@@ -443,7 +397,7 @@ export async function autoObjectMapperAsync(targetObject, sourceObject, dontAddN
 
     for (let sourceKey in sourceObject) {
         //#region when source key is exists in target object
-        if (keysOfTarget.indexOf(sourceKey) != -1){
+        if (keysOfTarget.indexOf(sourceKey) != -1) {
             //#region when source object value is null (check null)
             if (dontAddNullValues && sourceObject[sourceKey] == null)
                 continue;
@@ -786,4 +740,78 @@ export async function populateElementByAjaxOrLocalAsync(
     }
     //#endregion
 }  // duplicate
+export async function getDataByAjaxOrLocalAsync(
+    keyNameInLocal,
+    specialApiUrl,
+    byLanguage = true,
+    withToken = true
+) {
+    // byLanguage:  if true: check data in local by page language or
+    //              save returned data to local by page language. 
+    //              if false: language sensitive is not exists.
+
+    //#region get data from local
+    let dataInLocal = JSON.parse(
+        localStorage.getItem(keyNameInLocal));
+    //#endregion
+
+    return new Promise(resolve => {
+        //#region get data by ajax if not exists in local (ajax)
+        if (dataInLocal == null  // data of any language not exists in local
+            || (byLanguage && dataInLocal[language] == null)) // data belong to language not exists in local
+            $.ajax({
+                method: "GET",
+                url: baseApiUrl + specialApiUrl,
+                headers: {
+                    "Authorization": withToken ? jwtToken : null
+                },
+                contentType: "application/json",
+                dataType: "json",
+                success: (response) => {
+                    //#region add response to "dataInLocal"
+
+                    //#region when language sensitive is exists  (ADD BY LANGUAGE)  (EX => localKey : { EN: response })
+                    if (byLanguage) {
+                        //initialize "dataInLocal"
+                        if (dataInLocal == null)  // when any data not exists (sometimes it can be exists on local but associated language of data is not exists on local)
+                            dataInLocal = {};
+
+                        dataInLocal[language] = response;
+                    }
+                    //#endregion
+
+                    //#region when language sensitive is not exists  (DIRECT ADD)  (EX => localKey : response)
+                    else
+                        dataInLocal = response;
+                    //#endregion
+
+                    //#endregion
+
+                    //#region save data to local
+                    localStorage.setItem(
+                        keyNameInLocal,
+                        JSON.stringify(dataInLocal));
+                    //#endregion
+
+                    resolve(response);
+                },
+                complete: () => {
+                    resolve(null);
+                }
+            });
+        //#endregion
+
+        //#region when data already in local
+        else {
+            // when language sensitive is exists
+            if (byLanguage)
+                resolve(dataInLocal[language]);
+
+            // when language sensitive is not exists
+            else
+                resolve(dataInLocal);
+        }
+        //#endregion
+    })
+}  // new version
 //#endregion

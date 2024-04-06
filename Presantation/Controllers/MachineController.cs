@@ -157,7 +157,6 @@ namespace Presantation.Controllers
 
 
 		[HttpGet("display/language")]
-		[Authorization]
 		public async Task<IActionResult> GetAllLanguages()
 		{
 			var languages = await _manager.MachineService

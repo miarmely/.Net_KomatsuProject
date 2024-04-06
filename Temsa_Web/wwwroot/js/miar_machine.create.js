@@ -116,7 +116,7 @@ $(function () {
         //#region descriptions in some language not entered (error)
         // get languages in session
         let languagesInSession = JSON.parse(
-            localStorage.getItem(localKeys_allLanguages))[language];
+            localStorage.getItem(localKeys_allLanguages));
 
         // control description by language
         for (let index in languagesInSession) {

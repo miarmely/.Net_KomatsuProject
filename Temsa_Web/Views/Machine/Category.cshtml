@@ -25,23 +25,24 @@
                                 <div class="div_category">
                                     <h3 class="h_articleTitle"></h3>
 
-                                    @*maincategory select*@
-                                    <div class="form-group">
-                                        <label id="lbl_mainCategory" for="slct_mainCategory" class="col-sm-3 control-label"></label>
-                                        
-                                        @*for update & delete mode*@
-                                        <div class="col-sm-6" hidden>
+                                    @*maincategory <select>*@
+                                    <div class="form-group" hidden>
+                                        <label for="slct_mainCategory" class="col-sm-3 control-label"></label>
+                                        <div class="col-sm-6">
                                             <select id="slct_mainCategory" class="form-control"></select>
                                         </div>
+                                    </div>
 
-                                        @*for add mode*@
-                                        <div class="col-sm-6" >
-                                            <input id="inpt_mainCategory" type="text" class="form-control"/>
+                                    @*new maincategory <input>*@
+                                    <div class="form-group">
+                                        <label for="inpt_newMainCategory" class="col-sm-3 control-label"></label>
+                                        <div class="col-sm-6">
+                                            <input id="inpt_newMainCategory" type="text" class="form-control"/>
                                         </div>
                                     </div>
 
                                     @*select <button>*@
-                                    <div class="form-group  div_articleButton">
+                                    <div class="form-group  div_categoryButton">
                                         <label class="col-sm-3 control-label"></label>
                                         <div class="col-sm-6">
                                             <button type="button" class="btn"></button>
@@ -49,40 +50,31 @@
                                     </div>
 
                                     @*selected main category*@
-                                    <div id="div_selectedMainCategory">
-                                        <div class="form-group" style="margin-bottom: 0px">
-                                            <label class="col-sm-3 control-label"></label>
-                                            <div class="col-sm-6">
-                                                <input type="text" value="Crawler Excavator" class="form-control" readonly/>
-                                            </div>
-                                            <div class="col-sm-3">
-                                                <button type="button" class="btn btn_cancel"><img src="~/images/cancel.png" alt="cancel"/></button>
-                                            </div>
-                                        </div>
-                                    </div>
+                                    <div class="div_selectedCategories"></div>
                                 </div>
                                     
                                 @*subcategory*@
                                 <div class="div_category">
                                     <h3 class="h_articleTitle"></h3>
 
-                                    @*subcategories <select>*@
-                                    <div class="form-group">
-                                        <label id="lbl_subcategory" for="slct_subcategories" class="col-sm-3 control-label"></label>
-                                         
-                                        @*for update & delete mode*@
-                                        <div class="col-sm-6" hidden>
+                                    @*subcategory <select>*@
+                                    <div class="form-group" hidden>
+                                        <label for="slct_subcategory" class="col-sm-3 control-label"></label>
+                                        <div class="col-sm-6">
                                             <select id="slct_subcategory" class="form-control"></select>
                                         </div>
+                                    </div>
 
-                                        @*for add mode*@
+                                    @*new subcategory <input>*@
+                                    <div class="form-group">
+                                        <label for="inpt_newSubcategory" class="col-sm-3 control-label"></label>
                                         <div class="col-sm-6" >
-                                            <input id="inpt_subcategory" type="text" class="form-control"/>
+                                            <input id="inpt_newSubcategory" type="text" class="form-control"/>
                                         </div>
                                     </div>
 
                                     @*select <button>*@
-                                    <div class="form-group  div_articleButton">
+                                    <div class="form-group  div_categoryButton">
                                         <label class="col-sm-3 control-label"></label>
                                         <div class="col-sm-6">
                                             <button type="button" class="btn"></button>
@@ -90,42 +82,14 @@
                                     </div>
 
                                     @*selected main category*@
-                                    <div id="div_selectedSubcategories">
-                                        <div class="form-group" style="margin-bottom: 0px">
-                                            <label class="col-sm-3 control-label"></label>
-                                            <div class="col-sm-6">
-                                                <input type="text" value="Crawler Excavator" class="form-control" readonly/>
-                                            </div>
-                                            <div class="col-sm-3">
-                                                <button type="button" class="btn btn_cancel"><img src="~/images/cancel.png" alt="cancel"/></button>
-                                            </div>
-                                        </div>
-                                        <div class="form-group" style="margin-bottom: 0px">
-                                            <label class="col-sm-3 control-label"></label>
-                                            <div class="col-sm-6">
-                                                <input type="text" value="Wheel Loaders" class="form-control" readonly/>
-                                            </div>
-                                            <div class="col-sm-3">
-                                                <button type="button" class="btn btn_cancel"><img src="~/images/cancel.png" alt="cancel"/></button>
-                                            </div>
-                                        </div>
-                                        <div class="form-group" style="margin-bottom: 0px">
-                                            <label class="col-sm-3 control-label"></label>
-                                            <div class="col-sm-6">
-                                                <input type="text" value="Bulldozers" class="form-control" readonly/>
-                                            </div>
-                                            <div class="col-sm-3">
-                                                <button type="button" class="btn btn_cancel"><img src="~/images/cancel.png" alt="cancel"/></button>
-                                            </div>
-                                        </div>
-                                    </div>
+                                    <div class="div_selectedCategories"></div>
                                 </div>
 
                                 @*send <button>*@
-                                <div id="div_sendButton" class="form-group">
+                                <div id="div_sendButton" class="form-group  div_categoryButton">
                                     <label class="col-sm-3 control-label"></label>
                                     <div class="col-sm-6">
-                                        <button type="button" class="btn"></button>
+                                        <button type="submit" class="btn" disabled></button>
                                     </div>
                                 </div>
                             </div>
@@ -173,8 +137,14 @@
                 }
             },
             mainCategoryLabel: {
-                TR: "Ana Kategori",
-                EN: "Main Category"
+                select:{
+                    TR: "Ana Kategori",
+                    EN: "Main Category"
+                },
+                input:{
+                    TR: "Yeni Ana Kategori",
+                    EN: "New Main Category"
+                }            
             },
             subcategoryTitleByMode: {
                 add:{
@@ -191,9 +161,14 @@
                 }
             },
             subcategoryLabel: {
-                TR: "Alt Kategori",
-                EN: "Subcategory"
-            },
+                select:{
+                    TR: "Alt Kategori",
+                    EN: "Subcategory"
+                },
+                input:{
+                    TR: "Yeni Alt Kategori",
+                    EN: "New Subcategory"
+                }            },
             selectButton: {
                 TR: "Seç",
                 EN: "Select"
