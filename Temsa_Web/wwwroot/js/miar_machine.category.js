@@ -1,6 +1,5 @@
 ﻿import {
-    getDataByAjaxOrLocalAsync, populateSelectAsync,
-    updateElementText
+    getDataByAjaxOrLocalAsync, populateSelectAsync, updateElementText
 } from "./miar_tools.js";
 
 
@@ -8,7 +7,8 @@ $(function () {
     //#region variables
     const slct = {
         modes: $("#div_category_menubar select:nth-child(1)"),
-        languages: $("#div_category_menubar select:nth-child(2)"),
+        catLangOnMainCat: $(".div_category:nth-child(1) .slct_categoryLanguage"),
+        catLangOnSubcat: $(".div_category:nth-child(2) .slct_categoryLanguage"),
         mainCategory: $("#slct_mainCategory"),
         subcategory: $("#slct_subcategory"),
     };
@@ -23,6 +23,7 @@ $(function () {
         newSubcategoryInput: $("label[for='inpt_newSubcategory']").parent(),
         selectedMainCategory: $(".div_category:nth-child(1) .div_selectedCategories"),
         selectedSubcategory: $(".div_category:nth-child(2) .div_selectedCategories"),
+        selectedCategories: $(".div_selectedCategories")
     };
     const btn = {
         send: $("#div_sendButton button"),
@@ -34,19 +35,24 @@ $(function () {
         newSubcategory: $("#inpt_newSubcategory"),
     }
     let mode = "add";  // add | update | delete
-    let categoryLanguage = language;  // page language as default
+    let categoryLanguage = {
+        mainCategory: language,  // page language as default
+        subcategory: language
+    };
     let isCategoriesPopulatedToSelects = false;
-    let selectedMainCatsByLangs = {
-        TR: {},
-        EN: {}
-    };
-    let selectedSubcatsByLangs = {
-        TR: {},
-        EN: {}
-    };
+    let selectedCatsByLangs = {
+        mainCategory: {
+            TR: {},
+            EN: {}
+        },
+        subcategory: {
+            TR: {},
+            EN: {}
+        },
+    }
     let nextDivNos = {
-        mainCat: 0,
-        subCat: 0
+        mainCategory: 0,
+        subcategory: 0
     };  // for id of selected main/subcategory inputs
     //#endregion
 
@@ -116,59 +122,34 @@ $(function () {
         }
         //#endregion
     })
-    btn.selectOnMainCat.click(async () => {
-        //#region when any value is not entered
-        const newMainCategory = inpt.newMainCategory.val();
+    slct.catLangOnMainCat.change(() => {
+        // update update "categoryLanguage"
+        categoryLanguage.mainCategory = slct.catLangOnMainCat.val();
 
-        if (newMainCategory.length == 0)
-            return;
-        //#endregion
+        // show select <button> when any selected main category of selected category language is not exists 
+        if (getSelectedCategoryCount("mainCategory", categoryLanguage.mainCategory) == 0)
+            btn.selectOnMainCat.removeAttr("disabled");
 
-        //#region if main category is selected when another main category already exists
-        if (Object
-            .keys(selectedMainCatsByLangs[categoryLanguage])
-            .length > 0)
-            return;
-        //#endregion
-
-        //#region add new input to selected maincategories area
-        const div_formGroup_id = await addNewInputToSelectedInputsAreaAsync(
-            div.selectedMainCategory,
-            "mainCategory");
-
-        const inpt_formGroupDiv = $("#" + div_formGroup_id + " input");
-        //#endregion
-
-        switch (mode) {
-            case "add":
-                //#region populate new added <input>
-                selectedMainCatsByLangs[categoryLanguage][div_formGroup_id] = newMainCategory;
-                inpt_formGroupDiv.val(newMainCategory);
-
-                // disable select button
-                btn.selectOnMainCat.attr("disabled", "");
-                //#endregion
-
-                break;
-            case "update":
-                break;
-            case "delete":
-                break;
-        }
+        // disable select <button> (otherwise)
+        else
+            btn.selectOnMainCat.attr("disabled", "");
     })
-    div.selectedMainCategory.on("click", ".btn_cancel", (event) => {
-        //#region remove selected mainCategory from "selectedMainCatsByLangs"
-        let clickedElement = $(event.target);
-        let div_formGroup = clickedElement.closest("div[class= 'form-group']");
-
-        delete selectedMainCatsByLangs[categoryLanguage][div_formGroup.attr("id")];
-        //#endregion
-
-        //#region remove selected main category and show select <button>
-        div_formGroup.remove();
-        btn.selectOnMainCat.removeAttr("disabled");
-        //#endregion
-    });
+    slct.catLangOnSubcat.change(() => {
+        // update update "categoryLanguage"
+        categoryLanguage.subcategory = slct.catLangOnSubcat.val();
+    })
+    btn.selectOnMainCat.click(async () => {
+        await selectCategoryAsync("mainCategory");
+    })
+    btn.selectOnSubCat.click(async () => {
+        await selectCategoryAsync("subcategory");
+    })
+    div.selectedMainCategory.on("click", ".btn_cancel", async (event) => {
+        await removeSelectedInputAsync("mainCategory", $(event.target));
+    })
+    div.selectedSubcategory.on("click", ".btn_cancel", async (event) => {
+        await removeSelectedInputAsync("subcategory", $(event.target));
+    })
     //#endregion
 
     //#region functions
@@ -187,16 +168,20 @@ $(function () {
         }
         //#endregion
 
-        //#region populate languages <select>
+        //#region populate category language <select>s
         var allLanguages = await getDataByAjaxOrLocalAsync(
             localKeys_allLanguages,
             "/machine/display/language",
             false);
 
         await populateSelectAsync(
-            slct.languages,
+            slct.catLangOnMainCat,
             allLanguages,
-            language);
+            language);  // of main category
+        await populateSelectAsync(
+            slct.catLangOnSubcat,
+            allLanguages,
+            language);  // of subcategory
         //#endregion
 
         //#region populate main category article
@@ -250,9 +235,9 @@ $(function () {
 
         for (let index in allMainAndSubcategories) {
             let categoryInfo = allMainAndSubcategories[index];
-            let selectedCatLang = slct.languages.val();
+            let selectedCatLang = slct.catLangOnMainCat.val();
 
-            // populate main category <select> bt selected category language
+            // populate main category <select> by selected category language
             if (categoryInfo.language == selectedCatLang) {
                 // populate
                 slct.mainCategory.append(
@@ -273,27 +258,107 @@ $(function () {
         isCategoriesPopulatedToSelects = true;
         //#endregion
     }
-    async function addNewInputToSelectedInputsAreaAsync(div_parent, whichCategory) {
-        //#region set next div no
-        let nextDivNo;
+    async function selectCategoryAsync(whichCategory) {
+        //#region set variables
+        const slct_category = (whichCategory == "mainCategory" ?
+            slct.mainCategory
+            : slct.subcategory);
+        const inpt_newCategory = (whichCategory == "mainCategory" ?
+            inpt.newMainCategory
+            : inpt.newSubcategory);
+        const div_selectedCategories = (whichCategory == "mainCategory" ?
+            div.selectedMainCategory
+            : div.selectedSubcategory);
+        const newCategory = inpt_newCategory.val();
+        const categoryOnSelect = slct_category.val();
+        //#endregion
 
-        switch (whichCategory) {
-            case "mainCategory":
-                nextDivNo = nextDivNos.mainCat;
-                nextDivNos.mainCat += 1;
-                break;
-            case "subCategory":
-                nextDivNo = nextDivNos.subCat;
-                nextDivNos.subCat += 1;
-                break;
+        //#region when mode is "add" or "update" and any value is not entered
+        if (mode != "delete"
+            && newCategory.length == 0)
+            return;
+        //#endregion
+
+        //#region security control for "mainCategory"
+        if (whichCategory == "mainCategory") {
+            // if main category is alreay exists when new main category is selected
+            if (getSelectedCategoryCount(whichCategory, categoryLanguage.mainCategory) > 0)
+                return;
+
+            btn.selectOnMainCat.attr("disabled", "");
+            //#endregion
         }
         //#endregion
 
-        //#region add new input to selected main/subcategory inputs area
-        let div_id = "div_" + nextDivNo;
+        //#region add new <input> to selected main/sub categories 
+        const div_formGroup_id = await addNewInputToSelectedInputsAreaAsync(whichCategory);
 
-        div_parent.append(
-            `<div id="${div_id}" class="form-group" style="margin-bottom: 0px">
+        const inpt_newAdded = div_selectedCategories.find("#" + div_formGroup_id + " input");
+        //#endregion
+
+        //#region populate new <input> by mode
+        switch (mode) {
+            case "add":
+                // populate new added <input>  
+                inpt_newAdded.val(newCategory);
+
+                // reset new main/sub category <input>
+                inpt_newCategory.val("");
+
+                // update "selectedCatsByLangs"
+                selectedCatsByLangs[whichCategory][categoryLanguage[whichCategory]][div_formGroup_id] = newCategory;
+
+                break;
+            case "update":
+                //#region populate new added <input>
+                inpt_newAdded.val(categoryOnSelect + "  ~>  " + newCategory);
+
+                // reset new main/sub category <input>
+                inpt_newAdded.val("");
+
+                // update "selectedCatsByLangs"
+                selectedCatsByLangs[whichCategory][categoryLanguage[whichCategory]][div_formGroup_id] = newCategory;
+
+                break;
+            case "delete":
+                //// populate new added <input>
+                //inpt_newAdded.val(categoryLanguage);
+
+
+                break;
+        }
+        //#endregion
+    }
+    async function addNewInputToSelectedInputsAreaAsync(whichCategory) {
+        //#region set "div_selectedCatsByLang"
+        let div_selectedCats = (whichCategory == "mainCategory" ?
+            div.selectedMainCategory
+            : div.selectedSubcategory);
+        let div_selectedCatsOfLang_id = div_selectedCats.attr("class") + "_" + categoryLanguage[whichCategory];  // EX: "div_selectedCategories" + "_" + "EN" => "div_selectedCategories_EN"
+
+        //#region when any main/sub category belong to selected category language is not selected
+        if (getSelectedCategoryCount(whichCategory, categoryLanguage[whichCategory]) == 0) {
+            // add article belong to selected language
+            div_selectedCats.append(`
+                <div id="${div_selectedCatsOfLang_id}" class="div_selectedCategoriesByLang">
+                    <h4>${categoryLanguage[whichCategory]}</h4>
+                </div>`);
+        }
+        //#endregion
+
+        let div_selectedCatsOfLang = div_selectedCats.children("#" + div_selectedCatsOfLang_id);
+        //#endregion
+
+        //#region set "nextDivNo"
+        let nextDivNo = nextDivNos[whichCategory];
+        nextDivNos[whichCategory] += 1;
+        //#endregion
+
+        //#region add new input to selected main/subcategory inputs area
+        let div_newAddedInput_id = "div_" + nextDivNo;
+
+        div_selectedCatsOfLang.append(
+            `<div id="${div_newAddedInput_id}" class="form-group" style="margin-bottom: 0px">
                 <label class="col-sm-3 control-label"></label>
                 <div class="col-sm-6">
                     <input type="text" class="form-control" readonly/>
@@ -306,16 +371,64 @@ $(function () {
             </div>`);
         //#endregion
 
-        return div_id;
+        return div_newAddedInput_id;
+    }
+    async function removeSelectedInputAsync(whichCategory, clickedElement) {
+        //#region remove selected main/sub Category from "selectedMainCatsByLangs"
+        let div_inputOfCancelButton = clickedElement.closest("div[class= 'form-group']");
+        let titleOfSelectedCategory = (div_inputOfCancelButton
+            .siblings("h4")
+            .text());  // category language
+
+        delete selectedCatsByLangs[whichCategory][titleOfSelectedCategory][div_inputOfCancelButton.attr("id")];
+        //#endregion
+
+        //#region remove selected main category <input>
+        // when any main/sub category of selected language is not exists (remove article of selected language)
+        if (getSelectedCategoryCount(whichCategory, titleOfSelectedCategory) == 0)
+            div_inputOfCancelButton
+                .parent()
+                .remove();
+
+        // when any main/sub category is exists (remove only selected main/sub category)
+        else
+            div_inputOfCancelButton.remove();
+        //#endregion
+
+        //#region show select <button> of main category when any selected main category of selected category langage is not exists
+        if (whichCategory == "mainCategory"
+            && getSelectedCategoryCount(whichCategory, categoryLanguage[whichCategory]) == 0)
+            btn.selectOnMainCat.removeAttr("disabled");
+        //#endregion
+    }
+    function getSelectedCategoryCount(whichCategory, categoryLanguage) {
+        return Object
+            .keys(selectedCatsByLangs[whichCategory][categoryLanguage])
+            .length;
     }
     function resetCategoryArticles() {
-        // reset <select> and <input> of main category article
+        //#region reset <select> and <input> of main category article
         slct.mainCategory.prop("selectedIndex", 0);
         inpt.newMainCategory.val("");
+        //#endregion
 
-        // reset <select> and <input> of subcategory article
+        //#region reset <select> and <input> of subcategory article
         slct.subcategory.prop("selectedIndex", 0);
         inpt.newSubcategory.val("");
+        //#endregion
+
+        //#region reset selected main and subcategory
+        div.selectedCategories.empty();
+
+        // reset "selectedCatsByLangs"
+        for (let language in selectedCatsByLangs.mainCategory) selectedCatsByLangs.mainCategory[language] = {};
+        for (let language in selectedCatsByLangs.subcategory) selectedCatsByLangs.subcategory[language] = {};
+        //#endregion
+
+        //#region show select <button>s
+        btn.selectOnMainCat.removeAttr("disabled");
+        btn.selectOnSubCat.removeAttr("disabled");
+        //#endregion
     }
     //#endregion
 

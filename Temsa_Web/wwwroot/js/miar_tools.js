@@ -371,26 +371,6 @@ export async function setDisabledOfButtonsAsync(doDisabled, buttonIds, bgColor) 
     }
     //#endregion
 }
-export async function isAllObjectValuesNullAsync(object) {
-    //#region compute total null value quantity
-    let nullCounter = 0
-
-    for (let key in object) {
-        let value = object[key];
-
-        // when data is null
-        if (value == null)
-            nullCounter += 1;
-    }
-    //#endregion
-
-    //#region when all object values is null
-    if (nullCounter == Object.keys(object).length)
-        return true;
-    //#endregion
-
-    return false;
-}
 export async function autoObjectMapperAsync(targetObject, sourceObject, dontAddNullValues = false) {
     //#region update target object values with source object values
     let keysOfTarget = Object.keys(targetObject);
@@ -545,21 +525,6 @@ export async function showOrHideBackButtonAsync(
             break;
     }
 }
-export async function isUserRoleThisRoleAsync(userRole, targetRole) {
-    //#region check user role whether is desired role
-    switch (targetRole) {
-        case "user":
-            if (userRole == "User" || userRole == "Kullanıcı") return true;
-            return false;
-        case "editor":
-            if (userRole == "Editor" || userRole == "Editör") return true;
-            return false;
-        case "admin":
-            if (userRole == "Admin" || userRole == "Yönetici") return true;
-            return false;
-    }
-    //#endregion
-}
 export async function resetFormAsync(lbl_result) {
     // reset inputs and result label
     $("form")[0].reset();
@@ -678,6 +643,45 @@ export function updateErrorRow(
 export function updateElementText(element, text) {
     element.empty();
     element.text(text);
+}
+
+export async function isUserRoleThisRoleAsync(userRole, targetRole) {
+    //#region check user role whether is desired role
+    switch (targetRole) {
+        case "user":
+            if (userRole == "User" || userRole == "Kullanıcı") return true;
+            return false;
+        case "editor":
+            if (userRole == "Editor" || userRole == "Editör") return true;
+            return false;
+        case "admin":
+            if (userRole == "Admin" || userRole == "Yönetici") return true;
+            return false;
+    }
+    //#endregion
+}
+export async function isAllObjectValuesNullAsync(object) {
+    //#region compute total null value quantity
+    let nullCounter = 0
+
+    for (let key in object) {
+        let value = object[key];
+
+        // when data is null
+        if (value == null)
+            nullCounter += 1;
+    }
+    //#endregion
+
+    //#region when all object values is null
+    if (nullCounter == Object.keys(object).length)
+        return true;
+    //#endregion
+
+    return false;
+}
+export function isAnyValueExistsOnInput(inpt) {
+    return inpt.val().length > 0;
 }
 
 export async function populateElementByAjaxOrLocalAsync(

@@ -14,9 +14,6 @@
                     <div id="div_category_menubar">
                         @*modes <select>*@
                         <select class="input-sm form-control w-sm inline v-middle"></select>
-
-                        @*language <select>*@
-                        <select class="input-sm form-control w-sm inline v-middle"></select>
                     </div>
                     <div id="div_category_form">
                         <form>
@@ -38,6 +35,10 @@
                                         <label for="inpt_newMainCategory" class="col-sm-3 control-label"></label>
                                         <div class="col-sm-6">
                                             <input id="inpt_newMainCategory" type="text" class="form-control"/>
+                                        </div>
+                                        <div class="col-sm-3">
+                                            @*language <select>*@
+                                            <select class="form-control w-sm inline v-middle slct_categoryLanguage"></select>
                                         </div>
                                     </div>
 
@@ -71,6 +72,10 @@
                                         <div class="col-sm-6" >
                                             <input id="inpt_newSubcategory" type="text" class="form-control"/>
                                         </div>
+                                        <div class="col-sm-3">
+                                            @*language <select>*@
+                                            <select class="form-control w-sm inline v-middle slct_categoryLanguage"></select>
+                                        </div>
                                     </div>
 
                                     @*select <button>*@
@@ -100,6 +105,7 @@
         </div>
     </div>
 </div>
+
 
 <script>
     const langPack = {
