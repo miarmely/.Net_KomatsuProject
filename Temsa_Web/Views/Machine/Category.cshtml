@@ -94,8 +94,14 @@
                                 <div id="div_sendButton" class="form-group  div_categoryButton">
                                     <label class="col-sm-3 control-label"></label>
                                     <div class="col-sm-6">
-                                        <button type="submit" class="btn" disabled></button>
+                                        <button type="submit" class="btn"></button>
                                     </div>
+                                </div>
+
+                                @*result label*@
+                                <div style="text-align:center">
+                                    <p id="p_resultLabel"></p>
+                                    <img id="img_loading" src="~/images/loading.gif" style="width:40px; height:40px" hidden/>
                                 </div>
                             </div>
                         </form>
@@ -183,6 +189,22 @@
         sendButton: {
             TR: "Gönder",
             EN: "Send",
+        },
+        errorMessages: {
+            badRequestForMainCat: {
+                TR: "bazı diller için ana kategori eklenmemiş",
+                EN: "main category for some languages is not added"
+            },
+            badRequestForSubcat: {
+                TR: "bazı dilleri için alt kategori eklenmemiş veya eksik eklenmiş",
+                EN: "subcategory for some languages is not added or missing added"
+            }
+        },
+        successMessages:{
+            saveSuccessful: {
+                TR: "başarıyla kaydedildi",
+                EN: "saved successfully"
+            }
         }
     };
 </script>

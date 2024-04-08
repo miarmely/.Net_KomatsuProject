@@ -1,5 +1,5 @@
 ﻿import {
-    getDataByAjaxOrLocalAsync, populateSelectAsync, updateElementText
+    getDataByAjaxOrLocalAsync, populateSelectAsync, updateElementText, updateResultLabel
 } from "./miar_tools.js";
 
 
@@ -34,6 +34,10 @@ $(function () {
         newMainCategory: $("#inpt_newMainCategory"),
         newSubcategory: $("#inpt_newSubcategory"),
     }
+    const p_resultLabel = $("#p_resultLabel");
+    const img = {
+        loading: $("#img_loading")
+    }
     let mode = "add";  // add | update | delete
     let categoryLanguage = {
         mainCategory: language,  // page language as default
@@ -58,7 +62,10 @@ $(function () {
 
     //#region events
     slct.modes.change(async () => {
+        //#region resets
         resetCategoryArticles();
+        p_resultLabel.empty();
+        //#endregion
 
         //#region change article title of main and subcategory
         mode = slct.modes.val();
@@ -139,16 +146,150 @@ $(function () {
         categoryLanguage.subcategory = slct.catLangOnSubcat.val();
     })
     btn.selectOnMainCat.click(async () => {
+        p_resultLabel.empty();
         await selectCategoryAsync("mainCategory");
     })
     btn.selectOnSubCat.click(async () => {
+        p_resultLabel.empty();
         await selectCategoryAsync("subcategory");
     })
     div.selectedMainCategory.on("click", ".btn_cancel", async (event) => {
+        p_resultLabel.empty();
         await removeSelectedInputAsync("mainCategory", $(event.target));
     })
     div.selectedSubcategory.on("click", ".btn_cancel", async (event) => {
+        p_resultLabel.empty();
         await removeSelectedInputAsync("subcategory", $(event.target));
+    })
+    btn.send.click((event) => {
+        //#region resets
+        event.preventDefault();
+        p_resultLabel.empty();
+        //#endregion
+
+        //#region security control
+
+        //#region check selected main categories whether is entered for all languages
+        let selectedMainCatInTRCount = getSelectedCategoryCount("mainCategory", "TR");
+        let selectedMainCatInENCount = getSelectedCategoryCount("mainCategory", "EN");
+
+        if (selectedMainCatInTRCount == 0
+            || selectedMainCatInTRCount != selectedMainCatInENCount
+        ) {
+            // write error message
+            updateResultLabel(
+                "#" + p_resultLabel.attr("id"),
+                langPack.errorMessages.badRequestForMainCat[language],
+                resultLabel_errorColor,
+                "30px",
+                img.loading);
+
+            return;
+        }
+        //#endregion
+
+        //#region check selected subcategories whether is entered for all languages
+        let selectedSubcatInTRCount = getSelectedCategoryCount("subcategory", "TR");
+        let selectedSubcatInENCount = getSelectedCategoryCount("subcategory", "EN");
+
+        if (selectedSubcatInTRCount == 0
+            || selectedSubcatInTRCount != selectedSubcatInENCount
+        ) {
+            // write error message
+            updateResultLabel(
+                "#" + p_resultLabel.attr("id"),
+                langPack.errorMessages.badRequestForSubcat[language],
+                resultLabel_errorColor,
+                "30px",
+                img.loading);
+
+            return;
+        }
+        //#endregion
+
+        //#endregion
+
+        //#region set data
+
+        //#region set "mainCategoryInEn" and "mainCategoryInTR" data
+        let mainCategoryInEn;
+        let mainCategoryInTR;
+
+        for (let divId in selectedCatsByLangs.mainCategory.EN) {
+            mainCategoryInEn = selectedCatsByLangs.mainCategory.EN[divId];
+        }
+        for (let divId in selectedCatsByLangs.mainCategory.TR) {
+            mainCategoryInTR = selectedCatsByLangs.mainCategory.TR[divId];
+        }
+        //#endregion
+
+        //#region set "subcategoriesInEN" and "subcategoriesInTR"
+        let subcategoriesInEN = [];
+        let subcategoriesInTR = [];
+
+        for (let divId in selectedCatsByLangs.subcategory.EN) {
+            subcategoriesInEN.push(
+                selectedCatsByLangs.subcategory.EN[divId]);
+        }
+        for (let divId in selectedCatsByLangs.subcategory.TR) {
+            subcategoriesInTR.push(
+                selectedCatsByLangs.subcategory.TR[divId]);
+        }
+        //#endregion
+
+        //#endregion
+
+        $.ajax({
+            method: "POST",
+            url: baseApiUrl + `/machineCategory/mainAndSubcategory/add?language=${language}`,
+            headers: {
+                authorization: jwtToken
+            },
+            data: JSON.stringify({
+                mainCategoryInEN: mainCategoryInEn,
+                mainCategoryInTR: mainCategoryInTR,
+                subcategoriesInEN: subcategoriesInEN,
+                subcategoriesInTR: subcategoriesInTR,
+            }),
+            contentType: "application/json",
+            dataType: "json",
+            beforeSend: () => {
+                img.loading.removeAttr("hidden");
+            },
+            success: () => {
+                // write success message
+                updateResultLabel(
+                    "#" + p_resultLabel.attr("id"),
+                    langPack.successMessages.saveSuccessful[language],
+                    resultLabel_successColor,
+                    "30px",
+                    img.loading);
+
+                // remove old main and subcategories from local
+                localStorage.removeItem(localKeys_allMainAndSubcategories);
+
+                // refresh page after 2 second
+                setTimeout(
+                    () => window.location.reload(),
+                    1000);
+                
+            },
+            error: (response) => {
+                // write error message
+                updateResultLabel(
+                    "#" + p_resultLabel.attr("id"),
+                    JSON.parse(response.responseText).errorMessage,
+                    resultLabel_errorColor,
+                    "30px",
+                    img.loading);
+            }
+        })
+    })
+    $(".panel-body input").click(() => {
+        p_resultLabel.empty();
+    })
+    $(".panel-body select").click(() => {
+        p_resultLabel.empty();
     })
     //#endregion
 
