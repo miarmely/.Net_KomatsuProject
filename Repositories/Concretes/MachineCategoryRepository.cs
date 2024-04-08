@@ -21,12 +21,13 @@ namespace Repositories.Concretes
 					parameters);
 
 		public async Task<IEnumerable<CategoryView>> GetAllMainAndSubcategoriesAsync(
-			Func<CategoryView,
+			Func<MainCategoryPartForCategoryView,
 				SubcategoryPartForCategoryView,
 				CategoryView> map,
 			string splitOn) =>
 				await QueryAsync(
-					Configs.DbSettings.ProcedureNames.M_C_DisplayAllMainAndSubcategories,
+					Configs.DbSettings.ProcedureNames
+						.M_C_DisplayAllMainAndSubcategories,
 					null,
 					map,
 					splitOn);

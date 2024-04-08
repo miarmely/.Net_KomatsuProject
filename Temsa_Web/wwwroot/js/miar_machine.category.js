@@ -153,14 +153,6 @@ $(function () {
         p_resultLabel.empty();
         await selectCategoryAsync("subcategory");
     })
-    div.selectedMainCategory.on("click", ".btn_cancel", async (event) => {
-        p_resultLabel.empty();
-        await removeSelectedInputAsync("mainCategory", $(event.target));
-    })
-    div.selectedSubcategory.on("click", ".btn_cancel", async (event) => {
-        p_resultLabel.empty();
-        await removeSelectedInputAsync("subcategory", $(event.target));
-    })
     btn.send.click((event) => {
         //#region resets
         event.preventDefault();
@@ -267,12 +259,7 @@ $(function () {
 
                 // remove old main and subcategories from local
                 localStorage.removeItem(localKeys_allMainAndSubcategories);
-
-                // refresh page after 2 second
-                setTimeout(
-                    () => window.location.reload(),
-                    1000);
-                
+                resetCategoryArticles();
             },
             error: (response) => {
                 // write error message
@@ -284,6 +271,29 @@ $(function () {
                     img.loading);
             }
         })
+    })
+    div.selectedMainCategory.on("click", ".btn_cancel", async (event) => {
+        p_resultLabel.empty();
+        await removeSelectedInputAsync("mainCategory", $(event.target));
+    })
+    div.selectedSubcategory.on("click", ".btn_cancel", async (event) => {
+        p_resultLabel.empty();
+        await removeSelectedInputAsync("subcategory", $(event.target));
+    })
+    inpt.newMainCategory.keyup((event) => {
+        // when click to "Enter" key
+        if (event.key == "enter")
+            btn.selectOnMainCat.trigger("click");
+    })
+    inpt.newMainCategory.keyup((event) => {
+        // when click to "Enter" key
+        if (event.key == "Enter")
+            btn.selectOnMainCat.trigger("click");
+    });
+    inpt.newSubcategory.keyup((event) => {
+        // when click to "Enter" key
+        if (event.key == "Enter")
+            btn.selectOnSubCat.trigger("click");
     })
     $(".panel-body input").click(() => {
         p_resultLabel.empty();
@@ -375,18 +385,20 @@ $(function () {
         let subCatsOfFirstAddedMainCat = null;
 
         for (let index in allMainAndSubcategories) {
+            //#region set variables
             let categoryInfo = allMainAndSubcategories[index];
             let selectedCatLang = slct.catLangOnMainCat.val();
+            let mainAndSubCatsByLang = categoryInfo.mainAndSubcatsByLangs.find(m =>
+                m.language == selectedCatLang);
+            //#endregion
+            
+            // populate main category <select>
+            slct.mainCategory.append(
+                `<option>${mainAndSubCatsByLang.mainCategoryName}</option>`);
 
-            // populate main category <select> by selected category language
-            if (categoryInfo.language == selectedCatLang) {
-                // populate
-                slct.mainCategory.append(
-                    `<option>${categoryInfo.mainCategoryName}</option>`);
-
-                // save subcategory of first added main category
-                if (subCatsOfFirstAddedMainCat == null)
-                    subCatsOfFirstAddedMainCat = categoryInfo.subCategoryNames;
+            // save subcategories of first added main category
+            if (subCatsOfFirstAddedMainCat == null) {
+                subCatsOfFirstAddedMainCat = mainAndSubCatsByLang.subcategoryNames;
             }
         }
         //#endregion

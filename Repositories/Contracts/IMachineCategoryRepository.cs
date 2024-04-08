@@ -9,7 +9,7 @@ namespace Repositories.Contracts
 		Task<ErrorDto> AddMainAndSubcategoriesAsync(DynamicParameters parameters);
 
 		Task<IEnumerable<CategoryView>> GetAllMainAndSubcategoriesAsync(
-			Func<CategoryView,
+			Func<MainCategoryPartForCategoryView,
 				SubcategoryPartForCategoryView,
 				CategoryView> map,
 			string splitOn);

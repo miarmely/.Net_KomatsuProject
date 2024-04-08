@@ -1,6 +1,7 @@
 ﻿using Entities.DtoModels.CategoryDtos;
 using Entities.QueryParameters;
 using Microsoft.AspNetCore.Mvc;
+using Presantation.Attributes;
 using Services.Contracts;
 
 
@@ -19,6 +20,7 @@ namespace Presantation.Controllers
 
 
 		[HttpPost("mainAndSubcategory/add")]
+		[Authorization("Admin,Editor,Yönetici,Editör")]
 		public async Task<IActionResult> AddMainAndSubcategories(
 			[FromQuery] LanguageParams languageParam,
 			[FromBody] CategoryDtoForAddMainAndSubcategories categoryDto)
@@ -31,6 +33,7 @@ namespace Presantation.Controllers
 
 
 		[HttpGet("mainAndSubcategory/display/all")]
+		[Authorization]
 		public async Task<IActionResult> GetAllMainAndSubcategories()
 		{
 			var entity = await _services.MachineCategoryService
@@ -52,16 +55,16 @@ namespace Presantation.Controllers
 		}
 
 
-		[HttpPost("mainCategory/update")]
-		public async Task<IActionResult> UpdateMainCategory(
-			[FromQuery] LanguageParams languageParams,
-			[FromBody] CategoryDtoForUpdateMainCategory categoryDto)
-		{
-			await _services.MachineCategoryService
-				.UpdateMainCategoryAsync(languageParams, categoryDto);
+		//[HttpPost("mainCategory/update")]
+		//public async Task<IActionResult> UpdateMainCategory(
+		//	[FromQuery] LanguageParams languageParams,
+		//	[FromBody] CategoryDtoForUpdateMainCategory categoryDto)
+		//{
+		//	await _services.MachineCategoryService
+		//		.UpdateMainCategoryAsync(languageParams, categoryDto);
 
-			return NoContent();
-		}
+		//	return NoContent();
+		//}
 
 
 		[HttpPost("maincategory/delete")]
@@ -76,16 +79,16 @@ namespace Presantation.Controllers
 		}
 
 
-		[HttpPost("subcategory/update")]
-		public async Task<IActionResult> UpdateSubcategories(
-			[FromQuery] LanguageParams languageParams,
-			[FromBody] CategoryDtoForUpdateSubcategories categoryDto)
-		{
-			await _services.MachineCategoryService
-			   .UpdateSubcategoriesAsync(languageParams, categoryDto);
+		//[HttpPost("subcategory/update")]
+		//public async Task<IActionResult> UpdateSubcategories(
+		//	[FromQuery] LanguageParams languageParams,
+		//	[FromBody] CategoryDtoForUpdateSubcategories categoryDto)
+		//{
+		//	await _services.MachineCategoryService
+		//	   .UpdateSubcategoriesAsync(languageParams, categoryDto);
 
-			return NoContent();
-		}
+		//	return NoContent();
+		//}
 
 
 		[HttpPost("subcategory/delete")]
