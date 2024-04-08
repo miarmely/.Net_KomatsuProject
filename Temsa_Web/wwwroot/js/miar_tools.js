@@ -321,7 +321,17 @@ export async function setDisabledOfOtherUpdateButtonsAsync(rowId, pageSize, doDi
     //#endregion
 
 }
-export async function populateSelectAsync(select, options, optionToBeDisplay = null) {
+export async function populateSelectAsync(
+    select,
+    options,
+    optionToBeDisplay = null,
+    resetBeforeAdd = false
+) {
+    //#region reset <select> if desired
+    if (resetBeforeAdd)
+        select.empty();
+    //#endregion
+        
     //#region add <option>'s to <select>
     for (let index in options) {
         let option = options[index];
