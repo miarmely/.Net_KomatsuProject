@@ -7,7 +7,8 @@ using Entities.ViewModels;
 using Repositories.Contracts;
 using Services.Contracts;
 using System.Data;
-using System.Runtime.InteropServices;
+using System.Threading.Channels;
+
 
 namespace Services.Concretes
 {
@@ -39,6 +40,31 @@ namespace Services.Concretes
 			#region add main and subcategories
 			var errorDto = await _repos.MachineCategoryRepository
 				.AddMainAndSubcategoriesAsync(parameters);
+
+			// when any error is occured
+			if (errorDto.StatusCode != 204)
+				throw new ErrorWithCodeException(errorDto);
+			#endregion
+		}
+
+		public async Task AddSubcategoriesAsync(
+			CategoryDtoForAddSubcategories categoryDto,
+			LanguageParams languageParams)
+		{
+			#region set parameters
+			var parameters = new DynamicParameters(new
+			{
+				Language = languageParams.Language,
+				MainCategoryInEN = categoryDto.MainCategoryInEN,
+				SubCategoriesInTR = string.Join(',', categoryDto.SubcategoriesInTR),
+				SubCategoriesInEN = string.Join(',', categoryDto.SubcategoriesInEN),
+				SplitChar = ','
+			});
+			#endregion
+
+			#region add main and subcategories
+			var errorDto = await _repos.MachineCategoryRepository
+				.AddSubcategoriesAsync(parameters);
 
 			// when any error is occured
 			if (errorDto.StatusCode != 204)
@@ -115,65 +141,6 @@ namespace Services.Concretes
 			return categoryDict.Values;
 		}
 
-		public async Task UpdateMainCategoryAsync(
-			LanguageParams languageParams,
-			CategoryDtoForUpdateMainCategory categoryDto)
-		{
-			#region set parameters
-			var parameters = new DynamicParameters(categoryDto);
-
-			parameters.Add("Language", languageParams.Language, DbType.String);
-			#endregion
-
-			#region update main category (THROW)
-			var errorDto = await _repos.MachineCategoryRepository
-				.UpdateMainCategoryAsync(parameters);
-
-			// when any error occurs
-			if (errorDto.ErrorCode != null)
-				throw new ErrorWithCodeException(errorDto);
-			#endregion
-		}
-
-		public async Task UpdateSubcategoriesAsync(
-			LanguageParams languageParams,
-			CategoryDtoForUpdateSubcategories categoryDto)
-		{
-			#region set parameters
-			var parameters = new DynamicParameters();
-
-			parameters.AddDynamicParams(new
-			{
-				Language = languageParams.Language,
-				OldMainCategoryInEN = categoryDto.OldMainCategoryInEN,
-				OldSubCategoriesInEN = string.Join(",", categoryDto.OldSubCategoriesInEN),
-
-				OldSubCategoriesInTR = categoryDto.OldSubCategoriesInTR != null ?
-					string.Join(",", categoryDto.OldSubCategoriesInTR)
-					: null,
-
-				NewSubCategoriesInEN = categoryDto.NewSubCategoriesInEN != null ?
-					string.Join(",", categoryDto.NewSubCategoriesInEN)
-					: null,
-
-				NewSubCategoriesInTR = categoryDto.NewSubCategoriesInTR != null ?
-					string.Join(",", categoryDto.NewSubCategoriesInTR)
-					: null,
-
-				SplitChar = ','
-			});
-			#endregion
-
-			#region update main category (THROW)
-			var errorDto = await _repos.MachineCategoryRepository
-				.UpdateSubcategoriesAsync(parameters);
-
-			// when any error occurs
-			if (errorDto.ErrorCode != null)
-				throw new ErrorWithCodeException(errorDto);
-			#endregion
-		}
-
 		public async Task UpdateMainAndSubcategoriesAsync(
 			LanguageParams languageParams,
 			CategoryDtoForUpdateMainAndSubcategories categoryDto)
@@ -183,8 +150,8 @@ namespace Services.Concretes
 
 			if ((categoryDto.NewMainCategoryInEN != null
 					|| categoryDto.NewMainCategoryInTR != null)
-				&& !(categoryDto.NewSubCategoriesInEN != null
-					|| categoryDto.NewSubCategoriesInTR != null))
+				&& (categoryDto.NewSubCategoriesInEN == null
+					&& categoryDto.NewSubCategoriesInTR == null))
 			{
 				#region set parameters
 				var parameters = new DynamicParameters();
@@ -203,11 +170,67 @@ namespace Services.Concretes
 			}
 			#endregion
 
+			#region when only subcategories or main and subcategory is changed
+
+			#region set new subcategories parameters
+
+			#region set "newSubcategoriesInEN"
+			var newSubcategoriesInEN = new List<string>();
+
+			if (categoryDto.NewSubCategoriesInEN != null)
+				// if old subcategory is changed, add new subcategory to "newSubcategoriesInEN";
+				// is not changed, add old subcategory to "newSubcategoriesInEN"
+				foreach (var oldSubcatInEN in categoryDto.OldSubCategoriesInEN)
+				{
+					#region when "oldSubcatInEN" is updated
+					var infoOfChangedSubcat = categoryDto.NewSubCategoriesInEN
+						.FirstOrDefault(s => s.OldValue.Equals(oldSubcatInEN));
+					
+					if (infoOfChangedSubcat != null)
+						newSubcategoriesInEN.Add(infoOfChangedSubcat.NewValue);
+					#endregion
+
+					#region when "oldSubcatInEN" is not updated
+					else
+						newSubcategoriesInEN.Add(oldSubcatInEN);
+					#endregion
+				}
+
+				// EX:  OldSubCategoriesInEN = [A, B, C],  NewSubcategoriesInEN = [A11, C11]
+				//		=> newSubcategoriesInEN = [A11, B, C11] 
+			#endregion
+
+			#region set "newSubcategoriesInTR"
+			var newSubcategoriesInTR = new List<string>();
+
+			if (categoryDto.NewSubCategoriesInTR != null)
+				// if old subcategory is changed, add new subcategory to "newSubcategoriesInTR";
+				// is not changed, add old subcategory to "newSubcategoriesInTR"
+				foreach (var oldSubcatInTR in categoryDto.OldSubCategoriesInTR)
+				{
+					#region when "oldSubcatInTR" is updated
+					var infoOfChangedSubcat = categoryDto.NewSubCategoriesInTR
+						.FirstOrDefault(s => s.OldValue.Equals(oldSubcatInTR));
+
+					if (infoOfChangedSubcat != null)
+						newSubcategoriesInTR.Add(infoOfChangedSubcat.NewValue);
+					#endregion
+
+					#region when "oldSubcatInTR" is not updated
+					else
+						newSubcategoriesInTR.Add(oldSubcatInTR);
+					#endregion
+				}
+
+			#endregion
+
+			#endregion
+			
 			#region when only subcategory is changed
-			if (!(categoryDto.NewMainCategoryInEN != null
-					|| categoryDto.NewMainCategoryInTR != null)
-				&& (categoryDto.NewSubCategoriesInEN != null
-					|| categoryDto.NewSubCategoriesInTR != null))
+			if ((categoryDto.NewMainCategoryInEN == null
+				&& categoryDto.NewMainCategoryInTR == null)
+			&& (categoryDto.NewSubCategoriesInEN != null
+				|| categoryDto.NewSubCategoriesInTR != null))
 			{
 				#region set parameters
 				var parameters = new DynamicParameters();
@@ -227,12 +250,12 @@ namespace Services.Concretes
 					#endregion
 					#region NewSubCategoriesInEN
 					NewSubCategoriesInEN = categoryDto.NewSubCategoriesInEN != null ?
-						string.Join(",", categoryDto.NewSubCategoriesInEN)
+						string.Join(",", newSubcategoriesInEN)
 						: null,
 					#endregion
 					#region NewSubCategoriesInTR
 					NewSubCategoriesInTR = categoryDto.NewSubCategoriesInTR != null ?
-						string.Join(",", categoryDto.NewSubCategoriesInTR)
+						string.Join(",", newSubcategoriesInTR)
 						: null,
 					#endregion
 					SplitChar = ','
@@ -268,12 +291,12 @@ namespace Services.Concretes
 					NewMainCategoryInTR = categoryDto.NewMainCategoryInTR,
 					#region NewSubCategoriesInEN
 					NewSubCategoriesInEN = categoryDto.NewSubCategoriesInEN != null ?
-						string.Join(",", categoryDto.NewSubCategoriesInEN)
+						string.Join(",", newSubcategoriesInEN)
 						: null,
 					#endregion
 					#region NewSubCategoriesInTR
 					NewSubCategoriesInTR = categoryDto.NewSubCategoriesInTR != null ?
-						string.Join(",", categoryDto.NewSubCategoriesInTR)
+						string.Join(",", newSubcategoriesInTR)
 						: null,
 					#endregion
 					SplitChar = ','
@@ -285,7 +308,9 @@ namespace Services.Concretes
 			}
 			#endregion
 
-			#region when any error occurs  (THROW)
+			#endregion
+
+			#region when any error occurs (THROW)
 			if (errorDto.ErrorCode != null)
 				throw new ErrorWithCodeException(errorDto);
 			#endregion

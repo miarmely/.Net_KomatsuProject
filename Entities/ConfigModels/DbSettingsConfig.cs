@@ -26,6 +26,7 @@
 		public string M_GetAllHandStatus { get; init; }
 		public string M_SeparateTheValuesNotExistsOnTable { get; init; }
 		public string M_C_AddMainAndSubCategories { get; init; }
+		public string M_C_AddSubCategories { get; init; }
 		public string M_C_DisplayAllMainAndSubcategories { get; init; }
 		public string M_C_UpdateMainCategory { get; init; }
 		public string M_C_UpdateSubcategories { get; init; }

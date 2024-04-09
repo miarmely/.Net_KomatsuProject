@@ -2,7 +2,7 @@
 {
 	public record CategoryDtoForDeleteSubcategories
 	{
-		public string MainCategoryInEN { get; init; }
-		public List<string> SubcategoriesInEN { get; init; }
+		public string MainCategoryInEN { get; init; }  // base main category
+		public List<string> SubcategoriesInEN { get; init; }  // base subcategory
 	}
 }

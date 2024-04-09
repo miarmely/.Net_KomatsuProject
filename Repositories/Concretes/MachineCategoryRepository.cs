@@ -16,8 +16,14 @@ namespace Repositories.Concretes
 
 		public async Task<ErrorDto> AddMainAndSubcategoriesAsync(
 			DynamicParameters parameters) =>
-				await base.ExecuteAsync(
-					base.Configs.DbSettings.ProcedureNames.M_C_AddMainAndSubCategories,
+				await ExecuteAsync(
+					Configs.DbSettings.ProcedureNames.M_C_AddMainAndSubCategories,
+					parameters);
+
+		public async Task<ErrorDto> AddSubcategoriesAsync(
+			DynamicParameters parameters) =>
+			await ExecuteAsync(
+					Configs.DbSettings.ProcedureNames.M_C_AddMainAndSubCategories,
 					parameters);
 
 		public async Task<IEnumerable<CategoryView>> GetAllMainAndSubcategoriesAsync(

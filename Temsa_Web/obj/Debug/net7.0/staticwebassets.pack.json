@@ -489,8 +489,16 @@
       "PackagePath": "staticwebassets\\js\\miar_mainLayout.js"
     },
     {
-      "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\js\\miar_module_inputForm.js",
-      "PackagePath": "staticwebassets\\js\\miar_module_inputForm.js"
+      "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\js\\miar_module.dictionary.js",
+      "PackagePath": "staticwebassets\\js\\miar_module.dictionary.js"
+    },
+    {
+      "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\js\\miar_module.inputForm.js",
+      "PackagePath": "staticwebassets\\js\\miar_module.inputForm.js"
+    },
+    {
+      "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\js\\miar_module.js",
+      "PackagePath": "staticwebassets\\js\\miar_module.js"
     },
     {
       "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\js\\miar_profileOption_profile.js",

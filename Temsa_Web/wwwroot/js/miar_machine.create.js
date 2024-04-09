@@ -14,7 +14,7 @@ import {
 } from "./miar_machine.js";
 
 import { updateResultLabel, getBase64StrOfFileAsync } from "./miar_tools.js"
-import { checkValueOfNumberInputAsync, writeErrorToBelowOfInputAsync } from "./miar_module_inputForm.js";
+import { checkValueOfNumberInputAsync, writeErrorToBelowOfInputAsync } from "./miar_module.inputForm.js";
 
 
 $(function () {

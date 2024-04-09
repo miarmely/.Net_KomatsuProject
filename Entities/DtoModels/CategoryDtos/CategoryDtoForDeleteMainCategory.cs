@@ -2,6 +2,6 @@
 {
 	public record CategoryDtoForDeleteMainCategory
 	{
-		public string MainCategoryInEN { get; init; }
+		public string MainCategoryInEN { get; init; }  // base main category
 	}
 }

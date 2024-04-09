@@ -31,7 +31,7 @@ import {
     setVariablesForDescriptionsAsync, uploadDescriptionsEventsAsync
 } from "./miar_descriptions.js"
 
-import { checkValueOfNumberInputAsync } from "./miar_module_inputForm.js";
+import { checkValueOfNumberInputAsync } from "./miar_module.inputForm.js";
 
 
 $(function () {

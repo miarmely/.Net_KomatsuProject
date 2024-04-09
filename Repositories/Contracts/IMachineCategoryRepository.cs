@@ -2,11 +2,15 @@
 using Entities.DtoModels;
 using Entities.ViewModels;
 
+
 namespace Repositories.Contracts
 {
 	public interface IMachineCategoryRepository
 	{
 		Task<ErrorDto> AddMainAndSubcategoriesAsync(DynamicParameters parameters);
+
+		Task<ErrorDto> AddSubcategoriesAsync(
+			DynamicParameters parameters);
 
 		Task<IEnumerable<CategoryView>> GetAllMainAndSubcategoriesAsync(
 			Func<MainCategoryPartForCategoryView,

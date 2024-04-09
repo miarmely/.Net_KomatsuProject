@@ -32,6 +32,19 @@ namespace Presantation.Controllers
 		}
 
 
+		[HttpPost("subcategory/add")]
+		[Authorization("Admin,Editor,Yönetici,Editör")]
+		public async Task<IActionResult> AddSubcategories(
+			[FromQuery] LanguageParams languageParam,
+			[FromBody] CategoryDtoForAddSubcategories categoryDto)
+		{
+			await _services.MachineCategoryService
+				.AddSubcategoriesAsync(categoryDto, languageParam);
+
+			return NoContent();
+		}
+
+
 		[HttpGet("mainAndSubcategory/display/all")]
 		[Authorization]
 		public async Task<IActionResult> GetAllMainAndSubcategories()
@@ -55,18 +68,6 @@ namespace Presantation.Controllers
 		}
 
 
-		//[HttpPost("mainCategory/update")]
-		//public async Task<IActionResult> UpdateMainCategory(
-		//	[FromQuery] LanguageParams languageParams,
-		//	[FromBody] CategoryDtoForUpdateMainCategory categoryDto)
-		//{
-		//	await _services.MachineCategoryService
-		//		.UpdateMainCategoryAsync(languageParams, categoryDto);
-
-		//	return NoContent();
-		//}
-
-
 		[HttpPost("maincategory/delete")]
 		public async Task<IActionResult> DeleteMainCategory(
 			[FromQuery] LanguageParams languageParams,
@@ -77,18 +78,6 @@ namespace Presantation.Controllers
 
 			return NoContent();
 		}
-
-
-		//[HttpPost("subcategory/update")]
-		//public async Task<IActionResult> UpdateSubcategories(
-		//	[FromQuery] LanguageParams languageParams,
-		//	[FromBody] CategoryDtoForUpdateSubcategories categoryDto)
-		//{
-		//	await _services.MachineCategoryService
-		//	   .UpdateSubcategoriesAsync(languageParams, categoryDto);
-
-		//	return NoContent();
-		//}
 
 
 		[HttpPost("subcategory/delete")]

@@ -6,19 +6,15 @@ namespace Services.Contracts
 {
 	public interface IMachineCategoryService
 	{
-		public Task AddMainAndSubcategoriesAsync(
+		Task AddMainAndSubcategoriesAsync(
 			CategoryDtoForAddMainAndSubcategories categoryDto,
 			LanguageParams languageParams);
 
+		Task AddSubcategoriesAsync(
+			CategoryDtoForAddSubcategories categoryDto,
+			LanguageParams languageParams);
+
 		Task<IEnumerable<CategoryView>> GetAllMainAndSubcategoriesAsync();
-
-		Task UpdateMainCategoryAsync(
-			LanguageParams languageParams,
-			CategoryDtoForUpdateMainCategory categoryDto);
-
-		Task UpdateSubcategoriesAsync(
-			LanguageParams languageParams,
-			CategoryDtoForUpdateSubcategories categoryDto);
 
 		Task UpdateMainAndSubcategoriesAsync(
 			LanguageParams languageParams,
