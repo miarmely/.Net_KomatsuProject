@@ -9,8 +9,10 @@ $(function () {
     //#region variables
     const slct = {
         modes: $("#div_category_menubar select:nth-child(1)"),
+        categoryType: $("#div_category_menubar select:nth-child(2)"),
         categoryLanguage: $("#div_category_menubar .slct_categoryLanguage"),
-        mainCategory: $("#slct_mainCategory"),
+        mainCatOnMainCatArticle: $(".div_category:nth-child(1) #slct_mainCategory"),
+        mainCatOnSubcatArticle: $(".div_category:nth-child(2) #slct_mainCategory"),
         subcategory: $("#slct_subcategory"),
     };
     const h = {
@@ -18,7 +20,8 @@ $(function () {
         subcategoryTitle: $(".div_category:nth-child(2) .h_articleTitle"),
     };
     const div = {
-        mainCategorySelect: $("label[for='slct_mainCategory']").parent(),
+        mainCatSelectOnMainCatArticle: $(".div_category:nth-child(1) label[for='slct_mainCategory']").parent(),
+        mainCatSelectOnSubcatArticle: $(".div_category:nth-child(2) label[for='slct_mainCategory']").parent(),
         newMainCategoryInput: $("label[for='inpt_newMainCategory']").parent(),
         subcategorySelect: $("label[for='slct_subcategory']").parent(),
         newSubcategoryInput: $("label[for='inpt_newSubcategory']").parent(),
@@ -86,7 +89,7 @@ $(function () {
         switch (mode) {
             case "add":
                 //#region hide <select>; show <input> of main category
-                div.mainCategorySelect.attr("hidden", "");
+                div.mainCatSelectOnMainCatArticle.attr("hidden", "");
                 div.newMainCategoryInput.removeAttr("hidden");
                 //#endregion
 
@@ -98,7 +101,7 @@ $(function () {
                 break;
             case "update":
                 //#region show <input> and <select> of main category
-                div.mainCategorySelect.removeAttr("hidden");
+                div.mainCatSelectOnMainCatArticle.removeAttr("hidden");
                 div.newMainCategoryInput.removeAttr("hidden");
                 //#endregion
 
@@ -116,7 +119,7 @@ $(function () {
             case "delete":
                 //#region hide <input>; show <select> of main category
                 div.newMainCategoryInput.attr("hidden", "");
-                div.mainCategorySelect.removeAttr("hidden");
+                div.mainCatSelectOnMainCatArticle.removeAttr("hidden");
                 //#endregion
 
                 //#region hide <input>; show <select> of subcategory
@@ -129,6 +132,17 @@ $(function () {
                     await initializeMainAndSubcategoriesSelectAsync();
                 //#endregion
 
+                break;
+        }
+    })
+    slct.categoryType.change(() => {
+        switch (mode) {
+            case "add":
+
+                break;
+            case "update":
+                break;
+            case "delete":
                 break;
         }
     })
@@ -149,14 +163,14 @@ $(function () {
         if (mode != "add")
             await populateMainAndSubcatsSelectAsync(
                 categoryInfos,
-                slct.mainCategory.val());
+                slct.mainCatOnMainCatArticle.val());
         //#endregion
     })
-    slct.mainCategory.change(async () => {
+    slct.mainCatOnMainCatArticle.change(async () => {
         //#region populate subcategory <select> by selected main category
         if (mode != "add") {
             //#region set variables
-            let baseMainCatNameOfSelectedMainCat = slct.mainCategory.val();
+            let baseMainCatNameOfSelectedMainCat = slct.mainCatOnMainCatArticle.val();
             let mainAndSubcatsBySelectedLang = await getMainAndSubcatsByLangFromCategoryInfosAsync(
                 baseMainCatNameOfSelectedMainCat,
                 categoryLanguage);
@@ -173,7 +187,7 @@ $(function () {
     btn.send.click(async () => {
         //#region set variables
         p_resultLabel.empty();
-        const baseMainCatOfSelectedMainCat = slct.mainCategory.val();
+        const baseMainCatOfSelectedMainCat = slct.mainCatOnMainCatArticle.val();
         const selectedMainCatInTRCount = getSelectedCategoryCount(categoryType.mainCat, "TR");
         const selectedMainCatInENCount = getSelectedCategoryCount(categoryType.mainCat, "EN");
         const selectedSubcatInTRCount = getSelectedCategoryCount(categoryType.subcat, "TR");
@@ -407,7 +421,7 @@ $(function () {
     })
     btn.selectOnMainCat.click(async () => {
         //#region before start
-        const baseMainCatOfSelectedMainCat = slct.mainCategory.val();
+        const baseMainCatOfSelectedMainCat = slct.mainCatOnMainCatArticle.val();
         p_resultLabel.empty();
 
         // hide select <button>
@@ -415,7 +429,7 @@ $(function () {
 
         // hide main category <select>
         if(mode != "add")
-            slct.mainCategory.attr("disabled", "");
+            slct.mainCatOnMainCatArticle.attr("disabled", "");
         //#endregion
 
         //#region security control
@@ -476,7 +490,9 @@ $(function () {
             langPack.panelTitle[language]);
         //#endregion
 
-        //#region populate modes <select>
+        //#region populate <select>s on menubar
+
+        //#region modes <select>
         for (let mode in langPack.modes) {
             let modeNameByLanguage = langPack.modes[mode][language];
 
@@ -485,7 +501,7 @@ $(function () {
         }
         //#endregion
 
-        //#region populate category language <select>
+        //#region category language <select>
         var allLanguages = await getDataByAjaxOrLocalAsync(
             localKeys_allLanguages,
             "/machine/display/language",
@@ -495,6 +511,17 @@ $(function () {
             slct.categoryLanguage,
             allLanguages,
             language);
+        //#endregion
+
+        //#region category type <select>
+        for (let catType in langPack.categoryTypes) {
+            let catTypeByLang = langPack.categoryTypes[catType][language];
+
+            slct.categoryType.append(
+                `<option value="${catType}">${catTypeByLang}</option>`);
+        }
+        //#endregion
+
         //#endregion
 
         //#region populate main category article
@@ -549,7 +576,7 @@ $(function () {
         baseMainCatToBeDisplay = null  // it must be base main category
     ) {
         // reset main category
-        slct.mainCategory.empty();
+        slct.mainCatOnMainCatArticle.empty();
 
         //#region populate main category <select>
         let subCatsOfDisplayedMainCat = null;
@@ -561,7 +588,7 @@ $(function () {
             //#endregion
 
             // populate <select>
-            slct.mainCategory.append(
+            slct.mainCatOnMainCatArticle.append(
                 `<option value="${categoryInfo.baseMainCategoryName}">${mainAndSubCatsByLang.mainCategoryName}</option>`);
 
             //#region save subcategories
@@ -581,7 +608,7 @@ $(function () {
 
         // display desired main category
         if (baseMainCatToBeDisplay != null) {
-            slct.mainCategory.val(baseMainCatToBeDisplay);
+            slct.mainCatOnMainCatArticle.val(baseMainCatToBeDisplay);
         }
         //#endregion
 
@@ -595,7 +622,7 @@ $(function () {
     async function selectCategoryAsync(whichCategory) {
         //#region set variables
         const slct_category = (whichCategory == categoryType.mainCat ?
-            slct.mainCategory
+            slct.mainCatOnMainCatArticle
             : slct.subcategory);
         const inpt_newCategory = (whichCategory == categoryType.mainCat ?
             inpt.newMainCategory
@@ -735,7 +762,7 @@ $(function () {
             // when any selected main category is not exists
             if (mode != "add"
                 && !isAnyMainCategorySelected())
-                slct.mainCategory.removeAttr("disabled");
+                slct.mainCatOnMainCatArticle.removeAttr("disabled");
         }
         //#endregion
     }
@@ -752,14 +779,6 @@ $(function () {
             .length;
     }
     function resetCategoryArticles() {
-        // reset variables
-        baseMainCatOfSelectedMainCats = null;
-
-        //#region reset <select> and <input> of main category article
-        slct.mainCategory.removeAttr("disabled");
-        inpt.newMainCategory.val("");
-        //#endregion
-
         //#region reset <select> and <input> of subcategory article
         slct.subcategory.prop("selectedIndex", 0);
         inpt.newSubcategory.val("");
@@ -769,10 +788,47 @@ $(function () {
         div.selectedCategories.empty();
 
         // reset "selectedCatsByLangs"
-        for (let language in selectedCatsByLangs.mainCategory) selectedCatsByLangs.mainCategory[language] = {};
         for (let language in selectedCatsByLangs.subcategory) selectedCatsByLangs.subcategory[language] = {};
         //#endregion
 
+        //#region show select <button>s
+        btn.selectOnMainCat.removeAttr("disabled");
+        btn.selectOnSubCat.removeAttr("disabled");
+        //#endregion
+    }
+    function resetMainCategoryArticle() {
+        // reset variables
+        baseMainCatOfSelectedMainCats = null;
+
+        // reset new main category <input>
+        inpt.newMainCategory.val("");
+
+        // show main category <select> and reset it
+        slct.mainCatOnMainCatArticle.removeAttr("disabled");
+        slct.mainCatOnMainCatArticle.prop("selectedIndex", 0);
+
+        // remove selected main category <input>
+        div.selectedMainCategory.empty();
+
+        // reset maincategories in "selectedCatsByLangs"
+        for (let language in selectedCatsByLangs.mainCategory)
+            selectedCatsByLangs.mainCategory[language] = {};
+
+        //#region show select <button>
+        btn.selectOnMainCat.removeAttr("disabled");
+    }
+    function resetSubcategoryArticle() {
+        // show subcategory <select> and reset it
+        slct.subcategory.removeAttr("disabled");
+        slct.subcategory.prop("selectedIndex", 0);
+
+        // reset selected subcategory
+        div.selectedCategories.empty();
+
+        // reset subcategories in "selectedCatsByLangs"
+        for (let language in selectedCatsByLangs.subcategory)
+            selectedCatsByLangs.subcategory[language] = {};
+        
         //#region show select <button>s
         btn.selectOnMainCat.removeAttr("disabled");
         btn.selectOnSubCat.removeAttr("disabled");

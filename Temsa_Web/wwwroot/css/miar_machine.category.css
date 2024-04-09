@@ -45,6 +45,13 @@
 .slct_categoryLanguage {
     width: 50px;
     padding: 0;
+    
+}
+
+#div_category_menubar select:nth-child(2) {
+    width: 130px;
+    float: left;
+    
 }
 
 

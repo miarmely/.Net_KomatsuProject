@@ -15,6 +15,9 @@
                         @*modes <select>*@
                         <select class="input-sm form-control w-sm inline v-middle"></select>
 
+                        @*category type <select>*@
+                        <select class="input-sm form-control w-sm inline v-middle"></select>
+
                         @*language <select>*@
                         <select class="input-sm form-control w-sm inline v-middle slct_categoryLanguage"></select>
                     </div>
@@ -55,8 +58,16 @@
                                 </div>
                                     
                                 @*subcategory*@
-                                <div class="div_category">
+                                <div class="div_category" hidden>
                                     <h3 class="h_articleTitle"></h3>
+
+                                    @*maincategory <select>*@
+                                    <div class="form-group" hidden>
+                                        <label for="slct_mainCategory" class="col-sm-3 control-label"></label>
+                                        <div class="col-sm-6">
+                                            <select id="slct_mainCategory" class="form-control"></select>
+                                        </div>
+                                    </div>
 
                                     @*subcategory <select>*@
                                     <div class="form-group" hidden>
@@ -129,6 +140,16 @@
                 TR: "Sil",
                 EN: "Delete"
             }
+        },
+        categoryTypes: {
+            mainCategory:{
+                TR: "Ana Kategori",
+                EN: "Main Category"
+            },
+            subcategory:{
+                TR: "Alt Kategori",
+                EN: "Subcategory"
+            },
         },
         article: {
             mainCategoryTitleByMode: {
