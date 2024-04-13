@@ -24,7 +24,7 @@
                     <div id="div_category_form">
                         <form>
                             <div class="form-horizontal bucket-form">
-                                @*mainCategory*@
+                                @*mainCategory article*@
                                 <div class="div_category">
                                     <h3 class="h_articleTitle"></h3>
 
@@ -57,8 +57,8 @@
                                     <div class="div_selectedCategories"></div>
                                 </div>
                                     
-                                @*subcategory*@
-                                <div class="div_category" hidden>
+                                @*subcategory article*@
+                                <div class="div_category">
                                     <h3 class="h_articleTitle"></h3>
 
                                     @*maincategory <select>*@
@@ -141,14 +141,36 @@
                 EN: "Delete"
             }
         },
-        categoryTypes: {
-            mainCategory:{
-                TR: "Ana Kategori",
-                EN: "Main Category"
+        categoryTypesByMode: {
+            add: {
+                newCategory: {
+                    TR: "Yeni Kategori",
+                    EN: "New Category"
+                },
+                onlySubcategory: {
+                    TR: "Sadece Alt Kategori",
+                    EN: "Only Subcategory"
+                }
             },
-            subcategory:{
-                TR: "Alt Kategori",
-                EN: "Subcategory"
+            update: {
+                mainCategory: {
+                    TR: "Ana Kategori",
+                    EN: "Main Category"
+                },
+                subcategory: {
+                    TR: "Alt Kategori",
+                    EN: "Subcategory"
+                }
+            },
+            delete: {
+                mainCategory: {
+                    TR: "Ana Kategori",
+                    EN: "Main Category"
+                },
+                subcategory:{
+                    TR: "Alt Kategori",
+                    EN: "Subcategory"
+                }
             },
         },
         article: {

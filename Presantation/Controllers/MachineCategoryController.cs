@@ -20,28 +20,28 @@ namespace Presantation.Controllers
 
 
 		[HttpPost("mainAndSubcategory/add")]
-		[Authorization("Admin,Editor,Yönetici,Editör")]
+		//[Authorization("Admin,Editor,Yönetici,Editör")]
 		public async Task<IActionResult> AddMainAndSubcategories(
 			[FromQuery] LanguageParams languageParam,
 			[FromBody] CategoryDtoForAddMainAndSubcategories categoryDto)
 		{
+			return NoContent();
+
 			await _services.MachineCategoryService
 				.AddMainAndSubcategoriesAsync(categoryDto, languageParam);
-
-			return NoContent();
 		}
 
 
 		[HttpPost("subcategory/add")]
-		[Authorization("Admin,Editor,Yönetici,Editör")]
+		//[Authorization("Admin,Editor,Yönetici,Editör")]
 		public async Task<IActionResult> AddSubcategories(
 			[FromQuery] LanguageParams languageParam,
 			[FromBody] CategoryDtoForAddSubcategories categoryDto)
 		{
+			return NoContent();
+
 			await _services.MachineCategoryService
 				.AddSubcategoriesAsync(categoryDto, languageParam);
-
-			return NoContent();
 		}
 
 

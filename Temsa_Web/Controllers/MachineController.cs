@@ -4,7 +4,7 @@ using Presantation.Attributes;
 
 namespace Temsa_Web.Controllers
 {
-	[Authorization("Editor,Admin,Editör,Yönetici")]
+	//[Authorization("Editor,Admin,Editör,Yönetici")]
 	public class MachineController : Controller
 	{
 		public IActionResult Create() => View();

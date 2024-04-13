@@ -1,16 +1,7 @@
-﻿/*------------- PARTNER -------------*/
+﻿/*------------- partner -------------*/
 .panel-body {
     padding: 20px;
     min-height: 230px;
-}
-
-/*category modes*/
-#div_category_menubar select:nth-child(1) {
-    float: left;
-}
-
-#div_category_menubar select {
-    font-size: 13px;
 }
 
 #div_category_form {
@@ -21,9 +12,6 @@
     #div_category_form label {
         text-align: right;
     }
-
-
-/*------------- UPDATE & DELETE MODE -------------*/
 
 .div_category {
     border: solid 2px transparent;
@@ -42,16 +30,23 @@
     font-size: 20px;
 }
 
-.slct_categoryLanguage {
-    width: 50px;
-    padding: 0;
-    
+/*---------- menubar <select<s ----------*/
+#div_category_menubar select {
+    font-size: 13px;
+}
+
+#div_category_menubar select:nth-child(1) {
+    float: left;
 }
 
 #div_category_menubar select:nth-child(2) {
-    width: 130px;
+    width: 160px;
     float: left;
-    
+}
+
+.slct_categoryLanguage {
+    width: 50px;
+    padding: 0;
 }
 
 
