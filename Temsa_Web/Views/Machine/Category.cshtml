@@ -25,7 +25,7 @@
                         <form>
                             <div class="form-horizontal bucket-form">
                                 @*mainCategory article*@
-                                <div class="div_category">
+                                <div id="div_mainCategoryArticle" class="div_category">
                                     <h3 class="h_articleTitle"></h3>
 
                                     @*maincategory <select>*@
@@ -53,12 +53,17 @@
                                         </div>
                                     </div>
 
+                                    @*result label*@
+                                    <div class="form-group" style="text-align:center">
+                                        <p id="p_resultLabelForSelectBtn"></p>
+                                    </div>
+
                                     @*selected main category*@
                                     <div class="div_selectedCategories"></div>
                                 </div>
                                     
                                 @*subcategory article*@
-                                <div class="div_category">
+                                <div id="div_subcategoryArticle" class="div_category">
                                     <h3 class="h_articleTitle"></h3>
 
                                     @*maincategory <select>*@
@@ -94,6 +99,11 @@
                                         </div>
                                     </div>
 
+                                     @*result label*@
+                                    <div class="form-group" style="text-align:center">
+                                        <p id="p_resultLabelForSelectBtn"></p>
+                                    </div>
+
                                     @*selected main category*@
                                     <div class="div_selectedCategories"></div>
                                 </div>
@@ -108,7 +118,7 @@
 
                                 @*result label*@
                                 <div style="text-align:center">
-                                    <p id="p_resultLabel"></p>
+                                    <p id="p_resultLabelForSendBtn"></p>
                                     <img id="img_loading" src="~/images/loading.gif" style="width:40px; height:40px" hidden/>
                                 </div>
                             </div>
@@ -242,6 +252,10 @@
             notAnyChanges:{
                 TR: "herhangi bir değişiklik yapılmadı",
                 EN: "there is no any changes"
+            },
+            invalidProcess: {
+                TR: "geçersiz işlem",
+                EN: "invalid process"
             }
         },
         successMessages: {

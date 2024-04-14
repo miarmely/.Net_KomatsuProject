@@ -19,20 +19,25 @@ $(function () {
         mainCategoryTitle: $(".div_category:nth-child(1) .h_articleTitle"),
         subcategoryTitle: $(".div_category:nth-child(2) .h_articleTitle"),
     };
+    const div_id = {
+        mainCategoryArticle: "div_mainCategoryArticle",
+        subcategoryArticle: "div_subcategoryArticle",
+    }
     const div = {
-        mainCategoryArticle: $(".div_category:nth-child(1)"),
-        subcategoryArticle: $(".div_category:nth-child(2)"),
-        mainCatSelectOnMainCatArticle: $(".div_category:nth-child(1) label[for='slct_mainCategory']").parent(),
-        mainCatSelectOnSubcatArticle: $(".div_category:nth-child(2) label[for='slct_mainCategory']").parent(),
+        mainCategoryArticle: $("#" + div_id.mainCategoryArticle),
+        subcategoryArticle: $("#" + div_id.subcategoryArticle),
+        mainCatSelectOnMainCatArticle: $("#" + div_id.mainCategoryArticle + " label[for='slct_mainCategory']").parent(),
+        mainCatSelectOnSubcatArticle: $("#" + div_id.subcategoryArticle + " label[for='slct_mainCategory']").parent(),
         newMainCategoryInput: $("label[for='inpt_newMainCategory']").parent(),
         newSubcategoryInput: $("label[for='inpt_newSubcategory']").parent(),
         subcategorySelect: $("label[for='slct_subcategory']").parent(),
-        selectedMainCategory: $(".div_category:nth-child(1) .div_selectedCategories"),
-        selectedSubcategory: $(".div_category:nth-child(2) .div_selectedCategories"),
+        selectedMainCategory: $("#" + div_id.mainCategoryArticle + " .div_selectedCategories"),
+        selectedSubcategory: $("#" + div_id.subcategoryArticle + " .div_selectedCategories"),
         selectedCategories: $(".div_selectedCategories")
     };
     const btn = {
         send: $("#div_sendButton button"),
+        select: $(".div_categoryButton button"),
         selectOnMainCat: $("form .div_category:nth-child(1) .div_categoryButton button"),
         selectOnSubCat: $("form .div_category:nth-child(2) .div_categoryButton button"),
     };
@@ -43,8 +48,16 @@ $(function () {
     const img = {
         loading: $("#img_loading")
     }
-    const p_resultLabel_id = "p_resultLabel";
-    const p_resultLabel = $("#" + p_resultLabel_id);
+    const p_id = {
+        resultLabelForSelectBtnOnMainCat: div_id.mainCategoryArticle + " #p_resultLabelForSelectBtn",
+        resultLabelForSelectBtnOnSubcat: div_id.subcategoryArticle + " #p_resultLabelForSelectBtn",
+        resultLabelForSendBtn: "p_resultLabelForSendBtn",
+    }
+    const p = {
+        resultLabelForSendBtn: $("#" + p_id.resultLabelForSendBtn),
+        resultLabelForSelectBtnOnMainCat: $("#" + p_id.resultLabelForSelectBtnOnMainCat),
+        resultLabelForSelectBtnOnSubcat: $("#" + p_id.resultLabelForSelectBtnOnSubcat),
+    }
     const categoryType = {
         mainCat: "mainCategory",
         subcat: "subcategory"
@@ -75,7 +88,7 @@ $(function () {
         //#region resets
         resetMainCategoryArticle();
         resetSubcategoryArticle();
-        p_resultLabel.empty();
+        p.reempty();
         //#endregion
 
         //#region populate mode menus <select>
@@ -222,9 +235,87 @@ $(function () {
         }
         //#endregion
     })
-    btn.send.click(async () => {
+    btn.select.click((event) => {
+        resetResultLabels();
+
         //#region set variables
-        p_resultLabel.empty();
+        const newMainCategory = inpt.newMainCategory.val();
+        const newSubcategory = inpt.newSubcategory.val();
+        let isErrorOccured = false;
+        //#endregion
+
+        switch (mode) {
+            case "add":
+                switch (slct.modeMenus.val()) {
+                    case "newCategory":
+                        switch (getCategoryTypeOfSelectButton($(event.target))) {
+                            case categoryType.mainCat:
+                                //#region security control
+                                // when new main category <input> is empty
+                                if (newMainCategory.length == 0)
+                                    isErrorOccured = true;
+
+                                // when main category by selected language is selected again
+                                else if (getSelectedCategoryCount(categoryType.mainCat, categoryLanguage) > 0)
+                                    isErrorOccured = true;
+
+                                // write error message if security is failed
+                                if (isErrorOccured)
+                                    updateResultLabel(
+                                        "#" + p_id.resultLabelForSelectBtnOnMainCat,
+                                        langPack.errorMessages.invalidProcess[language],
+                                        resultLabel_errorColor);
+                                //#endregion
+
+                                break;  // when select button clicked on main category article
+                            case categoryType.subcat:
+                                //#region security control
+                                // when new main category <input> is empty
+                                if (newSubcategory.length == 0)
+                                    isErrorOccured = true;
+
+                                // when main category by selected language is selected again
+                                else if (getSelectedCategoryCount(categoryType.subcat, categoryLanguage) > 0)
+                                    isErrorOccured = true;
+
+                                // write error message if security is failed
+                                if (isErrorOccured)
+                                    updateResultLabel(
+                                        "#" + p_id.resultLabelForSelectBtnOnSubcat,
+                                        langPack.errorMessages.invalidProcess[language],
+                                        resultLabel_errorColor);
+                                //#endregion
+
+                                break;  // when select button clicked on subcategory article
+                        }
+           
+                        break;
+                    case "onlySubcategory":
+                        break;
+                }
+                break;
+            case "update":
+                switch (modeMenu) {
+                    case "mainCategory":
+                        break;
+                    case "subcategory":
+                        break;
+                }
+                break;
+            case "delete":
+                switch (modeMenu) {
+                    case "mainCategory":
+                        break;
+                    case "subcategory":
+                        break;
+                }
+                break;
+        }
+    })
+    btn.send.click(async () => {
+        resetResultLabels();
+
+        //#region set variables
         const baseMainCatOfSelectedMainCat = slct.mainCatOnMainCatArticle.val();
         const selectedMainCatInTRCount = getSelectedCategoryCount(categoryType.mainCat, "TR");
         const selectedMainCatInENCount = getSelectedCategoryCount(categoryType.mainCat, "EN");
@@ -242,7 +333,7 @@ $(function () {
                 ) {
                     // write error message
                     updateResultLabel(
-                        "#" + p_resultLabel_id,
+                        "#" + p_id.resultLabelForSendBtn,
                         langPack.errorMessages.badRequestForMainCat[language],
                         resultLabel_errorColor,
                         "30px",
@@ -258,7 +349,7 @@ $(function () {
                 ) {
                     // write error message
                     updateResultLabel(
-                        "#" + p_resultLabel_id,
+                        "#" + p_id.resultLabelForSendBtn,
                         langPack.errorMessages.badRequestForSubcat[language],
                         resultLabel_errorColor,
                         "30px",
@@ -320,7 +411,7 @@ $(function () {
                     success: () => {
                         // write success message
                         updateResultLabel(
-                            "#" + p_resultLabel_id,
+                            "#" + p_id.resultLabelForSendBtn,
                             langPack.successMessages.saveSuccessful[language],
                             resultLabel_successColor,
                             "30px",
@@ -333,7 +424,7 @@ $(function () {
                     error: (response) => {
                         // write error message
                         updateResultLabel(
-                            "#" + p_resultLabel_id,
+                            "#" + p_id.resultLabelForSendBtn,
                             JSON.parse(response.responseText).errorMessage,
                             resultLabel_errorColor,
                             "30px",
@@ -350,7 +441,7 @@ $(function () {
                 ) {
                     // write error message
                     updateResultLabel(
-                        "#" + p_resultLabel_id,
+                        "#" + p_id.resultLabelForSendBtn,
                         langPack.errorMessages.notAnyChanges[language],
                         resultLabel_errorColor,
                         "30px");
@@ -430,7 +521,7 @@ $(function () {
 
                         // write success message
                         updateResultLabel(
-                            "#" + p_resultLabel_id,
+                            "#" + p_id.resultLabelForSendBtn,
                             langPack.successMessages.updateSuccessful,
                             resultLabel_successColor,
                             "30px",
@@ -444,7 +535,7 @@ $(function () {
                     error: (response) => {
                         // write error message
                         updateResultLabel(
-                            "#" + p_resultLabel_id,
+                            "#" + p_id.resultLabelForSendBtn,
                             JSON.parse(response.responseText).errorMessage,
                             resultLabel_errorColor,
                             "30px",
@@ -458,10 +549,13 @@ $(function () {
         }
     })
     btn.selectOnMainCat.click(async () => {
+        return;
+
+        resetResultLabels();
+
         //#region before start
         const baseMainCatOfSelectedMainCat = slct.mainCatOnMainCatArticle.val();
-        p_resultLabel.empty();
-
+       
         // hide select <button>
         btn.selectOnMainCat.attr("disabled", "");
 
@@ -487,15 +581,17 @@ $(function () {
         await selectCategoryAsync(categoryType.mainCat);
     })
     btn.selectOnSubCat.click(async () => {
-        p_resultLabel.empty();
+        return;
+
+        resetResultLabels();
         await selectCategoryAsync(categoryType.subcat);
     })
     div.selectedMainCategory.on("click", ".btn_cancel", async (event) => {
-        p_resultLabel.empty();
+        resetResultLabels();
         await removeSelectedInputAsync(categoryType.mainCat, $(event.target));
     })
     div.selectedSubcategory.on("click", ".btn_cancel", async (event) => {
-        p_resultLabel.empty();
+        resetResultLabels();
         await removeSelectedInputAsync(categoryType.subcat, $(event.target));
     })
     inpt.newMainCategory.keyup((event) => {
@@ -514,10 +610,10 @@ $(function () {
             btn.selectOnSubCat.trigger("click");
     })
     $(".panel-body input").click(() => {
-        p_resultLabel.empty();
+        resetResultLabels();
     })
     $(".panel-body select").click(() => {
-        p_resultLabel.empty();
+        resetResultLabels();
     })
     //#endregion
 
@@ -889,6 +985,15 @@ $(function () {
             .keys(selectedCatsByLangs[whichCategory][categoryLanguage])
             .length;
     }
+    function getCategoryTypeOfSelectButton(btn_select) {
+        let div_category_id = (btn_select
+            .closest(".div_category")
+            .attr("id"));
+
+        return div_category_id == div_id.mainCategoryArticle ?
+            categoryType.mainCat
+            : categoryType.subcat;
+    }
     function resetCategoryArticles() {
         //#region reset <select> and <input> of subcategory article
         slct.subcategory.prop("selectedIndex", 0);
@@ -945,6 +1050,11 @@ $(function () {
         btn.selectOnMainCat.removeAttr("disabled");
         btn.selectOnSubCat.removeAttr("disabled");
         //#endregion
+    }
+    function resetResultLabels() {
+        p.resultLabelForSelectBtnOnMainCat.empty();
+        p.resultLabelForSelectBtnOnSubcat.empty();
+        p.resultLabelForSendBtn.empty();
     }
     function isAnyMainCategorySelected() {
         // control selected main categories in all languages
