@@ -25,10 +25,10 @@ namespace Presantation.Controllers
 			[FromQuery] LanguageParams languageParam,
 			[FromBody] CategoryDtoForAddMainAndSubcategories categoryDto)
 		{
-			return NoContent();
-
 			await _services.MachineCategoryService
 				.AddMainAndSubcategoriesAsync(categoryDto, languageParam);
+
+			return NoContent();
 		}
 
 
@@ -38,10 +38,10 @@ namespace Presantation.Controllers
 			[FromQuery] LanguageParams languageParam,
 			[FromBody] CategoryDtoForAddSubcategories categoryDto)
 		{
-			return NoContent();
-
 			await _services.MachineCategoryService
 				.AddSubcategoriesAsync(categoryDto, languageParam);
+
+			return NoContent();
 		}
 
 
