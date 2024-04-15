@@ -2,18 +2,15 @@
 
 @{
 	#region get firstName and lastName from claims
-	//var firstName = Context.User.Claims
-	//	.First(c => c.Type.Equals(ClaimTypes.Name))
-	//	.Value
-	//	.ToUpper();
+	var firstName = Context.User.Claims
+		.First(c => c.Type.Equals(ClaimTypes.Name))
+		.Value
+		.ToUpper();
 	
-	//var lastName = Context.User.Claims
-	//	.First(c => c.Type.Equals(ClaimTypes.Surname))
-	//	.Value
-	//	.ToUpper();
-
-	var firstName = "Try";
-	var lastName = "Trying";
+	var lastName = Context.User.Claims
+		.First(c => c.Type.Equals(ClaimTypes.Surname))
+		.Value
+		.ToUpper();
 	#endregion
 }
 
