@@ -18,7 +18,7 @@ namespace Presantation.Controllers
 
 
 		[HttpPost("create")]
-		//[Authorization("Admin,Yönetici,Editor,Editör")]
+		[Authorization("Admin,Yönetici,Editor,Editör")]
 		public async Task<IActionResult> CreateMachine(
 			[FromQuery] LanguageParams languageParams,
 			[FromBody] MachineDtoForCreate machineDto)
@@ -156,7 +156,7 @@ namespace Presantation.Controllers
 		}
 
 
-		[HttpGet("display/language")]
+		[HttpGet("display/language")]  // do not authorize
 		public async Task<IActionResult> GetAllLanguages()
 		{
 			var languages = await _manager.MachineService

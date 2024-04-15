@@ -20,7 +20,7 @@ namespace Presantation.Controllers
 
 
 		[HttpPost("mainAndSubcategory/add")]
-		//[Authorization("Admin,Editor,Yönetici,Editör")]
+		[Authorization("Admin,Editor,Yönetici,Editör")]
 		public async Task<IActionResult> AddMainAndSubcategories(
 			[FromQuery] LanguageParams languageParam,
 			[FromBody] CategoryDtoForAddMainAndSubcategories categoryDto)
@@ -33,7 +33,7 @@ namespace Presantation.Controllers
 
 
 		[HttpPost("subcategory/add")]
-		//[Authorization("Admin,Editor,Yönetici,Editör")]
+		[Authorization("Admin,Editor,Yönetici,Editör")]
 		public async Task<IActionResult> AddSubcategories(
 			[FromQuery] LanguageParams languageParam,
 			[FromBody] CategoryDtoForAddSubcategories categoryDto)
@@ -57,6 +57,7 @@ namespace Presantation.Controllers
 
 
 		[HttpPost("mainAndSubcategory/update")]
+		[Authorization("Admin,Editor,Yönetici,Editör")]
 		public async Task<IActionResult> UpdateMainAndSubcategories(
 			[FromQuery] LanguageParams languageParams,
 			[FromBody] CategoryDtoForUpdateMainAndSubcategories categoryDto)
@@ -69,6 +70,7 @@ namespace Presantation.Controllers
 
 
 		[HttpPost("maincategory/delete")]
+		[Authorization("Admin,Editor,Yönetici,Editör")]
 		public async Task<IActionResult> DeleteMainCategory(
 			[FromQuery] LanguageParams languageParams,
 			[FromBody] CategoryDtoForDeleteMainCategory categoryDto)
@@ -81,6 +83,7 @@ namespace Presantation.Controllers
 
 
 		[HttpPost("subcategory/delete")]
+		[Authorization("Admin,Editor,Yönetici,Editör")]
 		public async Task<IActionResult> DeleteSubcategories(
 			[FromQuery] LanguageParams languageParams,
 			[FromBody] CategoryDtoForDeleteSubcategories categoryDto)

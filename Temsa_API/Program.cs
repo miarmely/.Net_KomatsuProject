@@ -4,8 +4,8 @@ using Temsa_Api.Extensions;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddSwaggerGen();
-builder.Services.ConfigureAddControllers();
 builder.Services.AddAutoMapper(typeof(Program).Assembly);
+builder.Services.ConfigureAddControllers();
 builder.Services.ConfigureAllManagers();
 builder.Services.ConfigureServices();
 builder.Services.ConfigureConfigModels(builder.Configuration);
@@ -17,7 +17,7 @@ var app = builder.Build();
 builder.Services.ConfigureExceptionHandler(app);
 #endregion
 
-#region set production or staging mode 
+#region set production and development mode 
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -25,7 +25,11 @@ if (app.Environment.IsDevelopment())
 }
 
 else
-    app.UseHsts();
+{
+	app.UseSwagger();
+	app.UseSwaggerUI();
+	app.UseHsts();
+}   
 #endregion
 
 #region add pipelines
