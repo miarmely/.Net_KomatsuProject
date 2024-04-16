@@ -145,13 +145,151 @@ namespace Services.Concretes
 			LanguageParams languageParams,
 			CategoryDtoForUpdateMainAndSubcategories categoryDto)
 		{
-			#region when only main category is changed
+			#region when only subcategory or main and subcategory is changed
 			ErrorDto? errorDto = null;
 
-			if ((categoryDto.NewMainCategoryInEN != null
+			if (categoryDto.NewSubCategoriesInEN != null
+				|| categoryDto.NewSubCategoriesInTR != null)
+			{
+				#region set new subcategories parameters
+
+				#region set "newSubcategoriesInEN"
+				var newSubcategoriesInEN = new List<string>();
+
+				if (categoryDto.NewSubCategoriesInEN != null)
+					// if old subcategory is changed, add new subcategory to "newSubcategoriesInEN";
+					// is not changed, add old subcategory to "newSubcategoriesInEN"
+					foreach (var oldSubcatInEN in categoryDto.OldSubCategoriesInEN)
+					{
+						#region when "oldSubcatInEN" is updated
+						var infoOfChangedSubcat = categoryDto.NewSubCategoriesInEN
+							.FirstOrDefault(s => s.OldValue.Equals(oldSubcatInEN));
+
+						if (infoOfChangedSubcat != null)
+							newSubcategoriesInEN.Add(infoOfChangedSubcat.NewValue);
+						#endregion
+
+						#region when "oldSubcatInEN" is not updated
+						else
+							newSubcategoriesInEN.Add(oldSubcatInEN);
+						#endregion
+					}
+
+				// EX:  OldSubCategoriesInEN = [A, B, C],  NewSubcategoriesInEN = [A11, C11]
+				//		=> newSubcategoriesInEN = [A11, B, C11] 
+				#endregion
+
+				#region set "newSubcategoriesInTR"
+				var newSubcategoriesInTR = new List<string>();
+
+				if (categoryDto.NewSubCategoriesInTR != null)
+					// if old subcategory is changed, add new subcategory to "newSubcategoriesInTR";
+					// is not changed, add old subcategory to "newSubcategoriesInTR"
+					foreach (var oldSubcatInTR in categoryDto.OldSubCategoriesInTR)
+					{
+						#region when "oldSubcatInTR" is updated
+						var infoOfChangedSubcat = categoryDto.NewSubCategoriesInTR
+							.FirstOrDefault(s => s.OldValue.Equals(oldSubcatInTR));
+
+						if (infoOfChangedSubcat != null)
+							newSubcategoriesInTR.Add(infoOfChangedSubcat.NewValue);
+						#endregion
+
+						#region when "oldSubcatInTR" is not updated
+						else
+							newSubcategoriesInTR.Add(oldSubcatInTR);
+						#endregion
+					}
+
+				#endregion
+
+				#endregion
+
+				#region when main category is changed too  (UPDATE MAIN + SUB)
+				if (categoryDto.NewMainCategoryInEN != null
 					|| categoryDto.NewMainCategoryInTR != null)
-				&& (categoryDto.NewSubCategoriesInEN == null
-					&& categoryDto.NewSubCategoriesInTR == null))
+				{
+					#region set parameters
+					var parameters = new DynamicParameters();
+
+					parameters.AddDynamicParams(new
+					{
+						Language = languageParams.Language,
+						OldMainCategoryInEN = categoryDto.OldMainCategoryInEN,
+						#region OldSubCategoriesInEN
+						OldSubCategoriesInEN = categoryDto.OldSubCategoriesInEN != null ?
+							string.Join(",", categoryDto.OldSubCategoriesInEN)
+							: null,
+						#endregion
+						#region OldSubCategoriesInTR
+						OldSubCategoriesInTR = categoryDto.OldSubCategoriesInTR != null ?
+							string.Join(",", categoryDto.OldSubCategoriesInTR)
+							: null,
+						#endregion
+						NewMainCategoryInEN = categoryDto.NewMainCategoryInEN,
+						NewMainCategoryInTR = categoryDto.NewMainCategoryInTR,
+						#region NewSubCategoriesInEN
+						NewSubCategoriesInEN = categoryDto.NewSubCategoriesInEN != null ?
+							string.Join(",", newSubcategoriesInEN)
+							: null,
+						#endregion
+						#region NewSubCategoriesInTR
+						NewSubCategoriesInTR = categoryDto.NewSubCategoriesInTR != null ?
+							string.Join(",", newSubcategoriesInTR)
+							: null,
+						#endregion
+						SplitChar = ','
+					});
+					#endregion
+
+					errorDto = await _repos.MachineCategoryRepository
+						.UpdateMainAndSubcategoriesAsync(parameters);
+				}
+				#endregion
+
+				#region when only subcategory is changed  (UPDATE SUB)
+				else
+				{
+					#region set parameters
+					var parameters = new DynamicParameters();
+
+					parameters.AddDynamicParams(new
+					{
+						Language = languageParams.Language,
+						OldMainCategoryInEN = categoryDto.OldMainCategoryInEN,
+						#region OldSubCategoriesInEN
+						OldSubCategoriesInEN = string
+							.Join(",", categoryDto.OldSubCategoriesInEN),
+						#endregion
+						#region OldSubCategoriesInTR
+						OldSubCategoriesInTR = categoryDto.OldSubCategoriesInTR != null ?
+							string.Join(",", categoryDto.OldSubCategoriesInTR)
+							: null,
+						#endregion
+						#region NewSubCategoriesInEN
+						NewSubCategoriesInEN = categoryDto.NewSubCategoriesInEN != null ?
+							string.Join(",", newSubcategoriesInEN)
+							: null,
+						#endregion
+						#region NewSubCategoriesInTR
+						NewSubCategoriesInTR = categoryDto.NewSubCategoriesInTR != null ?
+							string.Join(",", newSubcategoriesInTR)
+							: null,
+						#endregion
+						SplitChar = ','
+					});
+					#endregion
+
+					errorDto = await _repos.MachineCategoryRepository
+						.UpdateSubcategoriesAsync(parameters);
+				}
+				#endregion
+			}
+			#endregion
+
+			#region when only main category is changed
+			else if(categoryDto.NewMainCategoryInEN != null
+				|| categoryDto.NewMainCategoryInTR != null)
 			{
 				#region set parameters
 				var parameters = new DynamicParameters();
@@ -159,155 +297,15 @@ namespace Services.Concretes
 				parameters.AddDynamicParams(new
 				{
 					Language = languageParams.Language,
-					OldMainCategoryInEN = categoryDto.OldMainCategoryInEN,
-					NewMainCategoryInEN = categoryDto.NewMainCategoryInEN,
-					NewMainCategoryInTR = categoryDto.NewMainCategoryInTR,
+					OldMainCategoryNameInEN = categoryDto.OldMainCategoryInEN,
+					NewMainCategoryNameInEN = categoryDto.NewMainCategoryInEN,
+					NewMainCategoryNameInTR = categoryDto.NewMainCategoryInTR,
 				});
 				#endregion
 
 				errorDto = await _repos.MachineCategoryRepository
 					.UpdateMainCategoryAsync(parameters);
 			}
-			#endregion
-
-			#region when only subcategories or main and subcategory is changed
-
-			#region set new subcategories parameters
-
-			#region set "newSubcategoriesInEN"
-			var newSubcategoriesInEN = new List<string>();
-
-			if (categoryDto.NewSubCategoriesInEN != null)
-				// if old subcategory is changed, add new subcategory to "newSubcategoriesInEN";
-				// is not changed, add old subcategory to "newSubcategoriesInEN"
-				foreach (var oldSubcatInEN in categoryDto.OldSubCategoriesInEN)
-				{
-					#region when "oldSubcatInEN" is updated
-					var infoOfChangedSubcat = categoryDto.NewSubCategoriesInEN
-						.FirstOrDefault(s => s.OldValue.Equals(oldSubcatInEN));
-					
-					if (infoOfChangedSubcat != null)
-						newSubcategoriesInEN.Add(infoOfChangedSubcat.NewValue);
-					#endregion
-
-					#region when "oldSubcatInEN" is not updated
-					else
-						newSubcategoriesInEN.Add(oldSubcatInEN);
-					#endregion
-				}
-
-				// EX:  OldSubCategoriesInEN = [A, B, C],  NewSubcategoriesInEN = [A11, C11]
-				//		=> newSubcategoriesInEN = [A11, B, C11] 
-			#endregion
-
-			#region set "newSubcategoriesInTR"
-			var newSubcategoriesInTR = new List<string>();
-
-			if (categoryDto.NewSubCategoriesInTR != null)
-				// if old subcategory is changed, add new subcategory to "newSubcategoriesInTR";
-				// is not changed, add old subcategory to "newSubcategoriesInTR"
-				foreach (var oldSubcatInTR in categoryDto.OldSubCategoriesInTR)
-				{
-					#region when "oldSubcatInTR" is updated
-					var infoOfChangedSubcat = categoryDto.NewSubCategoriesInTR
-						.FirstOrDefault(s => s.OldValue.Equals(oldSubcatInTR));
-
-					if (infoOfChangedSubcat != null)
-						newSubcategoriesInTR.Add(infoOfChangedSubcat.NewValue);
-					#endregion
-
-					#region when "oldSubcatInTR" is not updated
-					else
-						newSubcategoriesInTR.Add(oldSubcatInTR);
-					#endregion
-				}
-
-			#endregion
-
-			#endregion
-			
-			#region when only subcategory is changed
-			if ((categoryDto.NewMainCategoryInEN == null
-				&& categoryDto.NewMainCategoryInTR == null)
-			&& (categoryDto.NewSubCategoriesInEN != null
-				|| categoryDto.NewSubCategoriesInTR != null))
-			{
-				#region set parameters
-				var parameters = new DynamicParameters();
-
-				parameters.AddDynamicParams(new
-				{
-					Language = languageParams.Language,
-					OldMainCategoryInEN = categoryDto.OldMainCategoryInEN,
-					#region OldSubCategoriesInEN
-					OldSubCategoriesInEN = string
-						.Join(",", categoryDto.OldSubCategoriesInEN),
-					#endregion
-					#region OldSubCategoriesInTR
-					OldSubCategoriesInTR = categoryDto.OldSubCategoriesInTR != null ?
-						string.Join(",", categoryDto.OldSubCategoriesInTR)
-						: null,
-					#endregion
-					#region NewSubCategoriesInEN
-					NewSubCategoriesInEN = categoryDto.NewSubCategoriesInEN != null ?
-						string.Join(",", newSubcategoriesInEN)
-						: null,
-					#endregion
-					#region NewSubCategoriesInTR
-					NewSubCategoriesInTR = categoryDto.NewSubCategoriesInTR != null ?
-						string.Join(",", newSubcategoriesInTR)
-						: null,
-					#endregion
-					SplitChar = ','
-				});
-				#endregion
-
-				errorDto = await _repos.MachineCategoryRepository
-					.UpdateSubcategoriesAsync(parameters);
-			}
-			#endregion
-
-			#region when main and subcategory is changed
-			else
-			{
-				#region set parameters
-				var parameters = new DynamicParameters();
-
-				parameters.AddDynamicParams(new
-				{
-					Language = languageParams.Language,
-					OldMainCategoryInEN = categoryDto.OldMainCategoryInEN,
-					#region OldSubCategoriesInEN
-					OldSubCategoriesInEN = categoryDto.OldSubCategoriesInEN != null ?
-						string.Join(",", categoryDto.OldSubCategoriesInEN)
-						: null,
-					#endregion
-					#region OldSubCategoriesInTR
-					OldSubCategoriesInTR = categoryDto.OldSubCategoriesInTR != null ?
-						string.Join(",", categoryDto.OldSubCategoriesInTR)
-						: null,
-					#endregion
-					NewMainCategoryInEN = categoryDto.NewMainCategoryInEN,
-					NewMainCategoryInTR = categoryDto.NewMainCategoryInTR,
-					#region NewSubCategoriesInEN
-					NewSubCategoriesInEN = categoryDto.NewSubCategoriesInEN != null ?
-						string.Join(",", newSubcategoriesInEN)
-						: null,
-					#endregion
-					#region NewSubCategoriesInTR
-					NewSubCategoriesInTR = categoryDto.NewSubCategoriesInTR != null ?
-						string.Join(",", newSubcategoriesInTR)
-						: null,
-					#endregion
-					SplitChar = ','
-				});
-				#endregion
-
-				errorDto = await _repos.MachineCategoryRepository
-					.UpdateMainAndSubcategoriesAsync(parameters);
-			}
-			#endregion
-
 			#endregion
 
 			#region when any error occurs (THROW)

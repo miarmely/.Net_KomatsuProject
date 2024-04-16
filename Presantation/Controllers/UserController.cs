@@ -73,7 +73,7 @@ namespace Presantation.Controllers
 
         
 		[HttpGet("display/all")]
-        [Authorization]
+        [Authorization("Editor, Admin, Editör, Yönetici")]
         public async Task<IActionResult> GetAllUsersWithPaginationAsync(
             [FromQuery] LanguageAndPagingParams queryParams)
         {
@@ -85,7 +85,7 @@ namespace Presantation.Controllers
 
 
         [HttpGet("display/role")]
-		[Authorization]
+		[Authorization("Editor, Admin, Editör, Yönetici")]
 		public async Task<IActionResult> GetAllRolesByLanguage(
             [FromQuery] LanguageParams languageParams)
         {
