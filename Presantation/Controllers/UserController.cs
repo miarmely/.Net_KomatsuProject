@@ -18,7 +18,7 @@ namespace Presantation.Controllers
             _manager = services;
        
         [HttpPost("login/mobile")]
-        public async Task<IActionResult> LoginForMobileAsync(
+        public async Task<IActionResult> LoginForMobile(
             [FromQuery] LanguageParams languageParams,
             [FromBody] UserDtoForLogin userDto)
         {
@@ -30,7 +30,7 @@ namespace Presantation.Controllers
 
 
         [HttpPost("login/web")]
-        public async Task<IActionResult> LoginForWebAsync(
+        public async Task<IActionResult> LoginForWeb(
 			[FromQuery] LanguageParams languageParams,
 			[FromBody] UserDtoForLogin userDto)
         {
@@ -45,7 +45,7 @@ namespace Presantation.Controllers
 
 
         [HttpPost("register")]
-        public async Task<IActionResult> RegisterAsync(
+        public async Task<IActionResult> Register(
 			[FromQuery] LanguageParams languageParams,
             [FromBody] UserDtoForRegister userDto)
         {
@@ -58,7 +58,7 @@ namespace Presantation.Controllers
 
         [HttpPost("create")]
         [Authorization("Editor,Admin,Editör,Yönetici")]
-        public async Task<IActionResult> CreateUserAsync(
+        public async Task<IActionResult> CreateUser(
             [FromQuery] LanguageParams languageParams,
             [FromBody] UserDtoForCreate userDto)
 		{
@@ -71,7 +71,7 @@ namespace Presantation.Controllers
         
 		[HttpGet("display/all")]
         [Authorization("Editor,Admin,Editör,Yönetici")]
-        public async Task<IActionResult> GetAllUsersWithPaginationAsync(
+        public async Task<IActionResult> GetAllUsersWithPagination(
             [FromQuery] LanguageAndPagingParams queryParams)
         {
             var entity = await _manager.UserService
@@ -81,7 +81,19 @@ namespace Presantation.Controllers
         }
 
 
-        [HttpGet("display/role")]
+		[HttpGet("display/one")]
+		[Authorization]
+		public async Task<IActionResult> GetUser(
+			[FromQuery] UserParamsForUpdate userParams)
+		{
+			var entity = await _manager.UserService
+                .GetUserByTelNoAsync(userParams);
+
+			return Ok(entity);
+		}
+
+
+		[HttpGet("display/role")]
 		[Authorization("Editor,Admin,Editör,Yönetici")]
 		public async Task<IActionResult> GetAllRolesByLanguage(
             [FromQuery] LanguageParams languageParams)
@@ -94,8 +106,8 @@ namespace Presantation.Controllers
 
 
         [HttpPost("update/mobile")]
-        [Authorization("User,Kullanıcı")]
-        public async Task<IActionResult> UpdateUserByTelNoAsync(
+        [Authorization]
+        public async Task<IActionResult> UpdateUserByTelNo(
             [FromQuery] UserParamsForUpdate userParams,
             [FromBody] UserDtoForUpdateForMobile userDto)
         {
@@ -109,7 +121,7 @@ namespace Presantation.Controllers
 
 		[HttpPost("update/panel")]
 		[Authorization("Admin,Editor,Yönetici,Editör")]
-		public async Task<IActionResult> UpdateUserByTelNoAsync(
+		public async Task<IActionResult> UpdateUserByTelNo(
 			[FromQuery] UserParamsForUpdate userParams,
 			[FromBody] UserDtoForUpdateForPanel userDto)
 		{
@@ -124,7 +136,7 @@ namespace Presantation.Controllers
 
 		[HttpPost("delete")]
         [Authorization("Admin,Editor,Yönetici,Editör")]
-        public async Task<IActionResult> DeleteUsersAsync(
+        public async Task<IActionResult> DeleteUsers(
             [FromQuery] LanguageParams languageParams,
             [FromBody] UserDtoForDelete userDto)
         {

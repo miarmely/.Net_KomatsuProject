@@ -279,6 +279,26 @@ namespace Services.Concretes
 			return _mapper.Map<IEnumerable<UserDto>>(userViews);
 		}
 
+		public async Task<UserDto> GetUserByTelNoAsync(
+			UserParamsForUpdate userParams)
+		{
+			#region get user  (THROW)
+			var parameters = new DynamicParameters(userParams);
+
+			var userView = await _manager.UserRepository
+				.GetUserByTelNoAsync(parameters);
+
+			// when user not found
+			if (userView == null)
+				throw new ErrorWithCodeException(
+					404,
+					"NF-U",
+					"Not Found - User");
+			#endregion
+
+			return _mapper.Map<UserDto>(userView);
+		}
+
 		public async Task<IEnumerable<string>> GetAllRolesByLanguageAsync(string language)
 		{
 			#region get roles
