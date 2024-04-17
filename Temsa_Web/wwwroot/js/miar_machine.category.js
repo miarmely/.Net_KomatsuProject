@@ -916,11 +916,7 @@ $(function () {
             false,
             true);
 
-        //#region populate main and subcategory <select>s
         await populateMainAndSubcatsSelectAsync(categoryInfos);
-
-        isCategoriesPopulatedToSelects = true;
-        //#endregion
     }
     async function populateMainAndSubcatsSelectAsync(
         categoryInfos,

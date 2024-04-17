@@ -1,8 +1,5 @@
-﻿using Dapper;
-using Entities.DtoModels.FormDtos;
-using Entities.DtoModels.UserDtos;
+﻿using Entities.DtoModels.UserDtos;
 using Entities.QueryParameters;
-using Entities.ViewModels;
 using Microsoft.AspNetCore.Http;
 
 
@@ -10,11 +7,10 @@ namespace Services.Contracts
 {
     public interface IUserService
 	{
-        Task<string> LoginForMobileAsync(string language, UserDtoForLogin userDto);
+        Task<object> LoginForMobileAsync(string language, UserDtoForLogin userDto);
         Task<string> LoginForWebAsync(string language, UserDtoForLogin userDto);
         Task RegisterAsync(string language, UserDtoForRegister userDto);
         Task CreateUserAsync(string language, UserDtoForCreate userDto);
-        Task DeleteUsersByTelNoListAsync(string language, UserDtoForDelete userDto);
         Task<IEnumerable<string>> GetAllRolesByLanguageAsync(string language);
 
 		Task<IEnumerable<UserDto>> GetAllUsersWithPagingAsync(
@@ -24,6 +20,13 @@ namespace Services.Contracts
         Task UpdateUserByTelNoAsync(
             string language,
             string telNo,
-            UserDtoForUpdate userDto);
+            UserDtoForUpdateForPanel userDto);
+
+		Task UpdateUserByTelNoAsync(
+			string language,
+			string telNo,
+			UserDtoForUpdateForMobile userDto);
+
+		Task DeleteUsersByTelNoListAsync(string language, UserDtoForDelete userDto);
 	}
 }

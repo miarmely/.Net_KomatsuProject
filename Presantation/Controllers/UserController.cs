@@ -22,14 +22,11 @@ namespace Presantation.Controllers
             [FromQuery] LanguageParams languageParams,
             [FromBody] UserDtoForLogin userDto)
         {
-            var token = await _manager.UserService
+            var response = await _manager.UserService
                 .LoginForMobileAsync(languageParams.Language, userDto);
 
-            return Ok(new
-            {
-                Token = token
-            });
-        }
+            return Ok(response);
+		}
 
 
         [HttpPost("login/web")]
@@ -73,7 +70,7 @@ namespace Presantation.Controllers
 
         
 		[HttpGet("display/all")]
-        [Authorization("Editor, Admin, Editör, Yönetici")]
+        [Authorization("Editor,Admin,Editör,Yönetici")]
         public async Task<IActionResult> GetAllUsersWithPaginationAsync(
             [FromQuery] LanguageAndPagingParams queryParams)
         {
@@ -85,7 +82,7 @@ namespace Presantation.Controllers
 
 
         [HttpGet("display/role")]
-		[Authorization("Editor, Admin, Editör, Yönetici")]
+		[Authorization("Editor,Admin,Editör,Yönetici")]
 		public async Task<IActionResult> GetAllRolesByLanguage(
             [FromQuery] LanguageParams languageParams)
         {
@@ -96,11 +93,11 @@ namespace Presantation.Controllers
         }
 
 
-        [HttpPost("update")]
-        [Authorization("Admin,Editor,Yönetici,Editör")]
+        [HttpPost("update/mobile")]
+        [Authorization("User,Kullanıcı")]
         public async Task<IActionResult> UpdateUserByTelNoAsync(
             [FromQuery] UserParamsForUpdate userParams,
-            [FromBody] UserDtoForUpdate userDto)
+            [FromBody] UserDtoForUpdateForMobile userDto)
         {
             await _manager.UserService.UpdateUserByTelNoAsync(
                 userParams.Language, 
@@ -110,8 +107,22 @@ namespace Presantation.Controllers
             return NoContent();
         }
 
+		[HttpPost("update/panel")]
+		[Authorization("Admin,Editor,Yönetici,Editör")]
+		public async Task<IActionResult> UpdateUserByTelNoAsync(
+			[FromQuery] UserParamsForUpdate userParams,
+			[FromBody] UserDtoForUpdateForPanel userDto)
+		{
+			await _manager.UserService.UpdateUserByTelNoAsync(
+				userParams.Language,
+				userParams.TelNo,
+				userDto);
 
-        [HttpPost("delete")]
+			return NoContent();
+		}
+
+
+		[HttpPost("delete")]
         [Authorization("Admin,Editor,Yönetici,Editör")]
         public async Task<IActionResult> DeleteUsersAsync(
             [FromQuery] LanguageParams languageParams,

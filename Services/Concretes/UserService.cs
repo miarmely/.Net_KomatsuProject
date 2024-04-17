@@ -15,7 +15,6 @@ using Services.Contracts;
 using System.Collections.ObjectModel;
 using System.Data;
 using System.IdentityModel.Tokens.Jwt;
-using System.Runtime.InteropServices;
 using System.Security.Claims;
 using System.Text;
 
@@ -117,17 +116,34 @@ namespace Services.Concretes
 
 			return userView;
 		}
+
+		private async Task UpdateUserAsync(DynamicParameters parameters)
+		{
+			#region update user (throw)
+			var errorDto = await _manager.UserRepository
+				.UpdateUserByTelNoAsync(parameters);
+
+			// when any error occured
+			if (errorDto != null)
+				throw new ErrorWithCodeException(errorDto);
+			#endregion
+		}
 	}
 
 	public partial class UserService  // public
 	{
-		public async Task<string> LoginForMobileAsync(
+		public async Task<object> LoginForMobileAsync(
 			string language,
 			UserDtoForLogin userDto)
 		{
 			var userView = await LoginAsync(language, userDto);
 
-			return await GenerateTokenForUserAsync(userView);
+			return new
+			{
+				UserId = userView.UserId,
+				TelNo = userView.TelNo,
+				Token = await GenerateTokenForUserAsync(userView),
+			};
 		}
 
 		public async Task<string> LoginForWebAsync(
@@ -277,11 +293,12 @@ namespace Services.Concretes
 		public async Task UpdateUserByTelNoAsync(
 			string language,
 			string telNo,
-			UserDtoForUpdate userDto)
+			UserDtoForUpdateForPanel userDto)
 		{
 			#region set parameters
 			var parameters = new DynamicParameters(new
 			{
+				Language = language,
 				TelNoForValidation = telNo,
 				userDto.FirstName,
 				userDto.LastName,
@@ -295,18 +312,35 @@ namespace Services.Concretes
 				#endregion
 				userDto.RoleNames
 			});
-
-			parameters.Add("Language", language, DbType.String);
 			#endregion
 
-			#region update user (throw)
-			var errorDto = await _manager.UserRepository
-				.UpdateUserByTelNoAsync(parameters);
+			await UpdateUserAsync(parameters);
+		}
 
-			// when any error occured
-			if (errorDto != null)
-				throw new ErrorWithCodeException(errorDto);
+		public async Task UpdateUserByTelNoAsync(
+			string language,
+			string telNo,
+			UserDtoForUpdateForMobile userDto)
+		{
+			#region set parameters  (don't add role names)
+			var parameters = new DynamicParameters(new
+			{
+				Language = language,
+				TelNoForValidation = telNo,
+				userDto.FirstName,
+				userDto.LastName,
+				userDto.CompanyName,
+				userDto.TelNo,
+				userDto.Email,
+				#region Password
+				Password = userDto.Password == null ?
+					null
+					: await _micro.ComputeMd5Async(userDto.Password),
+				#endregion
+			});
 			#endregion
+
+			await UpdateUserAsync(parameters);
 		}
 
 		public async Task DeleteUsersByTelNoListAsync(

@@ -2,8 +2,8 @@
 
 namespace Entities.DtoModels.UserDtos
 {
-    public record UserDtoForUpdate
-    {
+	public record UserDtoForUpdateForMobile
+	{
 		[MiarLength(1, 50, "Ad", "Firstname")]
 		public string? FirstName { get; init; }
 
@@ -21,9 +21,12 @@ namespace Entities.DtoModels.UserDtos
 		[MiarEmail]
 		public string? Email { get; init; }
 
-        public string? RoleNames { get; init; }
-
-        [MiarLength(6, 16, "Şifre", "Password")]
+		[MiarLength(6, 16, "Şifre", "Password")]
 		public string? Password { get; init; }
+	}
+
+	public record UserDtoForUpdateForPanel : UserDtoForUpdateForMobile
+    {
+        public string? RoleNames { get; init; }
     }
 }
