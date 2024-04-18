@@ -33,20 +33,28 @@
 /*---------- menubar <select<s ----------*/
 #div_category_menubar select {
     font-size: 13px;
-}
-
-#div_category_menubar select:nth-child(1) {
     float: left;
 }
 
+/*mode select*/
+#div_category_menubar select:nth-child(1) {
+}
+
+/*mode menu select*/
 #div_category_menubar select:nth-child(2) {
     width: 160px;
-    float: left;
 }
 
+/*category language select*/
 .slct_categoryLanguage {
     width: 50px;
     padding: 0;
+}
+
+/*info message*/
+#div_category_menubar .div_infoMessage {
+    float: left;
+    padding-left: 3px;
 }
 
 

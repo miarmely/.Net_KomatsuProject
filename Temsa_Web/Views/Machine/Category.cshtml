@@ -3,6 +3,7 @@
 }
 
 <link rel="stylesheet" href="~/css/miar_machine.category.css"/>
+<link rel="stylesheet" href="~/css/miar_user.inputForm.css"/>
 
 
 <div class="form-w3layouts">
@@ -20,6 +21,12 @@
 
                         @*language <select>*@
                         <select class="input-sm form-control w-sm inline v-middle slct_categoryLanguage"></select>
+
+                        @*info message*@
+                        <div class="col-sm-3 div_infoMessage">
+                            <button type="button" tabindex="-1" data-toggle="dropdown" class="dropdown-toggle"></button>
+                            <ul role="menu" class="dropdown-menu"></ul>
+                        </div>
                     </div>
                     <div id="div_category_form">
                         <form>
@@ -272,6 +279,19 @@
                 TR: "başarıyla güncellendi",
                 EN: "updated successfully"
             }
+        },
+        infoMessages: {
+            menubar: {
+                TR: [
+                    "<<Ekle -> Yeni Kategori>>: Yeni ana kategori ve alt kategori eklemek içindir.",
+                    "<<Ekle -> Sadece Alt Kategori>>: Seçilen ana kategoriye yeni alt kategoriler eklemek içindir",
+                    "<<Güncelle -> Ana Kategori>>: Seçilen ana kategorinin adını değiştirmek içindir.",
+                    "<<<Güncelle -> Alt Kategori>>: Seçilen ana kategoriye ait alt kategorilerin adlarını değiştirmek içindir",
+                    "Kategori Dili: Burada seçilen dil ile sayfanın dili farklı şeylerdir. Burada seçilen dil girilecek olan ana veya alt kategorinin hangi dilde olduğunu belirtir."
+                ],
+                EN: []
+            },
+
         }
     };
 </script>

@@ -3,6 +3,7 @@
 } from "./miar_tools.js";
 
 import { getValuesOfObject } from "./miar_module.dictionary.js";
+import { machineForm_populateInfoMessagesAsync } from "./miar_machine.js";
 
 
 $(function () {
@@ -23,7 +24,7 @@ $(function () {
     const div_id = {
         mainCategoryArticle: "div_mainCategoryArticle",
         subcategoryArticle: "div_subcategoryArticle",
-    }
+    };
     const div = {
         mainCategoryArticle: $("#" + div_id.mainCategoryArticle),
         subcategoryArticle: $("#" + div_id.subcategoryArticle),
@@ -45,23 +46,26 @@ $(function () {
     const inpt = {
         newMainCategory: $("#inpt_newMainCategory"),
         newSubcategory: $("#inpt_newSubcategory"),
-    }
+    };
     const img = {
         loading: $("#img_loading")
-    }
+    };
     const p_id = {
         resultLabelForSelectBtnOnMainCat: div_id.mainCategoryArticle + " #p_resultLabelForSelectBtn",
         resultLabelForSelectBtnOnSubcat: div_id.subcategoryArticle + " #p_resultLabelForSelectBtn",
         resultLabelForSendBtn: "p_resultLabelForSendBtn",
-    }
+    };
     const p = {
         resultLabelForSendBtn: $("#" + p_id.resultLabelForSendBtn),
         resultLabelForSelectBtnOnMainCat: $("#" + p_id.resultLabelForSelectBtnOnMainCat),
         resultLabelForSelectBtnOnSubcat: $("#" + p_id.resultLabelForSelectBtnOnSubcat),
-    }
+    };
     const categoryType = {
         mainCat: "mainCategory",
         subcat: "subcategory"
+    };
+    const ul = {
+        infoMessageOnMenubar: $("#div_category_menubar .div_infoMessage ul")
     }
     let mode = "add";  // add | update | delete
     let modeMenu = "newCategory";
@@ -75,7 +79,7 @@ $(function () {
             TR: {},
             EN: {}
         },
-    }
+    };
     let nextDivNos = {
         mainCategory: 0,
         subcategory: 0
@@ -85,6 +89,10 @@ $(function () {
 
     //#region events
     slct.modes.change(async () => {
+        // !!!!!!!! TEMPORARY UNTIL DELETE FEATURE IS READY !!!!!!!!!!
+        if (slct.modes.val() == "delete")
+            return;
+
         //#region resets
         resetMainCategoryArticle();
         resetSubcategoryArticle();
@@ -850,6 +858,10 @@ $(function () {
             slct.modes.append(
                 `<option value="${mode}">${modeNameByLanguage}</option>`);
         }
+
+        // disable "delete" menu   !!!!!!!!! TEMPORARY  !!!!!!!!!
+        slct.modes.children("option[value= 'delete']").attr("disabled", "");
+        slct.modes.children("option[value= 'delete']").css("background-color", "#d3d3d3a1");
         //#endregion
 
         populateModeMenusSelect();
@@ -907,6 +919,13 @@ $(function () {
         //#endregion
 
         await initializeMainAndSubcategoriesSelectAsync();
+
+        //#region populate info messages on menubar
+        //for (let index in langPack.infoMessages.menubar[language]) {
+        //    let infoMessage = langPack.infoMessages.menubar[language][index];
+        //    ul.infoMessageOnMenubar.append(`<li>* ${infoMessage}</li>`)
+        //}
+        //#endregion
     }
     async function initializeMainAndSubcategoriesSelectAsync() {
         // get all main and subcategories
@@ -1192,9 +1211,6 @@ $(function () {
             : categoryType.subcat;
     }
     function resetMainCategoryArticle() {
-        // reset variables
-        baseMainCatOfSelectedMainCats = null;
-
         // reset new main category <input>
         inpt.newMainCategory.val("");
 
