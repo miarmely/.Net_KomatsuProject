@@ -24,6 +24,7 @@ $(function () {
     const div_id = {
         mainCategoryArticle: "div_mainCategoryArticle",
         subcategoryArticle: "div_subcategoryArticle",
+        categoryMenubar: "div_category_menubar"
     };
     const div = {
         mainCategoryArticle: $("#" + div_id.mainCategoryArticle),
@@ -42,6 +43,7 @@ $(function () {
         select: $(".div_categoryButton button"),
         selectOnMainCat: $("form .div_category:nth-child(1) .div_categoryButton button"),
         selectOnSubCat: $("form .div_category:nth-child(2) .div_categoryButton button"),
+        newMainCategoryInfoMessageButton: $("#btn_newMainCategoryInfoMessageButton")
     };
     const inpt = {
         newMainCategory: $("#inpt_newMainCategory"),
@@ -65,7 +67,7 @@ $(function () {
         subcat: "subcategory"
     };
     const ul = {
-        infoMessageOnMenubar: $("#div_category_menubar .div_infoMessage ul")
+        menubarInfoMessage: $("#" + div_id.categoryMenubar + " .div_infoMessage ul")
     }
     let mode = "add";  // add | update | delete
     let modeMenu = "newCategory";
@@ -395,7 +397,7 @@ $(function () {
                         // when new main category <input> is empty
                         if (newMainCategory.length == 0)
                             isErrorOccured = true;
-                       
+
                         // when main category by selected language is selected again
                         if (getSelectedCategoryCount(categoryType.mainCat, categoryLanguage) > 0)
                             isErrorOccured = true;
@@ -445,7 +447,7 @@ $(function () {
                         // when subcategory is already selected previously
                         for (let selectedOldSubcat in selectedCatsByLangs.subcategory[categoryLanguage]) {
                             const selectedNewSubCat = selectedCatsByLangs.subcategory[categoryLanguage][selectedOldSubcat];
- 
+
                             if (selectedNewSubCat.trim() == newSubcategory) {
                                 // write error message
                                 updateResultLabel(
@@ -455,7 +457,7 @@ $(function () {
                                 return;
                             }
                         }
-                        
+
                         // write error message if security is failed
                         if (isErrorOccured) {
                             updateResultLabel(
@@ -921,10 +923,11 @@ $(function () {
         await initializeMainAndSubcategoriesSelectAsync();
 
         //#region populate info messages on menubar
-        //for (let index in langPack.infoMessages.menubar[language]) {
-        //    let infoMessage = langPack.infoMessages.menubar[language][index];
-        //    ul.infoMessageOnMenubar.append(`<li>* ${infoMessage}</li>`)
-        //}
+        for (let index in langPack.infoMessages.menubar[language]) {
+            let infoMessage = langPack.infoMessages.menubar[language][index];
+
+            ul.menubarInfoMessage.append(`<li>${infoMessage}</li>`)
+        }
         //#endregion
     }
     async function initializeMainAndSubcategoriesSelectAsync() {
@@ -1181,6 +1184,7 @@ $(function () {
         btn.selectOnSubCat.removeAttr("disabled");
         //#endregion
     }
+
     function populateModeMenusSelect() {
         // reset mode menus <select>
         slct.modeMenus.empty();

@@ -2,6 +2,7 @@
     updateDefaultFlagAndLanguage, populateLanguageDropdownAsync,
     clicked_languageDropdown
 } from "./miar_header.js";
+import { showOrHideInfoMessage } from "./miar_tools.js";
 
 
 $(function () {
@@ -36,6 +37,14 @@ $(function () {
             //#endregion
         }
     })
+    ul_languages.click(() =>
+        clicked_languageDropdown($(":focus"))
+    )
+    $(".div_infoMessageButton").on("click", "button", (event) => {
+        let div_clickedInfoMessageButton = $(event.target).parent();
+
+        showOrHideInfoMessage(div_clickedInfoMessageButton);
+    });
     $(".sidebar-menu").click((event) => {
         //#region control whether click to main menu that have sub menus
         let a_selectedMenu = $(event.target);
@@ -60,9 +69,6 @@ $(function () {
         }
         //#endregion     
     })
-    ul_languages.click(() =>
-        clicked_languageDropdown($(":focus"))
-    )
     //#endregion
 
     //#region functions

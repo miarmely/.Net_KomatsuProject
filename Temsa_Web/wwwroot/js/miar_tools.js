@@ -547,6 +547,41 @@ export async function resetFormAsync(lbl_result) {
     $("form input").css("border-color", "");
     $("form select").css("border-color", "");
 }
+export async function isUserRoleThisRoleAsync(userRole, targetRole) {
+    //#region check user role whether is desired role
+    switch (targetRole) {
+        case "user":
+            if (userRole == "User" || userRole == "Kullanıcı") return true;
+            return false;
+        case "editor":
+            if (userRole == "Editor" || userRole == "Editör") return true;
+            return false;
+        case "admin":
+            if (userRole == "Admin" || userRole == "Yönetici") return true;
+            return false;
+    }
+    //#endregion
+}
+export async function isAllObjectValuesNullAsync(object) {
+    //#region compute total null value quantity
+    let nullCounter = 0
+
+    for (let key in object) {
+        let value = object[key];
+
+        // when data is null
+        if (value == null)
+            nullCounter += 1;
+    }
+    //#endregion
+
+    //#region when all object values is null
+    if (nullCounter == Object.keys(object).length)
+        return true;
+    //#endregion
+
+    return false;
+}
 export function getDateTimeInString(dateTime) {
     //#region set year
     let date = new Date(dateTime);
@@ -654,46 +689,29 @@ export function updateElementText(element, text) {
     element.empty();
     element.text(text);
 }
-
-export async function isUserRoleThisRoleAsync(userRole, targetRole) {
-    //#region check user role whether is desired role
-    switch (targetRole) {
-        case "user":
-            if (userRole == "User" || userRole == "Kullanıcı") return true;
-            return false;
-        case "editor":
-            if (userRole == "Editor" || userRole == "Editör") return true;
-            return false;
-        case "admin":
-            if (userRole == "Admin" || userRole == "Yönetici") return true;
-            return false;
-    }
-    //#endregion
-}
-export async function isAllObjectValuesNullAsync(object) {
-    //#region compute total null value quantity
-    let nullCounter = 0
-
-    for (let key in object) {
-        let value = object[key];
-
-        // when data is null
-        if (value == null)
-            nullCounter += 1;
-    }
-    //#endregion
-
-    //#region when all object values is null
-    if (nullCounter == Object.keys(object).length)
-        return true;
-    //#endregion
-
-    return false;
-}
 export function isAnyValueExistsOnInput(inpt) {
     return inpt.val().length > 0;
 }
+export function showOrHideInfoMessage(div_infoMessageButton) {
+    //#region show info message
+    const div_infoMessage = $("#div_infoMessage_" + div_infoMessageButton.attr("id"))
+    const isInfoMessageShowing = div_infoMessage.css("visibility") == "visible";
 
+    if (isInfoMessageShowing)
+        div_infoMessage.css({
+            visibility: "hidden",
+            height: "0"
+        });
+    //#endregion
+
+    //#region hide info message
+    else
+        div_infoMessage.css({
+            visibility: "visible",
+            height: "unset"
+        });
+    //#endregion
+}
 export async function populateElementByAjaxOrLocalAsync(
     keyNameInLocal,
     specialApiUrl,

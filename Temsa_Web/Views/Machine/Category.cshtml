@@ -3,7 +3,7 @@
 }
 
 <link rel="stylesheet" href="~/css/miar_machine.category.css"/>
-<link rel="stylesheet" href="~/css/miar_user.inputForm.css"/>
+<link rel="stylesheet" href="~/css/miar_module.css"/>
 
 
 <div class="form-w3layouts">
@@ -23,9 +23,11 @@
                         <select class="input-sm form-control w-sm inline v-middle slct_categoryLanguage"></select>
 
                         @*info message*@
-                        <div class="col-sm-3 div_infoMessage">
-                            <button type="button" tabindex="-1" data-toggle="dropdown" class="dropdown-toggle"></button>
-                            <ul role="menu" class="dropdown-menu"></ul>
+                        <div id="div_menubarInfoMessageButton" class="div_infoMessageButton">
+                            <button type="button"></button>
+                        </div>
+                        <div id="div_infoMessage_div_menubarInfoMessageButton" class="div_infoMessage">
+                            <ul></ul>
                         </div>
                     </div>
                     <div id="div_category_form">
@@ -49,7 +51,6 @@
                                         <div class="col-sm-6">
                                             <input id="inpt_newMainCategory" type="text" class="form-control"/>
                                         </div>
-                                        <div class="col-sm-3"></div>
                                     </div>
 
                                     @*select <button>*@
@@ -283,15 +284,98 @@
         infoMessages: {
             menubar: {
                 TR: [
-                    "<<Ekle -> Yeni Kategori>>: Yeni ana kategori ve alt kategori eklemek içindir.",
-                    "<<Ekle -> Sadece Alt Kategori>>: Seçilen ana kategoriye yeni alt kategoriler eklemek içindir",
-                    "<<Güncelle -> Ana Kategori>>: Seçilen ana kategorinin adını değiştirmek içindir.",
-                    "<<<Güncelle -> Alt Kategori>>: Seçilen ana kategoriye ait alt kategorilerin adlarını değiştirmek içindir",
-                    "Kategori Dili: Burada seçilen dil ile sayfanın dili farklı şeylerdir. Burada seçilen dil girilecek olan ana veya alt kategorinin hangi dilde olduğunu belirtir."
+                    `<b>* Ekle >> Yeni Kategori</b>:  
+                        <br>** Yeni ana kategori ve alt kategori eklemek içindir.  
+                        <br>** Yeni ana kategori ve alt kategori her dil için girilmelidir.`,
+                    `<b>* Ekle >> Sadece Alt Kategori</b>:  
+                        <br>** Seçili ana kategoriye ait yeni alt kategoriler eklemek içindir.  
+                        <br>** Yeni alt kategori her dil için girilmelidir.,
+                        <br>** \"Alt kategoriler dropdown\"u sadece varolan alt kategorileri görüntülemek içindir`,
+                    `<b>* Güncelle >> Ana Kategori</b>:  
+                        <br>** Seçilen ana kategorinin adını değiştirmek içindir.
+                        <br>** Yeni ana kategori adı her dil için girilmek zorunda değildir. (istenilen herhangi bir dil için güncelleme yapılabilir.)`,
+                    `<b>* Güncelle >> Alt Kategori</b>:  
+                        <br>** Seçilen ana kategoriye ait alt kategorilerin adlarını değiştirmek içindir.
+                        <br>** Yeni alt kategori adları her dil için girilmek zorunda değildir. (istenilen herhangi bir dil için güncelleme yapılabilir.)`,
+                    `<b>* Sil >> Ana Kategori</b>: 
+                        <br>** Yakında...`,
+                    `<b>* Sil >> Alt Kategori</b>: 
+                        <br>** Yakında...`,
+                    `<b>* Kategori Dili</b>:  
+                        <br>** Burada seçilen dil ile sayfanın dili farklıdır. Burada seçilen dil girilecek olan ana veya alt kategorinin hangi dilde olduğunu belirtir.`
                 ],
-                EN: []
+                EN: [
+                    `<b>* Add >> Main Category</b>:  
+                        <br>** It used to add new main and subcategory.  
+                        <br>* *You must enter new main and subcategory for all languages.`,
+                    `<b>* Add >> Only Subcategory</b>:  
+                        <br>** It used to add new subcategories belong to selected main category.  
+                        <br>** \"Subcategories dropdown\" is only for display registered subcategories."
+                        <br>** You must enter new subcategory for all languages.`,
+                    `<b>* Update >> Main Category</b>:  
+                        <br>** It used to change name of selected main category.
+                        <br>** There is no requirement of enter new main category name for all languages. (It can be update for desired any language.)`,
+                    `<b>* Update >> Subcategory</b>:  
+                        <br>** It used to change subcategory names belong to selected main category.
+                        <br>** There is no requirement of enter new subcategory names for all languages. (It can be update for desired any language.)`,
+                    `<b>* Delete >> Main Category</b>: 
+                        <br>** Soon...`, 
+                    `<b>* Delete >> Subcategory</b>: 
+                        <br>** Soon...`,
+                    `<b>* Category Language</b>:  
+                        <br>** The language in here and page language are different. The selected language in here determines language of main and subcategory to be entered`
+                ]
             },
+            newMainCategory: {
+                add:{
+                    TR: [
+                        "yeni ana kategori her dil için girilmelidir."
+                    ],
+                    EN: [
+                        "You must enter new main category for all languages."
+                    ]
+                },
+                update:{
+                    mainCategory: {
+                            TR: [
+                            "Seçilmiş ana kategorinin yeni adı girilir.",
+                            "Yeni ana kategori adını her dil için girme zorunluluğu yoktur.",
+                            "Yeni ana kategori adı sadece seçili dil için güncellenir.",
+                        ],
+                        EN: [
+                            "new name enters for selected main category",
+                            "There is no requirement of enter new main category name for all languages.",
+                            "New main category changes only for selected language."
+                        ]
+                    },
+                    subcategory: {
+                        TR: [
+                            "Seçili ana kategorinin seçili alt kategorisi için yeni ad girilir.",
+                            "Yeni alt kategori adını her dil için girme zorunluluğu yoktur.",
+                            "Yeni alt kategori adı sadece seçili dil için güncellenir.",
+                        ],
+                        EN: [
+                           "new name enters for selected subcategory of selected main category",
+                           "There is no requirement of enter new subcategory name for all languages.",
+                           "New subcategory updated only for selected language."
+                        ]
+                    }
+                },
+                delete:{
 
+                }
+            },
+            newSubcategory: {
+                add: {
+                    TR:[
+                        "Seçili ana kategoriye yeni alt kategoriler eklemek içindir."
+                    ],
+                    EN:[
+                        "it used to add new subcategories for selected main category."
+                    ]
+                }
+
+            }
         }
     };
 </script>

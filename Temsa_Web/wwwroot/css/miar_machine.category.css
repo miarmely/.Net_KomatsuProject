@@ -5,7 +5,7 @@
 }
 
 #div_category_form {
-    margin-top: 50px;
+    margin-top: 25px;
 }
 
     /* form labels*/
@@ -30,31 +30,32 @@
     font-size: 20px;
 }
 
+
 /*---------- menubar <select<s ----------*/
 #div_category_menubar select {
     font-size: 13px;
     float: left;
 }
 
-/*mode select*/
-#div_category_menubar select:nth-child(1) {
-}
+    /*mode select*/
+    #div_category_menubar select:nth-child(1) {
+    }
 
-/*mode menu select*/
-#div_category_menubar select:nth-child(2) {
-    width: 160px;
-}
+    /*mode menu select*/
+    #div_category_menubar select:nth-child(2) {
+        width: 160px;
+    }
+
 
 /*category language select*/
-.slct_categoryLanguage {
+#div_category_menubar .slct_categoryLanguage {
     width: 50px;
     padding: 0;
 }
 
-/*info message*/
-#div_category_menubar .div_infoMessage {
-    float: left;
-    padding-left: 3px;
+/*info message button*/
+#div_category_menubar .div_infoMessageButton {
+    margin-top: 3px;
 }
 
 
@@ -139,3 +140,10 @@
     .btn_cancel:hover {
         box-shadow: 1px 1px 10px red;
     }
+
+
+
+/*---------- info messages on <form> ----------*/
+#div_category_form .div_infoMessage{
+   margin-top:5px;
+}
