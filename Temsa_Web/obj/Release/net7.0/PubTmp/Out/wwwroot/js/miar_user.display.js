@@ -234,8 +234,8 @@ $(function () {
 
         $.ajax({
             method: "POST",
-            url: (`${baseApiUrl}/user/update` +
-                `?language=${language}` +
+            url: (`${baseApiUrl}/user/update/panel?` +
+                `language=${language}` +
                 `&telNo=${userInfos.telNo}`),
             headers: { "Authorization": jwtToken },
             data: JSON.stringify(data),

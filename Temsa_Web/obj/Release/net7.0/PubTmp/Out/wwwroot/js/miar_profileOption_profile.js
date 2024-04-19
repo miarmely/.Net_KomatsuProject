@@ -153,8 +153,8 @@ $(function () {
 
         $.ajax({
             method: "POST",
-            url: (baseApiUrl + "/user/update" +
-                `?language=${language}` +
+            url: (baseApiUrl + "/user/update/panel?" +
+                `language=${language}` +
                 `&telNo=${claimInfos.telNo}`),
             headers: {
                 "authorization": jwtToken

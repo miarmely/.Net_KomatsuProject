@@ -1,6 +1,6 @@
 {
   "Version": 1,
-  "Hash": "2tNdrQ+e7HKPFyjHhFRBupnv+BPToefSH+JrSCU9X2k=",
+  "Hash": "58eutJbWCk/pGEE5+LOhIC2JrSh87cCiYDPolQn46qY=",
   "Source": "Temsa_Web",
   "BasePath": "_content/Temsa_Web",
   "Mode": "Default",
@@ -882,23 +882,6 @@
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "wwwroot\\images\\loading.gif"
-    },
-    {
-      "Identity": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\images\\machines\\01-Anasayfa.png",
-      "SourceId": "Temsa_Web",
-      "SourceType": "Discovered",
-      "ContentRoot": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\",
-      "BasePath": "_content/Temsa_Web",
-      "RelativePath": "images/machines/01-Anasayfa.png",
-      "AssetKind": "All",
-      "AssetMode": "All",
-      "AssetRole": "Primary",
-      "RelatedAsset": "",
-      "AssetTraitName": "",
-      "AssetTraitValue": "",
-      "CopyToOutputDirectory": "Never",
-      "CopyToPublishDirectory": "PreserveNewest",
-      "OriginalItemSpec": "wwwroot\\images\\machines\\01-Anasayfa.png"
     },
     {
       "Identity": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\images\\machines\\D155AX-8_Walkaround_01.png",

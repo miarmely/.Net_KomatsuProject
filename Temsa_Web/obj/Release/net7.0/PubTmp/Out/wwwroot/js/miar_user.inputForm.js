@@ -1,4 +1,4 @@
-﻿import { writeErrorToBelowOfInputAsync } from "./miar_module_inputForm.js";
+﻿import { writeErrorToBelowOfInputAsync } from "./miar_module.inputForm.js";
 
 //#region variables
 export const roleTranslator = {

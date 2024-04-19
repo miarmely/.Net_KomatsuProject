@@ -302,7 +302,11 @@
                     `<b>* Sil >> Alt Kategori</b>: 
                         <br>** Yakında...`,
                     `<b>* Kategori Dili</b>:  
-                        <br>** Burada seçilen dil ile sayfanın dili farklıdır. Burada seçilen dil girilecek olan ana veya alt kategorinin hangi dilde olduğunu belirtir.`
+                        <br>** Burada seçilen dil ile sayfanın dili farklıdır. Burada seçilen dil girilecek olan ana veya alt kategorinin hangi dilde olduğunu belirtir.`,
+                    `<b>* Not</b>:
+                        <br>** Yeni kategoriler eklenecekken alt kategoriler bir dile göre girildikten sonra diğer diller içinde gireleceği zamanda, aynı sırayla girilmelidir. 
+                        <br>*** Örneğin TR= [alt kategori1, alt kategori2...],  EN= [subcategory1, subcategory2...])
+                        <br>** Güncelleme işleminde alt kategorilerin sırası önemli değildir.`
                 ],
                 EN: [
                     `<b>* Add >> Main Category</b>:  
@@ -310,7 +314,7 @@
                         <br>* *You must enter new main and subcategory for all languages.`,
                     `<b>* Add >> Only Subcategory</b>:  
                         <br>** It used to add new subcategories belong to selected main category.  
-                        <br>** \"Subcategories dropdown\" is only for display registered subcategories."
+                        <br>** \"Subcategories dropdown\" is only for display registered subcategories.
                         <br>** You must enter new subcategory for all languages.`,
                     `<b>* Update >> Main Category</b>:  
                         <br>** It used to change name of selected main category.
@@ -323,59 +327,13 @@
                     `<b>* Delete >> Subcategory</b>: 
                         <br>** Soon...`,
                     `<b>* Category Language</b>:  
-                        <br>** The language in here and page language are different. The selected language in here determines language of main and subcategory to be entered`
+                        <br>** The language in here and page language are different. The selected language in here determines language of main and subcategory to be entered`,
+                    `<b>* Note</b>:
+                        <br>** When new subcategories is adding, when subcategories will be enter for other languages after subcategory is entered for one language, must be same order.
+                        <br>*** Such as TR: [alt kategori1, alt kategori2...],  EN: [subcategory1, subcategory2...]
+                        <br>** Subcategories order is not important in update process.`
                 ]
             },
-            newMainCategory: {
-                add:{
-                    TR: [
-                        "yeni ana kategori her dil için girilmelidir."
-                    ],
-                    EN: [
-                        "You must enter new main category for all languages."
-                    ]
-                },
-                update:{
-                    mainCategory: {
-                            TR: [
-                            "Seçilmiş ana kategorinin yeni adı girilir.",
-                            "Yeni ana kategori adını her dil için girme zorunluluğu yoktur.",
-                            "Yeni ana kategori adı sadece seçili dil için güncellenir.",
-                        ],
-                        EN: [
-                            "new name enters for selected main category",
-                            "There is no requirement of enter new main category name for all languages.",
-                            "New main category changes only for selected language."
-                        ]
-                    },
-                    subcategory: {
-                        TR: [
-                            "Seçili ana kategorinin seçili alt kategorisi için yeni ad girilir.",
-                            "Yeni alt kategori adını her dil için girme zorunluluğu yoktur.",
-                            "Yeni alt kategori adı sadece seçili dil için güncellenir.",
-                        ],
-                        EN: [
-                           "new name enters for selected subcategory of selected main category",
-                           "There is no requirement of enter new subcategory name for all languages.",
-                           "New subcategory updated only for selected language."
-                        ]
-                    }
-                },
-                delete:{
-
-                }
-            },
-            newSubcategory: {
-                add: {
-                    TR:[
-                        "Seçili ana kategoriye yeni alt kategoriler eklemek içindir."
-                    ],
-                    EN:[
-                        "it used to add new subcategories for selected main category."
-                    ]
-                }
-
-            }
         }
     };
 </script>

@@ -1,15 +1,17 @@
 ﻿import {
     updateResultLabel, addPaginationButtonsAsync, getFileTypeFromFileName,
     controlPaginationBackAndNextButtonsAsync, isAllObjectValuesNullAsync,
-    updateElementText, getBase64StrOfFileAsync, autoObjectMapperAsync, showOrHideBackButtonAsync, resetFormAsync
+    updateElementText, getBase64StrOfFileAsync, autoObjectMapperAsync,
+    showOrHideBackButtonAsync, resetFormAsync
 } from "./miar_tools.js";
 
 import {
     addArticlesAsync, articleBuffer, art_baseId, setVariablesForArticleAsync,
     mouseover_articleVideoAsync, click_articleVideoDivAsync, controlArticleWidthAsync,
-    div_article_button_id, div_article_info_id, div_article_video_id, getValidArticleWidthAsync,
-    ended_articleVideoAsync, alignArticlesAsAutoAsync, mouseout_articleVideoDivAsync,
-    removeLastUploadedArticleVideoAsync, getArticleCountOnOneRowAsync,    
+    div_article_button_id, div_article_info_id, div_article_video_id,
+    getValidArticleWidthAsync, ended_articleVideoAsync, alignArticlesAsAutoAsync,
+    mouseout_articleVideoDivAsync, removeLastUploadedArticleVideoAsync,
+    getArticleCountOnOneRowAsync,    
 } from "./miar_article.js";
 
 import {
@@ -19,7 +21,8 @@ import {
     click_showImageButtonAsync, click_showVideoButtonAsync,
     click_inputAsync, click_textAreaAsync, change_imageInputAsync, change_videoInputAsync,
     machineForm_activeOrPassiveTheImageOrVideoBtnAsync,
-    machineForm_checkWhetherBlankTheInputsAsync, machineForm_populateInfoMessagesAsync, keyup_userForm_inputAsync
+    machineForm_checkWhetherBlankTheInputsAsync, machineForm_populateInfoMessagesAsync,
+    keyup_userForm_inputAsync
 } from "./miar_machine.js"
 
 import {
@@ -28,7 +31,7 @@ import {
     setVariablesForDescriptionsAsync, uploadDescriptionsEventsAsync
 } from "./miar_descriptions.js"
 
-import { checkValueOfNumberInputAsync } from "./miar_module_inputForm.js";
+import { checkValueOfNumberInputAsync } from "./miar_module.inputForm.js";
 
 
 $(function () {

@@ -1,5 +1,8 @@
 ﻿import { updateResultLabel } from "./miar_tools.js";
-import { clicked_languageDropdown, populateLanguageDropdown, updateDefaultFlagAndLanguage } from "./miar_header.js";
+import {
+    clicked_languageDropdown, populateLanguageDropdownAsync,
+    updateDefaultFlagAndLanguage
+} from "./miar_header.js";
 
 $(function () {
     //#region variables
@@ -107,12 +110,7 @@ $(function () {
             spn_displayingLanguage_id);
         //#endregion
 
-        //#region add languages to dropdown (static)
-        populateLanguageDropdown(
-            ul_languages_id,
-            ["TR", "EN"]  
-        )
-        //#endregion
+        await populateLanguageDropdownAsync($("#" + ul_languages_id));
     }
     //#endregion
 

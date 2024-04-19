@@ -1,0 +1,149 @@
+﻿/*------------- partner -------------*/
+.panel-body {
+    padding: 20px;
+    min-height: 230px;
+}
+
+#div_category_form {
+    margin-top: 25px;
+}
+
+    /* form labels*/
+    #div_category_form label {
+        text-align: right;
+    }
+
+.div_category {
+    border: solid 2px transparent;
+    padding: 20px 10px 30px;
+    box-shadow: 2px 1px 10px #002fff8f
+}
+
+    /*maincategory div*/
+    .div_category:nth-child(2) {
+        margin-top: 40px;
+    }
+
+.h_articleTitle {
+    text-align: center;
+    margin-bottom: 35px;
+    font-size: 20px;
+}
+
+
+/*---------- menubar <select<s ----------*/
+#div_category_menubar select {
+    font-size: 13px;
+    float: left;
+}
+
+    /*mode select*/
+    #div_category_menubar select:nth-child(1) {
+    }
+
+    /*mode menu select*/
+    #div_category_menubar select:nth-child(2) {
+        width: 160px;
+    }
+
+
+/*category language select*/
+#div_category_menubar .slct_categoryLanguage {
+    width: 50px;
+    padding: 0;
+}
+
+/*info message button*/
+#div_category_menubar .div_infoMessageButton {
+    margin-top: 3px;
+}
+
+
+/*----------- selected main/subcategories areas -----------*/
+.div_selectedCategoriesByLang {
+    padding-top: 10px;
+    padding-bottom: 20px;
+    box-shadow: 1px 1px 4px #002fff8f;
+    margin-bottom: 30px;
+}
+
+    .div_selectedCategoriesByLang > h4 {
+        text-align: center;
+        font-style: normal;
+        margin-bottom: 15px
+    }
+
+
+/*------ category buttons ------*/
+.div_categoryButton {
+    text-align: center;
+    margin-bottom: 45px;
+}
+
+
+    .div_categoryButton button {
+        background-color: darkblue;
+        color: white;
+    }
+
+        .div_categoryButton button:disabled {
+            background-color: #00008b70
+        }
+
+        .div_categoryButton button:hover {
+            color: white;
+            font-weight: bolder;
+        }
+
+        .div_categoryButton button:enabled:hover {
+            box-shadow: 1px 1px 10px #0075d3;
+        }
+
+        .div_categoryButton button:disabled:hover {
+            box-shadow: 1px 1px 10px red;
+        }
+
+        .div_categoryButton button:focus {
+            color: white;
+        }
+
+
+/*------ send button ------*/
+#div_sendButton {
+    margin-top: 40px;
+    margin-bottom: 10px;
+}
+
+    #div_sendButton button {
+        background-color: #129902;
+        color: white;
+        width: 100px;
+    }
+
+        #div_sendButton button:disabled {
+            background-color: #1299024a
+        }
+
+
+/*----- cancel button -----*/
+.btn_cancel {
+    background-color: transparent;
+    padding-right: 0px;
+    padding-left: 0px;
+}
+
+    .btn_cancel img {
+        width: 20px;
+        height: 20px;
+    }
+
+    .btn_cancel:hover {
+        box-shadow: 1px 1px 10px red;
+    }
+
+
+
+/*---------- info messages on <form> ----------*/
+#div_category_form .div_infoMessage{
+   margin-top:5px;
+}
