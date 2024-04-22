@@ -11,7 +11,7 @@ import {
     div_article_button_id, div_article_info_id, div_article_video_id,
     getValidArticleWidthAsync, ended_articleVideoAsync, alignArticlesAsAutoAsync,
     mouseout_articleVideoDivAsync, removeLastUploadedArticleVideoAsync,
-    getArticleCountOnOneRowAsync,    
+    getArticleCountOnOneRowAsync,
 } from "./miar_article.js";
 
 import {
@@ -22,7 +22,8 @@ import {
     click_inputAsync, click_textAreaAsync, change_imageInputAsync, change_videoInputAsync,
     machineForm_activeOrPassiveTheImageOrVideoBtnAsync,
     machineForm_checkWhetherBlankTheInputsAsync, machineForm_populateInfoMessagesAsync,
-    keyup_userForm_inputAsync
+    keyup_userForm_inputAsync, change_mainCategorySelectAsync,
+    getBaseMainCatOfMainCategoryAsync
 } from "./miar_machine.js"
 
 import {
@@ -158,7 +159,7 @@ $(function () {
         let spn_help_message = input
             .siblings("span")
             .text();
-        
+
         if (spn_help_message != "")
             await keyup_userForm_inputAsync(event, spn_resultLabel);
         //#endregion
@@ -209,6 +210,11 @@ $(function () {
         }
         //#endregion
     })
+    $("#" + slct_mainCategory_id).change(async () => {
+        await change_mainCategorySelectAsync(
+            $("#" + slct_mainCategory_id),
+            $("#" + slct_subCategory_id));
+    })
     btn_save.click(async (event) => {
         //#region resets
         event.preventDefault();
@@ -242,7 +248,7 @@ $(function () {
             "imageName": inpt_chooseImage.val(),
             "videoName": inpt_chooseVideo.val() == "" ? null : inpt_chooseVideo.val(),
             "pdfName": inpt_choosePdf.val(),
-            "mainCategoryName": $("#" + slct_mainCategory_id).val(),
+            "mainCategoryName": $("#" + slct_mainCategory_id + " option:selected").text(),
             "subCategoryName": $("#" + slct_subCategory_id).val(),
             "model": $("#" + inpt_model_id).val(),
             "brandName": $("#" + inpt_brand_id).val(),
@@ -329,7 +335,7 @@ $(function () {
         await resetFormAsync(spn_resultLabel);
         await machineForm_removePosterAttrAsync(vid_machine, src_machine);
         await machineForm_removeVideoAttrAsync(vid_machine, src_machine);
-       
+
         //#region show articles
         div_article_update.attr("hidden", "");
         div_article_display.removeAttr("hidden");
@@ -536,7 +542,8 @@ $(function () {
                         btn_descriptions_id,
                         btn_save);
                     await machineForm_populateSelectsAsync(
-                        $("#" + slct_mainCategory_id));
+                        $("#" + slct_mainCategory_id),
+                        $("#" + slct_subCategory_id));
                     await machineForm_populateInfoMessagesAsync();
 
                     isUpdatePageOpenedBefore = true;
@@ -672,7 +679,7 @@ $(function () {
 
         pageSize = articleCountOnOneRow * pageRow;
         //#endregion
-        
+
         $.ajax({
             method: "GET",
             url: (baseApiUrl + "/machine/display/all" +
@@ -815,7 +822,6 @@ $(function () {
                     `&oldMainCategoryName=${oldMainCategoryName}` +
                     `&oldSubCategoryName=${oldSubCategoryName}`),
                 headers: { "Authorization": jwtToken },
-                crossDomain: true,
                 data: JSON.stringify(data),
                 contentType: "application/json",
                 dataType: "json",
@@ -1118,7 +1124,7 @@ $(function () {
 
         //#region add machine image
         let infosOfLastClickedArticle = article_idsAndMachineInfos[idOfLastClickedArticle];
-        
+
         vid_machine.attr(
             "poster",
             "/" + path_imageFolderAfterWwwroot + "/" + infosOfLastClickedArticle.imageName);
@@ -1147,8 +1153,6 @@ $(function () {
         inpt_chooseImage.val(infosOfLastClickedArticle["imageName"]);
         inpt_chooseVideo.val(infosOfLastClickedArticle["videoName"]);
         inpt_choosePdf.val(infosOfLastClickedArticle["pdfName"]);
-        $("#slct_mainCategory").val(infosOfLastClickedArticle["mainCategoryName"]);
-        $("#slct_subCategory").val(infosOfLastClickedArticle["subCategoryName"]);
         $("#inpt_model").val(infosOfLastClickedArticle["model"]);
         $("#inpt_brand").val(infosOfLastClickedArticle["brandName"]);
         $("#inpt_year").val(infosOfLastClickedArticle["year"]);
@@ -1156,6 +1160,22 @@ $(function () {
         $("#inpt_sold").val(infosOfLastClickedArticle["sold"]);
         $("#inpt_rented").val(infosOfLastClickedArticle["rented"]);
         $(`input[name= "handStatus"][value= "${infosOfLastClickedArticle.handStatus}"]`).attr("checked", "");
+        //#endregion
+
+        //#region main/subcategory <select>
+        // add default value to maincategory <select>
+        $("#slct_mainCategory").val(await getBaseMainCatOfMainCategoryAsync(
+            infosOfLastClickedArticle["mainCategoryName"],
+            language));
+
+        // populate subcategory <select> by selected main category
+        await change_mainCategorySelectAsync(
+            $("#" + slct_mainCategory_id),
+            $("#" + slct_subCategory_id));  
+
+        // add default value to subcategory <select>
+        $("#slct_subCategory").val(
+            infosOfLastClickedArticle["subCategoryName"]); 
         //#endregion
 
         //#region descriptions

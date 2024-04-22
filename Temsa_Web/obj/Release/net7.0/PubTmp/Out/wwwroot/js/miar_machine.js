@@ -369,6 +369,19 @@ export async function change_pdfInputAsync(
     inpt_choosePdf.val(selectedPdfInfos.name);
     //#endregion
 }
+export async function change_mainCategorySelectAsync(slct_mainCategory, slct_subcategory){
+    //#region populate subcategory <select> by selected main category
+    const mainAndSubcatsByLang = await getMainAndSubcatsOfBaseMainCatByLangAsync(
+        slct_mainCategory.val(),
+        language);
+
+    await populateSelectAsync(
+        slct_subcategory,
+        mainAndSubcatsByLang.subcategoryNames,
+        null,
+        true);
+    //#endregion
+}
 export async function keyup_userForm_inputAsync(event, spn_resultLabel) {
     //#region when clicked key is "TAB"
     let clickedKeyNo = event.which;
@@ -554,51 +567,46 @@ export async function machineForm_addElementNamesAsync(
         langPack_saveButton[language]);
     //#endregion
 }
-export async function machineForm_populateSelectsAsync(slct_mainCategory) {
-    // populate main category and subcategory selects
-    await populateElementByAjaxOrLocalAsync(
-        localKeys_allMainCategories,
-        `/machine/display/mainCategory?language=${language}`,
-        (mainCategories) => {
-            //#region add main categories
-            populateSelectAsync(
-                slct_mainCategory,
-                mainCategories);
-            //#endregion
+export async function machineForm_populateSelectsAsync(slct_mainCategory, slct_subcategory) {
+    //#region populate main/subcategory <select>'s
+    const categoryInfos = await getDataByAjaxOrLocalAsync(
+        localKeys_allMainAndSubcategories,
+        "/machineCategory/mainAndSubcategory/display/all",
+        false,
+        true);
+    let isSubcatSelectPopulated = false;
 
-            //#region !!!!!!!!!!!!!!! disable mainCategoryNames !!!!!!!!!!!!!!! (TEMPORARY)
-            for (let index = 2; index <= mainCategories.length; index += 1) {
-                let option = slct_mainCategory
-                    .children(`option:nth-child(${index})`)
+    for (let index in categoryInfos) {
+        //#region populate main category <select>
+        const categoryInfo = categoryInfos[index];
+        const mainAndSubCatsByLang = categoryInfo.mainAndSubcatsByLangs.find(m =>
+            m.language == language);
 
-                option.attr("disabled", "")
-                option.attr("style", "color:darkgrey")
-            }
-            //#endregion
-        },
-        () => {
-            //#region populate subCategories after mainCategory populated
-            let selectedMainCategory = slct_mainCategory.val();
+        slct_mainCategory.append(
+            `<option value="${categoryInfo.baseMainCategoryName}">${mainAndSubCatsByLang.mainCategoryName}</option>`)
+        //#endregion
 
-            populateElementByAjaxOrLocalAsync(
-                localKeys_allSubCategories,
-                `/machine/display/subCategory?language=${language}&mainCategoryName=${selectedMainCategory}`,
-                (subCategories) => {
-                    populateSelectAsync(
-                        $("#slct_subCategory"),
-                        subCategories);
-                }
-            );
-            //#endregion
-        });
+        //#region populate subcategory <select> by first added main category
+        if (!isSubcatSelectPopulated) {
+            await populateSelectAsync(
+                slct_subcategory,
+                mainAndSubCatsByLang.subcategoryNames,
+                null,
+                true);
 
-    //#region populate descriptions select
+            isSubcatSelectPopulated = true;
+        }
+        //#endregion
+    }
+    //#endregion
+
+    //#region populate descriptions <select>
     var allLanguages = await getDataByAjaxOrLocalAsync(
         localKeys_allLanguages,
         "/machine/display/language",
         false);
 
-    //#region add languages to <ul> as <li>
+    //#region add languages to <ul>
     for (let index in allLanguages) {
         let languageInData = allLanguages[index];
 
@@ -683,10 +691,40 @@ export async function machineForm_populateInfoMessagesAsync() {
     for (let div_id in infoMessages)
         for (let index in infoMessages[div_id]) {
             let message = infoMessages[div_id][index];
-        
+
             $("#" + div_id + " .div_infoMessage" + " ul")
                 .append(`<li>* ${message}</li>`);
         }
     //#endregion
+}
+export async function getMainAndSubcatsOfBaseMainCatByLangAsync(baseMainCatName, language) {
+    const categoryInfos = await getDataByAjaxOrLocalAsync(
+        localKeys_allMainAndSubcategories,
+        "/machineCategory/mainAndSubcategory/display/all",
+        false,
+        true);
+    const mainAndSubcatsOfBaseMainCatByLang = (categoryInfos
+        .find(c => c.baseMainCategoryName == baseMainCatName)
+        .mainAndSubcatsByLangs
+        .find(m => m.language == language));
+    
+    return mainAndSubcatsOfBaseMainCatByLang;
+}
+export async function getBaseMainCatOfMainCategoryAsync(mainCategory, language) {
+    const categoryInfos = await getDataByAjaxOrLocalAsync(
+        localKeys_allMainAndSubcategories,
+        "/machineCategory/mainAndSubcategory/display/all",
+        false,
+        true);
+
+    for (const index in categoryInfos) {
+        const categoryInfo = categoryInfos[index];
+
+        // when main category belong to is found
+        if (categoryInfo.mainAndSubcatsByLangs.find(m =>
+            m.language == language
+            && m.mainCategoryName == mainCategory) != null)
+            return categoryInfo.baseMainCategoryName;
+    }
 }
 //#endregion

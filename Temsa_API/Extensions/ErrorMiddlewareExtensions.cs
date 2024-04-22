@@ -110,7 +110,7 @@ namespace Temsa_Api.Extensions
                                 StatusCode = 500,
                                 ErrorCode = "ISE",
                                 ErrorDescription = "Internal Server Error",
-                                ErrorMessage = exceptionMessage
+                                ErrorMessage = "an error is occured on server"
                             });
                             #endregion
                         }

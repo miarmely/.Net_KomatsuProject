@@ -10,7 +10,7 @@ import {
     click_showImageButtonAsync, click_showVideoButtonAsync,
     click_inputAsync, click_textAreaAsync, change_imageInputAsync, change_videoInputAsync,
     machineForm_activeOrPassiveTheImageOrVideoBtnAsync,
-    machineForm_checkWhetherBlankTheInputsAsync, machineForm_populateInfoMessagesAsync, keyup_userForm_inputAsync
+    machineForm_checkWhetherBlankTheInputsAsync, machineForm_populateInfoMessagesAsync, keyup_userForm_inputAsync, change_mainCategorySelectAsync
 } from "./miar_machine.js";
 
 import { updateResultLabel, getBase64StrOfFileAsync } from "./miar_tools.js"
@@ -331,6 +331,9 @@ $(function () {
             inpt.choosePdf,
             inpt.pdf);
     })
+    slct.mainCategory.change(async () => {
+        await change_mainCategorySelectAsync(slct.mainCategory, slct.subCategory);
+    })
     //#endregion
 
     //#region functions
@@ -358,7 +361,7 @@ $(function () {
             btn_descriptions_id,
             btn.save
         );
-        await machineForm_populateSelectsAsync(slct.mainCategory);
+        await machineForm_populateSelectsAsync(slct.mainCategory, slct.subCategory);
         await machineForm_populateInfoMessagesAsync();
         await uploadDescriptionsEventsAsync();
     }
@@ -373,7 +376,7 @@ $(function () {
                 data: JSON.stringify({
                     "ImageName": selectedImageInfos.name,
                     "VideoName": selectedVideoInfos == null ? null : selectedVideoInfos.name,
-                    "MainCategoryName": slct.mainCategory.val(),
+                    "MainCategoryName": slct.mainCategory.children("option:selected").text(),
                     "SubCategoryName": slct.subCategory.val(),
                     "Model": inpt.model.val(),
                     "BrandName": inpt.brand.val(),

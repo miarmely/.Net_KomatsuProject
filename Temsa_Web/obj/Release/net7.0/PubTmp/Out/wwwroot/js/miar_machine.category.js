@@ -1,9 +1,8 @@
-﻿import {
+﻿import { getValuesOfObject } from "./miar_module.dictionary.js";
+import { getMainAndSubcatsOfBaseMainCatByLangAsync } from "./miar_machine.js";
+import {
     getDataByAjaxOrLocalAsync, populateSelectAsync, updateElementText, updateResultLabel
 } from "./miar_tools.js";
-
-import { getValuesOfObject } from "./miar_module.dictionary.js";
-import { machineForm_populateInfoMessagesAsync } from "./miar_machine.js";
 
 
 $(function () {
@@ -247,7 +246,7 @@ $(function () {
         ) {
             //#region populate subcategories <select>
             let baseMainCat = slct.mainCatOnSubcatArticle.val();
-            let mainAndSubCatsByLang = await getMainAndSubcatsByLangFromCategoryInfosAsync(baseMainCat, categoryLanguage);
+            let mainAndSubCatsByLang = await getMainAndSubcatsOfBaseMainCatByLangAsync(baseMainCat, categoryLanguage);
 
             populateSelectAsync(
                 slct.subcategory,
@@ -722,7 +721,7 @@ $(function () {
 
                 //#region set "oldSubCategoriesInTR" and "newSubCategoriesInTR"
                 if (selectedSubcatInTRCount > 0) {
-                    oldSubCategoriesInTR = (await getMainAndSubcatsByLangFromCategoryInfosAsync(
+                    oldSubCategoriesInTR = (await getMainAndSubcatsOfBaseMainCatByLangAsync(
                         baseMainCategory,
                         "TR"))
                         .subcategoryNames;
@@ -739,7 +738,7 @@ $(function () {
                 //#endregion
 
                 //#region set "oldSubCategoriesInEN" and "newSubCategoriesInEN"
-                let oldSubCategoriesInEN = (await getMainAndSubcatsByLangFromCategoryInfosAsync(
+                let oldSubCategoriesInEN = (await getMainAndSubcatsOfBaseMainCatByLangAsync(
                     baseMainCategory,
                     "EN"))
                     .subcategoryNames;
@@ -992,7 +991,7 @@ $(function () {
             true);
     }
     async function populateSubcatSelectByBaseMainCatAsync(baseMainCategory) {
-        const mainAndSubcatsByLang = await getMainAndSubcatsByLangFromCategoryInfosAsync(
+        const mainAndSubcatsByLang = await getMainAndSubcatsOfBaseMainCatByLangAsync(
             baseMainCategory,
             categoryLanguage);
 
@@ -1085,13 +1084,6 @@ $(function () {
                 slct.mainCatOnMainCatArticle.removeAttr("disabled");
         }
         //#endregion
-    }
-    async function getMainAndSubcatsByLangFromCategoryInfosAsync(baseMainCatName, language) {
-        let categoryInfoOfBaseMainCat = categoryInfos.find(c =>
-            c.baseMainCategoryName == baseMainCatName);
-
-        return categoryInfoOfBaseMainCat.mainAndSubcatsByLangs.find(m =>
-            m.language == language);
     }
     async function showCategoryArticleAsync(
         mainCategoryArticle = { showMainCatSelect: false, showNewMainCatInput: false } || null,

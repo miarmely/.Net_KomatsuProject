@@ -4,6 +4,7 @@ import {
     updateDefaultFlagAndLanguage
 } from "./miar_header.js";
 
+
 $(function () {
     //#region variables
     const resultLabelId = "#p_resultLabel";

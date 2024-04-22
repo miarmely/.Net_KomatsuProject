@@ -37,9 +37,11 @@ $(function () {
             //#endregion
         }
     })
-    ul_languages.click(() =>
-        clicked_languageDropdown($(":focus"))
-    )
+    ul_languages.on("click", "li", (event) => {
+        let a_clickedLanguage = $(event.target);
+
+        clicked_languageDropdown(a_clickedLanguage);
+    })
     $(".div_infoMessageButton").on("click", "button", (event) => {
         let div_clickedInfoMessageButton = $(event.target).parent();
 
