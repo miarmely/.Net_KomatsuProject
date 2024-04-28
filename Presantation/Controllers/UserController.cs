@@ -10,7 +10,8 @@ namespace Presantation.Controllers
 {
     [ApiController]
     [Route("api/services/[Controller]")]
-    public class UserController : ControllerBase
+    public partial class UserController  // For Mobile + Panel
+		: ControllerBase
     {
         private readonly IServiceManager _manager;
         
@@ -56,31 +57,6 @@ namespace Presantation.Controllers
         }
 
 
-        [HttpPost("create")]
-        [Authorization("Editor,Admin,Editör,Yönetici")]
-        public async Task<IActionResult> CreateUser(
-            [FromQuery] LanguageParams languageParams,
-            [FromBody] UserDtoForCreate userDto)
-		{
-            await _manager.UserService
-                .CreateUserAsync(languageParams.Language, userDto);
-
-			return StatusCode(StatusCodes.Status201Created);
-		}
-
-        
-		[HttpGet("display/all")]
-        [Authorization("Editor,Admin,Editör,Yönetici")]
-        public async Task<IActionResult> GetAllUsersWithPagination(
-            [FromQuery] LanguageAndPagingParams queryParams)
-        {
-            var entity = await _manager.UserService
-                .GetAllUsersWithPagingAsync(queryParams, Response);
-
-            return Ok(entity);
-        }
-
-
 		[HttpGet("display/one")]
 		[Authorization]
 		public async Task<IActionResult> GetUser(
@@ -91,18 +67,6 @@ namespace Presantation.Controllers
 
 			return Ok(entity);
 		}
-
-
-		[HttpGet("display/role")]
-		[Authorization("Editor,Admin,Editör,Yönetici")]
-		public async Task<IActionResult> GetAllRolesByLanguage(
-            [FromQuery] LanguageParams languageParams)
-        {
-            var roles = await _manager.UserService
-                .GetAllRolesByLanguageAsync(languageParams.Language);
-
-            return Ok(roles);
-        }
 
 
         [HttpPost("update/mobile")]
@@ -118,6 +82,46 @@ namespace Presantation.Controllers
 
             return NoContent();
         }
+    }
+
+	public partial class UserController  // For Only Panel
+	{
+		[HttpPost("create")]
+		[Authorization("Admin,Editor,Yönetici,Editör")]
+		public async Task<IActionResult> CreateUser(
+			[FromQuery] LanguageParams languageParams,
+			[FromBody] UserDtoForCreate userDto)
+		{
+			await _manager.UserService
+				.CreateUserAsync(languageParams.Language, userDto);
+
+			return StatusCode(StatusCodes.Status201Created);
+		}
+
+
+		[HttpGet("display/all")]
+		[Authorization("Admin,Editor,Yönetici,Editör")]
+		public async Task<IActionResult> GetAllUsersWithPagination(
+			[FromQuery] LanguageAndPagingParams queryParams)
+		{
+			var entity = await _manager.UserService
+				.GetAllUsersWithPagingAsync(queryParams, Response);
+
+			return Ok(entity);
+		}
+
+
+		[HttpGet("display/role")]
+		[Authorization("Admin,Editor,Yönetici,Editör")]
+		public async Task<IActionResult> GetAllRolesByLanguage(
+			[FromQuery] LanguageParams languageParams)
+		{
+			var roles = await _manager.UserService
+				.GetAllRolesByLanguageAsync(languageParams.Language);
+
+			return Ok(roles);
+		}
+
 
 		[HttpPost("update/panel")]
 		[Authorization("Admin,Editor,Yönetici,Editör")]
@@ -135,15 +139,15 @@ namespace Presantation.Controllers
 
 
 		[HttpPost("delete")]
-        [Authorization("Admin,Editor,Yönetici,Editör")]
-        public async Task<IActionResult> DeleteUsers(
-            [FromQuery] LanguageParams languageParams,
-            [FromBody] UserDtoForDelete userDto)
-        {
-            await _manager.UserService
-                .DeleteUsersByTelNoListAsync(languageParams.Language, userDto);
+		[Authorization("Admin,Editor,Yönetici,Editör")]
+		public async Task<IActionResult> DeleteUsers(
+			[FromQuery] LanguageParams languageParams,
+			[FromBody] UserDtoForDelete userDto)
+		{
+			await _manager.UserService
+				.DeleteUsersByTelNoListAsync(languageParams.Language, userDto);
 
-            return NoContent();
-        }
-    }
+			return NoContent();
+		}
+	}
 }

@@ -34,11 +34,11 @@ namespace Repositories.Concretes
 				parameters);
 
         public async Task<IEnumerable<TView>> DisplayAllGeneralCommFormsAsync<TView>(
-        DynamicParameters parameters) =>
-            await base.QueryAsync<TView>(
-                base.Configs.DbSettings.ProcedureNames
-                    .U_F_GeneralCommunication_GetAll,
-                parameters);
+			DynamicParameters parameters) =>
+				await base.QueryAsync<TView>(
+					base.Configs.DbSettings.ProcedureNames
+						.U_F_GeneralCommunication_GetAll,
+					parameters);
 
         public async Task<IEnumerable<TView>> DisplayAllGetOfferFormsAsync<TView>(
             DynamicParameters parameters) =>

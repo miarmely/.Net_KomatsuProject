@@ -21,7 +21,7 @@ import {
 $(function () {
     //#region variables
     const div_articles = $("#div_articles");
-    const pageRow = 2;
+    const pageRow = 2;  // total row count on page
     const pagination_buttonCount = 5;
     const pagination_headerNames = {
         "waiting": "Form-Go-Waiting",
@@ -347,10 +347,10 @@ $(function () {
         //#region set "formStatus" param
         let selectedOption = slct_menubar.val();
 
-        let param_formStatus = selectedOption == "waiting" ?
+        let param_formStatus = (selectedOption == "waiting" ?
             1
             : selectedOption == "accepted" ?
-                2 : 3  // formStatuses == "rejected"
+                2 : 3)  // formStatuses == "rejected"
         //#endregion
 
         //#region set page size 
@@ -358,8 +358,8 @@ $(function () {
             "div_articles": div_articles,
             "articleType": "imageAndText",
             "articleStyle": {
-                "width": 370,
-                "height": 560,
+                "width": 300,
+                "height": 550,
                 "marginT": 10,
                 "marginB": 10,
                 "marginR": 20,
@@ -374,7 +374,7 @@ $(function () {
                 "bgColorForDelete": "rgb(220, 0, 0)"
             },
         });
-        let articleCountOnOneRow = await getArticleCountOnOneRowAsync();
+        const articleCountOnOneRow = await getArticleCountOnOneRowAsync();
 
         pageSize = articleCountOnOneRow * pageRow;
         //#endregion
