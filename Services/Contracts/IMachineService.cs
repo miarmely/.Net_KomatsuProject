@@ -29,7 +29,7 @@ namespace Services.Contracts
 			MachineDtoForDisplay machineDto,
 			HttpResponse response);
 
-		Task<IEnumerable<MachineView>> GetOneMachineByIdAsync(
+		Task<MachineView> GetOneMachineByIdAsync(
 			MachineParamsForDisplayOneMachine machineParams);
 
 		Task<IEnumerable<string>> GetMainCategoryNamesByLanguageAsync(string language);

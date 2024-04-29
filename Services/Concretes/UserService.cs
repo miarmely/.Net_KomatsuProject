@@ -21,7 +21,7 @@ using System.Text;
 
 namespace Services.Concretes
 {
-	public partial class UserService // private
+	public partial class UserService  // private
 		: IUserService
 	{
 		private readonly IRepositoryManager _manager;
@@ -130,7 +130,7 @@ namespace Services.Concretes
 		}
 	}
 
-	public partial class UserService  // public
+	public partial class UserService  // main services
 	{
 		public async Task<object> LoginForMobileAsync(
 			string language,
@@ -342,7 +342,7 @@ namespace Services.Concretes
 			string telNo,
 			UserDtoForUpdateForMobile userDto)
 		{
-			#region set parameters  (don't add role names)
+			#region set parameters  (don't add role names and password)
 			var parameters = new DynamicParameters(new
 			{
 				Language = language,
@@ -351,12 +351,7 @@ namespace Services.Concretes
 				userDto.LastName,
 				userDto.CompanyName,
 				userDto.TelNo,
-				userDto.Email,
-				#region Password
-				Password = userDto.Password == null ?
-					null
-					: await _micro.ComputeMd5Async(userDto.Password),
-				#endregion
+				userDto.Email
 			});
 			#endregion
 
@@ -391,5 +386,5 @@ namespace Services.Concretes
 				throw new ErrorWithCodeException(errorDto);
 			#endregion
 		}
-	} // main services
+	}
 }

@@ -267,7 +267,7 @@ namespace Services.Concretes
 			return machineViewPagingList;
 		}
 
-		public async Task<IEnumerable<MachineView>> GetOneMachineByIdAsync(
+		public async Task<MachineView> GetOneMachineByIdAsync(
 			MachineParamsForDisplayOneMachine machineParams)
 		{
 			#region set parameters
@@ -316,7 +316,7 @@ namespace Services.Concretes
 					parameters.Get<string>("ErrorMessage"));
 			#endregion
 
-			return machineViewDict.Values;
+			return machineViewDict.Values.FirstOrDefault();
 		}
 
 		public async Task<IEnumerable<string>> GetMainCategoryNamesByLanguageAsync(

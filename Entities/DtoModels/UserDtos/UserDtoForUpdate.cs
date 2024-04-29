@@ -19,14 +19,14 @@ namespace Entities.DtoModels.UserDtos
 
 		[MiarLength(1, 50, "Email", "Email")]
 		[MiarEmail]
-		public string? Email { get; init; }
-
-		[MiarLength(6, 16, "Şifre", "Password")]
-		public string? Password { get; init; }
+		public string? Email { get; init; }	
 	}
 
 	public record UserDtoForUpdateForPanel : UserDtoForUpdateForMobile
     {
         public string? RoleNames { get; init; }
-    }
+		
+		[MiarLength(6, 16, "Şifre", "Password")]
+		public string? Password { get; init; }
+	}
 }
