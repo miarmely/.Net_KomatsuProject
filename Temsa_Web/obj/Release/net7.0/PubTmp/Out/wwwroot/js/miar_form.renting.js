@@ -347,8 +347,8 @@ $(function () {
             "div_articles": div_articles,
             "articleType": "imageAndText",
             "articleStyle": {
-                "width": 370,
-                "height": 560,
+                "width": 300,
+                "height": 550,
                 "marginT": 10,
                 "marginB": 10,
                 "marginR": 20,
