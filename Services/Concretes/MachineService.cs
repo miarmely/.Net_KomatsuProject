@@ -1,4 +1,5 @@
 ﻿using Dapper;
+using Entities.ConfigModels;
 using Entities.DtoModels.MachineDtos;
 using Entities.Enums;
 using Entities.Exceptions;
@@ -135,7 +136,7 @@ namespace Services.Concretes
 				fileType);
 		}
 
-		public async Task<PagingList<MachineView>> GetAllMachinesAsync(
+		public async Task<PagingList<MachineViewForPanel>> GetAllMachinesAsync(
 		  string language,
 		  PaginationParams pagingParameters,
 		  HttpResponse response)
@@ -153,7 +154,7 @@ namespace Services.Concretes
 			#endregion
 
 			#region get machineViews
-			var machineViewDict = new Dictionary<Guid, MachineView>();
+			var machineViewDict = new Dictionary<Guid, MachineViewForPanel>();
 
 			var machineViews = await _manager.MachineRepository
 				.GetAllMachinesAsync(
@@ -195,7 +196,7 @@ namespace Services.Concretes
 			#region add pagination informations to headers
 
 			#region create pagination list
-			var machineViewPagingList = await PagingList<MachineView>
+			var machineViewPagingList = await PagingList<MachineViewForPanel>
 				.ToPagingListAsync(
 					machineViewDict.Values,
 					totalCount,
@@ -214,7 +215,7 @@ namespace Services.Concretes
 			return machineViewPagingList;
 		}
 
-		public async Task<PagingList<MachineView>> GetMachinesByConditionAsync(
+		public async Task<PagingList<MachineViewForPanel>> GetMachinesByConditionAsync(
 			string language,
 			PaginationParams paginationParameters,
 			MachineDtoForDisplay machineDto,
@@ -251,7 +252,7 @@ namespace Services.Concretes
 			#endregion
 
 			#region convert machineViews to pagingList
-			var machineViewPagingList = await PagingList<MachineView>.ToPagingListAsync(
+			var machineViewPagingList = await PagingList<MachineViewForPanel>.ToPagingListAsync(
 				   machineViews,
 				   totalCount,
 				   paginationParameters.PageNumber,
@@ -267,7 +268,7 @@ namespace Services.Concretes
 			return machineViewPagingList;
 		}
 
-		public async Task<MachineView> GetOneMachineByIdAsync(
+		public async Task<MachineViewForPanel> GetOneMachineByIdForPanelAsync(
 			MachineParamsForDisplayOneMachine machineParams)
 		{
 			#region set parameters
@@ -279,10 +280,10 @@ namespace Services.Concretes
 			#endregion
 
 			#region get machineView
-			var machineViewDict = new Dictionary<Guid, MachineView>();
+			var machineViewDict = new Dictionary<Guid, MachineViewForPanel>();
 
 			var machineViews = await _manager.MachineRepository
-				.GetOneMachineByIdAsync(
+				.GetOneMachineByIdForPanelAsync(
 				parameters,
 				(machinePart, descriptionPart) =>
 				{
@@ -300,6 +301,59 @@ namespace Services.Concretes
 					machineView.Descriptions.Add(
 						descriptionPart.Language,
 						descriptionPart.Description);
+					#endregion
+
+					return machineView;
+				},
+				"Language");
+			#endregion
+
+			#region when machine not found (error)
+			if (machineViews.Count() == 0)
+				throw new ErrorWithCodeException(
+					parameters.Get<short>("StatusCode"),
+					parameters.Get<string>("ErrorCode"),
+					parameters.Get<string>("ErrorDescription"),
+					parameters.Get<string>("ErrorMessage"));
+			#endregion
+
+			return machineViewDict.Values.FirstOrDefault();
+		}
+
+		public async Task<MachineViewForMobile> GetOneMachineByIdForMobileAsync(
+			MachineParamsForDisplayOneMachine machineParams)
+		{
+			#region set parameters
+			var parameters = new DynamicParameters(machineParams);
+			parameters.Add("ErrorCode", "", DbType.String, ParameterDirection.Output);
+			parameters.Add("StatusCode", 0, DbType.Int16, ParameterDirection.Output);
+			parameters.Add("ErrorMessage", "", DbType.String, ParameterDirection.Output);
+			parameters.Add("ErrorDescription", "", DbType.String, ParameterDirection.Output);
+			#endregion
+
+			#region get machineView
+			var machineViewDict = new Dictionary<Guid, MachineViewForMobile>();
+
+			var machineViews = await _manager.MachineRepository
+				.GetOneMachineByIdForMobileAsync(
+				parameters,
+				(machinePart, descriptionPart) =>
+				{
+					#region when machine isn't exists in dict
+					if (!machineViewDict.TryGetValue(
+						machinePart.Id,
+						out var machineView))
+					{
+						machineView = machinePart;
+						machineViewDict.Add(machinePart.Id, machineView);
+					}
+					#endregion
+
+					#region add description of page language to machineView
+					if (descriptionPart.Language.Equals(machineParams.Language))
+					{
+						machineView.Description = descriptionPart.Description;
+					}
 					#endregion
 
 					return machineView;

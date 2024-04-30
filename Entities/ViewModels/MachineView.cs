@@ -15,12 +15,22 @@
 		public string ImageName { get; init; }
 		public string VideoName { get; init; }
 		public string PdfName { get; init; }
-		public IDictionary<string, string> Descriptions { get; }
 		public DateTime CreatedAt { get; init; }
-
-		public MachineView() 
-			=> Descriptions = new Dictionary<string, string>();
 	}
+
+
+	public record MachineViewForMobile : MachineView
+	{
+		public string Description { get; set; }	
+	}
+
+
+	public record MachineViewForPanel : MachineView
+	{
+		public IDictionary<string, string> Descriptions { get; } 
+			= new Dictionary<string, string>();
+	}
+
 
 	public record DescriptionPartOfMachineView(
 		string Language,

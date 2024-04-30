@@ -17,9 +17,9 @@ namespace Repositories.Concretes
 				base.Configs.DbSettings.ProcedureNames.M_Create,
 				parameters);
 
-		public async Task<IEnumerable<MachineView>> GetAllMachinesAsync(
+		public async Task<IEnumerable<MachineViewForPanel>> GetAllMachinesAsync(
 			DynamicParameters parameters,
-			Func<MachineView, DescriptionPartOfMachineView, MachineView> map,
+			Func<MachineViewForPanel, DescriptionPartOfMachineView, MachineViewForPanel> map,
 			string splitOn) =>
 				await base.QueryAsync(
 					base.Configs.DbSettings.ProcedureNames.M_DisplayAll,
@@ -27,15 +27,25 @@ namespace Repositories.Concretes
 					map,
 					splitOn);
 
-		public async Task<IEnumerable<MachineView>> GetMachinesByConditionAsync(
+		public async Task<IEnumerable<MachineViewForPanel>> GetMachinesByConditionAsync(
 			DynamicParameters parameters) =>
-				await base.QueryAsync<MachineView>(
+				await base.QueryAsync<MachineViewForPanel>(
 					base.Configs.DbSettings.ProcedureNames.M_DisplayByCondition,
 					parameters);
 
-		public async Task<IEnumerable<MachineView>> GetOneMachineByIdAsync(
+		public async Task<IEnumerable<MachineViewForPanel>> GetOneMachineByIdForPanelAsync(
 			DynamicParameters parameters,
-			Func<MachineView, DescriptionPartOfMachineView, MachineView> map,
+			Func<MachineViewForPanel, DescriptionPartOfMachineView, MachineViewForPanel> map,
+			string splitOn) =>
+				await base.QueryAsync(
+					base.Configs.DbSettings.ProcedureNames.M_DisplayOneById,
+					parameters,
+					map,
+					splitOn);
+
+		public async Task<IEnumerable<MachineViewForMobile>> GetOneMachineByIdForMobileAsync(
+			DynamicParameters parameters,
+			Func<MachineViewForMobile, DescriptionPartOfMachineView, MachineViewForMobile> map,
 			string splitOn) =>
 				await base.QueryAsync(
 					base.Configs.DbSettings.ProcedureNames.M_DisplayOneById,

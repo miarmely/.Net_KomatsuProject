@@ -18,18 +18,21 @@ namespace Services.Contracts
 		   MachineDtoForUploadFile machineDto,
 		   FileTypes fileType);
 
-		Task<PagingList<MachineView>> GetAllMachinesAsync(
+		Task<PagingList<MachineViewForPanel>> GetAllMachinesAsync(
 			string language,
 			PaginationParams paginationParameters,
 			HttpResponse response);
 
-		Task<PagingList<MachineView>> GetMachinesByConditionAsync(
+		Task<PagingList<MachineViewForPanel>> GetMachinesByConditionAsync(
 			string language,
 			PaginationParams paginationParameters,
 			MachineDtoForDisplay machineDto,
 			HttpResponse response);
 
-		Task<MachineView> GetOneMachineByIdAsync(
+		Task<MachineViewForPanel> GetOneMachineByIdForPanelAsync(
+			MachineParamsForDisplayOneMachine machineParams);
+
+		Task<MachineViewForMobile> GetOneMachineByIdForMobileAsync(
 			MachineParamsForDisplayOneMachine machineParams);
 
 		Task<IEnumerable<string>> GetMainCategoryNamesByLanguageAsync(string language);

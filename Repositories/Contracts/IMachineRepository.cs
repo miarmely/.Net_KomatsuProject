@@ -14,17 +14,22 @@ namespace Repositories.Contracts
 
         Task<IEnumerable<string>> GetAllLanguagesAsync();
 
-        Task<IEnumerable<MachineView>> GetAllMachinesAsync(
+        Task<IEnumerable<MachineViewForPanel>> GetAllMachinesAsync(
             DynamicParameters parameters,
-            Func<MachineView, DescriptionPartOfMachineView, MachineView> map,
+            Func<MachineViewForPanel, DescriptionPartOfMachineView, MachineViewForPanel> map,
             string splitOn);
 
-        Task<IEnumerable<MachineView>> GetMachinesByConditionAsync(
+        Task<IEnumerable<MachineViewForPanel>> GetMachinesByConditionAsync(
             DynamicParameters parameters);
 
-		Task<IEnumerable<MachineView>> GetOneMachineByIdAsync(
+		Task<IEnumerable<MachineViewForPanel>> GetOneMachineByIdForPanelAsync(
 			DynamicParameters parameters,
-			Func<MachineView, DescriptionPartOfMachineView, MachineView> map,
+			Func<MachineViewForPanel, DescriptionPartOfMachineView, MachineViewForPanel> map,
+			string splitOn);
+
+		Task<IEnumerable<MachineViewForMobile>> GetOneMachineByIdForMobileAsync(
+			DynamicParameters parameters,
+			Func<MachineViewForMobile, DescriptionPartOfMachineView, MachineViewForMobile> map,
 			string splitOn);
 
 		Task<IEnumerable<string>> GetMainCategoryNamesByLanguageAsync(

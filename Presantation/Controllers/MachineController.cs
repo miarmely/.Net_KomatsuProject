@@ -91,13 +91,25 @@ namespace Presantation.Controllers
 		}
 
 
-		[HttpGet("display/one")]
+		[HttpGet("display/one/panel")]
 		[Authorization]
-		public async Task<IActionResult> GetOneMachineById(
+		public async Task<IActionResult> GetOneMachineByIdForPanel(
 			[FromQuery] MachineParamsForDisplayOneMachine machineParams)
 		{
 			var machineView = await _manager.MachineService
-				.GetOneMachineByIdAsync(machineParams);
+				.GetOneMachineByIdForPanelAsync(machineParams);
+
+			return Ok(machineView);
+		}
+
+
+		[HttpGet("display/one/mobile")]
+		[Authorization]
+		public async Task<IActionResult> GetOneMachineByIdForMobile(
+			[FromQuery] MachineParamsForDisplayOneMachine machineParams)
+		{
+			var machineView = await _manager.MachineService
+				.GetOneMachineByIdForMobileAsync(machineParams);
 
 			return Ok(machineView);
 		}
