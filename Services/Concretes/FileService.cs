@@ -60,7 +60,7 @@ namespace Services.Concretes
 				{
 					#region when other errors occured for "image" file (throw)
 					if (fileType == FileTypes.Image)
-						throw new ErrorWithCodeException(
+						throw new ExceptionWithMessage(
 							ErrorDetailsConfig.ToErrorDto(
 								language,
 								_configs.ErrorDetails.FiE_U_I));
@@ -68,7 +68,7 @@ namespace Services.Concretes
 
 					#region when other errors occured for "video" file (throw)
 					if (fileType == FileTypes.Video)
-						throw new ErrorWithCodeException(
+						throw new ExceptionWithMessage(
 							ErrorDetailsConfig.ToErrorDto(
 								language,
 								_configs.ErrorDetails.FiE_U_V));
@@ -76,7 +76,7 @@ namespace Services.Concretes
 
 					#region when other errors occured for "pdf" file (throw)
 					if (fileType == FileTypes.Pdf)
-						throw new ErrorWithCodeException(
+						throw new ExceptionWithMessage(
 							ErrorDetailsConfig.ToErrorDto(
 								language,
 								_configs.ErrorDetails.FiE_U_P));
@@ -84,7 +84,7 @@ namespace Services.Concretes
 
 					#region when other errors occured for "slider" file (throw)
 					if (fileType == FileTypes.Slider)
-						throw new ErrorWithCodeException(
+						throw new ExceptionWithMessage(
 							ErrorDetailsConfig.ToErrorDto(
 								language,
 								_configs.ErrorDetails.FiE_U_S));
@@ -178,7 +178,7 @@ namespace Services.Concretes
 			{
 				#region when any error occured for "image" file (throw)
 				if (fileType == FileTypes.Image)
-					throw new ErrorWithCodeException(
+					throw new ExceptionWithMessage(
 						ErrorDetailsConfig.ToErrorDto(
 							language,
 							_configs.ErrorDetails.FiE_D_I));
@@ -186,7 +186,7 @@ namespace Services.Concretes
 
 				#region when any error occured for "video" file (throw)
 				if (fileType == FileTypes.Image)
-					throw new ErrorWithCodeException(
+					throw new ExceptionWithMessage(
 						ErrorDetailsConfig.ToErrorDto(
 							language,
 							_configs.ErrorDetails.FiE_D_V));
@@ -194,7 +194,7 @@ namespace Services.Concretes
 
 				#region when any error occured for "pdf" file (throw)
 				else if (fileType == FileTypes.Pdf)
-					throw new ErrorWithCodeException(
+					throw new ExceptionWithMessage(
 						ErrorDetailsConfig.ToErrorDto(
 							language,
 							_configs.ErrorDetails.FiE_D_P));
@@ -202,7 +202,7 @@ namespace Services.Concretes
 
 				#region when any error occured for "slider" file (throw)
 				else if (fileType == FileTypes.Slider)
-					throw new ErrorWithCodeException(
+					throw new ExceptionWithMessage(
 						ErrorDetailsConfig.ToErrorDto(
 							language,
 							_configs.ErrorDetails.FiE_D_S));

@@ -6,11 +6,11 @@ namespace Repositories.Contracts
 {
     public interface IMachineRepository : IRepositoryBase
 	{
-		public Task<ErrorDto?> CreateMachineAsync(DynamicParameters parameters);
+		public Task<ErrorDtoWithMessage?> CreateMachineAsync(DynamicParameters parameters);
 
-        Task<ErrorDto?> UpdateMachineAsync(DynamicParameters parameters);
+        Task<ErrorDtoWithMessage?> UpdateMachineAsync(DynamicParameters parameters);
 
-        Task<ErrorDto?> DeleteMachinesAsync(DynamicParameters parameters);
+        Task<ErrorDtoWithMessage?> DeleteMachinesAsync(DynamicParameters parameters);
 
         Task<IEnumerable<string>> GetAllLanguagesAsync();
 

@@ -94,7 +94,7 @@ namespace Services.Concretes
 
 			// when any slider not found (throw)
 			if (sliderViews.Count() == 0)
-				throw new ErrorWithCodeException(
+				throw new ExceptionWithMessage(
 					parameters.Get<Int16>("StatusCode"),
 					parameters.Get<string>("ErrorCode"),
 					parameters.Get<string>("ErrorDescription"),
@@ -140,7 +140,7 @@ namespace Services.Concretes
 
 			// when slider path not found (throw)
 			if (sliderPath == null)
-				throw new ErrorWithCodeException(
+				throw new ExceptionWithMessage(
 					parameters.Get<Int16>("StatusCode"),
 					parameters.Get<string>("ErrorCode"),
 					parameters.Get<string>("ErrorDescription"),

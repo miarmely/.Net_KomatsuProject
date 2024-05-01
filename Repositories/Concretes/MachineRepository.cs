@@ -12,8 +12,8 @@ namespace Repositories.Concretes
 			: base(context, configs)
 		{ }
 
-		public async Task<ErrorDto?> CreateMachineAsync(DynamicParameters parameters) =>
-			await base.QuerySingleOrDefaultAsync<ErrorDto>(
+		public async Task<ErrorDtoWithMessage?> CreateMachineAsync(DynamicParameters parameters) =>
+			await base.QuerySingleOrDefaultAsync<ErrorDtoWithMessage>(
 				base.Configs.DbSettings.ProcedureNames.M_Create,
 				parameters);
 
@@ -76,13 +76,13 @@ namespace Repositories.Concretes
                 SELECT  Name 
                 FROM    {base.Configs.DbSettings.TableNames.Language}");
 
-		public async Task<ErrorDto?> UpdateMachineAsync(DynamicParameters parameters) =>
-			await base.QuerySingleOrDefaultAsync<ErrorDto>(
+		public async Task<ErrorDtoWithMessage?> UpdateMachineAsync(DynamicParameters parameters) =>
+			await base.QuerySingleOrDefaultAsync<ErrorDtoWithMessage>(
 				base.Configs.DbSettings.ProcedureNames.M_Update,
 				parameters);
 
-		public async Task<ErrorDto?> DeleteMachinesAsync(DynamicParameters parameters)
-			=> await base.QuerySingleOrDefaultAsync<ErrorDto>(
+		public async Task<ErrorDtoWithMessage?> DeleteMachinesAsync(DynamicParameters parameters)
+			=> await base.QuerySingleOrDefaultAsync<ErrorDtoWithMessage>(
 					base.Configs.DbSettings.ProcedureNames.M_Delete,
 					parameters);
 

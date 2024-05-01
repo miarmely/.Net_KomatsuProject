@@ -21,7 +21,7 @@ namespace Entities.ConfigModels
 
     public partial record ErrorDetailsConfig  // functions
     {
-		public static ErrorDto ToErrorDto(
+		public static ErrorDtoWithMessage ToErrorDto(
 			string language,
 			ErrorDetails errorDetails)
 		{
@@ -33,7 +33,7 @@ namespace Entities.ConfigModels
 			};
 			#endregion
 
-			return new ErrorDto()
+			return new ErrorDtoWithMessage()
 			{
 				StatusCode = errorDetails.StatusCode,
 				ErrorCode = errorDetails.ErrorCode,

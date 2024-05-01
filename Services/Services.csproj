@@ -14,7 +14,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\MicroServices\MicroServices.csproj" />
+    <ProjectReference Include="..\..\#__Private\1__My_Services\Miarmely\Miarmely.csproj" />
     <ProjectReference Include="..\Repositories\Repositories.csproj" />
   </ItemGroup>
 

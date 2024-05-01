@@ -33,7 +33,7 @@ namespace Temsa_Api.Extensions
                         {
                             #region get errorDto (catch)
                             var errorDto = JsonSerializer
-                                .Deserialize<ErrorDto>(exceptionMessage);
+                                .Deserialize<ErrorDtoWithMessage>(exceptionMessage);
 
                             // if error message can be deserialize then this error is
                             // expected error. But when error message can't be
@@ -85,7 +85,7 @@ namespace Temsa_Api.Extensions
                                     as IDictionary<string, string>;
 
                                 // create new errorDto
-                                errorDto = new ErrorDto
+                                errorDto = new ErrorDtoWithMessage
                                 {
                                     StatusCode = errorDto.StatusCode,
                                     ErrorCode = errorDto.ErrorCode,

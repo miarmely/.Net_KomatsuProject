@@ -1,6 +1,5 @@
-﻿
+﻿using Entities.MiarLibrary.Attributes;
 
-using Entities.Attributes;
 
 namespace Entities.DtoModels.FormDtos
 {

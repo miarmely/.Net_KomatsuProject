@@ -1,4 +1,4 @@
-﻿using Entities.Attributes;
+﻿using Entities.MiarLibrary.Attributes;
 
 
 namespace Entities.DtoModels.MachineDtos

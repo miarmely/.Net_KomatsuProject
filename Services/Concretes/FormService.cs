@@ -73,7 +73,7 @@ namespace Services.Concretes
 
             #region when any form not found (throw)
             if (formViews.Count() == 0)
-                throw new ErrorWithCodeException(
+                throw new ExceptionWithMessage(
                     ErrorDetailsConfig.ToErrorDto(
                         language,
                         _configs.ErrorDetails.NF_Fo));
@@ -124,7 +124,7 @@ namespace Services.Concretes
 
             #region when any form not found (throw)
             if (formViews.Count() == 0)
-                throw new ErrorWithCodeException(
+                throw new ExceptionWithMessage(
                     ErrorDetailsConfig.ToErrorDto(
                         language,
                         _configs.ErrorDetails.NF_Fo));
@@ -175,7 +175,7 @@ namespace Services.Concretes
 
             // when any error occured
             if (answererInfos == null)
-                throw new ErrorWithCodeException(
+                throw new ExceptionWithMessage(
                     parameters.Get<Int16>("StatusCode"),
                     parameters.Get<string>("ErrorCode"),
                     parameters.Get<string>("ErrorDescription"),
@@ -211,7 +211,7 @@ namespace Services.Concretes
 
             // when conflict error occured
             if (errorDto != null)
-                throw new ErrorWithCodeException(errorDto);
+                throw new ExceptionWithMessage(errorDto);
             #endregion
         }
 
@@ -235,7 +235,7 @@ namespace Services.Concretes
                 .CreateGetOfferFormAsync(parameters);
 
             if (errorDto != null)
-                throw new ErrorWithCodeException(errorDto);
+                throw new ExceptionWithMessage(errorDto);
             #endregion
         }
 
@@ -259,7 +259,7 @@ namespace Services.Concretes
                 .CreateRentingFormAsync(parameters);
 
             if (errorDto != null)
-                throw new ErrorWithCodeException(errorDto);
+                throw new ExceptionWithMessage(errorDto);
             #endregion
         }
         #endregion

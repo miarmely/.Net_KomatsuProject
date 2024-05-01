@@ -29,6 +29,6 @@ namespace Repositories.Contracts
 			DynamicParameters? parameters,
 			Func<SqlMapper.GridReader, Task<TResult>> funcAsync);
 
-		Task<ErrorDto> ExecuteAsync(string sql, DynamicParameters parameters);
+		Task<ErrorDtoWithMessage> ExecuteAsync(string sql, DynamicParameters parameters);
 	}
 }

@@ -8,7 +8,7 @@ using System.Data;
 
 namespace Repositories.Concretes
 {
-    public abstract partial class RepositoryBase  // private
+	public abstract partial class RepositoryBase  // private
 		: IRepositoryBase
 	{
 		private RepositoryContext _context;
@@ -31,61 +31,61 @@ namespace Repositories.Concretes
 					commandType: CommandType.StoredProcedure);
 	}
 
-    public abstract partial class RepositoryBase  // public
-    {
-        public async Task<IEnumerable<T>> QueryAsync<T>(
-            string procedureName, 
-            DynamicParameters? parameters)
-        {
-            #region send query
-            using (var connection = _context.CreateSqlConnection())
-            {
-                return await connection.QueryAsync<T>(
-                    GetCommandDefinitionForProcedures(procedureName, parameters));
-            }
-            #endregion
-        }
+	public abstract partial class RepositoryBase  // public
+	{
+		public async Task<IEnumerable<T>> QueryAsync<T>(
+			string procedureName,
+			DynamicParameters? parameters)
+		{
+			#region send query
+			using (var connection = _context.CreateSqlConnection())
+			{
+				return await connection.QueryAsync<T>(
+					GetCommandDefinitionForProcedures(procedureName, parameters));
+			}
+			#endregion
+		}
 
-        public async Task<IEnumerable<T>> QueryAsync<T>(
-            string query)
-        {
-            #region send query
-            using (var connection = _context.CreateSqlConnection())
-            {
-                return await connection.QueryAsync<T>(query);    
-            }
-            #endregion
-        }
+		public async Task<IEnumerable<T>> QueryAsync<T>(
+			string query)
+		{
+			#region send query
+			using (var connection = _context.CreateSqlConnection())
+			{
+				return await connection.QueryAsync<T>(query);
+			}
+			#endregion
+		}
 
-        public async Task<IEnumerable<TResult>> QueryAsync<TPart1, TPart2, TResult>(
-            string procedureName,
-            DynamicParameters? parameters,
-            Func<TPart1, TPart2, TResult> map,
-            string splitOn)
-        {
-            #region send query
-            using (var connection = _context.CreateSqlConnection())
-            {
+		public async Task<IEnumerable<TResult>> QueryAsync<TPart1, TPart2, TResult>(
+			string procedureName,
+			DynamicParameters? parameters,
+			Func<TPart1, TPart2, TResult> map,
+			string splitOn)
+		{
+			#region send query
+			using (var connection = _context.CreateSqlConnection())
+			{
 				try
 				{
 					#region get result
 					var result = await connection.QueryAsync(
-					    GetCommandDefinitionForProcedures(procedureName, parameters),
-					    map,
-					    splitOn);
+						GetCommandDefinitionForProcedures(procedureName, parameters),
+						map,
+						splitOn);
 					#endregion
 
 					return result;
 				}
-                catch (Exception ex)
-                {
+				catch (Exception ex)
+				{
 					// i use try catch because if returned table empty then system
 					// give error about "splitOn" parameter
 
 					return new List<TResult>();  // send empty list
 				}
 			}
-            #endregion
+			#endregion
 		}
 
 		public async Task<T> QuerySingleOrDefaultAsync<T>(
@@ -110,7 +110,7 @@ namespace Repositories.Concretes
 			using (var connection = _context.CreateSqlConnection())
 			{
 				using (var multi = await connection
-                    .QueryMultipleAsync(sqlCommand, parameters))
+					.QueryMultipleAsync(sqlCommand, parameters))
 				{
 					return await funcAsync(multi);
 				}
@@ -118,17 +118,17 @@ namespace Repositories.Concretes
 			#endregion
 		}
 
-		public async Task<ErrorDto> ExecuteAsync(
-			string procedureName, 
+		public async Task<ErrorDtoWithMessage> ExecuteAsync(
+			string procedureName,
 			DynamicParameters parameters)
 		{
 			#region update parameters
 			parameters.Add("StatusCode", 0, DbType.Int16, ParameterDirection.Output);
 			parameters.Add("ErrorCode", "", DbType.String, ParameterDirection.Output);
 			parameters.Add("ErrorMessage", "", DbType.String, ParameterDirection.Output);
-			
-			parameters.Add("ErrorDescription", 
-				"", 
+
+			parameters.Add("ErrorDescription",
+				"",
 				DbType.String,
 				ParameterDirection.Output);
 			#endregion
@@ -141,7 +141,7 @@ namespace Repositories.Concretes
 			}
 			#endregion
 
-			return new ErrorDto
+			return new ErrorDtoWithMessage
 			{
 				StatusCode = parameters.Get<Int16>("StatusCode"),
 				ErrorCode = parameters.Get<string>("ErrorCode"),
@@ -149,5 +149,5 @@ namespace Repositories.Concretes
 				ErrorMessage = parameters.Get<string>("ErrorMessage")
 			};
 		}
-    }
+	}
 }

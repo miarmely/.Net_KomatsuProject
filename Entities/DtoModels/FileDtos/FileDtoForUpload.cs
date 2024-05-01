@@ -1,5 +1,5 @@
-﻿using Entities.Attributes;
-using Entities.Enums;
+﻿using Entities.Enums;
+using Entities.MiarLibrary.Attributes;
 using Entities.QueryParameters;
 
 namespace Entities.DtoModels.FileDtos

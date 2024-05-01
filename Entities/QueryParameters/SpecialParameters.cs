@@ -1,4 +1,4 @@
-﻿using Entities.Attributes;
+﻿using Entities.MiarLibrary.Attributes;
 using System.ComponentModel.DataAnnotations;
 
 namespace Entities.QueryParameters

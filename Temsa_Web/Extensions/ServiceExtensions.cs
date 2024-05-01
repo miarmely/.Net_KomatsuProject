@@ -1,6 +1,7 @@
 ﻿using Entities.ConfigModels;
 using Entities.ConfigModels.Contracts;
-using MicroServices;
+using Miarmely.Services.Concretes;
+using Miarmely.Services.Contracts;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Repositories;
 using Repositories.Concretes;
@@ -10,7 +11,7 @@ using Services.Contracts;
 
 namespace Temsa_Web.Extensions
 {
-	public static class ServiceExtensions
+    public static class ServiceExtensions
 	{
 		public static void ConfigureManagers(this IServiceCollection services)
 		{
@@ -22,7 +23,7 @@ namespace Temsa_Web.Extensions
 		public static void ConfigureServices(this IServiceCollection services)
 		{
             services.AddScoped<RepositoryContext>();
-			services.AddScoped<IMicroService, MicroService>();
+			services.AddScoped<IMiarService, MiarService>();
         }
 			
 		public static void ConfigureCookie(this IServiceCollection services)

@@ -43,7 +43,7 @@ namespace Services.Concretes
 
 			// when any error is occured
 			if (errorDto.StatusCode != 204)
-				throw new ErrorWithCodeException(errorDto);
+				throw new ExceptionWithMessage(errorDto);
 			#endregion
 		}
 
@@ -68,7 +68,7 @@ namespace Services.Concretes
 
 			// when any error is occured
 			if (errorDto.StatusCode != 204)
-				throw new ErrorWithCodeException(errorDto);
+				throw new ExceptionWithMessage(errorDto);
 			#endregion
 		}
 
@@ -131,7 +131,7 @@ namespace Services.Concretes
 
 			#region when any main category not found (THROW)
 			if (categoryViews.Count() == 0)
-				throw new ErrorWithCodeException(
+				throw new ExceptionWithMessage(
 					404,
 					"NF-MC-M",
 					"Not Found - Machine Category - Main Category",
@@ -146,7 +146,7 @@ namespace Services.Concretes
 			CategoryDtoForUpdateMainAndSubcategories categoryDto)
 		{
 			#region when only subcategory or main and subcategory is changed
-			ErrorDto? errorDto = null;
+			ErrorDtoWithMessage? errorDto = null;
 
 			if (categoryDto.NewSubCategoriesInEN != null
 				|| categoryDto.NewSubCategoriesInTR != null)
@@ -310,7 +310,7 @@ namespace Services.Concretes
 
 			#region when any error occurs (THROW)
 			if (errorDto.ErrorCode != null)
-				throw new ErrorWithCodeException(errorDto);
+				throw new ExceptionWithMessage(errorDto);
 			#endregion
 		}
 
@@ -334,7 +334,7 @@ namespace Services.Concretes
 
 			// when any error occures
 			if (errorDto.ErrorCode != null)
-				throw new ErrorWithCodeException(errorDto);
+				throw new ExceptionWithMessage(errorDto);
 			#endregion
 		}
 
@@ -364,7 +364,7 @@ namespace Services.Concretes
 
 			// when any error occures
 			if (errorDto.ErrorCode != null)
-				throw new ErrorWithCodeException(errorDto);
+				throw new ExceptionWithMessage(errorDto);
 			#endregion
 		}
 	}

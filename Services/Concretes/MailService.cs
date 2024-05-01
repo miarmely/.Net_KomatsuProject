@@ -76,7 +76,7 @@ namespace Services.Concretes
 			catch (Exception ex)
 			{
 				#region for unexpected error
-				throw new ErrorWithCodeException(
+				throw new ExceptionWithCode(
 					statusCode: 500,
 					errorCode: "EE",
 					errorDescription: $"Email Error -> {ex.Message}"

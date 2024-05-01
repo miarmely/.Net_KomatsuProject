@@ -14,13 +14,13 @@ namespace Repositories.Concretes
 			IConfigManager configs) : base(context, configs)
 		{ }
 
-		public async Task<ErrorDto> AddMainAndSubcategoriesAsync(
+		public async Task<ErrorDtoWithMessage> AddMainAndSubcategoriesAsync(
 			DynamicParameters parameters) =>
 				await ExecuteAsync(
 					Configs.DbSettings.ProcedureNames.M_C_AddMainAndSubCategories,
 					parameters);
 
-		public async Task<ErrorDto> AddSubcategoriesAsync(
+		public async Task<ErrorDtoWithMessage> AddSubcategoriesAsync(
 			DynamicParameters parameters) =>
 			await ExecuteAsync(
 					Configs.DbSettings.ProcedureNames.M_C_AddSubCategories,
@@ -38,31 +38,31 @@ namespace Repositories.Concretes
 					map,
 					splitOn);
 
-		public async Task<ErrorDto> UpdateMainCategoryAsync(
+		public async Task<ErrorDtoWithMessage> UpdateMainCategoryAsync(
 			DynamicParameters parameters) =>
 				await ExecuteAsync(
 					Configs.DbSettings.ProcedureNames.M_C_UpdateMainCategory,
 					parameters);
 
-		public async Task<ErrorDto> UpdateSubcategoriesAsync(
+		public async Task<ErrorDtoWithMessage> UpdateSubcategoriesAsync(
 			DynamicParameters parameters) =>
 				await ExecuteAsync(
 					Configs.DbSettings.ProcedureNames.M_C_UpdateSubcategories,
 					parameters);
 
-		public async Task<ErrorDto> UpdateMainAndSubcategoriesAsync(
+		public async Task<ErrorDtoWithMessage> UpdateMainAndSubcategoriesAsync(
 			DynamicParameters parameters) =>
 				await ExecuteAsync(
 					Configs.DbSettings.ProcedureNames.M_C_UpdateMainAndSubcategories,
 					parameters);
 
-		public async Task<ErrorDto> DeleteMainCategoryAsync(
+		public async Task<ErrorDtoWithMessage> DeleteMainCategoryAsync(
 			DynamicParameters parameters) =>
 				await base.ExecuteAsync(
 					Configs.DbSettings.ProcedureNames.M_C_DeleteMainCategory,
 					parameters);
 
-		public async Task<ErrorDto> DeleteSubcategoryAsync(
+		public async Task<ErrorDtoWithMessage> DeleteSubcategoryAsync(
 			DynamicParameters parameters) =>
 				await base.ExecuteAsync(
 					Configs.DbSettings.ProcedureNames.M_C_DeleteSubcategories,

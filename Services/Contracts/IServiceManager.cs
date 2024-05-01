@@ -1,4 +1,6 @@
-﻿namespace Services.Contracts
+﻿using Services.MiarLibrary.Contracts;
+
+namespace Services.Contracts
 {
 	public interface IServiceManager
 	{
@@ -7,7 +9,8 @@
 		IMachineService MachineService { get; }
 		IFileService FileService { get; }
 		ISliderService SliderService { get; }
-		IFormService FormService { get;  }
-		IMachineCategoryService MachineCategoryService { get;  }
+		IFormService FormService { get; }
+		IMachineCategoryService MachineCategoryService { get; }
+		IPasswordService PasswordService { get; }
 	}
 }

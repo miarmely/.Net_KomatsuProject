@@ -7,13 +7,13 @@ namespace Repositories.Contracts
 {
 	public interface IFormRepository : IRepositoryBase
 	{
-		Task<ErrorDto?> CreateGeneralCommFormAsync(
+		Task<ErrorDtoWithMessage?> CreateGeneralCommFormAsync(
 			DynamicParameters parameters);
 
-		Task<ErrorDto?> CreateGetOfferFormAsync(
+		Task<ErrorDtoWithMessage?> CreateGetOfferFormAsync(
 			DynamicParameters parameters);
 
-		Task<ErrorDto?> CreateRentingFormAsync(
+		Task<ErrorDtoWithMessage?> CreateRentingFormAsync(
 			DynamicParameters parameters);
 
         Task<IEnumerable<TView>> DisplayAllGeneralCommFormsAsync<TView>(

@@ -119,7 +119,7 @@ namespace Services.Concretes
 
 			#region when any error occured (throw)
 			if (errorDto != null)
-				throw new ErrorWithCodeException(errorDto);
+				throw new ExceptionWithMessage(errorDto);
 			#endregion
 		}
 
@@ -186,7 +186,7 @@ namespace Services.Concretes
 			var totalCount = parameters.Get<int>("TotalCount");
 
 			if (totalCount == 0)
-				throw new ErrorWithCodeException(
+				throw new ExceptionWithMessage(
 					parameters.Get<Int16>("StatusCode"),
 					parameters.Get<string>("ErrorCode"),
 					parameters.Get<string>("ErrorDescription"),
@@ -242,7 +242,7 @@ namespace Services.Concretes
 			var totalCount = parameters.Get<int>("TotalCount");
 
 			if (totalCount == 0)
-				throw new ErrorWithCodeException(
+				throw new ExceptionWithMessage(
 					parameters.Get<Int16>("StatusCode"),
 					parameters.Get<string>("ErrorCode"),
 					parameters.Get<string>("ErrorDescription"),
@@ -310,7 +310,7 @@ namespace Services.Concretes
 
 			#region when machine not found (error)
 			if (machineViews.Count() == 0)
-				throw new ErrorWithCodeException(
+				throw new ExceptionWithMessage(
 					parameters.Get<short>("StatusCode"),
 					parameters.Get<string>("ErrorCode"),
 					parameters.Get<string>("ErrorDescription"),
@@ -363,7 +363,7 @@ namespace Services.Concretes
 
 			#region when machine not found (error)
 			if (machineViews.Count() == 0)
-				throw new ErrorWithCodeException(
+				throw new ExceptionWithMessage(
 					parameters.Get<short>("StatusCode"),
 					parameters.Get<string>("ErrorCode"),
 					parameters.Get<string>("ErrorDescription"),
@@ -473,7 +473,7 @@ namespace Services.Concretes
 
 			// when any error occured (throw)
 			if (errorDto != null)
-				throw new ErrorWithCodeException(errorDto);
+				throw new ExceptionWithMessage(errorDto);
 			#endregion
 
 			#endregion
@@ -508,7 +508,7 @@ namespace Services.Concretes
 
 			// when any error occured (throw)
 			if (errorDto != null)
-				throw new ErrorWithCodeException(errorDto);
+				throw new ExceptionWithMessage(errorDto);
 			#endregion
 
 			#endregion

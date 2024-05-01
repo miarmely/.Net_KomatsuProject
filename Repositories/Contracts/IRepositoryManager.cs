@@ -1,4 +1,6 @@
-﻿namespace Repositories.Contracts
+﻿using Repositories.MiarLibrary.Contracts;
+
+namespace Repositories.Contracts
 {
 	public interface IRepositoryManager
 	{
@@ -7,5 +9,6 @@
 		IFileRepository FileRepository { get; }
 		IFormRepository FormRepository { get; }
 		IMachineCategoryRepository MachineCategoryRepository { get; }
+		IPasswordRepository PasswordRepository { get; }
 	}
 }

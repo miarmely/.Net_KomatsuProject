@@ -6,7 +6,7 @@ using Entities.DtoModels.UserDtos;
 using Entities.Exceptions;
 using Entities.QueryParameters;
 using Entities.ViewModels;
-using MicroServices;
+using Miarmely.Services.Contracts;
 using Microsoft.AspNetCore.Http;
 using Microsoft.IdentityModel.Tokens;
 using Repositories;
@@ -21,23 +21,23 @@ using System.Text;
 
 namespace Services.Concretes
 {
-	public partial class UserService  // private
+    public partial class UserService  // private
 		: IUserService
 	{
 		private readonly IRepositoryManager _manager;
 		private readonly IConfigManager _configs;
 		private readonly IMapper _mapper;
-		private readonly IMicroService _micro;
+		private readonly IMiarService _miar;
 
 		public UserService(IRepositoryManager manager,
 			IConfigManager config,
 			IMapper mapper,
-			IMicroService microServices)
+			IMiarService miarServices)
 		{
 			_manager = manager;
 			_configs = config;
 			_mapper = mapper;
-			_micro = microServices;
+			_miar = miarServices;
 		}
 
 		private async Task<string> GenerateTokenForUserAsync(UserView userView)
@@ -89,7 +89,7 @@ namespace Services.Concretes
 		{
 			#region set paramaters
 			var parameters = new DynamicParameters();
-			var hashedPassword = await _micro.ComputeMd5Async(userDto.Password);
+			var hashedPassword = await _miar.ComputeMd5Async(userDto.Password);
 
 			parameters.Add("Language", language, DbType.String);
 			parameters.Add("TelNo", userDto.TelNo, DbType.String);
@@ -107,7 +107,7 @@ namespace Services.Concretes
 
 			#region when telNo or password is wrong (throw)
 			if (userView == null)
-				throw new ErrorWithCodeException(
+				throw new ExceptionWithMessage(
 					parameters.Get<Int16>("StatusCode"),
 					parameters.Get<string>("ErrorCode"),
 					parameters.Get<string>("ErrorDescription"),
@@ -125,7 +125,7 @@ namespace Services.Concretes
 
 			// when any error occured
 			if (errorDto != null)
-				throw new ErrorWithCodeException(errorDto);
+				throw new ExceptionWithMessage(errorDto);
 			#endregion
 		}
 	}
@@ -158,7 +158,7 @@ namespace Services.Concretes
 				.RolesCanBeLoginToAdminPanel
 				.Contains(r)))
 			{
-				throw new ErrorWithCodeException(ErrorDetailsConfig
+				throw new ExceptionWithMessage(ErrorDetailsConfig
 					.ToErrorDto(
 						language,
 						_configs.ErrorDetails.AE_F));
@@ -205,7 +205,7 @@ namespace Services.Concretes
 				CompanyName = userDto.CompanyName,
 				TelNo = userDto.TelNo,
 				Email = userDto.Email,
-				Password = await _micro.ComputeMd5Async(userDto.Password),
+				Password = await _miar.ComputeMd5Async(userDto.Password),
 				RoleNames = string.Join(",", userDto.RoleNames) // convert list to string 
 			});
 
@@ -220,7 +220,7 @@ namespace Services.Concretes
 
 			// when any error occured
 			if (errorDto != null)
-				throw new ErrorWithCodeException(errorDto);
+				throw new ExceptionWithMessage(errorDto);
 			#endregion
 		}
 
@@ -233,7 +233,7 @@ namespace Services.Concretes
 
 			parameters.Add(
 				"AccountId",
-				await _micro.GetUserIdFromClaimsAsync(
+				await _miar.GetUserIdFromClaimsAsync(
 					response.HttpContext,
 					ClaimTypes.NameIdentifier),
 				DbType.Guid);
@@ -252,7 +252,8 @@ namespace Services.Concretes
 
 			#region when any userView not found (throw)
 			if (userViews.Count() == 0)
-				throw new ErrorWithCodeException(404,
+				throw new ExceptionWithCode(
+					404,
 					"NF-U",
 					"Not Found - User");
 			#endregion
@@ -290,7 +291,7 @@ namespace Services.Concretes
 
 			// when user not found
 			if (userView == null)
-				throw new ErrorWithCodeException(
+				throw new ExceptionWithCode(
 					404,
 					"NF-U",
 					"Not Found - User");
@@ -328,7 +329,7 @@ namespace Services.Concretes
 				#region Password
 				Password = userDto.Password == null ?
 					null
-					: await _micro.ComputeMd5Async(userDto.Password),
+					: await _miar.ComputeMd5Async(userDto.Password),
 				#endregion
 				userDto.RoleNames
 			});
@@ -383,7 +384,7 @@ namespace Services.Concretes
 
 			// when any error occured
 			if (errorDto != null)
-				throw new ErrorWithCodeException(errorDto);
+				throw new ExceptionWithMessage(errorDto);
 			#endregion
 		}
 	}

@@ -48,8 +48,8 @@ namespace Repositories.Concretes
 			return userView;
 		}
 
-		public async Task<ErrorDto?> CreateUserAsync(DynamicParameters parameters) =>
-			await base.QuerySingleOrDefaultAsync<ErrorDto>(
+		public async Task<ErrorDtoWithMessage?> CreateUserAsync(DynamicParameters parameters) =>
+			await base.QuerySingleOrDefaultAsync<ErrorDtoWithMessage>(
 				base.Configs.DbSettings.ProcedureNames.U_Create,
 				parameters);
 
@@ -118,15 +118,15 @@ namespace Repositories.Concretes
 			return userView;
 		}
 
-		public async Task<ErrorDto?> UpdateUserByTelNoAsync(
+		public async Task<ErrorDtoWithMessage?> UpdateUserByTelNoAsync(
 			DynamicParameters parameters) =>
-				await base.QuerySingleOrDefaultAsync<ErrorDto>(
+				await base.QuerySingleOrDefaultAsync<ErrorDtoWithMessage>(
 					base.Configs.DbSettings.ProcedureNames.U_Update,
 					parameters);
 
-		public async Task<ErrorDto?> DeleteUsersByTelNoListAsync(
+		public async Task<ErrorDtoWithMessage?> DeleteUsersByTelNoListAsync(
 			DynamicParameters parameters) =>
-				await base.QuerySingleOrDefaultAsync<ErrorDto>(
+				await base.QuerySingleOrDefaultAsync<ErrorDtoWithMessage>(
 					base.Configs.DbSettings.ProcedureNames.U_Delete,
 					parameters);
 	}

@@ -82,7 +82,7 @@ namespace Presantation.Attributes.Filters
 
 				#region for mobile (throw)
 				else  // projectName= "Presentation"
-					throw new ErrorWithCodeException(
+					throw new ExceptionWithMessage(
 						401,
 						"AE-U",
 						"Authorization Error - Unauthorized",
@@ -122,7 +122,7 @@ namespace Presantation.Attributes.Filters
 
 				#region for mobile throw error (throw)
 				else
-					throw new ErrorWithCodeException(
+					throw new ExceptionWithMessage(
 						404,
 						"AE-E",
 						"Authentication Error - Expires",
@@ -168,7 +168,7 @@ namespace Presantation.Attributes.Filters
 				#endregion
 
 				#region when role level isn't enough (throw)
-				throw new ErrorWithCodeException(403,
+				throw new ExceptionWithMessage(403,
 					"AE-F",
 					"Authorization Error - Forbidden",
 					ConvertErrorCodeToErrorMessageByLanguage(language, "AE-F"));

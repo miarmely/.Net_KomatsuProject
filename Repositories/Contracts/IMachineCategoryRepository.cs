@@ -7,9 +7,9 @@ namespace Repositories.Contracts
 {
 	public interface IMachineCategoryRepository
 	{
-		Task<ErrorDto> AddMainAndSubcategoriesAsync(DynamicParameters parameters);
+		Task<ErrorDtoWithMessage> AddMainAndSubcategoriesAsync(DynamicParameters parameters);
 
-		Task<ErrorDto> AddSubcategoriesAsync(
+		Task<ErrorDtoWithMessage> AddSubcategoriesAsync(
 			DynamicParameters parameters);
 
 		Task<IEnumerable<CategoryView>> GetAllMainAndSubcategoriesAsync(
@@ -18,19 +18,19 @@ namespace Repositories.Contracts
 				CategoryView> map,
 			string splitOn);
 
-		Task<ErrorDto> UpdateMainCategoryAsync(
+		Task<ErrorDtoWithMessage> UpdateMainCategoryAsync(
 			DynamicParameters parameters);
 
-		Task<ErrorDto> UpdateSubcategoriesAsync(
+		Task<ErrorDtoWithMessage> UpdateSubcategoriesAsync(
 			DynamicParameters parameters);
 
-		Task<ErrorDto> UpdateMainAndSubcategoriesAsync(
+		Task<ErrorDtoWithMessage> UpdateMainAndSubcategoriesAsync(
 			DynamicParameters parameters);
 
-		Task<ErrorDto> DeleteMainCategoryAsync(
+		Task<ErrorDtoWithMessage> DeleteMainCategoryAsync(
 			DynamicParameters parameters);
 
-		Task<ErrorDto> DeleteSubcategoryAsync(
+		Task<ErrorDtoWithMessage> DeleteSubcategoryAsync(
 			DynamicParameters parameters);
 	}
 }

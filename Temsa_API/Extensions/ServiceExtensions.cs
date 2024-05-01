@@ -1,6 +1,7 @@
 ﻿using Entities.ConfigModels;
 using Entities.ConfigModels.Contracts;
-using MicroServices;
+using Miarmely.Services.Concretes;
+using Miarmely.Services.Contracts;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Presantation;
@@ -13,7 +14,7 @@ using System.Text;
 
 namespace Temsa_Api.Extensions
 {
-	public static class ServiceExtensions
+    public static class ServiceExtensions
 	{
 		public static void ConfigureAllManagers(this IServiceCollection services)
 		{
@@ -25,7 +26,7 @@ namespace Temsa_Api.Extensions
 		public static void ConfigureServices(this IServiceCollection services)
 		{
 			services.AddSingleton<RepositoryContext>();
-			services.AddScoped<IMicroService, MicroService>();
+			services.AddScoped<IMiarService, MiarService>();
 		}
 
 		public static void ConfigureConfigModels(
