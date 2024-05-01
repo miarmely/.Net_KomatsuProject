@@ -19,15 +19,20 @@ namespace Entities.DtoModels.UserDtos
 		public string? TelNo { get; init; }
 
 		[MiarLength(1, 50, "Email", "Email")]
+		[MiarEnglishChars(new char[] { '.', '@' }, "Email", "Email")]
 		[MiarEmail]
 		public string? Email { get; init; }	
 	}
+
 
 	public record UserDtoForUpdateForPanel : UserDtoForUpdateForMobile
     {
         public string? RoleNames { get; init; }
 		
 		[MiarLength(6, 16, "Şifre", "Password")]
+		[MiarEnglishChars(new char[] { '.', ',', '!', '?', '-', ':', ';' },
+			"Şifre", "Password")]
+		[MiarPassword(true, true, true, null, 1, 1, 1, "Şifre", "Password")]
 		public string? Password { get; init; }
 	}
 }

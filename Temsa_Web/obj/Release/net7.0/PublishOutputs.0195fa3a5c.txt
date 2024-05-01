@@ -54,12 +54,12 @@ C:\Users\Mac\Desktop\SOFTWARE\1__Software_Languages\1__C#\2__API\1__Projects\3__
 C:\Users\Mac\Desktop\SOFTWARE\1__Software_Languages\1__C#\2__API\1__Projects\3__Temsa\Temsa_Web\obj\Release\net7.0\PubTmp\Out\runtimes\win\lib\net6.0\System.Security.Cryptography.ProtectedData.dll
 C:\Users\Mac\Desktop\SOFTWARE\1__Software_Languages\1__C#\2__API\1__Projects\3__Temsa\Temsa_Web\obj\Release\net7.0\PubTmp\Out\runtimes\win\lib\net6.0\System.Windows.Extensions.dll
 C:\Users\Mac\Desktop\SOFTWARE\1__Software_Languages\1__C#\2__API\1__Projects\3__Temsa\Temsa_Web\obj\Release\net7.0\PubTmp\Out\Entities.dll
-C:\Users\Mac\Desktop\SOFTWARE\1__Software_Languages\1__C#\2__API\1__Projects\3__Temsa\Temsa_Web\obj\Release\net7.0\PubTmp\Out\MicroServices.dll
+C:\Users\Mac\Desktop\SOFTWARE\1__Software_Languages\1__C#\2__API\1__Projects\3__Temsa\Temsa_Web\obj\Release\net7.0\PubTmp\Out\Miarmely.dll
 C:\Users\Mac\Desktop\SOFTWARE\1__Software_Languages\1__C#\2__API\1__Projects\3__Temsa\Temsa_Web\obj\Release\net7.0\PubTmp\Out\Presantation.dll
 C:\Users\Mac\Desktop\SOFTWARE\1__Software_Languages\1__C#\2__API\1__Projects\3__Temsa\Temsa_Web\obj\Release\net7.0\PubTmp\Out\Repositories.dll
 C:\Users\Mac\Desktop\SOFTWARE\1__Software_Languages\1__C#\2__API\1__Projects\3__Temsa\Temsa_Web\obj\Release\net7.0\PubTmp\Out\Services.dll
 C:\Users\Mac\Desktop\SOFTWARE\1__Software_Languages\1__C#\2__API\1__Projects\3__Temsa\Temsa_Web\obj\Release\net7.0\PubTmp\Out\Presantation.pdb
 C:\Users\Mac\Desktop\SOFTWARE\1__Software_Languages\1__C#\2__API\1__Projects\3__Temsa\Temsa_Web\obj\Release\net7.0\PubTmp\Out\Entities.pdb
-C:\Users\Mac\Desktop\SOFTWARE\1__Software_Languages\1__C#\2__API\1__Projects\3__Temsa\Temsa_Web\obj\Release\net7.0\PubTmp\Out\MicroServices.pdb
+C:\Users\Mac\Desktop\SOFTWARE\1__Software_Languages\1__C#\2__API\1__Projects\3__Temsa\Temsa_Web\obj\Release\net7.0\PubTmp\Out\Miarmely.pdb
 C:\Users\Mac\Desktop\SOFTWARE\1__Software_Languages\1__C#\2__API\1__Projects\3__Temsa\Temsa_Web\obj\Release\net7.0\PubTmp\Out\Repositories.pdb
 C:\Users\Mac\Desktop\SOFTWARE\1__Software_Languages\1__C#\2__API\1__Projects\3__Temsa\Temsa_Web\obj\Release\net7.0\PubTmp\Out\Services.pdb

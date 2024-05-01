@@ -19,9 +19,7 @@ C:\Users\Mac\Desktop\SOFTWARE\1__Software_Languages\1__C#\2__API\1__Projects\3__
 C:\Users\Mac\Desktop\SOFTWARE\1__Software_Languages\1__C#\2__API\1__Projects\3__Temsa\Services\bin\Release\net7.0\Services.dll
 C:\Users\Mac\Desktop\SOFTWARE\1__Software_Languages\1__C#\2__API\1__Projects\3__Temsa\Services\bin\Release\net7.0\Services.pdb
 C:\Users\Mac\Desktop\SOFTWARE\1__Software_Languages\1__C#\2__API\1__Projects\3__Temsa\Services\bin\Release\net7.0\Entities.dll
-C:\Users\Mac\Desktop\SOFTWARE\1__Software_Languages\1__C#\2__API\1__Projects\3__Temsa\Services\bin\Release\net7.0\MicroServices.dll
 C:\Users\Mac\Desktop\SOFTWARE\1__Software_Languages\1__C#\2__API\1__Projects\3__Temsa\Services\bin\Release\net7.0\Repositories.dll
-C:\Users\Mac\Desktop\SOFTWARE\1__Software_Languages\1__C#\2__API\1__Projects\3__Temsa\Services\bin\Release\net7.0\MicroServices.pdb
 C:\Users\Mac\Desktop\SOFTWARE\1__Software_Languages\1__C#\2__API\1__Projects\3__Temsa\Services\bin\Release\net7.0\Repositories.pdb
 C:\Users\Mac\Desktop\SOFTWARE\1__Software_Languages\1__C#\2__API\1__Projects\3__Temsa\Services\bin\Release\net7.0\Entities.pdb
 C:\Users\Mac\Desktop\SOFTWARE\1__Software_Languages\1__C#\2__API\1__Projects\3__Temsa\Services\obj\Release\net7.0\Services.csproj.AssemblyReference.cache
@@ -34,3 +32,5 @@ C:\Users\Mac\Desktop\SOFTWARE\1__Software_Languages\1__C#\2__API\1__Projects\3__
 C:\Users\Mac\Desktop\SOFTWARE\1__Software_Languages\1__C#\2__API\1__Projects\3__Temsa\Services\obj\Release\net7.0\refint\Services.dll
 C:\Users\Mac\Desktop\SOFTWARE\1__Software_Languages\1__C#\2__API\1__Projects\3__Temsa\Services\obj\Release\net7.0\Services.pdb
 C:\Users\Mac\Desktop\SOFTWARE\1__Software_Languages\1__C#\2__API\1__Projects\3__Temsa\Services\obj\Release\net7.0\ref\Services.dll
+C:\Users\Mac\Desktop\SOFTWARE\1__Software_Languages\1__C#\2__API\1__Projects\3__Temsa\Services\bin\Release\net7.0\Miarmely.dll
+C:\Users\Mac\Desktop\SOFTWARE\1__Software_Languages\1__C#\2__API\1__Projects\3__Temsa\Services\bin\Release\net7.0\Miarmely.pdb

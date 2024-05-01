@@ -1,11 +1,11 @@
 ﻿using AutoMapper;
 using Entities.ConfigModels.Contracts;
 using Miarmely.Services.Contracts;
-using Microsoft.AspNetCore.Http;
 using Repositories.Contracts;
 using Services.Contracts;
 using Services.MiarLibrary.Concretes;
 using Services.MiarLibrary.Contracts;
+
 
 namespace Services.Concretes
 {
@@ -31,7 +31,6 @@ namespace Services.Concretes
 		public IPasswordService PasswordService => _passwordService.Value;
        
 		public ServiceManager(
-			HttpContext context,
 			IRepositoryManager manager,
 			IConfigManager configs,
 			IMapper mapper,
@@ -52,7 +51,7 @@ namespace Services.Concretes
 			_machineCategoryService = new Lazy<IMachineCategoryService>(() => 
 				new MachineCategoryService(manager));
 			_passwordService = new Lazy<IPasswordService>(() =>
-				new PasswordService(context, manager, miar));
+				new PasswordService(manager, miar));
         }
 	}
 }

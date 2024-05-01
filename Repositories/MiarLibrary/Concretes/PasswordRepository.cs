@@ -15,7 +15,7 @@ namespace Repositories.MiarLibrary.Concretes
         {}
 
         public async Task<ErrorDtoWithMessage> UpdatePasswordAsync(
-			DynamicParameters parameters) => 
+			DynamicParameters parameters) =>
 				await ExecuteAsync(
 					Configs.DbSettings.ProcedureNames.Mi_Password_Update,
 					parameters);

@@ -1,4 +1,5 @@
 ﻿using Entities.MiarLibrary.DtoModels;
+using Entities.QueryParameters;
 using Microsoft.AspNetCore.Mvc;
 using Services.Contracts;
 
@@ -18,9 +19,13 @@ namespace Presantation.Controllers.MiarLibrary
 
 		[HttpPost("update")]
 		public async Task<IActionResult> UpdatePasswordOfUser(
+			[FromQuery] LanguageParams languageParams,
 			[FromBody] PasswordDtoForUpdate passwordDto)
 		{
-			await _services.PasswordService.UpdatePasswordAsync(passwordDto);
+			await _services.PasswordService.UpdatePasswordAsync(
+				languageParams, 
+				passwordDto, 
+				HttpContext);
 
 			return NoContent();
 		}

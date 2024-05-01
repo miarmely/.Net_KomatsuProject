@@ -6,15 +6,19 @@
 	}
 
 
-	public record class ErrorDtoWithCode : ErrorDtoWithStatus
+	public record class ErrorDtoWithCode
 	{
-		public string ErrorCode { get; init; }
-		public string ErrorDescription { get; init; }
+		public int StatusCode { get; init; }
+		public string? ErrorCode { get; init; }
+		public string? ErrorDescription { get; init; }
 	}
 
 
-	public record class ErrorDtoWithMessage : ErrorDtoWithCode
+	public record class ErrorDtoWithMessage 
 	{
-		public string ErrorMessage { get; init; }
+		public int StatusCode { get; init; }
+		public string? ErrorCode { get; init; }
+		public string? ErrorDescription { get; init; }
+		public string? ErrorMessage { get; init; }
 	}
 }

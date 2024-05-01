@@ -1,6 +1,6 @@
 {
   "Version": 1,
-  "Hash": "F3a5Jo1QBpRRgjnAEXU0qX5J+I9nT8RCSVlwNoyyb/4=",
+  "Hash": "C7OV0+JjWYLxeSpjdkOpDNrE8RKy2S9AZUUc/AbBn2s=",
   "Source": "Temsa_Web",
   "BasePath": "_content/Temsa_Web",
   "Mode": "Default",
@@ -1528,23 +1528,6 @@
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "wwwroot\\images\\show.png"
-    },
-    {
-      "Identity": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\images\\sliders\\pc210lc-11e0-1250x723-01.webp",
-      "SourceId": "Temsa_Web",
-      "SourceType": "Discovered",
-      "ContentRoot": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\",
-      "BasePath": "_content/Temsa_Web",
-      "RelativePath": "images/sliders/pc210lc-11e0-1250x723-01.webp",
-      "AssetKind": "All",
-      "AssetMode": "All",
-      "AssetRole": "Primary",
-      "RelatedAsset": "",
-      "AssetTraitName": "",
-      "AssetTraitValue": "",
-      "CopyToOutputDirectory": "Never",
-      "CopyToPublishDirectory": "PreserveNewest",
-      "OriginalItemSpec": "wwwroot\\images\\sliders\\pc210lc-11e0-1250x723-01.webp"
     },
     {
       "Identity": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\images\\sliders\\yeni-cag-yeni.webp",

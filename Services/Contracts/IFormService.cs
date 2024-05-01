@@ -9,17 +9,17 @@ namespace Services.Contracts
 {
     public interface IFormService
 	{
-		Task CreateGenaralCommFormAsync(
+		Task<object> CreateGenaralCommFormAsync(
             LanguageParams languageParams,
             GeneralCommFormDtoForCreate formDto,
 			HttpContext httpContext);
 
-		Task CreateGetOfferFormAsync(
+		Task<object> CreateGetOfferFormAsync(
 			LanguageParams languageParams,
 			GetOfferFormDtoForCreate formDto,
 			HttpContext httpContext);
 
-		Task CreateRentingFormAsync(
+		Task<object> CreateRentingFormAsync(
 			LanguageParams languageParams,
 			RentingFormDtoForCreate formDto,
 			HttpContext httpContext);

@@ -1,6 +1,6 @@
 ﻿using Entities.Exceptions;
 using System.ComponentModel.DataAnnotations;
-
+using System.Text.Json;
 
 namespace Entities.MiarLibrary.Attributes
 {
@@ -48,7 +48,11 @@ namespace Entities.MiarLibrary.Attributes
                         400,
                         "FE-V-" + first2Char,
                         "Format Error - Validation - " + _displayNameInEN,
-                        $"\"{_displayNameInTR}\", ingilizce karakterlerden oluşmalıdır ve [{validSpecialCharsInStr}] özel karakterlerini içerebilir.");
+                        JsonSerializer.Serialize(new
+                        {
+                            TR = $"\"{_displayNameInTR}\", ingilizce karakterlerden oluşmalıdır ve [{validSpecialCharsInStr}] özel karakterlerini içerebilir.",
+                            EN = $"\"{_displayNameInEN}\", must contain english chars and it can contain [{validSpecialCharsInStr}] special chars.",
+                        }));
                 }
                 #endregion
             }

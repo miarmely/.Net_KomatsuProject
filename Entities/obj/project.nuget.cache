@@ -1,0 +1,12 @@
+{
+  "version": 2,
+  "dgSpecHash": "MDVJ0H720rTOSqT3uxU+nqFxW3Nt57x28K2OXdJGS5idnYp99Om6TRUOXkgPzyMWipnbyCUAXnXIunr33RkMew==",
+  "success": true,
+  "projectFilePath": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Entities\\Entities.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\Mac\\.nuget\\packages\\microsoft.extensions.dependencyinjection.abstractions\\7.0.0\\microsoft.extensions.dependencyinjection.abstractions.7.0.0.nupkg.sha512",
+    "C:\\Users\\Mac\\.nuget\\packages\\microsoft.extensions.options\\7.0.1\\microsoft.extensions.options.7.0.1.nupkg.sha512",
+    "C:\\Users\\Mac\\.nuget\\packages\\microsoft.extensions.primitives\\7.0.0\\microsoft.extensions.primitives.7.0.0.nupkg.sha512"
+  ],
+  "logs": []
+}

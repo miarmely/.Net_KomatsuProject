@@ -1,7 +1,7 @@
 ﻿using Entities.DtoModels;
 using Entities.Exceptions;
 using System.ComponentModel.DataAnnotations;
-
+using System.Text.Json;
 
 namespace Entities.MiarLibrary.Attributes
 {
@@ -12,7 +12,11 @@ namespace Entities.MiarLibrary.Attributes
 			StatusCode = 400,
 			ErrorCode = "FE-U-P",
 			ErrorDescription = "Format Error - User - Phone",
-			ErrorMessage = "\"Telefon\" geçerli değil"
+			ErrorMessage = JsonSerializer.Serialize(new
+			{
+				TR = "\"Telefon\" geçerli değil",
+				EN = "\"Phone\" Invalid"
+			})
 		};
 
 		protected override ValidationResult? IsValid(
@@ -39,10 +43,10 @@ namespace Entities.MiarLibrary.Attributes
 				.Substring(phoneInStr.Length / 2);
 
 			if (!int.TryParse(rightChunkOfString, out int _))
-                throw new ExceptionWithMessage(_errorDto);
-            #endregion
+				throw new ExceptionWithMessage(_errorDto);
+			#endregion
 
-            return ValidationResult.Success;
+			return ValidationResult.Success;
 		}
 	}
 }

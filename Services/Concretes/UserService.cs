@@ -130,6 +130,7 @@ namespace Services.Concretes
 		}
 	}
 
+
 	public partial class UserService  // main services
 	{
 		public async Task<object> LoginForMobileAsync(
@@ -152,7 +153,7 @@ namespace Services.Concretes
 		{
 			var userView = await LoginAsync(language, userDto);
 
-			#region when user role invalid for login to admin panel (throw)
+			#region when user role invalid for login to panel (throw)
 			if (!userView.RoleNames.Any(r => _configs
 				.LoginSettings
 				.RolesCanBeLoginToAdminPanel

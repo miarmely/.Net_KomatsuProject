@@ -1,6 +1,7 @@
 ﻿using Entities.DtoModels;
 using Entities.Exceptions;
 using System.ComponentModel.DataAnnotations;
+using System.Text.Json;
 
 
 namespace Entities.MiarLibrary.Attributes
@@ -12,7 +13,11 @@ namespace Entities.MiarLibrary.Attributes
 			StatusCode = 400,
 			ErrorCode = "FE-U-E",
 			ErrorDescription = "Format Error - User - Email",
-			ErrorMessage = "\"Email\" geçerli değil"
+			ErrorMessage = JsonSerializer.Serialize(new
+			{
+				TR = "\"Email\" geçerli değil",
+				EN = "\"Email\" invalid",
+			})
 		};
 
 		protected override ValidationResult? IsValid(

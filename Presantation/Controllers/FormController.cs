@@ -23,12 +23,12 @@ namespace Presantation.Controllers
             [FromQuery] LanguageParams languageParams,
             [FromBody] GeneralCommFormDtoForCreate formDto)
         {
-            await _manager.FormService.CreateGenaralCommFormAsync(
+            var response = await _manager.FormService.CreateGenaralCommFormAsync(
                 languageParams,
                 formDto,
                 HttpContext);
 
-            return NoContent();
+            return Ok(response);
         }
 
 
@@ -38,10 +38,10 @@ namespace Presantation.Controllers
             [FromQuery] LanguageParams languageParams,
             [FromBody] GetOfferFormDtoForCreate formDto)
         {
-            await _manager.FormService
+            var response = await _manager.FormService
                 .CreateGetOfferFormAsync(languageParams, formDto, HttpContext);
 
-            return NoContent();
+            return Ok(response);
         }
 
 
@@ -51,10 +51,10 @@ namespace Presantation.Controllers
             [FromQuery] LanguageParams languageParams,
             [FromBody] RentingFormDtoForCreate formDto)
         {
-            await _manager.FormService
+			var response = await _manager.FormService
                 .CreateRentingFormAsync(languageParams, formDto, HttpContext);
 
-            return NoContent();
+            return Ok(response);
         }
 
 

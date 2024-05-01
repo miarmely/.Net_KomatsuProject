@@ -35,8 +35,9 @@
     width: 55px;
 }
 
-/*short infos on machine articles*/
-#div_article_info #div_identity h5 {
+/*infos of articles*/
+#div_article_info #div_identity h5,  /*form articles*/
+#div_article_info h6 {  /*machine articles*/
     text-align: justify;
     text-align-last: center;
 }
