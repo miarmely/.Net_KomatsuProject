@@ -8,5 +8,6 @@ namespace Repositories.MiarLibrary.Contracts
 	public interface IPasswordRepository : IRepositoryBase
 	{
 		Task<ErrorDtoWithMessage> UpdatePasswordAsync(DynamicParameters parameters);
+		Task<ErrorDtoWithMessage> UpdatePasswordByOTPAsync(DynamicParameters parameters);
 	}
 }

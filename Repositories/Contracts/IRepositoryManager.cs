@@ -1,5 +1,6 @@
 ﻿using Repositories.MiarLibrary.Contracts;
 
+
 namespace Repositories.Contracts
 {
 	public interface IRepositoryManager
@@ -10,5 +11,8 @@ namespace Repositories.Contracts
 		IFormRepository FormRepository { get; }
 		IMachineCategoryRepository MachineCategoryRepository { get; }
 		IPasswordRepository PasswordRepository { get; }
+		IOTPRepository OTPRepository { get; }
+
+		object GetSuccessMessageByLanguages(string language);
 	}
 }

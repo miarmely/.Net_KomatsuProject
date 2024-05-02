@@ -339,7 +339,7 @@ namespace Services.Concretes
 			await UpdateUserAsync(parameters);
 		}
 
-		public async Task UpdateUserByTelNoAsync(
+		public async Task<object> UpdateUserByTelNoAsync(
 			string language,
 			string telNo,
 			UserDtoForUpdateForMobile userDto)
@@ -358,6 +358,8 @@ namespace Services.Concretes
 			#endregion
 
 			await UpdateUserAsync(parameters);
+
+			return _manager.GetSuccessMessageByLanguages(language);
 		}
 
 		public async Task DeleteUsersByTelNoListAsync(

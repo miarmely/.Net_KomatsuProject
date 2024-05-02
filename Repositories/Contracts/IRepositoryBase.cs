@@ -1,6 +1,7 @@
 ﻿using Dapper;
 using Entities.ConfigModels.Contracts;
 using Entities.DtoModels;
+using System.Data;
 
 namespace Repositories.Contracts
 {
@@ -29,6 +30,13 @@ namespace Repositories.Contracts
 			DynamicParameters? parameters,
 			Func<SqlMapper.GridReader, Task<TResult>> funcAsync);
 
-		Task<ErrorDtoWithMessage> ExecuteAsync(string sql, DynamicParameters parameters);
+		Task<ErrorDtoWithMessage> ExecuteAsync(
+			string procedureName, 
+			DynamicParameters parameters);
+
+		Task ExecuteWithTransactionAsync(
+			string procedureName,
+			DynamicParameters parameters,
+			Func<IDbTransaction, Task> funcInTransactionAsync);
 	}
 }

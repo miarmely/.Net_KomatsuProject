@@ -6,66 +6,111 @@ using Miarmely.Services.Contracts;
 using Microsoft.AspNetCore.Http;
 using Repositories.Contracts;
 using Services.MiarLibrary.Contracts;
+using System.Data;
 using System.Security.Claims;
 using System.Text.Json;
 
+
 namespace Services.MiarLibrary.Concretes
 {
-    public class PasswordService : IPasswordService
-    {
+	public class PasswordService : IPasswordService
+	{
 		private readonly IRepositoryManager _repos;
-        private readonly IMiarService _miar;
-        
-        public PasswordService(
+		private readonly IMiarService _miar;
+
+		public PasswordService(
 			IRepositoryManager manager,
-            IMiarService miar)
-        {
+			IMiarService miar)
+		{
 			_repos = manager;
-            _miar = miar;
+			_miar = miar;
 		}
 
-        public async Task UpdatePasswordAsync(
-            LanguageParams languageParams,
-            PasswordDtoForUpdate passwordDto,
-            HttpContext context)
-        {
-            #region when "new password again" is not equal to "new password" (THROW)
-            if (!passwordDto.NewPassword.Equals(passwordDto.NewPasswordAgain))
-                throw new ExceptionWithMessage(
-                    400,
-                    "FE-P-NP",
-                    "Format Error - Password - New Passwords",
-                    JsonSerializer.Serialize(new
-                    {
-                        TR = "'yeni şifre tekrar' ile 'yeni şifre' aynı değil",
-                        EN = "'new password again' is not same with 'new password'",
-                    }));
+		public async Task<object> UpdatePasswordAsync(
+			LanguageParams languageParams,
+			PasswordDtoForUpdate passwordDto,
+			HttpContext context)
+		{
+			#region when "new password again" is not equal to "new password" (THROW)
+			if (!passwordDto.NewPassword.Equals(passwordDto.NewPasswordAgain))
+				throw new ExceptionWithMessage(
+					400,
+					"FE-P-NP",
+					"Format Error - Password - New Passwords",
+					JsonSerializer.Serialize(new
+					{
+						TR = "'yeni şifre tekrar' ile 'yeni şifre' aynı değil",
+						EN = "'new password again' is not same with 'new password'",
+					}));
 			#endregion
 
 			#region set parameters
 			var parameters = new DynamicParameters();
-			
+
 			parameters.AddDynamicParams(new
-            {
-                Language = languageParams.Language,
+			{
+				Language = languageParams.Language,
 				#region UserId
 				UserId = await _miar.GetUserIdFromClaimsAsync(
 					context,
-                    ClaimTypes.NameIdentifier),
+					ClaimTypes.NameIdentifier),
 				#endregion
 				HashedOldPass = await _miar.ComputeMd5Async(passwordDto.OldPassword),
-                HashedNewPass = await _miar.ComputeMd5Async(passwordDto.NewPassword)
-            });
-            #endregion
-
-            #region update password (THROW)
-            var errorDto = await _repos.PasswordRepository
-                .UpdatePasswordAsync(parameters);
-
-            // when any error occured
-            if (errorDto.StatusCode != 204)
-                throw new ExceptionWithMessage(errorDto);
+				HashedNewPass = await _miar.ComputeMd5Async(passwordDto.NewPassword)
+			});
 			#endregion
+
+			#region update password (THROW)
+			var errorDto = await _repos.PasswordRepository
+				.UpdatePasswordAsync(parameters);
+
+			// when any error occured
+			if (errorDto.StatusCode != 204)
+				throw new ExceptionWithMessage(errorDto);
+			#endregion
+
+			return _repos.GetSuccessMessageByLanguages(languageParams.Language);
+		}
+
+		public async Task<object> UpdatePasswordByOTPAsync(
+			LanguageParams languageParams,
+			PasswordDtoForUpdateByOTP passwordDto)
+		{
+			#region when "new password again" is not equal to "new password" (THROW)
+			if (!passwordDto.NewPassword.Equals(passwordDto.NewPasswordAgain))
+				throw new ExceptionWithMessage(
+					400,
+					"FE-P-NP",
+					"Format Error - Password - New Passwords",
+					JsonSerializer.Serialize(new
+					{
+						TR = "'yeni şifre tekrar' ile 'yeni şifre' aynı değil",
+						EN = "'new password again' is not same with 'new password'",
+					}));
+			#endregion
+
+			#region set parameters
+			var parameters = new DynamicParameters();
+
+			parameters.AddDynamicParams(new
+			{
+				Language = languageParams.Language,
+				OTPId = passwordDto.OTPId,
+				HashedNewPassword = await _miar.ComputeMd5Async(passwordDto.NewPassword),
+				RequestDate = DateTime.UtcNow
+			});
+			#endregion
+
+			#region update password by otp (THROW)
+			var errorDto = await _repos.PasswordRepository
+				.UpdatePasswordByOTPAsync(parameters);
+
+			// when any error occured
+			if (errorDto.StatusCode != 204)
+				throw new ExceptionWithMessage(errorDto);
+			#endregion
+
+			return _repos.GetSuccessMessageByLanguages(languageParams.Language);
 		}
 	}
 }

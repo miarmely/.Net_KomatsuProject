@@ -1,7 +1,6 @@
 ﻿using Dapper;
 using Entities.ConfigModels.Contracts;
 using Entities.DtoModels;
-using Microsoft.AspNetCore.Http;
 using Repositories.Contracts;
 using System.Data;
 
@@ -24,10 +23,12 @@ namespace Repositories.Concretes
 
 		private CommandDefinition GetCommandDefinitionForProcedures(
 			string commandText,
-			DynamicParameters? parameters) =>
+			DynamicParameters? parameters,
+			IDbTransaction? transaction = null) =>
 				new CommandDefinition(
 					commandText,
 					parameters,
+					transaction,
 					commandType: CommandType.StoredProcedure);
 	}
 
@@ -148,6 +149,40 @@ namespace Repositories.Concretes
 				ErrorDescription = parameters.Get<string>("ErrorDescription"),
 				ErrorMessage = parameters.Get<string>("ErrorMessage")
 			};
+		}
+
+		public async Task ExecuteWithTransactionAsync(
+			string procedureName,
+			DynamicParameters parameters,
+			Func<IDbTransaction, Task> funcInTransactionAsync)
+		{
+			#region update parameters
+			parameters.Add("StatusCode", 0, DbType.Int16, ParameterDirection.Output);
+			parameters.Add("ErrorCode", "", DbType.String, ParameterDirection.Output);
+			parameters.Add("ErrorMessage", "", DbType.String, ParameterDirection.Output);
+
+			parameters.Add("ErrorDescription",
+				"",
+				DbType.String,
+				ParameterDirection.Output);
+			#endregion
+
+			#region execute procedure with transaction
+			using (var connection = _context.CreateSqlConnection())
+			{
+				connection.Open();
+
+				using (var transaction = connection.BeginTransaction())
+				{
+					await connection.ExecuteAsync(GetCommandDefinitionForProcedures(
+						procedureName,
+						parameters,
+						transaction));
+
+					await funcInTransactionAsync(transaction);
+				}
+			}
+			#endregion
 		}
 	}
 }

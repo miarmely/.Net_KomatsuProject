@@ -1,7 +1,9 @@
 ﻿using Entities.ConfigModels.Contracts;
+using Entities.QueryParameters;
 using Repositories.Contracts;
 using Repositories.MiarLibrary.Concretes;
 using Repositories.MiarLibrary.Contracts;
+
 
 namespace Repositories.Concretes
 {
@@ -13,6 +15,8 @@ namespace Repositories.Concretes
 		private readonly Lazy<IFormRepository> _formRepository;
 		private readonly Lazy<IMachineCategoryRepository> _machineCategoryRepository;
 		private readonly Lazy<IPasswordRepository> _passwordRepository;
+		private readonly Lazy<IOTPRepository> _OTPRepository;
+
 
  		public IUserRepository UserRepository => _userRepository.Value;
 		public IMachineRepository MachineRepository => _machineRepository.Value;
@@ -21,6 +25,8 @@ namespace Repositories.Concretes
 		public IMachineCategoryRepository MachineCategoryRepository =>
 			_machineCategoryRepository.Value;
 		public IPasswordRepository PasswordRepository => _passwordRepository.Value;
+		public IOTPRepository OTPRepository => _OTPRepository.Value;
+		
 
 		public RepositoryManager(
 			RepositoryContext context,
@@ -38,6 +44,15 @@ namespace Repositories.Concretes
 				new MachineCategoryRepository(context, configs));
 			_passwordRepository = new Lazy<IPasswordRepository>(() =>
 				new PasswordRepository(context, configs));
+			_OTPRepository = new Lazy<IOTPRepository>(() =>
+				new OTPRepository(context, configs));
 		}
+
+		public object GetSuccessMessageByLanguages(string language) =>
+			language switch
+			{
+				"TR" => new { message = "Başarılı" },
+				"EN" => new { message = "Successful" }
+			};
 	}
 }

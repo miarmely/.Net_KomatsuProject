@@ -1,19 +1,16 @@
 ﻿using Dapper;
-using Entities.ConfigModels;
 using Entities.DtoModels.MachineDtos;
 using Entities.Enums;
 using Entities.Exceptions;
 using Entities.QueryParameters;
 using Entities.ViewModels;
-using Microsoft.AspNetCore.Authentication.OAuth.Claims;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.IdentityModel.Tokens;
 using Repositories;
 using Repositories.Contracts;
 using Services.Contracts;
-using System.Collections;
 using System.Data;
+
 
 namespace Services.Concretes
 {

@@ -75,12 +75,12 @@ namespace Presantation.Controllers
             [FromQuery] UserParamsForUpdate userParams,
             [FromBody] UserDtoForUpdateForMobile userDto)
         {
-            await _manager.UserService.UpdateUserByTelNoAsync(
+            var response = await _manager.UserService.UpdateUserByTelNoAsync(
                 userParams.Language, 
                 userParams.TelNo, 
                 userDto);
 
-            return NoContent();
+            return Ok(response);
         }
     }
 

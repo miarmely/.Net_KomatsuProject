@@ -1,9 +1,10 @@
 ﻿using Entities.DtoModels;
+using MimeKit;
 
 namespace Services.Contracts
 {
     public interface IMailService
 	{
-		Task SendMailAsync(MailDto mailDto);
+		Task SendMailAsync(List<string> To, string subject, TextPart body);
 	}
 }

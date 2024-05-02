@@ -12,5 +12,6 @@ namespace Services.Contracts
 		IFormService FormService { get; }
 		IMachineCategoryService MachineCategoryService { get; }
 		IPasswordService PasswordService { get; }
+		IOTPService OTPService { get; }
 	}
 }

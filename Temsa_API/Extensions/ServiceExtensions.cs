@@ -1,5 +1,6 @@
 ﻿using Entities.ConfigModels;
 using Entities.ConfigModels.Contracts;
+using Entities.MiarLibrary.ConfigModels;
 using Miarmely.Services.Concretes;
 using Miarmely.Services.Contracts;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -11,6 +12,7 @@ using Repositories.Contracts;
 using Services.Concretes;
 using Services.Contracts;
 using System.Text;
+
 
 namespace Temsa_Api.Extensions
 {
@@ -47,6 +49,9 @@ namespace Temsa_Api.Extensions
 
 			services.Configure<ErrorDetailsConfig>(configuration
 				.GetSection(nameof(ErrorDetailsConfig)));
+
+			services.Configure<OTPSettingsConfig>(configuration
+				.GetSection(nameof(OTPSettingsConfig)));
 		}
 
 		public static void ConfigureJwt(

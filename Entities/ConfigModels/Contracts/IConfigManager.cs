@@ -1,4 +1,7 @@
-﻿namespace Entities.ConfigModels.Contracts
+﻿using Entities.MiarLibrary.ConfigModels;
+
+
+namespace Entities.ConfigModels.Contracts
 {
 	public interface IConfigManager
 	{
@@ -7,5 +10,6 @@
 		DbSettingsConfig DbSettings { get; }
 		LoginSettingsConfig LoginSettings { get; }
 		ErrorDetailsConfig ErrorDetails { get; }
+		OTPSettingsConfig OTPSettings { get; }
 	}
 }

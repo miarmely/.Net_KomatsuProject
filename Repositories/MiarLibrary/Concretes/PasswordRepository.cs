@@ -19,5 +19,11 @@ namespace Repositories.MiarLibrary.Concretes
 				await ExecuteAsync(
 					Configs.DbSettings.ProcedureNames.Mi_Password_Update,
 					parameters);
+
+		public async Task<ErrorDtoWithMessage> UpdatePasswordByOTPAsync(
+			DynamicParameters parameters) =>
+				await ExecuteAsync(
+					Configs.DbSettings.ProcedureNames.Mi_Password_UpdateByOTP,
+					parameters);
 	}
 }

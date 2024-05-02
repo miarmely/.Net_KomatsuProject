@@ -19,6 +19,8 @@ namespace Services.Concretes
 		private readonly Lazy<IFormService> _formService;
 		private readonly Lazy<IMachineCategoryService> _machineCategoryService;
 		private readonly Lazy<IPasswordService> _passwordService;
+		private readonly Lazy<IOTPService> _OTPService;
+
 
 		public IUserService UserService => _userService.Value;
 		public IMailService MailService => _mailService.Value;
@@ -29,15 +31,17 @@ namespace Services.Concretes
 		public IMachineCategoryService MachineCategoryService => 
 			_machineCategoryService.Value;
 		public IPasswordService PasswordService => _passwordService.Value;
+		public IOTPService OTPService => _OTPService.Value;
        
+
 		public ServiceManager(
 			IRepositoryManager manager,
 			IConfigManager configs,
 			IMapper mapper,
-			IMiarService miar)
+			IMiarService miarService)
         {
 			_userService = new Lazy<IUserService>(() => 
-				new UserService(manager, configs, mapper, miar));
+				new UserService(manager, configs, mapper, miarService));
 			_mailService = new Lazy<IMailService>(() =>
 				new MailService(configs));
 			_machineService = new Lazy<IMachineService>(() => 
@@ -51,7 +55,9 @@ namespace Services.Concretes
 			_machineCategoryService = new Lazy<IMachineCategoryService>(() => 
 				new MachineCategoryService(manager));
 			_passwordService = new Lazy<IPasswordService>(() =>
-				new PasswordService(manager, miar));
+				new PasswordService(manager, miarService));
+			_OTPService = new Lazy<IOTPService>(()
+				=> new OTPService(manager, configs, MailService));
         }
 	}
 }

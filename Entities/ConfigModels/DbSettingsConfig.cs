@@ -25,7 +25,10 @@
 		public string M_GetSubCategoryNames { get; init; }
 		public string M_GetAllHandStatus { get; init; }
 		public string M_SeparateTheValuesNotExistsOnTable { get; init; }
+		public string Mi_OTP_Add { get; init; }
+		public string Mi_OTP_Verify { get; init; }
 		public string Mi_Password_Update { get; init; }
+		public string Mi_Password_UpdateByOTP { get; init; }
 		public string M_C_AddMainAndSubCategories { get; init; }
 		public string M_C_AddSubCategories { get; init; }
 		public string M_C_DisplayAllMainAndSubcategories { get; init; }

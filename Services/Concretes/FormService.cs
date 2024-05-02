@@ -210,11 +210,7 @@ namespace Services.Concretes
 				throw new ExceptionWithMessage(errorDto);
 			#endregion
 
-			return languageParams.Language switch
-			{
-				"TR" => new { message = "başarılı" },
-				"EN" => new { message = "successful" }
-			};
+			return _manager.GetSuccessMessageByLanguages(languageParams.Language);
 		}
 
 		public async Task<object> CreateGetOfferFormAsync(
@@ -240,11 +236,7 @@ namespace Services.Concretes
 				throw new ExceptionWithMessage(errorDto);
 			#endregion
 
-			return languageParams.Language switch
-			{
-				"TR" => new { message = "başarılı" },
-				"EN" => new { message = "successful" }
-			};
+			return _manager.GetSuccessMessageByLanguages(languageParams.Language);
 		}
 
 		public async Task<object> CreateRentingFormAsync(
@@ -270,11 +262,7 @@ namespace Services.Concretes
 				throw new ExceptionWithMessage(errorDto);
 			#endregion
 
-			return languageParams.Language switch
-			{
-				"TR" => new { message = "başarılı" },
-				"EN" => new { message = "successful" }
-			};
+			return _manager.GetSuccessMessageByLanguages(languageParams.Language);
 		}
 		#endregion
 

@@ -25,7 +25,7 @@ namespace Services.Contracts
 		string telNo,
 		UserDtoForUpdateForPanel userDto);
 
-		Task UpdateUserByTelNoAsync(
+		Task<object> UpdateUserByTelNoAsync(
 			string language,
 			string telNo,
 			UserDtoForUpdateForMobile userDto);
