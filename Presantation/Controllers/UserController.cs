@@ -50,10 +50,10 @@ namespace Presantation.Controllers
 			[FromQuery] LanguageParams languageParams,
             [FromBody] UserDtoForRegister userDto)
         {
-            await _manager.UserService
+            var response = await _manager.UserService
                 .RegisterAsync(languageParams.Language, userDto);
 
-            return StatusCode(StatusCodes.Status201Created);
+            return StatusCode(StatusCodes.Status201Created, response);
         }
 
 

@@ -9,7 +9,7 @@ namespace Services.Contracts
 	{
 		Task<object> LoginForMobileAsync(string language, UserDtoForLogin userDto);
 		Task<string> LoginForWebAsync(string language, UserDtoForLogin userDto);
-		Task RegisterAsync(string language, UserDtoForRegister userDto);
+		Task<object> RegisterAsync(string language, UserDtoForRegister userDto);
 		Task CreateUserAsync(string language, UserDtoForCreate userDto);
 		Task<IEnumerable<string>> GetAllRolesByLanguageAsync(string language);
 

@@ -10,15 +10,15 @@ using System.Data;
 
 namespace Services.Concretes
 {
-    public class OTPService : IOTPService
+	public class OTPService : IOTPService
 	{
-        private readonly IRepositoryManager _repos;
+		private readonly IRepositoryManager _repos;
 		private readonly IConfigManager _configs;
 		private readonly IMailService _mailService;
 
 		public OTPService(
-			IRepositoryManager repos, 
-			IConfigManager configs, 
+			IRepositoryManager repos,
+			IConfigManager configs,
 			IMailService mailService)
 		{
 			_repos = repos;
@@ -98,7 +98,11 @@ namespace Services.Concretes
 			});
 			#endregion
 
-			return _repos.GetSuccessMessageByLanguages(otpParams.Language);
+			return otpParams.Language switch
+			{
+				"TR" => new { Message = "başarılı", Email = otpParams.Email },
+				"EN" => new { Message = "successful", Email = otpParams.Email }
+			};
 		}
 
 		public async Task<object> VerifyCodeAsync(

@@ -169,7 +169,7 @@ namespace Services.Concretes
 			return await GenerateTokenForUserAsync(userView);
 		}
 
-		public async Task RegisterAsync(
+		public async Task<object> RegisterAsync(
 			string language,
 			UserDtoForRegister userDto)
 		{
@@ -184,6 +184,8 @@ namespace Services.Concretes
 			#endregion
 
 			await CreateUserAsync(language, userDtoForCreate);
+
+			return _manager.GetSuccessMessageByLanguages(language);
 		}
 
 		public async Task CreateUserAsync(
