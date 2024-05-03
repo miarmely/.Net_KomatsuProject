@@ -349,16 +349,16 @@ namespace Services.Concretes
 			{
 				Language = languageParams.Language,
 				MainCategoryInEN = categoryDto.MainCategoryInEN,
-
-				SubcategoriesInEN = categoryDto.SubcategoriesInEN != null ?
-					string.Join(',', categoryDto.SubcategoriesInEN)
+				#region Subcategories
+				Subcategories = categoryDto.Subcategories != null ?
+					string.Join(',', categoryDto.Subcategories)
 					: null,
-
+				#endregion
 				SplitChar = ','
 			});
 			#endregion
 
-			#region delete sub categories (THROW)
+			#region delete subcategories (THROW)
 			var errorDto = await _repos.MachineCategoryRepository
 				.DeleteSubcategoryAsync(parameters);
 

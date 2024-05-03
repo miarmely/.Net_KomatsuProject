@@ -64,7 +64,7 @@ namespace Repositories.Concretes
 
 		public async Task<ErrorDtoWithMessage> DeleteSubcategoryAsync(
 			DynamicParameters parameters) =>
-				await base.ExecuteAsync(
+				await ExecuteAsync(
 					Configs.DbSettings.ProcedureNames.M_C_DeleteSubcategories,
 					parameters);
 	}
