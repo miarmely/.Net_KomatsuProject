@@ -17,10 +17,14 @@ li.dropdown - item > a:hover {
     vertical-align: middle
 }
 
-
 .sidebar_submenu {
     padding: 100px 0px;
 }
+
+.miar_hide {
+    display: none !important
+}
+
 /* xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx */
 
 

@@ -81,6 +81,7 @@ $(function () {
             EN: {}
         },
     };
+    let oldSelectedBaseMainCat = "";
     let nextDivNos = {
         mainCategory: 0,
         subcategory: 0
@@ -90,14 +91,12 @@ $(function () {
 
     //#region events
     slct.modes.change(async () => {
-        // !!!!!!!! TEMPORARY UNTIL DELETE FEATURE IS READY !!!!!!!!!!
-        if (slct.modes.val() == "delete")
-            return;
-
         //#region resets
-        resetMainCategoryArticle();
-        resetSubcategoryArticle();
-        resetResultLabels
+        // show category language <select>
+        slct.categoryLanguage.css("display", "inline");
+        
+        await resetCategoryArticlesAsync();
+        resetResultLabels();
         //#endregion
 
         //#region populate mode menus <select>
@@ -126,8 +125,11 @@ $(function () {
                     null);
                 break;
             case "delete":
+                // hide category language <select>
+                slct.categoryLanguage.css("display", "none",);
+
                 await showCategoryArticleAsync(
-                    { showMainCatSelect: true, showNewMainCatInput: false },
+                    { showMainCatSelect: true, showNewMainCatInput: false, },
                     null);
                 break;
         }
@@ -267,6 +269,7 @@ $(function () {
         let isErrorOccured = false;
         let div_formGroup_id;
         let inpt_newAdded;
+        let selectedBaseMainCat;
         //#endregion
 
         switch (mode) {
@@ -293,7 +296,7 @@ $(function () {
                             isErrorOccured = true;
                         //#endregion
 
-                        //#region security control
+                        //#region security control (THROW)
                         switch (catTypeOfClickedSelectBtn) {
                             case categoryType.mainCat:
                                 // when main category by selected language is selected again
@@ -393,12 +396,25 @@ $(function () {
                 switch (modeMenu) {
                     case categoryType.mainCat:
                         //#region security control
+
+                        //#region when different main category is selected
+                        selectedBaseMainCat = slct.mainCatOnMainCatArticle.val();
+
+                        // when main category is selected firstly
+                        if (oldSelectedBaseMainCat == "")
+                            oldSelectedBaseMainCat = selectedBaseMainCat;
+
+                        // when different main category is selected
+                        else if (selectedBaseMainCat != oldSelectedBaseMainCat)
+                            isErrorOccured = true;
+                        //#endregion
+
                         // when new main category <input> is empty
-                        if (newMainCategory.length == 0)
+                        else if (newMainCategory.length == 0)
                             isErrorOccured = true;
 
                         // when main category by selected language is selected again
-                        if (getSelectedCategoryCount(categoryType.mainCat, categoryLanguage) > 0)
+                        else if (getSelectedCategoryCount(categoryType.mainCat, categoryLanguage) > 0)
                             isErrorOccured = true;
 
                         // write error message if security is failed
@@ -413,6 +429,7 @@ $(function () {
 
                         //#region add new <input> to selected main/sub categories
                         div_formGroup_id = await addNewInputToSelectedInputsAreaAsync(categoryType.mainCat);
+
                         inpt_newAdded = div.selectedMainCategory.find("#" + div_formGroup_id + " input");
                         //#endregion
 
@@ -438,7 +455,20 @@ $(function () {
 
                         break;
                     case categoryType.subcat:
-                        //#region security control
+                        //#region security control (THROW)
+
+                        //#region when different main category is selected
+                        selectedBaseMainCat = slct.mainCatOnMainCatArticle.val();
+
+                        // when main category is selected firstly
+                        if (oldSelectedBaseMainCat == "")
+                            oldSelectedBaseMainCat = selectedBaseMainCat;
+
+                        // when different main category is selected
+                        else if (selectedBaseMainCat != oldSelectedBaseMainCat)
+                            isErrorOccured = true;
+                        //#endregion
+
                         // when new subcategory <input> is empty
                         if (newSubcategory.length == 0)
                             isErrorOccured = true;
@@ -447,7 +477,7 @@ $(function () {
                         for (let selectedOldSubcat in selectedCatsByLangs.subcategory[categoryLanguage]) {
                             const selectedNewSubCat = selectedCatsByLangs.subcategory[categoryLanguage][selectedOldSubcat];
 
-                            if (selectedNewSubCat.trim() == newSubcategory) {
+                            if (newSubcategory == selectedNewSubCat.trim()) {
                                 // write error message
                                 updateResultLabel(
                                     "#" + p_id.resultLabelForSelectBtnOnSubcat,
@@ -496,8 +526,74 @@ $(function () {
             case "delete":
                 switch (modeMenu) {
                     case "mainCategory":
+                        //#region security control (THROW)
+                        // when main category by selected language is selected again
+                        if (getSelectedCategoryCount(categoryType.mainCat, language) > 0){
+                            updateResultLabel(
+                                "#" + p_id.resultLabelForSelectBtnOnMainCat,
+                                langPack.errorMessages.invalidProcess[language],
+                                resultLabel_errorColor);
+
+                            return;
+                        }
+                        //#endregion
+
+                        //#region add new <input> to selected maincategories area
+                        div_formGroup_id = await addNewInputToSelectedInputsAreaAsync(categoryType.mainCat);
+
+                        inpt_newAdded = div.selectedMainCategory.find("#" + div_formGroup_id + " input");
+                        //#endregion
+
+                        //#region populate new added <input>
+                        // populate <input>
+                        const selectedMainCategory = slct.mainCatOnMainCatArticle.children("option:selected").text();
+                        inpt_newAdded.val(selectedMainCategory);
+
+                        // update "selectedCatsByLangs"
+                        selectedCatsByLangs.mainCategory[language][div_formGroup_id] = slct.mainCatOnMainCatArticle.val();
+
+                        // disable select <button> on main category article
+                        btn.selectOnMainCat.attr("disabled", "");
+                        //#endregion
+
                         break;
                     case "subcategory":
+                        //#region security control (THROW)
+                        const selectedSubcat = (slct.subcategory
+                            .children("option:selected")
+                            .text());
+
+                        // when subcategory is already selected previously (THROW)
+                        for (let divId in selectedCatsByLangs.subcategory[language]) {
+                            const OldSelectedSubCat = selectedCatsByLangs.subcategory[language][divId];
+
+                            if (selectedSubcat == OldSelectedSubCat) {
+                                // write error message
+                                updateResultLabel(
+                                    "#" + p_id.resultLabelForSelectBtnOnSubcat,
+                                    langPack.errorMessages.conflictForSelectSubcategory[language],
+                                    resultLabel_errorColor);
+                                return;
+                            }
+                        }
+                        //#endregion
+
+                        //#region add new <input> to selected main/subcategories
+                        div_formGroup_id = await addNewInputToSelectedInputsAreaAsync(categoryType.subcat);
+                        inpt_newAdded = div.selectedSubcategory.find("#" + div_formGroup_id + " input");
+                        //#endregion
+
+                        //#region populate new added <input>
+                        // populate <input>
+                        inpt_newAdded.val(selectedSubcat);
+
+                        // update "selectedCatsByLangs"
+                        selectedCatsByLangs.subcategory[language][div_formGroup_id] = selectedSubcat;
+
+                        // disable main category <select> on subcategory article
+                        slct.mainCatOnSubcatArticle.attr("disabled", "");
+                        //#endregion
+
                         break;
                 }
                 break;
@@ -860,12 +956,8 @@ $(function () {
                 `<option value="${mode}">${modeNameByLanguage}</option>`);
         }
 
-        // disable "delete" menu   !!!!!!!!! TEMPORARY  !!!!!!!!!
-        slct.modes.children("option[value= 'delete']").attr("disabled", "");
-        slct.modes.children("option[value= 'delete']").css("background-color", "#d3d3d3a1");
-        //#endregion
-
         populateModeMenusSelect();
+        //#endregion
 
         //#region category language <select>
         var allLanguages = await getDataByAjaxOrLocalAsync(
@@ -1056,7 +1148,7 @@ $(function () {
         switch (mode) {
             case "add": delete selectedCatsByLangs[whichCategory][titleOfSelectedCategory][div_formGroupOfCancelButton.attr("id")]; break;
             case "update": delete selectedCatsByLangs[whichCategory][titleOfSelectedCategory][mainCategory]; break;
-            case "delete": break;
+            case "delete": delete selectedCatsByLangs[whichCategory][titleOfSelectedCategory][div_formGroupOfCancelButton.attr("id")]; break;
         }
         //#endregion
 
@@ -1161,12 +1253,14 @@ $(function () {
         await populateSubcatSelectByBaseMainCatAsync(
             slct.mainCatOnSubcatArticle.val());
 
-        //#region reset selected main and subcategory
+        //#region reset selected main/subcategory area and buffers
         div.selectedCategories.empty();
 
         // reset "selectedCatsByLangs"
         for (let categoryType in { mainCategory: "", subcategory: "" })
             for (let language in selectedCatsByLangs[categoryType]) selectedCatsByLangs[categoryType][language] = {};
+
+        oldSelectedBaseMainCat = "";
         //#endregion
 
         //#region show main category <select>'s and select <button>'s
@@ -1204,41 +1298,6 @@ $(function () {
         return div_category_id == div_id.mainCategoryArticle ?
             categoryType.mainCat
             : categoryType.subcat;
-    }
-    function resetMainCategoryArticle() {
-        // reset new main category <input>
-        inpt.newMainCategory.val("");
-
-        // show main category <select> and reset it
-        slct.mainCatOnMainCatArticle.removeAttr("disabled");
-        slct.mainCatOnMainCatArticle.prop("selectedIndex", 0);
-
-        // remove selected main category <input>
-        div.selectedMainCategory.empty();
-
-        // reset maincategories in "selectedCatsByLangs"
-        for (let language in selectedCatsByLangs.mainCategory)
-            selectedCatsByLangs.mainCategory[language] = {};
-
-        //#region show select <button>
-        btn.selectOnMainCat.removeAttr("disabled");
-    }
-    function resetSubcategoryArticle() {
-        // show subcategory <select> and reset it
-        slct.subcategory.removeAttr("disabled");
-        slct.subcategory.prop("selectedIndex", 0);
-
-        // reset selected subcategory
-        div.selectedCategories.empty();
-
-        // reset subcategories in "selectedCatsByLangs"
-        for (let language in selectedCatsByLangs.subcategory)
-            selectedCatsByLangs.subcategory[language] = {};
-
-        //#region show select <button>s
-        btn.selectOnMainCat.removeAttr("disabled");
-        btn.selectOnSubCat.removeAttr("disabled");
-        //#endregion
     }
     function resetResultLabels() {
         p.resultLabelForSelectBtnOnMainCat.empty();
