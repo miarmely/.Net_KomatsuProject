@@ -1,5 +1,4 @@
-﻿using Entities.DtoModels;
-using Entities.MiarLibrary.DtoModels;
+﻿using Entities.MiarLibrary.DtoModels;
 using Entities.MiarLibrary.QueryParameters;
 using Entities.QueryParameters;
 using Microsoft.AspNetCore.Mvc;
@@ -37,7 +36,6 @@ namespace Presantation.Controllers.MiarLibrary
 
 
 		[HttpGet("forgotPassword/sendVerificationCode")]
-		[Authorization]
 		public async Task<IActionResult> SendVerificationCode(
 			[FromQuery] OTPParamsForAdd otpParams)
 		{
@@ -49,7 +47,6 @@ namespace Presantation.Controllers.MiarLibrary
 
 
 		[HttpGet("forgotPassword/verifyCode")]
-		[Authorization]
 		public async Task<IActionResult> VerifyCode(
 			[FromQuery] OTPParamsForVerify otpParams)
 		{
@@ -60,7 +57,6 @@ namespace Presantation.Controllers.MiarLibrary
 
 
 		[HttpPost("forgotPassword/newPassword")]
-		[Authorization]
 		public async Task<IActionResult> VerifyCode(
 			[FromQuery] LanguageParams languageParams,
 			[FromBody] PasswordDtoForUpdateByOTP passwordDto)
