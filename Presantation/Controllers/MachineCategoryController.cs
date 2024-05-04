@@ -69,7 +69,7 @@ namespace Presantation.Controllers
 		}
 
 
-		[HttpPost("maincategory/delete")]
+		[HttpPost("mainCategory/delete")]
 		[Authorization("Admin,Editor,Yönetici,Editör")]
 		public async Task<IActionResult> DeleteMainCategory(
 			[FromQuery] LanguageParams languageParams,

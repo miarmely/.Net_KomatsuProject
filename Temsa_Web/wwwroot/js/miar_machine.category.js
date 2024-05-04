@@ -910,7 +910,6 @@ $(function () {
                                 resultLabel_successColor,
                                 "30px",
                                 img.loading);
-
                             resolve();
                         });
                     },
@@ -927,6 +926,56 @@ $(function () {
 
                 break;
             case "delete":
+                switch (modeMenu) {
+                    case modeMenus.delete.mainCat:
+                        const selectedMainCats = getValuesOfObject(
+                            selectedCatsByLangs.mainCategory[language]);
+
+                        $.ajax({
+                            method: "POST",
+                            url: baseApiUrl + `/machineCategory/mainCategory/delete?language=${language}`,
+                            headers: {
+                                authorization: jwtToken
+                            },
+                            data: JSON.stringify({
+                                mainCategoryInEN: selectedMainCats[0]
+                            }),
+                            contentType: "application/json",
+                            dataType: "json",
+                            beforeSend: () => {
+                                img.loading.removeAttr("hidden");
+                            },
+                            success: () => {
+                                // remove old main and subcats from local
+                                localStorage.removeItem(localKeys_allMainAndSubcategories);
+
+                                new Promise(async resolve => {
+                                    await resetCategoryArticlesAsync();
+
+                                    // write success message
+                                    updateResultLabel(
+                                        "#" + p_id.resultLabelForSendBtn,
+                                        langPack.successMessages.deleteSuccessful[language],
+                                        resultLabel_successColor,
+                                        "30px",
+                                        img.loading);
+                                    resolve();
+                                })
+                            },
+                            error: (response) => {
+                                // write error
+                                updateResultLabel(
+                                    "#" + p_id.resultLabelForSendBtn,
+                                    JSON.parse(response.responseText).errorMessage,
+                                    resultLabel_errorColor,
+                                    "30px",
+                                    img.loading);
+                            }
+                        })
+
+                        break;
+                }
+
                 break;
         }
     })
@@ -1124,6 +1173,12 @@ $(function () {
                 <div id="${div_selectedCatsOfLang_id}" class="div_selectedCategoriesByLang">
                     <h4>${categoryLanguage}</h4>
                 </div>`);
+
+            // hide language title if mode delete
+            if (mode == "delete")
+                div_selectedCats
+                    .find("#" + div_selectedCatsOfLang_id + " h4")
+                    .css("display", "none");               
         }
         //#endregion
 
@@ -1289,9 +1344,8 @@ $(function () {
         slct.mainCatOnSubcatArticle.prop("selectedIndex", 0);
         //#endregion
 
-        // reset subcategory <select>
         await populateSubcatSelectByBaseMainCatAsync(
-            slct.mainCatOnSubcatArticle.val());
+            slct.mainCatOnSubcatArticle.val());  // reset subcategory <select>
 
         //#region reset selected main/subcategory area and buffers
         div.selectedCategories.empty();
