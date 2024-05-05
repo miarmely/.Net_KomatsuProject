@@ -250,11 +250,19 @@
             EN: "Send",
         },
         errorMessages: {
-            badRequestForMainCat: {
-                TR: "bazı diller için ana kategori eklenmemiş",
-                EN: "main category for some languages is not added"
+            anyMainCatIsNotAdded: {
+                TR: "herhangi bir ana kategori eklenmemiş",
+                EN: "any main category is not added"
             },
-            badRequestForSubcat: {
+            anySubcatIsNotAdded: {
+                TR: "herhangi bir alt kategori eklenmemiş",
+                EN: "any subcategory is not added"
+            },
+            mainCatCountIsNotSame: {
+                TR: "bazı diller için ana kategori eklenmemiş veya eksik eklenmiş",
+                EN: "main category for some languages is not added or missing added"
+            },
+            subcatCountIsNotSame: {
                 TR: "bazı diller için alt kategori eklenmemiş veya eksik eklenmiş",
                 EN: "subcategory for some languages is not added or missing added"
             },
@@ -302,9 +310,15 @@
                         <br>** Seçilen ana kategoriye ait alt kategorilerin adlarını değiştirmek içindir.
                         <br>** Yeni alt kategori adları her dil için girilmek zorunda değildir. (istenilen herhangi bir dil için güncelleme yapılabilir.)`,
                     `<b>* Sil >> Ana Kategori</b>: 
-                        <br>** Yakında...`,
+                        <br>** Seçilen ana kategoriyi tamamen silmek içindir.
+                        <br>** Aynı anda sadece bir tane ana kategori silinebilir.
+                        <br>** Ana kategoriler sayfa diline göre gösterilir.
+                        <br>** Silme işleminde kategori dili seçimi yoktur. Seçilen ana kategori, her dil için otomatik olarak silinecektir.`,
                     `<b>* Sil >> Alt Kategori</b>: 
-                        <br>** Yakında...`,
+                        <br>** Seçilen ana kategorinin alt kategorilerini silmek içindir.
+                        <br>** Aynı anda birden fazla alt kategori silinebilir.
+                        <br>** Alt kategoriler sayfa diline göre gösterilir.
+                        <br>** Silme işleminde kategori dili seçimi yoktur. Seçilen alt kategoriler, her dil için otomatik olarak silinecektir.`,
                     `<b>* Kategori Dili</b>:  
                         <br>** Burada seçilen dil ile sayfanın dili farklıdır. Burada seçilen dil girilecek olan ana veya alt kategorinin hangi dilde olduğunu belirtir.`,
                     `<b>* Not</b>:
@@ -326,10 +340,16 @@
                     `<b>* Update >> Subcategory</b>:  
                         <br>** It used to change subcategory names belong to selected main category.
                         <br>** There is no requirement of enter new subcategory names for all languages. (It can be update for desired any language.)`,
-                    `<b>* Delete >> Main Category</b>: 
-                        <br>** Soon...`, 
+                    `<b>* Delete >> Main Category</b>:
+                        <br>** It used to completely delete the main category.
+                        <br>** You can delete only one main category at a time.
+                        <br>** Main categories are displayed by page language.
+                        <br>** There is no selection for the category language on deletion. Selected main category will be automatically deleted for all languages.`,
                     `<b>* Delete >> Subcategory</b>: 
-                        <br>** Soon...`,
+                        <br>** It used to delete subcategories of the main category.
+                        <br>** You can delete multiple main category at a time.
+                        <br>** Subcategories are displayed by page language.
+                        <br>** There is no selection for the category language on deletion. Selected subcategories will be automatically deleted for all languages.`,
                     `<b>* Category Language</b>:  
                         <br>** The language in here and page language are different. The selected language in here determines language of main and subcategory to be entered`,
                     `<b>* Note</b>:

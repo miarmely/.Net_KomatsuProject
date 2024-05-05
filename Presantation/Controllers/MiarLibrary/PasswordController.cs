@@ -26,12 +26,12 @@ namespace Presantation.Controllers.MiarLibrary
 			[FromQuery] LanguageParams languageParams,
 			[FromBody] PasswordDtoForUpdate passwordDto)
 		{
-			await _services.PasswordService.UpdatePasswordAsync(
+			var response = await _services.PasswordService.UpdatePasswordAsync(
 				languageParams, 
 				passwordDto, 
 				HttpContext);
 
-			return NoContent();
+			return Ok(response);
 		}
 
 
