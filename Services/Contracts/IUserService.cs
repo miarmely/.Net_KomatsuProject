@@ -31,5 +31,6 @@ namespace Services.Contracts
 			UserDtoForUpdateForMobile userDto);
 
 		Task DeleteUsersByTelNoListAsync(string language, UserDtoForDelete userDto);
+		Task<object> CloseAccountAsync(LanguageParams languageParams, HttpContext context);
 	}
 }

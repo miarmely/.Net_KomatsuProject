@@ -127,7 +127,13 @@ namespace Repositories.Concretes
 		public async Task<ErrorDtoWithMessage?> DeleteUsersByTelNoListAsync(
 			DynamicParameters parameters) =>
 				await base.QuerySingleOrDefaultAsync<ErrorDtoWithMessage>(
-					base.Configs.DbSettings.ProcedureNames.U_Delete,
+					base.Configs.DbSettings.ProcedureNames.U_MultipleDeleteByTelNo,
+					parameters);
+
+		public async Task<ErrorDtoWithMessage> CloseAccountAsync(
+			DynamicParameters parameters) =>
+				await ExecuteAsync(
+					Configs.DbSettings.ProcedureNames.U_CloseAccount,
 					parameters);
 	}
 }

@@ -21,7 +21,7 @@ using System.Text;
 
 namespace Services.Concretes
 {
-    public partial class UserService  // private
+	public partial class UserService  // private
 		: IUserService
 	{
 		private readonly IRepositoryManager _manager;
@@ -242,9 +242,9 @@ namespace Services.Concretes
 				DbType.Guid);
 
 			parameters.Add(
-				"TotalCount", 
-				0, 
-				DbType.Int32, 
+				"TotalCount",
+				0,
+				DbType.Int32,
 				ParameterDirection.Output);
 			#endregion
 
@@ -391,6 +391,34 @@ namespace Services.Concretes
 			if (errorDto != null)
 				throw new ExceptionWithMessage(errorDto);
 			#endregion
+		}
+
+		public async Task<object> CloseAccountAsync(
+			LanguageParams languageParams,
+			HttpContext context)
+		{
+			#region set parameters
+			var accountId = await _miar
+				.GetUserIdFromClaimsAsync(context, ClaimTypes.NameIdentifier);
+
+			var parameters = new DynamicParameters(new
+			{
+				Language = languageParams.Language,
+				AccountId = accountId,
+				RequestDate = DateTime.UtcNow,
+			});
+			#endregion
+
+			#region close account (THROW)
+			var errorDto = await _manager.UserRepository
+				.CloseAccountAsync(parameters);
+
+			// when any error occured
+			if (errorDto.StatusCode != 204)
+				throw new ExceptionWithMessage(errorDto);
+			#endregion
+
+			return _manager.GetSuccessMessageByLanguages(languageParams.Language);
 		}
 	}
 }

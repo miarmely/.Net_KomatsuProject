@@ -14,8 +14,9 @@
 		public string U_DisplayByTelNo { get; init; }
 		public string U_DisplayAllRoles { get; init; }
 		public string U_Update { get; init; }
-		public string U_Delete { get; init; }
-		public string M_Create { get; init; }
+		public string U_MultipleDeleteByTelNo { get; init; }
+        public string U_CloseAccount { get; init; }
+        public string M_Create { get; init; }
 		public string M_DisplayAll { get; init; }
 		public string M_DisplayByCondition { get; init; }
 		public string M_DisplayOneById { get; init; }

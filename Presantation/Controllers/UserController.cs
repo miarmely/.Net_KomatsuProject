@@ -10,7 +10,7 @@ namespace Presantation.Controllers
 {
     [ApiController]
     [Route("api/services/[Controller]")]
-    public partial class UserController  // For Mobile + Panel
+    public partial class UserController  // for mobile or panel
 		: ControllerBase
     {
         private readonly IServiceManager _manager;
@@ -82,9 +82,22 @@ namespace Presantation.Controllers
 
             return Ok(response);
         }
+
+
+		[HttpGet("closeAccount")]
+		[Authorization]
+		public async Task<IActionResult> CloseAccountAsync(
+			[FromQuery] LanguageParams languageParams)
+		{
+			var response = await _manager.UserService.CloseAccountAsync(
+				languageParams,
+				HttpContext);
+
+			return Ok(response);
+		}
     }
 
-	public partial class UserController  // For Only Panel
+	public partial class UserController  // for only panel
 	{
 		[HttpPost("create")]
 		[Authorization("Admin,Editor,Yönetici,Editör")]
