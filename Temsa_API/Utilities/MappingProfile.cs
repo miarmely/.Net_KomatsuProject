@@ -9,7 +9,10 @@ namespace Temsa_Api.Utilities
         public MappingProfile()
         {
             CreateMap<UserView, UserDto>();
-            CreateMap<UserDtoForRegister, UserDtoForCreate>();
+            CreateMap<UserDtoForRegister, UserDtoForCreate>()
+                .ForMember(
+                dest => dest.RoleNames,
+                opt => opt.MapFrom(src => new List<string>()));
         }
     }
 }
