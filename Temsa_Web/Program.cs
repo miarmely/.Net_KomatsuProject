@@ -15,7 +15,7 @@ var app = builder.Build();
 #endregion
 
 #region set production or staging mode 
-if (!app.Environment.IsDevelopment())
+if (app.Environment.IsProduction())
     app.UseHsts();
 #endregion
 

@@ -106,6 +106,8 @@ namespace Services.Concretes
 			#endregion
 
 			#region when telNo or password is wrong (throw)
+			var x = parameters.Get<string>("ErrorCode");
+
 			if (userView == null)
 				throw new ExceptionWithMessage(
 					parameters.Get<Int16>("StatusCode"),
@@ -159,10 +161,9 @@ namespace Services.Concretes
 				.RolesCanBeLoginToAdminPanel
 				.Contains(r)))
 			{
-				throw new ExceptionWithMessage(ErrorDetailsConfig
-					.ToErrorDto(
-						language,
-						_configs.ErrorDetails.AE_F));
+				throw new ExceptionWithMessage(ErrorDetailsConfig.ToErrorDto(
+					language,
+					_configs.ErrorDetails.AE_F));
 			}
 			#endregion
 

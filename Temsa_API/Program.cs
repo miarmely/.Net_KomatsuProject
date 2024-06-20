@@ -17,22 +17,14 @@ var app = builder.Build();
 builder.Services.ConfigureExceptionHandler(app);
 #endregion
 
-#region set production and development mode 
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
-
-else
-{
-	app.UseSwagger();
-	app.UseSwaggerUI();
+#region set production mode
+if (app.Environment.IsProduction())
 	app.UseHsts();
-}   
 #endregion
 
 #region add pipelines
+app.UseSwagger();
+app.UseSwaggerUI();
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseRouting();

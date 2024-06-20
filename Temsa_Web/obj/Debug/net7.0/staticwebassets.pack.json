@@ -205,56 +205,200 @@
       "PackagePath": "staticwebassets\\images\\loading.gif"
     },
     {
+      "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\images\\machines\\D155AX-8E0.webp",
+      "PackagePath": "staticwebassets\\images\\machines\\D155AX-8E0.webp"
+    },
+    {
       "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\images\\machines\\D155AX-8_Walkaround_01.png",
       "PackagePath": "staticwebassets\\images\\machines\\D155AX-8_Walkaround_01.png"
+    },
+    {
+      "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\images\\machines\\D65EX-18E0.webp",
+      "PackagePath": "staticwebassets\\images\\machines\\D65EX-18E0.webp"
     },
     {
       "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\images\\machines\\D65EX-18_Walkaround_01.png",
       "PackagePath": "staticwebassets\\images\\machines\\D65EX-18_Walkaround_01.png"
     },
     {
+      "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\images\\machines\\D85EX-18E0.webp",
+      "PackagePath": "staticwebassets\\images\\machines\\D85EX-18E0.webp"
+    },
+    {
       "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\images\\machines\\D85EX-18_Walkaround_01.png",
       "PackagePath": "staticwebassets\\images\\machines\\D85EX-18_Walkaround_01.png"
+    },
+    {
+      "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\images\\machines\\D85EXi-18 Akıllı Dozer.webp",
+      "PackagePath": "staticwebassets\\images\\machines\\D85EXi-18 Akıllı Dozer.webp"
+    },
+    {
+      "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\images\\machines\\DRX 1000.webp",
+      "PackagePath": "staticwebassets\\images\\machines\\DRX 1000.webp"
+    },
+    {
+      "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\images\\machines\\DRX 800.webp",
+      "PackagePath": "staticwebassets\\images\\machines\\DRX 800.webp"
+    },
+    {
+      "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\images\\machines\\GD675-7E0.webp",
+      "PackagePath": "staticwebassets\\images\\machines\\GD675-7E0.webp"
     },
     {
       "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\images\\machines\\GD675-7_Walkaround_01.png",
       "PackagePath": "staticwebassets\\images\\machines\\GD675-7_Walkaround_01.png"
     },
     {
+      "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\images\\machines\\HD1500-8.webp",
+      "PackagePath": "staticwebassets\\images\\machines\\HD1500-8.webp"
+    },
+    {
+      "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\images\\machines\\HD325-8.webp",
+      "PackagePath": "staticwebassets\\images\\machines\\HD325-8.webp"
+    },
+    {
+      "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\images\\machines\\HD405-8.webp",
+      "PackagePath": "staticwebassets\\images\\machines\\HD405-8.webp"
+    },
+    {
       "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\images\\machines\\HD405-8EO.jpg",
       "PackagePath": "staticwebassets\\images\\machines\\HD405-8EO.jpg"
+    },
+    {
+      "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\images\\machines\\HD465-8.webp",
+      "PackagePath": "staticwebassets\\images\\machines\\HD465-8.webp"
+    },
+    {
+      "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\images\\machines\\HD605-8.webp",
+      "PackagePath": "staticwebassets\\images\\machines\\HD605-8.webp"
+    },
+    {
+      "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\images\\machines\\HD785-8E0.webp",
+      "PackagePath": "staticwebassets\\images\\machines\\HD785-8E0.webp"
     },
     {
       "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\images\\machines\\HD785-8_Walkaround_01.png",
       "PackagePath": "staticwebassets\\images\\machines\\HD785-8_Walkaround_01.png"
     },
     {
+      "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\images\\machines\\HM300-5.webp",
+      "PackagePath": "staticwebassets\\images\\machines\\HM300-5.webp"
+    },
+    {
+      "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\images\\machines\\HRX 1000.webp",
+      "PackagePath": "staticwebassets\\images\\machines\\HRX 1000.webp"
+    },
+    {
+      "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\images\\machines\\MVT-II 600.webp",
+      "PackagePath": "staticwebassets\\images\\machines\\MVT-II 600.webp"
+    },
+    {
+      "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\images\\machines\\MVT-II 800.webp",
+      "PackagePath": "staticwebassets\\images\\machines\\MVT-II 800.webp"
+    },
+    {
       "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\images\\machines\\PC138US-11_Walkaround_01.png",
       "PackagePath": "staticwebassets\\images\\machines\\PC138US-11_Walkaround_01.png"
+    },
+    {
+      "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\images\\machines\\PC2000-11.webp",
+      "PackagePath": "staticwebassets\\images\\machines\\PC2000-11.webp"
     },
     {
       "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\images\\machines\\PC210LC-11.jpg",
       "PackagePath": "staticwebassets\\images\\machines\\PC210LC-11.jpg"
     },
     {
+      "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\images\\machines\\PC210LC-11E0.webp",
+      "PackagePath": "staticwebassets\\images\\machines\\PC210LC-11E0.webp"
+    },
+    {
+      "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\images\\machines\\PC290LC-11E0.webp",
+      "PackagePath": "staticwebassets\\images\\machines\\PC290LC-11E0.webp"
+    },
+    {
       "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\images\\machines\\PC290LC-11_Walkaround_01.png",
       "PackagePath": "staticwebassets\\images\\machines\\PC290LC-11_Walkaround_01.png"
+    },
+    {
+      "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\images\\machines\\PC3000-11.webp",
+      "PackagePath": "staticwebassets\\images\\machines\\PC3000-11.webp"
+    },
+    {
+      "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\images\\machines\\PC360LC-11E0.webp",
+      "PackagePath": "staticwebassets\\images\\machines\\PC360LC-11E0.webp"
     },
     {
       "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\images\\machines\\PC360LC-11_Walkaround_01.png",
       "PackagePath": "staticwebassets\\images\\machines\\PC360LC-11_Walkaround_01.png"
     },
     {
+      "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\images\\machines\\PC4000-11.webp",
+      "PackagePath": "staticwebassets\\images\\machines\\PC4000-11.webp"
+    },
+    {
+      "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\images\\machines\\PC490LC-11E0.webp",
+      "PackagePath": "staticwebassets\\images\\machines\\PC490LC-11E0.webp"
+    },
+    {
       "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\images\\machines\\PC490LC-11_Walkaround_01.png",
       "PackagePath": "staticwebassets\\images\\machines\\PC490LC-11_Walkaround_01.png"
+    },
+    {
+      "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\images\\machines\\PC5500-11.webp",
+      "PackagePath": "staticwebassets\\images\\machines\\PC5500-11.webp"
+    },
+    {
+      "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\images\\machines\\PC7000-11.webp",
+      "PackagePath": "staticwebassets\\images\\machines\\PC7000-11.webp"
+    },
+    {
+      "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\images\\machines\\PC700LC-11E0.webp",
+      "PackagePath": "staticwebassets\\images\\machines\\PC700LC-11E0.webp"
     },
     {
       "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\images\\machines\\PC700LC-11_Walkaround_01.png",
       "PackagePath": "staticwebassets\\images\\machines\\PC700LC-11_Walkaround_01.png"
     },
     {
+      "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\images\\machines\\PC8000-11.webp",
+      "PackagePath": "staticwebassets\\images\\machines\\PC8000-11.webp"
+    },
+    {
+      "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\images\\machines\\PC950LC-11E0.webp",
+      "PackagePath": "staticwebassets\\images\\machines\\PC950LC-11E0.webp"
+    },
+    {
       "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\images\\machines\\PW180-11_Walkaround_02.png",
       "PackagePath": "staticwebassets\\images\\machines\\PW180-11_Walkaround_02.png"
+    },
+    {
+      "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\images\\machines\\SFB-29.webp",
+      "PackagePath": "staticwebassets\\images\\machines\\SFB-29.webp"
+    },
+    {
+      "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\images\\machines\\SFB-31.webp",
+      "PackagePath": "staticwebassets\\images\\machines\\SFB-31.webp"
+    },
+    {
+      "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\images\\machines\\SFB-38.webp",
+      "PackagePath": "staticwebassets\\images\\machines\\SFB-38.webp"
+    },
+    {
+      "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\images\\machines\\SFB-40.webp",
+      "PackagePath": "staticwebassets\\images\\machines\\SFB-40.webp"
+    },
+    {
+      "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\images\\machines\\SFB-43.webp",
+      "PackagePath": "staticwebassets\\images\\machines\\SFB-43.webp"
+    },
+    {
+      "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\images\\machines\\Stamler RF-5.webp",
+      "PackagePath": "staticwebassets\\images\\machines\\Stamler RF-5.webp"
+    },
+    {
+      "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\images\\machines\\WA200-8E0.webp",
+      "PackagePath": "staticwebassets\\images\\machines\\WA200-8E0.webp"
     },
     {
       "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\images\\machines\\WA200-8_Walkaround_02.png",
@@ -265,32 +409,92 @@
       "PackagePath": "staticwebassets\\images\\machines\\WA270-8.jpg"
     },
     {
+      "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\images\\machines\\WA270-8E0.webp",
+      "PackagePath": "staticwebassets\\images\\machines\\WA270-8E0.webp"
+    },
+    {
+      "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\images\\machines\\WA320-8E0.webp",
+      "PackagePath": "staticwebassets\\images\\machines\\WA320-8E0.webp"
+    },
+    {
       "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\images\\machines\\WA320-8_Walkaround_01.png",
       "PackagePath": "staticwebassets\\images\\machines\\WA320-8_Walkaround_01.png"
+    },
+    {
+      "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\images\\machines\\WA380-8E0.webp",
+      "PackagePath": "staticwebassets\\images\\machines\\WA380-8E0.webp"
     },
     {
       "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\images\\machines\\WA380-8_Walkaround_02.png",
       "PackagePath": "staticwebassets\\images\\machines\\WA380-8_Walkaround_02.png"
     },
     {
+      "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\images\\machines\\WA470-8E0.webp",
+      "PackagePath": "staticwebassets\\images\\machines\\WA470-8E0.webp"
+    },
+    {
       "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\images\\machines\\WA470-8_Walkaround_01.png",
       "PackagePath": "staticwebassets\\images\\machines\\WA470-8_Walkaround_01.png"
+    },
+    {
+      "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\images\\machines\\WA475-10.webp",
+      "PackagePath": "staticwebassets\\images\\machines\\WA475-10.webp"
     },
     {
       "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\images\\machines\\WA475-10_Walkaround_02.png",
       "PackagePath": "staticwebassets\\images\\machines\\WA475-10_Walkaround_02.png"
     },
     {
+      "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\images\\machines\\WA500-8E0.webp",
+      "PackagePath": "staticwebassets\\images\\machines\\WA500-8E0.webp"
+    },
+    {
       "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\images\\machines\\WA500-8_Walkaround_02.png",
       "PackagePath": "staticwebassets\\images\\machines\\WA500-8_Walkaround_02.png"
+    },
+    {
+      "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\images\\machines\\WA600-8E0.webp",
+      "PackagePath": "staticwebassets\\images\\machines\\WA600-8E0.webp"
     },
     {
       "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\images\\machines\\WA600-8_Walkaround_01.png",
       "PackagePath": "staticwebassets\\images\\machines\\WA600-8_Walkaround_01.png"
     },
     {
+      "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\images\\machines\\WB97R-8.webp",
+      "PackagePath": "staticwebassets\\images\\machines\\WB97R-8.webp"
+    },
+    {
+      "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\images\\machines\\WB97S-8.webp",
+      "PackagePath": "staticwebassets\\images\\machines\\WB97S-8.webp"
+    },
+    {
+      "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\images\\machines\\XL1700.webp",
+      "PackagePath": "staticwebassets\\images\\machines\\XL1700.webp"
+    },
+    {
+      "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\images\\machines\\XL1900.webp",
+      "PackagePath": "staticwebassets\\images\\machines\\XL1900.webp"
+    },
+    {
+      "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\images\\machines\\XL2700.webp",
+      "PackagePath": "staticwebassets\\images\\machines\\XL2700.webp"
+    },
+    {
+      "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\images\\machines\\XRS 600.webp",
+      "PackagePath": "staticwebassets\\images\\machines\\XRS 600.webp"
+    },
+    {
+      "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\images\\machines\\XRS 800.webp",
+      "PackagePath": "staticwebassets\\images\\machines\\XRS 800.webp"
+    },
+    {
       "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\images\\machines\\d85-exi-1250x835-02.webp",
       "PackagePath": "staticwebassets\\images\\machines\\d85-exi-1250x835-02.webp"
+    },
+    {
+      "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\images\\machines\\iXRS 600.webp",
+      "PackagePath": "staticwebassets\\images\\machines\\iXRS 600.webp"
     },
     {
       "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\images\\machines\\pc950lc-11.jpg",
@@ -299,6 +503,10 @@
     {
       "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\images\\machines\\pw160.jpg",
       "PackagePath": "staticwebassets\\images\\machines\\pw160.jpg"
+    },
+    {
+      "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\images\\machines\\rf27-rf31-rf40.webp",
+      "PackagePath": "staticwebassets\\images\\machines\\rf27-rf31-rf40.webp"
     },
     {
       "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\images\\mail.png",
@@ -355,6 +563,18 @@
     {
       "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\images\\show.png",
       "PackagePath": "staticwebassets\\images\\show.png"
+    },
+    {
+      "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\images\\sliders\\bekoloader-kamp-big.webp",
+      "PackagePath": "staticwebassets\\images\\sliders\\bekoloader-kamp-big.webp"
+    },
+    {
+      "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\images\\sliders\\pc-700-kampanya-sayfa-slider-01.webp",
+      "PackagePath": "staticwebassets\\images\\sliders\\pc-700-kampanya-sayfa-slider-01.webp"
+    },
+    {
+      "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\images\\sliders\\pc-950-kampanya-sayfa-slider-01.webp",
+      "PackagePath": "staticwebassets\\images\\sliders\\pc-950-kampanya-sayfa-slider-01.webp"
     },
     {
       "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\images\\sliders\\yeni-cag-yeni.webp",
@@ -773,24 +993,112 @@
       "PackagePath": "staticwebassets\\lib\\jquery\\dist\\jquery.min.map"
     },
     {
+      "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\pdfs\\HD1500-8.pdf",
+      "PackagePath": "staticwebassets\\pdfs\\HD1500-8.pdf"
+    },
+    {
+      "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\pdfs\\HD325-8.pdf",
+      "PackagePath": "staticwebassets\\pdfs\\HD325-8.pdf"
+    },
+    {
+      "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\pdfs\\HD405-8.pdf",
+      "PackagePath": "staticwebassets\\pdfs\\HD405-8.pdf"
+    },
+    {
+      "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\pdfs\\HD465-8.pdf",
+      "PackagePath": "staticwebassets\\pdfs\\HD465-8.pdf"
+    },
+    {
+      "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\pdfs\\HD605-8.pdf",
+      "PackagePath": "staticwebassets\\pdfs\\HD605-8.pdf"
+    },
+    {
+      "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\pdfs\\HD785-8E0.pdf",
+      "PackagePath": "staticwebassets\\pdfs\\HD785-8E0.pdf"
+    },
+    {
+      "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\pdfs\\HM300-5.pdf",
+      "PackagePath": "staticwebassets\\pdfs\\HM300-5.pdf"
+    },
+    {
+      "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\pdfs\\PC2000-11.pdf",
+      "PackagePath": "staticwebassets\\pdfs\\PC2000-11.pdf"
+    },
+    {
+      "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\pdfs\\PC3000-11.pdf",
+      "PackagePath": "staticwebassets\\pdfs\\PC3000-11.pdf"
+    },
+    {
+      "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\pdfs\\PC4000-11.pdf",
+      "PackagePath": "staticwebassets\\pdfs\\PC4000-11.pdf"
+    },
+    {
+      "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\pdfs\\PC5500-11.pdf",
+      "PackagePath": "staticwebassets\\pdfs\\PC5500-11.pdf"
+    },
+    {
+      "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\pdfs\\PC7000-11.pdf",
+      "PackagePath": "staticwebassets\\pdfs\\PC7000-11.pdf"
+    },
+    {
+      "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\pdfs\\PC8000-11.pdf",
+      "PackagePath": "staticwebassets\\pdfs\\PC8000-11.pdf"
+    },
+    {
+      "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\pdfs\\SFB-29.pdf",
+      "PackagePath": "staticwebassets\\pdfs\\SFB-29.pdf"
+    },
+    {
+      "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\pdfs\\SFB-31.pdf",
+      "PackagePath": "staticwebassets\\pdfs\\SFB-31.pdf"
+    },
+    {
+      "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\pdfs\\SFB-38.pdf",
+      "PackagePath": "staticwebassets\\pdfs\\SFB-38.pdf"
+    },
+    {
+      "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\pdfs\\SFB-40.pdf",
+      "PackagePath": "staticwebassets\\pdfs\\SFB-40.pdf"
+    },
+    {
+      "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\pdfs\\SFB-43.pdf",
+      "PackagePath": "staticwebassets\\pdfs\\SFB-43.pdf"
+    },
+    {
+      "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\pdfs\\Stamler RF-5.pdf",
+      "PackagePath": "staticwebassets\\pdfs\\Stamler RF-5.pdf"
+    },
+    {
+      "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\pdfs\\WB97R-8.pdf",
+      "PackagePath": "staticwebassets\\pdfs\\WB97R-8.pdf"
+    },
+    {
+      "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\pdfs\\WB97S-8.pdf",
+      "PackagePath": "staticwebassets\\pdfs\\WB97S-8.pdf"
+    },
+    {
+      "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\pdfs\\XL1700.pdf",
+      "PackagePath": "staticwebassets\\pdfs\\XL1700.pdf"
+    },
+    {
+      "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\pdfs\\XL1900.pdf",
+      "PackagePath": "staticwebassets\\pdfs\\XL1900.pdf"
+    },
+    {
+      "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\pdfs\\XL2700-sıkıştırıldı.pdf",
+      "PackagePath": "staticwebassets\\pdfs\\XL2700-sıkıştırıldı.pdf"
+    },
+    {
+      "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\pdfs\\rf27-rf31-rf40.pdf",
+      "PackagePath": "staticwebassets\\pdfs\\rf27-rf31-rf40.pdf"
+    },
+    {
       "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\pdfs\\senCard Dental Conertlü.pdf",
       "PackagePath": "staticwebassets\\pdfs\\senCard Dental Conertlü.pdf"
     },
     {
-      "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\videos\\machines\\_Geometric80s28_preview.mp4",
-      "PackagePath": "staticwebassets\\videos\\machines\\_Geometric80s28_preview.mp4"
-    },
-    {
-      "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\videos\\machines\\istockphoto-1333872264-640_adpp_is.mp4",
-      "PackagePath": "staticwebassets\\videos\\machines\\istockphoto-1333872264-640_adpp_is.mp4"
-    },
-    {
-      "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\videos\\machines\\pexels-andi-farruku-6194506 (2160p).mp4",
-      "PackagePath": "staticwebassets\\videos\\machines\\pexels-andi-farruku-6194506 (2160p).mp4"
-    },
-    {
-      "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\videos\\machines\\random1.mp4",
-      "PackagePath": "staticwebassets\\videos\\machines\\random1.mp4"
+      "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\3__Temsa\\Temsa_Web\\wwwroot\\pdfs\\tum-urunler-tek-katalog.pdf",
+      "PackagePath": "staticwebassets\\pdfs\\tum-urunler-tek-katalog.pdf"
     },
     {
       "Id": "obj\\Debug\\net7.0\\staticwebassets\\msbuild.Temsa_Web.Microsoft.AspNetCore.StaticWebAssets.props",

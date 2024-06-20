@@ -100,7 +100,7 @@ namespace Temsa_Api.Extensions
 							"https://localhost:7136",
 							"http://104.247.163.183:5552",
 							"https://104.247.163.183:5552",
-							"http://172.25.104.118:5552")
+							"http://172.26.193.213:5552")
 						.AllowAnyMethod()
 						.AllowAnyHeader()
 						.WithExposedHeaders(
