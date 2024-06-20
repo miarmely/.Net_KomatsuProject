@@ -12,7 +12,9 @@ namespace Repositories
         public RepositoryContext(IConfiguration configuration)
         {
             _configuration = configuration;
-            _connectionString = _configuration.GetConnectionString("SqlServer");
+            _connectionString = _configuration.GetConnectionString(configuration
+                .GetSection("ConnectionType")
+                .Value);
         }
 
         public IDbConnection CreateSqlConnection() =>
